@@ -1,7 +1,7 @@
 ﻿// <copyright file="Resources.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019 Chris Trout
+// Copyright(c) 2019-2020 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ namespace Cross.Pipelines.Builder
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
 		/// <summary>
-		/// Looks up a localized string like "PipelineContext is not able to be constructed without a PipelineName.".
+		/// Looks up a localized string like "PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -64,7 +64,7 @@ namespace Cross.Pipelines.Builder
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext is not able to be constructed without a PipelineName.".
+		/// Looks up a localized string using a specific culture like "PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]

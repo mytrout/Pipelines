@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0CF6BAA0-5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cross.Pipelines.Builder", "src\Cross.Pipelines.Builder\Cross.Pipelines.Builder.csproj", "{2C5F35F3-7212-4842-8EC5-02083FDE94B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cross.Pipelines.Builder.Tests", "test\Cross.Pipelines.Builder.Tests\Cross.Pipelines.Builder.Tests.csproj", "{CE80B840-4D42-42DC-ADA9-AA11DC10B32F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,12 +29,17 @@ Global
 		{2C5F35F3-7212-4842-8EC5-02083FDE94B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C5F35F3-7212-4842-8EC5-02083FDE94B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C5F35F3-7212-4842-8EC5-02083FDE94B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE80B840-4D42-42DC-ADA9-AA11DC10B32F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE80B840-4D42-42DC-ADA9-AA11DC10B32F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE80B840-4D42-42DC-ADA9-AA11DC10B32F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE80B840-4D42-42DC-ADA9-AA11DC10B32F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C5F35F3-7212-4842-8EC5-02083FDE94B1} = {B190B2FE-FEE5-48EC-BF0B-077F985CC05D}
+		{CE80B840-4D42-42DC-ADA9-AA11DC10B32F} = {0CF6BAA0-5A4C-4E0E-AE0F-048C3883E604}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DCBE04B1-9A76-48BD-AA2C-2C0E9A72D544}

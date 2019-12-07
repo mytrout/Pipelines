@@ -121,6 +121,6 @@
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
-    <value>Smoke Test (en-US)</value>
+    <value>Smoke Test (en-GB)</value>
   </data>
 </root>
