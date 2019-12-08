@@ -1,4 +1,4 @@
-﻿// <copyright file="IPipelineMiddlewareInitializer.cs" company="Chris Trout">
+﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,21 +22,4 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines
-{
-    using System;
-
-    /// <summary>
-    /// Provides a middleware initializer for the pipeline.
-    /// </summary>
-    public interface IPipelineMiddlewareInitializer
-    {
-        /// <summary>
-        /// Initializes middleware.
-        /// </summary>
-        /// <param name="middlewareType">The type to be constructed.</param>
-        /// <param name="nextRequest">The next middleware to execute.</param>
-        /// <returns>An instance of the middleware that is constructed.</returns>
-        object InitializeMiddleware(Type middlewareType, PipelineRequest nextRequest);
-    }
-}
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exceptions thrown in this context are not fatal and should not be treated as such.", Scope = "member", Target = "~M:Cross.Pipelines.PipelineMiddlewareInitializer.InitializeMiddleware(System.Type,Cross.Pipelines.PipelineRequest)~System.Object")]

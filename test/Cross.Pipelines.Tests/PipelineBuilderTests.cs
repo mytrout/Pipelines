@@ -27,6 +27,9 @@ namespace Cross.Pipelines.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Reflection;
     using System.Threading.Tasks;
 
     [TestClass]
@@ -38,6 +41,7 @@ namespace Cross.Pipelines.Tests
             // arrange
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             string expectedMethodName = "InvokeAsync";
+            Type expectedType = typeof(PipelineMiddlewareInitializer);
 
             // act
             var result = new PipelineBuilder(serviceProvider);
@@ -46,6 +50,24 @@ namespace Cross.Pipelines.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMethodName, result.MethodName);
             Assert.AreEqual(serviceProvider, result.ServiceProvider);
+            Assert.IsInstanceOfType(result.PipelineMiddlewareInitializer, expectedType);
+        }
+
+        [TestMethod]
+        public void Constructs_PipelineBuilder_Successfully_Using_ServiceProvider_Providing_IPipelineMiddlewareInitializer()
+        {
+            // arrange
+            IPipelineMiddlewareInitializer initializer = new Mock<IPipelineMiddlewareInitializer>().Object;
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
+            IServiceProvider serviceProvider = serviceProviderMock.Object;
+
+            // act
+            var result = new PipelineBuilder(serviceProvider);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(initializer, result.PipelineMiddlewareInitializer);
         }
 
         [TestMethod]
@@ -88,6 +110,21 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_ServiceProvider_Is_Null()
+        {
+            // arrange
+            IServiceProvider serviceProvider = null;
+            string expectedParameterName = nameof(serviceProvider);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineBuilder(serviceProvider));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParameterName, result.ParamName);
+        }
+
+        [TestMethod]
         public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_A_Value_Type()
         {
             // arrange
@@ -102,6 +139,23 @@ namespace Cross.Pipelines.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_Null()
+        {
+            // arrange
+            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
+            var sut = new PipelineBuilder(serviceProvider);
+            Type middlewareType = null;
+            string expectedParamName = nameof(middlewareType);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.AddMiddleware(middlewareType));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
         [TestMethod]
@@ -166,6 +220,89 @@ namespace Cross.Pipelines.Tests
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_Build_When_Initializer_Returns_Null()
+        {
+            // arrange
+            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
+            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
+            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
+            IServiceProvider serviceProvider = serviceProviderMock.Object;
+
+            var sut = new PipelineBuilder(serviceProvider)
+                    .AddMiddleware<M1>();
+
+            string expectedMessage = Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, typeof(M1).Name);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_Build_When_Initializer_Returns_Type_Without_InvokeAsync_Method()
+        {
+            // arrange
+            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
+            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
+            IServiceProvider serviceProvider = serviceProviderMock.Object;
+
+            var sut = new PipelineBuilder(serviceProvider)
+                    .AddMiddleware<M1>();
+
+            string expectedMessage = Resources.INVOKEASYNC_MISSING(CultureInfo.CurrentCulture);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        // TO FUTURE DEVELOPER: THIS TEST REQUIRES KNOWLEDGE OF CLASS INTERNALS.
+        //                      IT IS INTENTIONALLY BRITTLE TO GUARANTEE THAT ANY
+        //                      VALIDATION ISSUES ARE CAPTURED.
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_Build_When_MiddlewareTypes_Return_Null()
+        {
+            // arrange
+            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
+            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
+            IServiceProvider serviceProvider = serviceProviderMock.Object;
+
+            var sut = new PipelineBuilder(serviceProvider)
+                    .AddMiddleware<M1>();
+
+            // Force a null into the PipelineBuilder's Middleware
+            PropertyInfo propertyInfo = typeof(PipelineBuilder).GetProperty("MiddlewareTypes", BindingFlags.NonPublic | BindingFlags.Instance);
+            var stack = propertyInfo.GetMethod.Invoke(sut, null) as Stack<Type>;
+            stack.Push(null);
+
+            string expectedMessage = Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
 
             // assert
             Assert.IsNotNull(result);

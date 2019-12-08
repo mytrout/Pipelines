@@ -137,7 +137,7 @@ namespace Cross.Pipelines
                     throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
                 }
 
-                var nextInvoke = middlewareType.GetMethod(this.MethodName);
+                var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
 
                 if (nextInvoke == null)
                 {

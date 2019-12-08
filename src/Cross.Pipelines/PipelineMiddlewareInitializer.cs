@@ -28,15 +28,24 @@ namespace Cross.Pipelines
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <inheritdoc />
     public class PipelineMiddlewareInitializer : IPipelineMiddlewareInitializer
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PipelineMiddlewareInitializer" /> class with the specified <see cref="IServiceProvider" />.
+        /// </summary>
+        /// <param name="serviceProvider">.</param>
         public PipelineMiddlewareInitializer(IServiceProvider serviceProvider)
         {
             this.ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
+        /// <summary>
+        /// Gets the Dependency Injection-provided <see cref="IServiceProvider" />.
+        /// </summary>
         public IServiceProvider ServiceProvider { get; }
 
+        /// <inheritdoc />
         public object InitializeMiddleware(Type middlewareType, PipelineRequest nextRequest)
         {
             if (middlewareType == null)
