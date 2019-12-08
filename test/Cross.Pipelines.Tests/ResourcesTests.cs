@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace Cross.Pipelines.Builder.Tests
+namespace Cross.Pipelines.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;

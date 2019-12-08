@@ -1,4 +1,4 @@
-﻿// <copyright file="PipelineDelegate.cs" company="Chris Trout">
+﻿// <copyright file="IPipelineMiddlewareInitializer.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,14 +22,18 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines.Builder
+namespace Cross.Pipelines
 {
-    using System.Threading.Tasks;
+    using System;
 
-    /// <summary>
-    /// Provides the delegate used for building a Pipeline.
-    /// </summary>
-    /// <param name="context">The context passed during pipeline execution.</param>
-    /// <returns>A <see cref="Task" />.</returns>
-    public delegate Task PipelineRequest(PipelineContext context);
+    public interface IPipelineMiddlewareInitializer
+    {
+        /// <summary>
+        /// Initializes middleware.
+        /// </summary>
+        /// <param name="middlewareType"></param>
+        /// <param name="nextRequest"></param>
+        /// <returns></returns>
+        object InitializeMiddleware(Type middlewareType, PipelineRequest nextRequest);
+    }
 }

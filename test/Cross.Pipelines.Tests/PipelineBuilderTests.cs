@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines.Builder.Tests
+namespace Cross.Pipelines.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;

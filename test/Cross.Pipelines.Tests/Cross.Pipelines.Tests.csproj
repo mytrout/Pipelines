@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Cross.Pipelines.Builder\Cross.Pipelines.Builder.csproj" />
+    <ProjectReference Include="..\..\src\Cross.Pipelines\Cross.Pipelines.csproj" />
   </ItemGroup>
 
 </Project>

@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines.Builder
+namespace Cross.Pipelines
 {
     using System;
     using System.Collections.Generic;
