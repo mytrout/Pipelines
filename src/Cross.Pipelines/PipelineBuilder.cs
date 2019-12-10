@@ -42,6 +42,7 @@ namespace Cross.Pipelines
         public PipelineBuilder(IServiceProvider serviceProvider)
         {
             this.ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
             var middlewareInitializer = this.ServiceProvider.GetService(typeof(IPipelineMiddlewareInitializer)) as IPipelineMiddlewareInitializer;
 
             // If Dependency Injection has a IPipelineTypeInitializer, use it instead of the default.
@@ -137,6 +138,8 @@ namespace Cross.Pipelines
                     throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
                 }
 
+                // if the PipelineMiddlewareInitializer returns a different type for any reason,
+                // using nextInstance.GetType() guarantees it contains the correct MethodName.
                 var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
 
                 if (nextInvoke == null)

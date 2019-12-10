@@ -27,12 +27,12 @@ namespace Cross.Pipelines
     using System;
 
     /// <summary>
-    /// Provides a middleware initializer for the pipeline.
+    /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
     /// </summary>
     public interface IPipelineMiddlewareInitializer
     {
         /// <summary>
-        /// Initializes middleware.
+        /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
         /// </summary>
         /// <param name="middlewareType">The type to be constructed.</param>
         /// <param name="nextRequest">The next middleware to execute.</param>
