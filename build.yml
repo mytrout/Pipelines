@@ -11,6 +11,8 @@ pool:
 
 variables:
   solution: '**/*.sln'
+  projects: '**/*.csproj'
+  testProjects: '**/*Tests/*.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -21,13 +23,21 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+     command: build
+     projects: $(projects)
+     arguments: '--configuration $(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+     command: test
+     projects: $(testProjects)
+     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+
+- task: DotNetCoreCLI@2
+  inputs:
+     command: publish
+     publishWebProjects: False
+     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+     zipAfterPublish: True 
