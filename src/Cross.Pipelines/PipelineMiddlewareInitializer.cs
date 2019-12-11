@@ -26,6 +26,7 @@ namespace Cross.Pipelines
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <inheritdoc />
@@ -97,7 +98,7 @@ namespace Cross.Pipelines
 
             if (!nextRequestParameterFound)
             {
-                throw new InvalidOperationException($"'{middlewareType.Name}' middleware does not contain a constructor that has a PipelineRequest parameter.");
+                throw new InvalidOperationException(Resources.CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
             }
 
             return result;

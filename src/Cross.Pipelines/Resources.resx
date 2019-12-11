@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER" xml:space="preserve">
+    <value>'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.</value>
+  </data>
   <data name="CONTEXT_CANNOT_BE_CONSTRUCTED" xml:space="preserve">
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
