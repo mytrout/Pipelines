@@ -15,29 +15,87 @@ variables:
   testProjects: '**/*Tests/*.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  major: 0
+  minor: 5
+  patch: 0
 
 steps:
+- task: RegExMatchReplace@2
+  inputs:
+    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
+    RegEx: '\<AssemblyVersion\>.*\<\/AssemblyVersion\>'
+    ValueToReplace: '<AssemblyVersion>$(major).$(minor).$(patch).$(Build.BuildId)</AssemblyVersion>'
+  displayName: 'Replace AssemblyVersion on Linux/Windows'
+
+- task: RegExMatchReplace@2
+  inputs:
+    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
+    RegEx: '\<FileVersion\>.*\<\/FileVersion\>'
+    ValueToReplace: '<FileVersion>$(major).$(minor).$(patch).$(Build.BuildId)</FileVersion>'
+  displayName: 'Replace FileVersion on Linux/Windows'
+
+- task: RegExMatchReplace@2
+  inputs:
+    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
+    RegEx: '\<Version\>.*\<\/Version\>'
+    ValueToReplace: '<Version>$(major).$(minor).$(patch)-beta</Version>'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
+  displayName: 'Replace Version on Linux/Windows on master builds'
+
+- task: RegExMatchReplace@2
+  inputs:
+    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
+    RegEx: '\<Version\>.*\<\/Version\>'
+    ValueToReplace: '<Version>$(major).$(minor).$(patch)-$(Build.SourceBranchName)</Version>'
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master')) 
+  displayName: 'Replace Version on Linux/Windows on non-master branch'
+
 - task: NuGetToolInstaller@1
+  displayName: 'Install latest version of NuGet Tools'
 
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
+    displayName: 'Restore nuget packages for the solution'
 
 - task: DotNetCoreCLI@2
   inputs:
      command: build
      projects: $(projects)
      arguments: '--configuration $(buildConfiguration)'
+  displayName: 'Build the solution'
 
 - task: DotNetCoreCLI@2
   inputs:
      command: test
      projects: $(testProjects)
      arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+  displayName: 'Run the automated tests'
 
 - task: DotNetCoreCLI@2
   inputs:
      command: publish
      publishWebProjects: False
-     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/dll'
      zipAfterPublish: True 
+  displayName: 'Publish the dlls to the $(ArtifactStagingDirectory)/dll'
+
+# Package a project
+- task: NuGetCommand@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/src/**/*.csproj'
+    packDestination: '$(Build.ArtifactStagingDirectory)/nuget'
+  displayName: 'Pack the nuget package to $(ArtifactStagingDirectory)/nuget'
+
+# Push a project
+- task: NuGetCommand@2
+  inputs:
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg;!$(Build.ArtifactStagingDirectory)/nuget/*.symbols.nupkg'
+    command: 'push'
+    configuration: $(buildConfiguration)
+    allowPackageConflicts: true
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'Cross.Pipelines'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Publish the nuget package to Cross.Pipelines'
