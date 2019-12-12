@@ -27,6 +27,7 @@ namespace Cross.Pipelines.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Globalization;
+    using System.Threading;
 
     [TestClass]
     public class PipelineContextTests
@@ -40,6 +41,7 @@ namespace Cross.Pipelines.Tests
             const int expectedItemCount = 0;
             const int expectedExceptionCount = 0;
             Guid invalidCorrelationId = Guid.Empty;
+            CancellationToken expectedCancellationToken = CancellationToken.None;
 
             // act
             var result = new PipelineContext(pipelineName);
@@ -48,6 +50,7 @@ namespace Cross.Pipelines.Tests
 
             // assert
             Assert.IsNotNull(result, "PipelineContext should not be null.");
+            Assert.AreEqual(expectedCancellationToken, result.CancellationToken, "CancellationToken should be CancellationToken.None.");
             Assert.AreNotEqual(invalidCorrelationId, result.CorrelationId, "CorrelationID cannot be Guid.Empty.");
             Assert.IsNotNull(result.Errors, "PipelineContext.Errors should not be null.");
             Assert.AreEqual(expectedExceptionCount, result.Errors.Count);

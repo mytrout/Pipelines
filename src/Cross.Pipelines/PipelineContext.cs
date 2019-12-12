@@ -27,6 +27,7 @@ namespace Cross.Pipelines
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Threading;
 
     /// <summary>
     /// Provides the context that is passed between middleware implenentation in the pipeline.
@@ -52,6 +53,11 @@ namespace Cross.Pipelines
         /// Gets the name of the pipeline used in reporting and logging.
         /// </summary>
         public string PipelineName { get; }
+
+        /// <summary>
+        /// Gets or sets the token used by callers to cancel the pipeline execution.
+        /// </summary>
+        public CancellationToken CancellationToken { get; set; } = default;
 
         /// <summary>
         /// Gets a correlation value that can be used to correlate log entries and reporting data.
