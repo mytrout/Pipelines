@@ -1,4 +1,4 @@
-﻿// <copyright file="IPipelineMiddlewareInitializer.cs" company="Chris Trout">
+﻿// <copyright file="IMiddlewareActivator.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -29,7 +29,7 @@ namespace Cross.Pipelines
     /// <summary>
     /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
     /// </summary>
-    public interface IPipelineMiddlewareInitializer
+    public interface IMiddlewareActivator
     {
         /// <summary>
         /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
@@ -37,6 +37,6 @@ namespace Cross.Pipelines
         /// <param name="middlewareType">The type to be constructed.</param>
         /// <param name="nextRequest">The next middleware to execute.</param>
         /// <returns>An instance of the middleware that is constructed.</returns>
-        object InitializeMiddleware(Type middlewareType, PipelineRequest nextRequest);
+        object CreateInstance(Type middlewareType, PipelineRequest nextRequest);
     }
 }

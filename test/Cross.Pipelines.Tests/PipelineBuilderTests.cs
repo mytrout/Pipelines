@@ -24,6 +24,7 @@
 
 namespace Cross.Pipelines.Tests
 {
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
@@ -39,48 +40,32 @@ namespace Cross.Pipelines.Tests
         public void Constructs_PipelineBuilder_Successfully()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             string expectedMethodName = "InvokeAsync";
-            Type expectedType = typeof(PipelineMiddlewareInitializer);
 
             // act
-            var result = new PipelineBuilder(serviceProvider);
+            var result = new PipelineBuilder();
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMethodName, result.MethodName);
-            Assert.AreEqual(serviceProvider, result.ServiceProvider);
-            Assert.IsInstanceOfType(result.PipelineMiddlewareInitializer, expectedType);
-        }
-
-        [TestMethod]
-        public void Constructs_PipelineBuilder_Successfully_Using_ServiceProvider_Providing_IPipelineMiddlewareInitializer()
-        {
-            // arrange
-            IPipelineMiddlewareInitializer initializer = new Mock<IPipelineMiddlewareInitializer>().Object;
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
-            IServiceProvider serviceProvider = serviceProviderMock.Object;
-
-            // act
-            var result = new PipelineBuilder(serviceProvider);
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(initializer, result.PipelineMiddlewareInitializer);
         }
 
         [TestMethod]
         public void Returns_Correct_PipelineRequest_Delegate_From_Build_Method()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider).AddMiddleware<SampleWithInvokeAsyncMethod>();
+            var nextRequest = new PipelineRequest(context => Task.CompletedTask);
+            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
+            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
+                                            .Returns(new SampleWithInvokeAsyncMethod(nextRequest));
+            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
+
+            var sut = new PipelineBuilder().AddMiddleware<SampleWithInvokeAsyncMethod>();
 
             var expectedTargetType = typeof(SampleWithInvokeAsyncMethod);
 
             // act
-            var result = sut.Build();
+            var result = sut.Build(middlewareActivator);
 
             // assert
             Assert.IsNotNull(result);
@@ -91,12 +76,15 @@ namespace Cross.Pipelines.Tests
         public async Task Returns_Correct_Message_From_ConstructedPipeline()
         {
             // arrange
+            ILogger logger = new Mock<ILogger>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var pipeline = new PipelineBuilder(serviceProvider)
-                                .AddMiddleware<M1>()
-                                .AddMiddleware<M2>()
-                                .AddMiddleware<M3>()
-                                .Build();
+            IMiddlewareActivator middlewareActivator = new MiddlewareActivator(logger, serviceProvider);
+
+            var pipeline = new PipelineBuilder()
+                                        .AddMiddleware<M1>()
+                                        .AddMiddleware<M2>()
+                                        .AddMiddleware<M3>()
+                                        .Build(middlewareActivator);
 
             var expectedMessage = "Sponge Bob SquarePants";
             var pipelineContext = new PipelineContext("Constructed Pipeline");
@@ -110,28 +98,13 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_ServiceProvider_Is_Null()
-        {
-            // arrange
-            IServiceProvider serviceProvider = null;
-            string expectedParameterName = nameof(serviceProvider);
-
-            // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineBuilder(serviceProvider));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedParameterName, result.ParamName);
-        }
-
-        [TestMethod]
         public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_A_Value_Type()
         {
             // arrange
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = typeof(int);
-            string expectedMessage = "middlewareType must be a reference type.";
+            string expectedMessage = Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(middlewareType));
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -145,8 +118,7 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_Null()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = null;
             string expectedParamName = nameof(middlewareType);
 
@@ -162,10 +134,9 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Does_Not_Contain_InvokeAsync_Method()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithoutInvokeAsyncMethod);
-            string expectedMessage = "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.";
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -179,10 +150,9 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_Has_Wrong_ParameterType()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithWrongParameterType);
-            string expectedMessage = "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.";
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -196,10 +166,9 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_Has_Too_Many_Parameters()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithTooManyParameters);
-            string expectedMessage = "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.";
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -213,10 +182,9 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_No_Parameters()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var sut = new PipelineBuilder(serviceProvider);
+            var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithNoParameters);
-            string expectedMessage = "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.";
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -227,24 +195,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_Initializer_Returns_Null()
+        public void Throws_InvalidOperationException_From_Build_When_MiddlewareActivator_Returns_Null()
         {
             // arrange
-            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
-            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
-            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
+            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
+            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
 
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
-            IServiceProvider serviceProvider = serviceProviderMock.Object;
-
-            var sut = new PipelineBuilder(serviceProvider)
+            var sut = new PipelineBuilder()
                     .AddMiddleware<M1>();
 
             string expectedMessage = Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, typeof(M1).Name);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -252,24 +216,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_Initializer_Returns_Type_Without_InvokeAsync_Method()
+        public void Throws_InvalidOperationException_From_Build_When_MiddlewareActivator_Returns_Type_Without_InvokeAsync_Method()
         {
             // arrange
-            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
-            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
-            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
+            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
 
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
-            IServiceProvider serviceProvider = serviceProviderMock.Object;
-
-            var sut = new PipelineBuilder(serviceProvider)
+            var sut = new PipelineBuilder()
                     .AddMiddleware<M1>();
 
-            string expectedMessage = Resources.INVOKEASYNC_MISSING(CultureInfo.CurrentCulture);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -283,15 +243,11 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_Build_When_MiddlewareTypes_Return_Null()
         {
             // arrange
-            var mockInitializer = new Mock<IPipelineMiddlewareInitializer>();
-            mockInitializer.Setup(x => x.InitializeMiddleware(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
-            IPipelineMiddlewareInitializer initializer = mockInitializer.Object;
+            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
+            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
 
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock.Setup(x => x.GetService(typeof(IPipelineMiddlewareInitializer))).Returns(initializer);
-            IServiceProvider serviceProvider = serviceProviderMock.Object;
-
-            var sut = new PipelineBuilder(serviceProvider)
+            var sut = new PipelineBuilder()
                     .AddMiddleware<M1>();
 
             // Force a null into the PipelineBuilder's Middleware
@@ -302,7 +258,7 @@ namespace Cross.Pipelines.Tests
             string expectedMessage = Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build());
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -310,7 +266,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
-// Allow multiple testing classes here because there are so many options to test.
+    // Allow multiple testing classes here because there are so many options to test.
 #pragma warning disable SA1402 // File may only contain a single type
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -411,8 +367,26 @@ namespace Cross.Pipelines.Tests
             return Task.CompletedTask;
         }
     }
+
+    public class SampleWithConstructorParameter
+    {
+        public SampleWithConstructorParameter(IDictionary<object, string> weirdParameter, PipelineRequest next)
+        {
+            this.WeirdParameter = weirdParameter ?? throw new ArgumentNullException(nameof(weirdParameter));
+        }
+
+        public PipelineRequest Next { get; }
+
+        public IDictionary<object, string> WeirdParameter { get; }
+
+        public Task InvokeAsync()
+        {
+            return Task.CompletedTask;
+        }
+    }
 #pragma warning restore CA1801 // Remove unused parameter
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1822 // Mark members as static
 #pragma warning restore SA1402 // File may only contain a single type
+
 }

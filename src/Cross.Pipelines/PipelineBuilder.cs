@@ -36,33 +36,17 @@ namespace Cross.Pipelines
     public class PipelineBuilder
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PipelineBuilder" /> class with dependency injection.
+        /// Initializes a new instance of the <see cref="PipelineBuilder" /> class.
         /// </summary>
-        /// <param name="serviceProvider">Dependency Injection provider.</param>
-        public PipelineBuilder(IServiceProvider serviceProvider)
+        public PipelineBuilder()
         {
-            this.ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-
-            var middlewareInitializer = this.ServiceProvider.GetService(typeof(IPipelineMiddlewareInitializer)) as IPipelineMiddlewareInitializer;
-
-            // If Dependency Injection has a IPipelineTypeInitializer, use it instead of the default.
-            this.PipelineMiddlewareInitializer = middlewareInitializer ?? new PipelineMiddlewareInitializer(serviceProvider);
+            // no op
         }
 
         /// <summary>
         /// Gets the name of the method used by the pipeline.
         /// </summary>
         public virtual string MethodName => "InvokeAsync";
-
-        /// <summary>
-        /// Gets the Dependency Injection Provider used to provide parameters to the Middleware instances.
-        /// </summary>
-        public IServiceProvider ServiceProvider { get; }
-
-        /// <summary>
-        /// Gets the capability to intialize middleware using the dependency injection provider.
-        /// </summary>
-        public IPipelineMiddlewareInitializer PipelineMiddlewareInitializer { get; }
 
         /// <summary>
         /// Gets the types registered as Middleware for the Pipeline.
@@ -104,9 +88,10 @@ namespace Cross.Pipelines
             if (method == null
                     || parameters == null
                     || parameters.Length != 1
-                    || parameters[0].ParameterType != typeof(PipelineContext))
+                    || parameters[0].ParameterType != typeof(PipelineContext)
+                    || method.ReturnType != typeof(Task))
             {
-                throw new InvalidOperationException(Resources.INVOKEASYNC_DOES_NOT_EXIST(CultureInfo.CurrentCulture));
+                throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, this.MethodName));
             }
 
             this.MiddlewareTypes.Push(middlewareType);
@@ -116,9 +101,15 @@ namespace Cross.Pipelines
         /// <summary>
         /// Builds a pipeline from the configured middleware.
         /// </summary>
+        /// <param name="middlewareActivator">The service used to initialize instances of middleware.</param>
         /// <returns>A pipeline to execute.</returns>
-        public PipelineRequest Build()
+        public PipelineRequest Build(IMiddlewareActivator middlewareActivator)
         {
+            if (middlewareActivator == null)
+            {
+                throw new ArgumentNullException(nameof(middlewareActivator));
+            }
+
             // Configures the "final" delegate in the Pipeline.
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
 
@@ -131,20 +122,20 @@ namespace Cross.Pipelines
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                object nextInstance = this.PipelineMiddlewareInitializer.InitializeMiddleware(middlewareType, nextRequest);
+                object nextInstance = middlewareActivator.CreateInstance(middlewareType, nextRequest);
 
                 if (nextInstance == null)
                 {
                     throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
                 }
 
-                // if the PipelineMiddlewareInitializer returns a different type for any reason,
+                // if the IMiddlewareActivator returns a different type for any reason,
                 // using nextInstance.GetType() guarantees it contains the correct MethodName.
                 var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
 
                 if (nextInvoke == null)
                 {
-                    throw new InvalidOperationException(Resources.INVOKEASYNC_MISSING(CultureInfo.CurrentCulture));
+                    throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, this.MethodName));
                 }
 
                 nextRequest = (PipelineRequest)nextInvoke.CreateDelegate(typeof(PipelineRequest), nextInstance);

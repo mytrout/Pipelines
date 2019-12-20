@@ -124,75 +124,51 @@ namespace Cross.Pipelines
 		}
 		
 		/// <summary>
-		/// Looks up a localized string like "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.".
+		/// Looks up a localized string like "Middleware must contain an '{0}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_DOES_NOT_EXIST()
+		public static string METHOD_NOT_FOUND()
 		{
-			return Resources.INVOKEASYNC_DOES_NOT_EXIST(CultureInfo.CurrentCulture);
+			return Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Middleware must contain an InvokeAsync method with one parameter of type 'PipelineContext'.".
+		/// Looks up a localized string using a specific culture like "Middleware must contain an '{0}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_DOES_NOT_EXIST(CultureInfo culture)
+		public static string METHOD_NOT_FOUND(CultureInfo culture)
 		{
-			return Resources.ResourceManager.GetString("INVOKEASYNC_DOES_NOT_EXIST", culture);
-		}
-		
-		/// <summary>
-		/// Looks up a localized string like "'{0}' middleware does not contain the '{1}' method."".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_MISSING()
-		{
-			return Resources.INVOKEASYNC_MISSING(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain the '{1}' method."".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_MISSING(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("INVOKEASYNC_MISSING", culture);
+			return Resources.ResourceManager.GetString("METHOD_NOT_FOUND", culture);
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain the '{1}' method."".
+		/// Looks up a localized string using a specific culture like "Middleware must contain an '{0}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_MISSING(params object[] args)
+		public static string METHOD_NOT_FOUND(params object[] args)
 		{
-			return Resources.INVOKEASYNC_MISSING(CultureInfo.CurrentCulture, args);
+			return Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, args);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain the '{1}' method."".
+		/// Looks up a localized string using a specific culture like "Middleware must contain an '{0}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVOKEASYNC_MISSING(CultureInfo culture, params object[] args)
+		public static string METHOD_NOT_FOUND(CultureInfo culture, params object[] args)
 		{
-			return string.Format(culture, Resources.ResourceManager.GetString("INVOKEASYNC_MISSING", culture), args);
+			return string.Format(culture, Resources.ResourceManager.GetString("METHOD_NOT_FOUND", culture), args);
 		}
 
 		/// <summary>
@@ -268,7 +244,55 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string like "{0} must be a reference type.".
+		/// Looks up a localized string like "{0}({1}) failed to intialize properly.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string TYPE_FAILED_TO_INITIALIZE()
+		{
+			return Resources.TYPE_FAILED_TO_INITIALIZE(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string TYPE_FAILED_TO_INITIALIZE(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("TYPE_FAILED_TO_INITIALIZE", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string TYPE_FAILED_TO_INITIALIZE(params object[] args)
+		{
+			return Resources.TYPE_FAILED_TO_INITIALIZE(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string TYPE_FAILED_TO_INITIALIZE(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("TYPE_FAILED_TO_INITIALIZE", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "'{0}' must be a reference type.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -280,7 +304,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0} must be a reference type.".
+		/// Looks up a localized string using a specific culture like "'{0}' must be a reference type.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -292,7 +316,7 @@ namespace Cross.Pipelines
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0} must be a reference type.".
+		/// Looks up a localized string using a specific culture like "'{0}' must be a reference type.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -304,7 +328,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0} must be a reference type.".
+		/// Looks up a localized string using a specific culture like "'{0}' must be a reference type.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
