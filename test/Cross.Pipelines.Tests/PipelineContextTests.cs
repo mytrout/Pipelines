@@ -36,7 +36,6 @@ namespace Cross.Pipelines.Tests
         public void Constructs_PipelineContext_Successfully()
         {
             // arrange
-            const string pipelineName = "Pipeline Name";
             DateTimeOffset startingOffset = DateTimeOffset.UtcNow;
             const int expectedItemCount = 0;
             const int expectedExceptionCount = 0;
@@ -44,7 +43,7 @@ namespace Cross.Pipelines.Tests
             CancellationToken expectedCancellationToken = CancellationToken.None;
 
             // act
-            var result = new PipelineContext(pipelineName);
+            var result = new PipelineContext();
 
             DateTimeOffset endingOffset = DateTimeOffset.UtcNow;
 
@@ -56,27 +55,8 @@ namespace Cross.Pipelines.Tests
             Assert.AreEqual(expectedExceptionCount, result.Errors.Count);
             Assert.IsNotNull(result.Items, "PipelineContext.Items should not be null.");
             Assert.AreEqual(expectedItemCount, result.Items.Count);
-            Assert.AreEqual(pipelineName, result.PipelineName);
             Assert.IsTrue(startingOffset < result.Timestamp, "StartingOffset is greater than or equal to the PipelineContext.Timestamp.");
             Assert.IsTrue(endingOffset > result.Timestamp, "EndingOffset is less than or equal to the PipelineContext.Timestamp.");
-        }
-
-        [DataTestMethod]
-        [DataRow(null)]
-        [DataRow("     ")]
-        [DataRow("\r\n")]
-        [DataRow("")]
-        public void Throws_InvalidOperationException_From_PipelineContext_Constructor_When_PipelineName_Is_Invalid(string pipelineName)
-        {
-            // arrange
-            string expectedMessage = Resources.CONTEXT_CANNOT_BE_CONSTRUCTED(CultureInfo.CurrentCulture);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => new PipelineContext(pipelineName));
-
-            // assert
-            Assert.IsNotNull(result, $"The PipelineContext constructor should throw an exception when pipelineName parameter is '{pipelineName ?? "<null>"} '.");
-            Assert.AreEqual(expectedMessage, result.Message);
         }
     }
 }

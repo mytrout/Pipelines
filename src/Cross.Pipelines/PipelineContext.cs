@@ -35,24 +35,12 @@ namespace Cross.Pipelines
     public class PipelineContext
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PipelineContext" /> class with the specified pipelineName.
+        /// Initializes a new instance of the <see cref="PipelineContext" /> class.
         /// </summary>
-        /// <param name="pipelineName">The name of the pipeline used in reporting and logging.</param>
-        /// <exception cref="InvalidOperationException">Thrown when <paramref name="pipelineName"/> is <see langword="null" />, empty or whitespace.</exception>
-        public PipelineContext(string pipelineName)
+        public PipelineContext()
         {
-            if (string.IsNullOrWhiteSpace(pipelineName))
-            {
-                throw new InvalidOperationException(Resources.CONTEXT_CANNOT_BE_CONSTRUCTED(CultureInfo.CurrentCulture));
-            }
-
-            this.PipelineName = pipelineName;
+            // no op
         }
-
-        /// <summary>
-        /// Gets the name of the pipeline used in reporting and logging.
-        /// </summary>
-        public string PipelineName { get; }
 
         /// <summary>
         /// Gets or sets the token used by callers to cancel the pipeline execution.

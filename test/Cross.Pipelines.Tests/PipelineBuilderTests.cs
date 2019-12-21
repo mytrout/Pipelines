@@ -87,7 +87,7 @@ namespace Cross.Pipelines.Tests
                                         .Build(middlewareActivator);
 
             var expectedMessage = "Sponge Bob SquarePants";
-            var pipelineContext = new PipelineContext("Constructed Pipeline");
+            var pipelineContext = new PipelineContext();
 
             // act
             await pipeline.Invoke(pipelineContext).ConfigureAwait(false);
