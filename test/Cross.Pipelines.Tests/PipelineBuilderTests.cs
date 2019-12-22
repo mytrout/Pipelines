@@ -76,7 +76,7 @@ namespace Cross.Pipelines.Tests
         public async Task Returns_Correct_Message_From_ConstructedPipeline()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             IMiddlewareActivator middlewareActivator = new MiddlewareActivator(logger, serviceProvider);
 

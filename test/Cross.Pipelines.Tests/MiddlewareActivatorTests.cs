@@ -38,7 +38,7 @@ namespace Cross.Pipelines.Tests
         public void Constructs_MiddlewareActivator_Successfully()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
 
             // act
@@ -53,8 +53,8 @@ namespace Cross.Pipelines.Tests
         public void Returns_Null_From_InitializeMiddleware_When_Middleware_Cannot_Be_Constructed()
         {
             // arrange
-            var mockLogger = new Mock<ILogger>();
-            ILogger logger = mockLogger.Object;
+            var mockLogger = new Mock<ILogger<MiddlewareActivator>>();
+            ILogger<MiddlewareActivator> logger = mockLogger.Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Information";
             string expectedArgument2 = "SampleWithConstructorParameter(IDictionary`2, PipelineRequest) failed to intialize properly.";
@@ -78,7 +78,7 @@ namespace Cross.Pipelines.Tests
         public void Returns_Valid_Middleware_Instance_From_InitializeMiddleware()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type middlewareType = typeof(SampleWithInvokeAsyncMethod);
             var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
@@ -97,7 +97,7 @@ namespace Cross.Pipelines.Tests
         public void Throws_ArgumentNullException_From_Constructor_When_ServiceProvider_Is_Null()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = null;
             string expectedParamName = nameof(serviceProvider);
 
@@ -113,7 +113,7 @@ namespace Cross.Pipelines.Tests
         public void Throws_ArgumentNullException_From_InitializeMiddleware_When_MiddlewareType_Is_Null()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type middlewareType = null;
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
@@ -134,7 +134,7 @@ namespace Cross.Pipelines.Tests
         public void Throws_ArgumentNullException_From_InitializeMiddleware_When_PipelineRequest_Is_Null()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             var middlewareType = typeof(M1);
             PipelineRequest nextRequest = null;
@@ -155,7 +155,7 @@ namespace Cross.Pipelines.Tests
         public void Throws_InvalidOperationException_From_InitializeMiddleware_When_MiddlewareType_Does_Not_Have_InvokeAsync_Method()
         {
             // arrange
-            ILogger logger = new Mock<ILogger>().Object;
+            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type middlewareType = typeof(SampleWithoutInvokeAsyncMethod);
             var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);

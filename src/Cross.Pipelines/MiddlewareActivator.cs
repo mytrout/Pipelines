@@ -37,8 +37,8 @@ namespace Cross.Pipelines
         /// Initializes a new instance of the <see cref="MiddlewareActivator" /> class with the specified <see cref="IServiceProvider" />.
         /// </summary>
         /// <param name="serviceProvider">.</param>
-        /// <param name="logger"><see cref="ILogger" /> to log information during run-time.</param>
-        public MiddlewareActivator(ILogger logger, IServiceProvider serviceProvider)
+        /// <param name="logger"><see cref="ILogger{MiddlewareActivator}" /> to log information during run-time.</param>
+        public MiddlewareActivator(ILogger<MiddlewareActivator> logger, IServiceProvider serviceProvider)
         {
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -47,7 +47,7 @@ namespace Cross.Pipelines
         /// <summary>
         /// Gets the Logger reference for this <see cref="IMiddlewareActivator" />.
         /// </summary>
-        public ILogger Logger { get; }
+        public ILogger<MiddlewareActivator> Logger { get; }
 
         /// <summary>
         /// Gets the Dependency Injection-provided <see cref="IServiceProvider" />.
