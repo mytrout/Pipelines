@@ -124,7 +124,7 @@
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
   <data name="METHOD_NOT_FOUND" xml:space="preserve">
-    <value>Middleware must contain an '{0}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.</value>
+    <value>Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.</value>
   </data>
   <data name="NULL_MIDDLEWARE" xml:space="preserve">
     <value>A 'null' middleware was added to the Pipeline which prevents the pipeline from being built as requested.</value>

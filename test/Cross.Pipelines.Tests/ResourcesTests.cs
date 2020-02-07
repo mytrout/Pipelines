@@ -27,6 +27,7 @@ namespace Cross.Pipelines.Tests
     using System;
     using System.Globalization;
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class ResourcesTests
     {
@@ -44,7 +45,7 @@ namespace Cross.Pipelines.Tests
             Assert.AreEqual(expectedSmokeTest, result);
         }
 
-        /* Will reinstate this test when we have time to properly test localization.
+        /* Will reinstate this test when we have time to properly test localization. */
         [TestMethod]
         public void Returns_GB_English_On_SMOKE_TEST()
         {
@@ -58,6 +59,5 @@ namespace Cross.Pipelines.Tests
             // assert
             Assert.AreEqual(expectedSmokeTest, result);
         }
-        */
     }
 }

@@ -31,6 +31,7 @@ namespace Cross.Pipelines.Tests
     using System.Globalization;
     using System.Threading.Tasks;
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class MiddlewareActivatorTests
     {
@@ -91,6 +92,22 @@ namespace Cross.Pipelines.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, middlewareType);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Logger_Is_Null()
+        {
+            // arrange
+            ILogger<MiddlewareActivator> logger = null;
+            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
+            string expectedParamName = nameof(logger);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new MiddlewareActivator(logger, serviceProvider));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
         [TestMethod]

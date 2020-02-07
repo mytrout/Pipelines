@@ -117,8 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER" xml:space="preserve">
+    <value>'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.</value>
+  </data>
   <data name="CONTEXT_CANNOT_BE_CONSTRUCTED" xml:space="preserve">
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
+  </data>
+  <data name="METHOD_NOT_FOUND" xml:space="preserve">
+    <value>Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.</value>
+  </data>
+  <data name="NULL_MIDDLEWARE" xml:space="preserve">
+    <value>A 'null' middleware was added to the Pipeline which prevents the pipeline from being built as requested.</value>
+  </data>
+  <data name="SERVICEPROVIDER_LACKS_PARAMETER" xml:space="preserve">
+    <value>ServiceProvider does not contain one of the parameters required for '{0}'.</value>
+  </data>
+  <data name="TYPE_FAILED_TO_INITIALIZE" xml:space="preserve">
+    <value>{0}({1}) failed to intialize properly.</value>
+  </data>
+  <data name="TYPE_MUST_BE_REFERENCE" xml:space="preserve">
+    <value>'{0}' must be a reference type.</value>
   </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
     <value>Smoke Test (en-GB)</value>

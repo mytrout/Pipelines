@@ -28,6 +28,7 @@ namespace Cross.Pipelines
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -84,15 +85,7 @@ namespace Cross.Pipelines
             }
 
             var method = middlewareType.GetMethod(this.MethodName);
-            var parameters = method?.GetParameters();
-            if (method == null
-                    || parameters == null
-                    || parameters.Length != 1
-                    || parameters[0].ParameterType != typeof(PipelineContext)
-                    || method.ReturnType != typeof(Task))
-            {
-                throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, this.MethodName));
-            }
+            this.ValidateMethod(middlewareType, method);
 
             this.MiddlewareTypes.Push(middlewareType);
             return this;
@@ -132,16 +125,25 @@ namespace Cross.Pipelines
                 // if the IMiddlewareActivator returns a different type for any reason,
                 // using nextInstance.GetType() guarantees it contains the correct MethodName.
                 var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
-
-                if (nextInvoke == null)
-                {
-                    throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, this.MethodName));
-                }
+                this.ValidateMethod(nextInstance.GetType(), nextInvoke);
 
                 nextRequest = (PipelineRequest)nextInvoke.CreateDelegate(typeof(PipelineRequest), nextInstance);
             }
 
             return nextRequest;
+        }
+
+        private void ValidateMethod(Type originatingType, MethodInfo method)
+        {
+            var parameters = method?.GetParameters();
+            if (method == null
+                    || parameters == null
+                    || parameters.Length != 1
+                    || parameters[0].ParameterType != typeof(PipelineContext)
+                    || method.ReturnType != typeof(Task))
+            {
+                throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, originatingType.Name, this.MethodName));
+            }
         }
     }
 }

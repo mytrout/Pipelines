@@ -64,6 +64,7 @@ namespace <#=namespaceName #>
 	/// <summary>
 	/// The <see cref="<#=className#>" /> class provides a wrapper around resource files that allows localized strings to be returned, as needed.
 	/// </summary>
+	[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	public static class <#=className #>
 	{
 		/// <summary>

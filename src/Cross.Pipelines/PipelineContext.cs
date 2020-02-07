@@ -24,14 +24,21 @@
 
 namespace Cross.Pipelines
 {
+    using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Threading;
+
+    /*  TO FUTURE DEVELOPERS: This class does not have any unit tests because it uses only
+     *                        compiler-based functionality which should always work.  If any other
+     *                        functionality is added to this class, including a constructor, then
+     *                        unit tests should be written to cover all functionality.
+     */
 
     /// <summary>
     /// Provides the context that is passed between middleware implenentation in the pipeline.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class PipelineContext
     {
         /// <summary>
@@ -48,6 +55,11 @@ namespace Cross.Pipelines
         public CancellationToken CancellationToken { get; set; } = default;
 
         /// <summary>
+        /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.
+        /// </summary>
+        public IConfiguration Configuration { get; set; }
+
+        /// <summary>
         /// Gets a correlation value that can be used to correlate log entries and reporting data.
         /// </summary>
         public Guid CorrelationId { get; } = Guid.NewGuid();
@@ -56,6 +68,11 @@ namespace Cross.Pipelines
         /// Gets a list of non-fatal exceptions reported by the pipeline.
         /// </summary>
         public IList<Exception> Errors { get; } = new List<Exception>();
+
+        /// <summary>
+        /// Gets a value indicating whether or not <see cref="Configuration"/> is available.
+        /// </summary>
+        public bool IsConfigurationAvailable => this.Configuration != null;
 
         /// <summary>
         /// Gets context items which are passed between middleware instances during execution.

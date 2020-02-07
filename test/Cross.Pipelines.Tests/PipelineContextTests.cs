@@ -24,11 +24,13 @@
 
 namespace Cross.Pipelines.Tests
 {
+    using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
     using System;
-    using System.Globalization;
     using System.Threading;
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class PipelineContextTests
     {
@@ -50,13 +52,29 @@ namespace Cross.Pipelines.Tests
             // assert
             Assert.IsNotNull(result, "PipelineContext should not be null.");
             Assert.AreEqual(expectedCancellationToken, result.CancellationToken, "CancellationToken should be CancellationToken.None.");
+            Assert.IsNull(result.Configuration, "Configuration should be null.");
             Assert.AreNotEqual(invalidCorrelationId, result.CorrelationId, "CorrelationID cannot be Guid.Empty.");
             Assert.IsNotNull(result.Errors, "PipelineContext.Errors should not be null.");
             Assert.AreEqual(expectedExceptionCount, result.Errors.Count);
+            Assert.IsFalse(result.IsConfigurationAvailable, "IsConfigurationAvailable should be false.");
             Assert.IsNotNull(result.Items, "PipelineContext.Items should not be null.");
             Assert.AreEqual(expectedItemCount, result.Items.Count);
             Assert.IsTrue(startingOffset < result.Timestamp, "StartingOffset is greater than or equal to the PipelineContext.Timestamp.");
             Assert.IsTrue(endingOffset > result.Timestamp, "EndingOffset is less than or equal to the PipelineContext.Timestamp.");
+        }
+
+        [TestMethod]
+        public void Returns_True_From_IsConfigurationAvailable_When_Configuration_Property_Is_Not_Null()
+        {
+            // arrange
+            PipelineContext context = new PipelineContext();
+            IConfiguration expectedConfiguration = new Mock<IConfiguration>().Object;
+
+            // act
+            context.Configuration = expectedConfiguration;
+
+            // assert
+            Assert.AreEqual(expectedConfiguration, context.Configuration);
         }
     }
 }

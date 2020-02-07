@@ -33,6 +33,7 @@ namespace Cross.Pipelines.Tests
     using System.Reflection;
     using System.Threading.Tasks;
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class PipelineBuilderTests
     {
@@ -98,6 +99,25 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
+        public void Throws_ArgumentNullException_From_Build_When_MiddlewareActivator_Is_Null()
+        {
+            // arrange
+            IMiddlewareActivator middlewareActivator = null;
+
+            var sut = new PipelineBuilder()
+                    .AddMiddleware<M1>();
+
+            string expectedParamName = nameof(middlewareActivator);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.Build(middlewareActivator));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
+        }
+
+        [TestMethod]
         public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_A_Value_Type()
         {
             // arrange
@@ -136,7 +156,7 @@ namespace Cross.Pipelines.Tests
             // arrange
             var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithoutInvokeAsyncMethod);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -152,7 +172,7 @@ namespace Cross.Pipelines.Tests
             // arrange
             var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithWrongParameterType);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -168,7 +188,7 @@ namespace Cross.Pipelines.Tests
             // arrange
             var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithTooManyParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -184,7 +204,7 @@ namespace Cross.Pipelines.Tests
             // arrange
             var sut = new PipelineBuilder();
             Type middlewareType = typeof(SampleWithNoParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
@@ -226,7 +246,7 @@ namespace Cross.Pipelines.Tests
             var sut = new PipelineBuilder()
                     .AddMiddleware<M1>();
 
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, sut.MethodName);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, "Object", sut.MethodName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
@@ -271,6 +291,7 @@ namespace Cross.Pipelines.Tests
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable CA1801 // Remove unused parameter
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithoutInvokeAsyncMethod
     {
         public Task Invoke(PipelineContext context)
@@ -279,6 +300,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithInvokeAsyncMethod
     {
         public SampleWithInvokeAsyncMethod(PipelineRequest next)
@@ -294,6 +316,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class M1
     {
         private readonly PipelineRequest next;
@@ -322,6 +345,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class M2 : M1
     {
         public M2(PipelineRequest next)
@@ -333,6 +357,7 @@ namespace Cross.Pipelines.Tests
         protected override string Key => "Bob";
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class M3 : M1
     {
         public M3(PipelineRequest next)
@@ -344,6 +369,7 @@ namespace Cross.Pipelines.Tests
         protected override string Key => "SquarePants";
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithWrongParameterType
     {
         public Task InvokeAsync(string context)
@@ -352,6 +378,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithTooManyParameters
     {
         public Task InvokeAsync(PipelineContext context, string item2)
@@ -360,6 +387,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithNoParameters
     {
         public Task InvokeAsync()
@@ -368,6 +396,7 @@ namespace Cross.Pipelines.Tests
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithConstructorParameter
     {
         public SampleWithConstructorParameter(IDictionary<object, string> weirdParameter, PipelineRequest next)
