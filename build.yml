@@ -14,7 +14,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 10
-  patch: 0
+  patch: 1
 
 steps:
 - task: RegExMatchReplace@2
