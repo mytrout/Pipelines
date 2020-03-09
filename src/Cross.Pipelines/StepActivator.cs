@@ -1,4 +1,4 @@
-﻿// <copyright file="MiddlewareActivator.cs" company="Chris Trout">
+﻿// <copyright file="StepActivator.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -31,23 +31,23 @@ namespace Cross.Pipelines
     using System.Linq;
 
     /// <inheritdoc />
-    public class MiddlewareActivator : IMiddlewareActivator
+    public class StepActivator : IStepActivator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MiddlewareActivator" /> class with the specified <see cref="IServiceProvider" />.
+        /// Initializes a new instance of the <see cref="StepActivator" /> class with the specified <see cref="IServiceProvider" />.
         /// </summary>
         /// <param name="serviceProvider">.</param>
-        /// <param name="logger"><see cref="ILogger{MiddlewareActivator}" /> to log information during run-time.</param>
-        public MiddlewareActivator(ILogger<MiddlewareActivator> logger, IServiceProvider serviceProvider)
+        /// <param name="logger"><see cref="ILogger{StepActivator}" /> to log information during run-time.</param>
+        public StepActivator(ILogger<StepActivator> logger, IServiceProvider serviceProvider)
         {
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         /// <summary>
-        /// Gets the Logger reference for this <see cref="IMiddlewareActivator" />.
+        /// Gets the Logger reference for this <see cref="IStepActivator" />.
         /// </summary>
-        public ILogger<MiddlewareActivator> Logger { get; }
+        public ILogger<StepActivator> Logger { get; }
 
         /// <summary>
         /// Gets the Dependency Injection-provided <see cref="IServiceProvider" />.
@@ -55,11 +55,11 @@ namespace Cross.Pipelines
         public IServiceProvider ServiceProvider { get; }
 
         /// <inheritdoc />
-        public object CreateInstance(Type middlewareType, PipelineRequest nextRequest)
+        public object CreateInstance(Type stepType, PipelineRequest nextRequest)
         {
-            if (middlewareType == null)
+            if (stepType == null)
             {
-                throw new ArgumentNullException(nameof(middlewareType));
+                throw new ArgumentNullException(nameof(stepType));
             }
 
             if (nextRequest == null)
@@ -72,7 +72,7 @@ namespace Cross.Pipelines
             // Indicates whether at least one constructor has a PipelineRequest parameter.
             bool oneConstructorContainsNextRequestParameter = false;
 
-            foreach (var constructor in middlewareType.GetConstructors()
+            foreach (var constructor in stepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
                 bool nextRequestParameterFound = false;
@@ -111,7 +111,7 @@ namespace Cross.Pipelines
                     string parameters = string.Join(", ", constructor.GetParameters().Select(x => x.ParameterType.Name));
                     this.Logger.LogInformation(exc, Resources.TYPE_FAILED_TO_INITIALIZE(
                                                             CultureInfo.CurrentCulture,
-                                                            middlewareType.Name,
+                                                            stepType.Name,
                                                             parameters));
 
                     // try other constructors rather than rethrowing the exception.
@@ -120,7 +120,7 @@ namespace Cross.Pipelines
 
             if (!oneConstructorContainsNextRequestParameter)
             {
-                throw new InvalidOperationException(Resources.CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
+                throw new InvalidOperationException(Resources.CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER(CultureInfo.CurrentCulture, stepType.Name));
             }
 
             return result;

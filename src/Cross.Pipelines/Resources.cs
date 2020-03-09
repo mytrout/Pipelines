@@ -53,7 +53,7 @@ namespace Cross.Pipelines
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
 		/// <summary>
-		/// Looks up a localized string like "'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.".
+		/// Looks up a localized string like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -65,7 +65,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.".
+		/// Looks up a localized string using a specific culture like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -77,7 +77,7 @@ namespace Cross.Pipelines
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.".
+		/// Looks up a localized string using a specific culture like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -89,7 +89,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "'{0}' middleware does not contain a constructor that has a PipelineRequest parameter.".
+		/// Looks up a localized string using a specific culture like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -125,7 +125,7 @@ namespace Cross.Pipelines
 		}
 		
 		/// <summary>
-		/// Looks up a localized string like "Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
+		/// Looks up a localized string like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -137,7 +137,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
+		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -149,7 +149,7 @@ namespace Cross.Pipelines
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
+		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -161,7 +161,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Middleware type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
+		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -173,7 +173,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string like "A 'null' middleware was added to the Pipeline which prevents the pipeline from being built as requested.".
+		/// Looks up a localized string like "A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -185,7 +185,7 @@ namespace Cross.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "A 'null' middleware was added to the Pipeline which prevents the pipeline from being built as requested.".
+		/// Looks up a localized string using a specific culture like "A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]

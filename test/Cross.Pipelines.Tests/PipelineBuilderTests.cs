@@ -56,17 +56,17 @@ namespace Cross.Pipelines.Tests
         {
             // arrange
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
-            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
-            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
+            var mockStepActivator = new Mock<IStepActivator>();
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
                                             .Returns(new SampleWithInvokeAsyncMethod(nextRequest));
-            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
+            IStepActivator stepActivator = mockStepActivator.Object;
 
-            var sut = new PipelineBuilder().AddMiddleware<SampleWithInvokeAsyncMethod>();
+            var sut = new PipelineBuilder().AddStep<SampleWithInvokeAsyncMethod>();
 
             var expectedTargetType = typeof(SampleWithInvokeAsyncMethod);
 
             // act
-            var result = sut.Build(middlewareActivator);
+            var result = sut.Build(stepActivator);
 
             // assert
             Assert.IsNotNull(result);
@@ -77,15 +77,15 @@ namespace Cross.Pipelines.Tests
         public async Task Returns_Correct_Message_From_ConstructedPipeline()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            IMiddlewareActivator middlewareActivator = new MiddlewareActivator(logger, serviceProvider);
+            IStepActivator stepActivator = new StepActivator(logger, serviceProvider);
 
             var pipeline = new PipelineBuilder()
-                                        .AddMiddleware<M1>()
-                                        .AddMiddleware<M2>()
-                                        .AddMiddleware<M3>()
-                                        .Build(middlewareActivator);
+                                        .AddStep<M1>()
+                                        .AddStep<M2>()
+                                        .AddStep<M3>()
+                                        .Build(stepActivator);
 
             var expectedMessage = "Sponge Bob SquarePants";
             var pipelineContext = new PipelineContext();
@@ -99,18 +99,18 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Build_When_MiddlewareActivator_Is_Null()
+        public void Throws_ArgumentNullException_From_Build_When_StepActivator_Is_Null()
         {
             // arrange
-            IMiddlewareActivator middlewareActivator = null;
+            IStepActivator stepActivator = null;
 
             var sut = new PipelineBuilder()
-                    .AddMiddleware<M1>();
+                    .AddStep<M1>();
 
-            string expectedParamName = nameof(middlewareActivator);
+            string expectedParamName = nameof(stepActivator);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.Build(middlewareActivator));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.Build(stepActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -118,16 +118,16 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_A_Value_Type()
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Is_A_Value_Type()
         {
             // arrange
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             var sut = new PipelineBuilder();
-            Type middlewareType = typeof(int);
-            string expectedMessage = Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(middlewareType));
+            Type stepType = typeof(int);
+            string expectedMessage = Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType));
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -135,15 +135,15 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Is_Null()
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Is_Null()
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type middlewareType = null;
-            string expectedParamName = nameof(middlewareType);
+            Type stepType = null;
+            string expectedParamName = nameof(stepType);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -151,15 +151,15 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_MiddlewareType_Does_Not_Contain_InvokeAsync_Method()
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Does_Not_Contain_InvokeAsync_Method()
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type middlewareType = typeof(SampleWithoutInvokeAsyncMethod);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
+            Type stepType = typeof(SampleWithoutInvokeAsyncMethod);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -167,15 +167,15 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_Has_Wrong_ParameterType()
+        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_Has_Wrong_ParameterType()
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type middlewareType = typeof(SampleWithWrongParameterType);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
+            Type stepType = typeof(SampleWithWrongParameterType);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -183,15 +183,15 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_Has_Too_Many_Parameters()
+        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_Has_Too_Many_Parameters()
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type middlewareType = typeof(SampleWithTooManyParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
+            Type stepType = typeof(SampleWithTooManyParameters);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -199,15 +199,15 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddMiddleware_When_Middleware_InvokeAsync_Method_No_Parameters()
+        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_No_Parameters()
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type middlewareType = typeof(SampleWithNoParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, middlewareType.Name, sut.MethodName);
+            Type stepType = typeof(SampleWithNoParameters);
+            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddMiddleware(middlewareType));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
 
             // assert
             Assert.IsNotNull(result);
@@ -215,20 +215,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_MiddlewareActivator_Returns_Null()
+        public void Throws_InvalidOperationException_From_Build_When_StepActivator_Returns_Null()
         {
             // arrange
-            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
-            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
-            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
+            var mockStepActivator = new Mock<IStepActivator>();
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
+            IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
-                    .AddMiddleware<M1>();
+                    .AddStep<M1>();
 
             string expectedMessage = Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, typeof(M1).Name);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -236,20 +236,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_MiddlewareActivator_Returns_Type_Without_InvokeAsync_Method()
+        public void Throws_InvalidOperationException_From_Build_When_StepActivator_Returns_Type_Without_InvokeAsync_Method()
         {
             // arrange
-            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
-            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
-            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
+            var mockStepActivator = new Mock<IStepActivator>();
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
-                    .AddMiddleware<M1>();
+                    .AddStep<M1>();
 
             string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, "Object", sut.MethodName);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
 
             // assert
             Assert.IsNotNull(result);
@@ -260,25 +260,25 @@ namespace Cross.Pipelines.Tests
         //                      IT IS INTENTIONALLY BRITTLE TO GUARANTEE THAT ANY
         //                      VALIDATION ISSUES ARE CAPTURED.
         [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_MiddlewareTypes_Return_Null()
+        public void Throws_InvalidOperationException_From_Build_When_StepTypes_Return_Null()
         {
             // arrange
-            var mockMiddlewareActivator = new Mock<IMiddlewareActivator>();
-            mockMiddlewareActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
-            IMiddlewareActivator middlewareActivator = mockMiddlewareActivator.Object;
+            var mockStepActivator = new Mock<IStepActivator>();
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
-                    .AddMiddleware<M1>();
+                    .AddStep<M1>();
 
-            // Force a null into the PipelineBuilder's Middleware
-            PropertyInfo propertyInfo = typeof(PipelineBuilder).GetProperty("MiddlewareTypes", BindingFlags.NonPublic | BindingFlags.Instance);
+            // Force a null into the PipelineBuilder's Step
+            PropertyInfo propertyInfo = typeof(PipelineBuilder).GetProperty("StepTypes", BindingFlags.NonPublic | BindingFlags.Instance);
             var stack = propertyInfo.GetMethod.Invoke(sut, null) as Stack<Type>;
             stack.Push(null);
 
             string expectedMessage = Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture);
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(middlewareActivator));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
 
             // assert
             Assert.IsNotNull(result);

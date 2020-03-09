@@ -32,7 +32,7 @@ namespace Cross.Pipelines
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Builds the Pipeline by adding different middleware implenentations.
+    /// Builds the Pipeline by adding different step implenentations.
     /// </summary>
     public class PipelineBuilder
     {
@@ -50,79 +50,79 @@ namespace Cross.Pipelines
         public virtual string MethodName => "InvokeAsync";
 
         /// <summary>
-        /// Gets the types registered as Middleware for the Pipeline.
+        /// Gets the types registered as Step for the Pipeline.
         /// </summary>
-        private Stack<Type> MiddlewareTypes { get; } = new Stack<Type>();
+        private Stack<Type> StepTypes { get; } = new Stack<Type>();
 
         /// <summary>
-        /// Adds middleware to this pipeline.
+        /// Adds step to this pipeline.
         /// </summary>
         /// <typeparam name="T">The generic type to add to the pipeline.</typeparam>
-        /// <returns>Returns a <see cref="PipelineBuilder" /> with the middleware type added.</returns>
-        public PipelineBuilder AddMiddleware<T>()
+        /// <returns>Returns a <see cref="PipelineBuilder" /> with the Step type added.</returns>
+        public PipelineBuilder AddStep<T>()
             where T : class
         {
-            return this.AddMiddleware(typeof(T));
+            return this.AddStep(typeof(T));
         }
 
         /// <summary>
-        /// Adds middleware to this pipeline.
+        /// Adds Step to this pipeline.
         /// </summary>
-        /// <param name="middlewareType">The <see cref="Type" /> to add to the pipeline.</param>
-        /// <returns>Returns a <see cref="PipelineBuilder" /> with the middleware type added.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="middlewareType"/> is <see langword="null" />.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when <paramref name="middlewareType"/> is a value type or does not have the appropriate.</exception>
-        public PipelineBuilder AddMiddleware(Type middlewareType)
+        /// <param name="stepType">The <see cref="Type" /> to add to the pipeline.</param>
+        /// <returns>Returns a <see cref="PipelineBuilder" /> with the step type added.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepType"/> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
+        public PipelineBuilder AddStep(Type stepType)
         {
-            if (middlewareType == null)
+            if (stepType == null)
             {
-                throw new ArgumentNullException(nameof(middlewareType));
+                throw new ArgumentNullException(nameof(stepType));
             }
 
-            if (middlewareType.IsValueType)
+            if (stepType.IsValueType)
             {
-                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(middlewareType)));
+                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType)));
             }
 
-            var method = middlewareType.GetMethod(this.MethodName);
-            this.ValidateMethod(middlewareType, method);
+            var method = stepType.GetMethod(this.MethodName);
+            this.ValidateMethod(stepType, method);
 
-            this.MiddlewareTypes.Push(middlewareType);
+            this.StepTypes.Push(stepType);
             return this;
         }
 
         /// <summary>
-        /// Builds a pipeline from the configured middleware.
+        /// Builds a pipeline from the configured step.
         /// </summary>
-        /// <param name="middlewareActivator">The service used to initialize instances of middleware.</param>
+        /// <param name="stepActivator">The service used to initialize instances of step.</param>
         /// <returns>A pipeline to execute.</returns>
-        public PipelineRequest Build(IMiddlewareActivator middlewareActivator)
+        public PipelineRequest Build(IStepActivator stepActivator)
         {
-            if (middlewareActivator == null)
+            if (stepActivator == null)
             {
-                throw new ArgumentNullException(nameof(middlewareActivator));
+                throw new ArgumentNullException(nameof(stepActivator));
             }
 
             // Configures the "final" delegate in the Pipeline.
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
 
-            while (this.MiddlewareTypes.Any())
+            while (this.StepTypes.Any())
             {
-                Type middlewareType = this.MiddlewareTypes.Pop();
+                Type stepType = this.StepTypes.Pop();
 
-                if (middlewareType == null)
+                if (stepType == null)
                 {
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                object nextInstance = middlewareActivator.CreateInstance(middlewareType, nextRequest);
+                object nextInstance = stepActivator.CreateInstance(stepType, nextRequest);
 
                 if (nextInstance == null)
                 {
-                    throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, middlewareType.Name));
+                    throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, stepType.Name));
                 }
 
-                // if the IMiddlewareActivator returns a different type for any reason,
+                // if the IStepActivator returns a different type for any reason,
                 // using nextInstance.GetType() guarantees it contains the correct MethodName.
                 var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
                 this.ValidateMethod(nextInstance.GetType(), nextInvoke);

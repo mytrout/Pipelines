@@ -1,4 +1,4 @@
-﻿// <copyright file="MiddlewareActivatorTests.cs" company="Chris Trout">
+﻿// <copyright file="StepActivatorTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -28,22 +28,21 @@ namespace Cross.Pipelines.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
-    using System.Globalization;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class MiddlewareActivatorTests
+    public class StepActivatorTests
     {
         [TestMethod]
-        public void Constructs_MiddlewareActivator_Successfully()
+        public void Constructs_StepActivator_Successfully()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
 
             // act
-            var result = new MiddlewareActivator(logger, serviceProvider);
+            var result = new StepActivator(logger, serviceProvider);
 
             // assert
             Assert.IsNotNull(result);
@@ -51,22 +50,22 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Returns_Null_From_InitializeMiddleware_When_Middleware_Cannot_Be_Constructed()
+        public void Returns_Null_From_InitializeStep_When_Step_Cannot_Be_Constructed()
         {
             // arrange
-            var mockLogger = new Mock<ILogger<MiddlewareActivator>>();
-            ILogger<MiddlewareActivator> logger = mockLogger.Object;
+            var mockLogger = new Mock<ILogger<StepActivator>>();
+            ILogger<StepActivator> logger = mockLogger.Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Information";
             string expectedArgument2 = "SampleWithConstructorParameter(IDictionary`2, PipelineRequest) failed to intialize properly.";
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type middlewareType = typeof(SampleWithConstructorParameter);
+            Type stepType = typeof(SampleWithConstructorParameter);
             var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
 
-            var source = new MiddlewareActivator(logger, serviceProvider);
+            var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.CreateInstance(middlewareType, pipelineRequest);
+            var result = source.CreateInstance(stepType, pipelineRequest);
 
             // assert
             Assert.IsNull(result, "Result should be null because SampleWithConstructorParameter should not be buildable under those circumstances.");
@@ -76,34 +75,34 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Returns_Valid_Middleware_Instance_From_InitializeMiddleware()
+        public void Returns_Valid_Step_Instance_From_InitializeStep()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type middlewareType = typeof(SampleWithInvokeAsyncMethod);
+            Type stepType = typeof(SampleWithInvokeAsyncMethod);
             var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
 
-            var source = new MiddlewareActivator(logger, serviceProvider);
+            var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.CreateInstance(middlewareType, pipelineRequest);
+            var result = source.CreateInstance(stepType, pipelineRequest);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, middlewareType);
+            Assert.IsInstanceOfType(result, stepType);
         }
 
         [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Is_Null()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = null;
+            ILogger<StepActivator> logger = null;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new MiddlewareActivator(logger, serviceProvider));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepActivator(logger, serviceProvider));
 
             // assert
             Assert.IsNotNull(result);
@@ -114,12 +113,12 @@ namespace Cross.Pipelines.Tests
         public void Throws_ArgumentNullException_From_Constructor_When_ServiceProvider_Is_Null()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = null;
             string expectedParamName = nameof(serviceProvider);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new MiddlewareActivator(logger, serviceProvider));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepActivator(logger, serviceProvider));
 
             // assert
             Assert.IsNotNull(result);
@@ -127,20 +126,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_InitializeMiddleware_When_MiddlewareType_Is_Null()
+        public void Throws_ArgumentNullException_From_InitializeStep_When_StepType_Is_Null()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type middlewareType = null;
+            Type stepType = null;
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
 
-            var sut = new MiddlewareActivator(logger, serviceProvider);
+            var sut = new StepActivator(logger, serviceProvider);
 
-            var expectedParamName = nameof(middlewareType);
+            var expectedParamName = nameof(stepType);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(middlewareType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -148,20 +147,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_InitializeMiddleware_When_PipelineRequest_Is_Null()
+        public void Throws_ArgumentNullException_From_InitializeStep_When_PipelineRequest_Is_Null()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var middlewareType = typeof(M1);
+            var stepType = typeof(M1);
             PipelineRequest nextRequest = null;
 
-            var sut = new MiddlewareActivator(logger, serviceProvider);
+            var sut = new StepActivator(logger, serviceProvider);
 
             var expectedParamName = nameof(nextRequest);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(middlewareType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -169,20 +168,20 @@ namespace Cross.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_InitializeMiddleware_When_MiddlewareType_Does_Not_Have_InvokeAsync_Method()
+        public void Throws_InvalidOperationException_From_InitializeStep_When_StepType_Does_Not_Have_InvokeAsync_Method()
         {
             // arrange
-            ILogger<MiddlewareActivator> logger = new Mock<ILogger<MiddlewareActivator>>().Object;
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type middlewareType = typeof(SampleWithoutInvokeAsyncMethod);
+            Type stepType = typeof(SampleWithoutInvokeAsyncMethod);
             var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
 
-            var sut = new MiddlewareActivator(logger, serviceProvider);
+            var sut = new StepActivator(logger, serviceProvider);
 
-            var expectedMessage = $"'{middlewareType.Name}' middleware does not contain a constructor that has a PipelineRequest parameter.";
+            var expectedMessage = $"'{stepType.Name}' step does not contain a constructor that has a PipelineRequest parameter.";
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(middlewareType, pipelineRequest));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(stepType, pipelineRequest));
 
             // assert
             Assert.IsNotNull(result);

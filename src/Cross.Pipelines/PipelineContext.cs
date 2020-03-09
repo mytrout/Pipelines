@@ -36,7 +36,7 @@ namespace Cross.Pipelines
      */
 
     /// <summary>
-    /// Provides the context that is passed between middleware implenentation in the pipeline.
+    /// Provides the context that is passed between step implenentation in the pipeline.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class PipelineContext
@@ -75,7 +75,7 @@ namespace Cross.Pipelines
         public bool IsConfigurationAvailable => this.Configuration != null;
 
         /// <summary>
-        /// Gets context items which are passed between middleware instances during execution.
+        /// Gets context items which are passed between step instances during execution.
         /// </summary>
         public IDictionary<string, object> Items { get; } = new Dictionary<string, object>();
 

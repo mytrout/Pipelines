@@ -1,4 +1,4 @@
-﻿// <copyright file="IMiddlewareActivator.cs" company="Chris Trout">
+﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -27,16 +27,16 @@ namespace Cross.Pipelines
     using System;
 
     /// <summary>
-    /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
+    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
     /// </summary>
-    public interface IMiddlewareActivator
+    public interface IStepActivator
     {
         /// <summary>
-        /// Constructs an instance of middleware from a <see cref="Type" /> for the pipeline.
+        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
         /// </summary>
-        /// <param name="middlewareType">The type to be constructed.</param>
-        /// <param name="nextRequest">The next middleware to execute.</param>
-        /// <returns>An instance of the middleware that is constructed.</returns>
-        object CreateInstance(Type middlewareType, PipelineRequest nextRequest);
+        /// <param name="stepType">The type to be constructed.</param>
+        /// <param name="nextRequest">The next step to execute.</param>
+        /// <returns>An instance of the step that is constructed.</returns>
+        object CreateInstance(Type stepType, PipelineRequest nextRequest);
     }
 }
