@@ -13,8 +13,8 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 11
-  patch: 0
+  minor: $[counter(variables['major'], 11)]
+  patch: $[counter(variables['minor'], 1)]
 
 steps:
 - task: RegExMatchReplace@2
@@ -43,7 +43,7 @@ steps:
   inputs:
     PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
     RegEx: '\<Version\>.*\<\/Version\>'
-    ValueToReplace: '<Version>$(major).$(minor).$(patch)-$(Build.SourceBranchName)</Version>'
+    ValueToReplace: '<Version>$(major).$(minor).$(patch)-beta</Version>'
   condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master')) 
   displayName: 'Replace Version on Linux/Windows on non-master branch'
 
@@ -77,18 +77,10 @@ steps:
      zipAfterPublish: True 
   displayName: 'Publish the dlls to the $(ArtifactStagingDirectory)/dll'
 
-# Package a project
-- task: NuGetCommand@2
-  inputs:
-    command: 'pack'
-    packagesToPack: '**/src/**/*.csproj'
-    packDestination: '$(Build.ArtifactStagingDirectory)/nuget'
-  displayName: 'Pack the nuget package to $(ArtifactStagingDirectory)/nuget'
-
 # Push a project
 - task: NuGetCommand@2
   inputs:
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/nuget/*.nupkg;!$(Build.ArtifactStagingDirectory)/nuget/*.symbols.nupkg'
+    packagesToPush: '**/*.nupkg;!**/*.symbols.nupkg'
     command: 'push'
     configuration: $(buildConfiguration)
     allowPackageConflicts: true
