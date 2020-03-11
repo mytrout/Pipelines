@@ -13,8 +13,8 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: $[counter(variables['major'], 11)]
-  patch: $[counter(variables['minor'], 1)]
+  minor: $[counter(variables['major'], 0)]
+  patch: $[counter(variables['minor'], 0)]
 
 steps:
 - task: RegExMatchReplace@2
