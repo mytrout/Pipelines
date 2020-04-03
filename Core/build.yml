@@ -33,7 +33,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
      command: build
-     projects: $(projects)
+     projects: $(solution)
      arguments: '--configuration $(buildConfiguration) /p:Version=>$(major).$(minor).$(patch)-beta /p:AssemblyVersion=>$(major).$(minor).$(patch).$(Build.BuildId)-beta /p:FileVersion=>$(major).$(minor).$(patch).$(Build.BuildId)-beta'
   displayName: 'Build the solution'
 
