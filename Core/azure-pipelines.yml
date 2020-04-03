@@ -1,7 +1,5 @@
-# Publish NuGet package for Cross.Pipelines.
-
 trigger:
-  master
+- master
 
 pool:
   vmImage: 'windows-latest'
