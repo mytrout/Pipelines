@@ -13,8 +13,8 @@ pool:
 
 variables:
   solution: '**/Core/*.sln'
-  projects: '**/Core/src/*.csproj'
-  testProjects: '**/Core/test/*.csproj'
+  projects: '**/src/*.csproj'
+  testProjects: '**/test/*.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
