@@ -2,9 +2,11 @@
 
 trigger:
   branches:
-    master
-  path:
-    Core/*
+   include:
+   - master
+  paths:
+    include:
+    - Core/*
 
 pool:
   vmImage: 'windows-latest'
