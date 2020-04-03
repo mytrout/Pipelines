@@ -12,9 +12,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  projects: '**/*.csproj'
-  testProjects: '**/*Tests/*.csproj'
+  solution: '**/Core/*.sln'
+  projects: '**/Core/src/*.csproj'
+  testProjects: '**/Core/test/*.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
@@ -22,36 +22,6 @@ variables:
   patch: $[counter(variables['minor'], 0)]
 
 steps:
-- task: RegExMatchReplace@2
-  inputs:
-    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
-    RegEx: '\<AssemblyVersion\>.*\<\/AssemblyVersion\>'
-    ValueToReplace: '<AssemblyVersion>$(major).$(minor).$(patch).$(Build.BuildId)</AssemblyVersion>'
-  displayName: 'Replace AssemblyVersion on Linux/Windows'
-
-- task: RegExMatchReplace@2
-  inputs:
-    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
-    RegEx: '\<FileVersion\>.*\<\/FileVersion\>'
-    ValueToReplace: '<FileVersion>$(major).$(minor).$(patch).$(Build.BuildId)</FileVersion>'
-  displayName: 'Replace FileVersion on Linux/Windows'
-
-- task: RegExMatchReplace@2
-  inputs:
-    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
-    RegEx: '\<Version\>.*\<\/Version\>'
-    ValueToReplace: '<Version>$(major).$(minor).$(patch)-beta</Version>'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
-  displayName: 'Replace Version on Linux/Windows on master builds'
-
-- task: RegExMatchReplace@2
-  inputs:
-    PathToFile: '$(Build.SourcesDirectory)/src/$(Build.Repository.Name)/$(Build.Repository.Name).csproj'
-    RegEx: '\<Version\>.*\<\/Version\>'
-    ValueToReplace: '<Version>$(major).$(minor).$(patch)-beta</Version>'
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master')) 
-  displayName: 'Replace Version on Linux/Windows on non-master branch'
-
 - task: NuGetToolInstaller@1
   displayName: 'Install latest version of NuGet Tools'
 
@@ -64,7 +34,7 @@ steps:
   inputs:
      command: build
      projects: $(projects)
-     arguments: '--configuration $(buildConfiguration)'
+     arguments: '--configuration $(buildConfiguration) /p:Version=>$(major).$(minor).$(patch)-beta /p:AssemblyVersion=>$(major).$(minor).$(patch).$(Build.BuildId)-beta /p:FileVersion=>$(major).$(minor).$(patch).$(Build.BuildId)-beta'
   displayName: 'Build the solution'
 
 - task: DotNetCoreCLI@2
@@ -83,13 +53,13 @@ steps:
   displayName: 'Publish the dlls to the $(ArtifactStagingDirectory)/dll'
 
 # Push a project
-- task: NuGetCommand@2
-  inputs:
-    packagesToPush: '**/*.nupkg;!**/*.symbols.nupkg'
-    command: 'push'
-    configuration: $(buildConfiguration)
-    allowPackageConflicts: true
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'ea2302d5-a8d1-481c-a7f8-40b10b1d7556/7408c788-39c6-442b-8fad-e72439da7221'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displayName: 'Publish the nuget package to Cross.Pipelines'
+#- task: NuGetCommand@2
+#  inputs:
+#    packagesToPush: '**/*.nupkg;!**/*.symbols.nupkg'
+#    command: 'push'
+#    configuration: $(buildConfiguration)
+#    allowPackageConflicts: true
+#    nuGetFeedType: 'internal'
+#    publishVstsFeed: 'ea2302d5-a8d1-481c-a7f8-40b10b1d7556/7408c788-39c6-442b-8fad-e72439da7221'
+#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#  displayName: 'Publish the nuget package to Cross.Pipelines'
