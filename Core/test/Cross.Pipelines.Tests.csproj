@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
+    <Content Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Cross.Pipelines\Cross.Pipelines.csproj" />
+    <ProjectReference Include="..\src\Cross.Pipelines.csproj" />
   </ItemGroup>
 
 </Project>

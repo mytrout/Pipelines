@@ -6,7 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7C30B959-8AB9-4868-8A71-6BD4C026A38F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		build.yml = build.yml
+		azure-pipelines.yml = azure-pipelines.yml
 		License.md = License.md
 		README.md = README.md
 		stylecop.json = stylecop.json
@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B190B2FE-FEE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0CF6BAA0-5A4C-4E0E-AE0F-048C3883E604}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cross.Pipelines", "src\Cross.Pipelines\Cross.Pipelines.csproj", "{3BC5612F-0361-4C5B-BE2E-81364693E908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cross.Pipelines", "src\Cross.Pipelines.csproj", "{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cross.Pipelines.Tests", "test\Cross.Pipelines.Tests\Cross.Pipelines.Tests.csproj", "{6B403FD3-E36C-40DF-BA71-44D0D7D0B937}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cross.Pipelines.Tests", "test\Cross.Pipelines.Tests.csproj", "{C24B89B2-8563-48E8-8563-AA4878A4A7FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,21 +26,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3BC5612F-0361-4C5B-BE2E-81364693E908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3BC5612F-0361-4C5B-BE2E-81364693E908}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3BC5612F-0361-4C5B-BE2E-81364693E908}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3BC5612F-0361-4C5B-BE2E-81364693E908}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B403FD3-E36C-40DF-BA71-44D0D7D0B937}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B403FD3-E36C-40DF-BA71-44D0D7D0B937}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B403FD3-E36C-40DF-BA71-44D0D7D0B937}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B403FD3-E36C-40DF-BA71-44D0D7D0B937}.Release|Any CPU.Build.0 = Release|Any CPU
+		{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C24B89B2-8563-48E8-8563-AA4878A4A7FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C24B89B2-8563-48E8-8563-AA4878A4A7FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C24B89B2-8563-48E8-8563-AA4878A4A7FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C24B89B2-8563-48E8-8563-AA4878A4A7FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3BC5612F-0361-4C5B-BE2E-81364693E908} = {B190B2FE-FEE5-48EC-BF0B-077F985CC05D}
-		{6B403FD3-E36C-40DF-BA71-44D0D7D0B937} = {0CF6BAA0-5A4C-4E0E-AE0F-048C3883E604}
+		{127EF1C1-6976-4E53-8397-CF1A4A7EF51C} = {B190B2FE-FEE5-48EC-BF0B-077F985CC05D}
+		{C24B89B2-8563-48E8-8563-AA4878A4A7FA} = {0CF6BAA0-5A4C-4E0E-AE0F-048C3883E604}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DCBE04B1-9A76-48BD-AA2C-2C0E9A72D544}
