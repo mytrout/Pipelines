@@ -69,6 +69,40 @@ steps:
      zipAfterPublish: True 
   displayName: 'Publish the dlls to the $(ArtifactStagingDirectory)/dll'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/**/src/**'
+    Contents: '*.dll'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/dll'
+    CleanTargetFolder: true
+    OverWrite: true
+    flattenFolders: true
+  displayName: 'Copy files from Sources directory to staging directory.'  
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/**/src/**'
+    Contents: '*.nuget'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/nuget'
+    CleanTargetFolder: true
+    OverWrite: true
+    flattenFolders: true
+  displayName: 'Copy files from Sources directory to staging directory.'  
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/dll'
+    ArtifactName: 'dll'
+    publishLocation: 'Container'
+  displayName: 'Publish the dlls to the release.'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/nuget'
+    ArtifactName: 'nuget'
+    publishLocation: 'Container'
+  displayName: 'Publish the nuget to the release.'
+
  #Push a project
 - task: NuGetCommand@2
   inputs:
