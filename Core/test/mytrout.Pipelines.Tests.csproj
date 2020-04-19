@@ -39,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Cross.Pipelines.csproj" />
+    <ProjectReference Include="..\src\mytrout.Pipelines.csproj" />
   </ItemGroup>
-
 </Project>
