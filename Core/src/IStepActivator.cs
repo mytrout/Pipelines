@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines
+namespace MyTrout.Pipelines
 {
     using System;
 

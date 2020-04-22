@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace Cross.Pipelines.Tests
+namespace MyTrout.Pipelines.Tests
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;

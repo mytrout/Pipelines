@@ -1,4 +1,4 @@
-Cross.Pipelines [![Build Status](https://dev.azure.com/cross-software/Cross.Pipelines/_apis/build/status/Cross.Pipelines?branchName=master)](https://dev.azure.com/cross-software/Cross.Pipelines/_build/latest?definitionId=9&branchName=master)
+MyTrout.Pipelines [![Build Status](https://dev.azure.com/cross-software/MyTrout.Pipelines/_apis/build/status/MyTrout.Pipelines?branchName=master)](https://dev.azure.com/cross-software/MyTrout.Pipelines/_build/latest?definitionId=9&branchName=master)
 
 # Introduction 
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 

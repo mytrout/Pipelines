@@ -6,7 +6,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  project: '$(Build.SourcesDirectory)/Core/src/Cross.Pipelines.csproj'
+  project: '$(Build.SourcesDirectory)/Core/src/MyTrout.Pipelines.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
@@ -84,4 +84,4 @@ steps:
 #    nuGetFeedType: 'internal'
 #    publishVstsFeed: 'ea2302d5-a8d1-481c-a7f8-40b10b1d7556/7408c788-39c6-442b-8fad-e72439da7221'
 #  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-#  displayName: 'Publish the nuget package to Cross.Pipelines'
+#  displayName: 'Publish the nuget package to MyTrout.Pipelines'
