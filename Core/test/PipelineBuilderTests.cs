@@ -73,8 +73,10 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(expectedTargetType, result.Target.GetType());
         }
 
+#pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
         [TestMethod]
         public async Task Returns_Correct_Message_From_ConstructedPipeline()
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
@@ -121,7 +123,6 @@ namespace MyTrout.Pipelines.Tests
         public void Throws_InvalidOperationException_From_AddStep_When_StepType_Is_A_Value_Type()
         {
             // arrange
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             var sut = new PipelineBuilder();
             Type stepType = typeof(int);
             string expectedMessage = Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType));
@@ -294,7 +295,9 @@ namespace MyTrout.Pipelines.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithoutInvokeAsyncMethod
     {
+#pragma warning disable VSTHRD200 // This class specifically NEEDS the method name to be wrong, so the test can fail.
         public Task Invoke(PipelineContext context)
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             return Task.CompletedTask;
         }

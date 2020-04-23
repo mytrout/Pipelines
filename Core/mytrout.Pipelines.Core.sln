@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B190B2FE-FEE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0CF6BAA0-5A4C-4E0E-AE0F-048C3883E604}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipelines", "src\mytrout.Pipelines.csproj", "{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines", "src\MyTrout.Pipelines.csproj", "{127EF1C1-6976-4E53-8397-CF1A4A7EF51C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipelines.Tests", "test\mytrout.Pipelines.Tests.csproj", "{C24B89B2-8563-48E8-8563-AA4878A4A7FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Tests", "test\MyTrout.Pipelines.Tests.csproj", "{C24B89B2-8563-48E8-8563-AA4878A4A7FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

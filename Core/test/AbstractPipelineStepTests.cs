@@ -28,16 +28,13 @@ namespace MyTrout.Pipelines.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Reflection;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class AbstractPipelineStepTests
     {
-        public static Task Next(PipelineContext context)
+        public static Task NextAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }
@@ -49,22 +46,24 @@ namespace MyTrout.Pipelines.Tests
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
 
             // act
-            SampleStep result = new SampleStep(logger, AbstractPipelineStepTests.Next);
+            SampleStep result = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(AbstractPipelineStepTests.Next, result.NextItem);
+            Assert.AreEqual(AbstractPipelineStepTests.NextAsync, result.NextItem);
         }
 
+#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public void Returns_Task_From_InvokeAsync()
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
             PipelineContext context = new PipelineContext();
 
-            var step = new SampleStep(logger, AbstractPipelineStepTests.Next);
+            var step = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
 
             // act
             var result = step.InvokeAsync(context);
@@ -82,7 +81,7 @@ namespace MyTrout.Pipelines.Tests
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStep(logger, AbstractPipelineStepTests.Next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStep(logger, AbstractPipelineStepTests.NextAsync));
 
             // assert
             Assert.IsNotNull(result);
@@ -105,15 +104,17 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
+#pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
         [TestMethod]
         public async Task Throws_ArgumentNullException_From_InvokeAsync_When_Context_Is_Null()
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             PipelineContext context = null;
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
             string expectedParamName = nameof(context);
 
-            var step = new SampleStep(logger, AbstractPipelineStepTests.Next);
+            var step = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
 
             // act
             var result = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => step.InvokeAsync(context));
