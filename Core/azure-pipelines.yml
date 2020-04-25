@@ -18,7 +18,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 16
-  patch: 0
+  patch: 1
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
   publishVstsFeed: 'mytrout'
@@ -39,7 +39,7 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: '$(sonarCloudProjectKey)'
     projectName: '$(sonarCloudProjectName)'
-    projectVersion: '$(major).$(minor).$(patch).$(buidId)'
+    projectVersion: '$(major).$(minor).$(patch)$(suffix)'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Prepare SonarQube analysis.'
 
