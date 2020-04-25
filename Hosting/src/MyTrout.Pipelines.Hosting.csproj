@@ -11,8 +11,8 @@
     <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <FileVersion>0.5.0.0</FileVersion>
     <Description>Provides helper classes to use a Pipeline with GenericHost.</Description>
-    <PackageProjectUrl>https://dev.azure.com/cross-software/MyTrout.Pipelines</PackageProjectUrl>
-    <RepositoryUrl>https://dev.azure.com/cross-software/_git/MyTrout.Pipelines</RepositoryUrl>
+    <PackageProjectUrl>https://dev.azure.com/mytrout/Pipelines</PackageProjectUrl>
+    <RepositoryUrl>https://dev.azure.com/mytrout/_git/Pipelines</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
