@@ -5,11 +5,11 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/Core/*.sln'
+  solution: '**/Hosting/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 16
+  minor: 15
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
