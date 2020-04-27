@@ -55,7 +55,7 @@ namespace MyTrout.Pipelines
         public IServiceProvider ServiceProvider { get; }
 
         /// <inheritdoc />
-        public object createInstance(Type stepType, PipelineRequest nextRequest)
+        public object CreateInstance(Type stepType, PipelineRequest nextRequest)
         {
             if (stepType == null)
             {

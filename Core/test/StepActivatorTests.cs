@@ -65,7 +65,7 @@ namespace MyTrout.Pipelines.Tests
             var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.createInstance(stepType, pipelineRequest);
+            var result = source.CreateInstance(stepType, pipelineRequest);
 
             // assert
             Assert.IsNull(result, "Result should be null because SampleWithConstructorParameter should not be buildable under those circumstances.");
@@ -86,7 +86,7 @@ namespace MyTrout.Pipelines.Tests
             var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.createInstance(stepType, pipelineRequest);
+            var result = source.CreateInstance(stepType, pipelineRequest);
 
             // assert
             Assert.IsNotNull(result);
@@ -139,7 +139,7 @@ namespace MyTrout.Pipelines.Tests
             var expectedParamName = nameof(stepType);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.createInstance(stepType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -160,7 +160,7 @@ namespace MyTrout.Pipelines.Tests
             var expectedParamName = nameof(nextRequest);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.createInstance(stepType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -181,7 +181,7 @@ namespace MyTrout.Pipelines.Tests
             var expectedMessage = $"'{stepType.Name}' step does not contain a constructor that has a PipelineRequest parameter.";
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.createInstance(stepType, pipelineRequest));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(stepType, pipelineRequest));
 
             // assert
             Assert.IsNotNull(result);

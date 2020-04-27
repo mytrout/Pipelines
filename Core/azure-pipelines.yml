@@ -57,6 +57,13 @@ steps:
      arguments: --configuration $(BuildConfiguration) --collect "XPlat Code Coverage" 
   displayName: 'Run the unit and simple integration tests.'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.TempDirectory)'
+    Contents: '**/*.trx'
+    TargetFolder: '$(Common.TestResultsDirectory)'
+  displayName: 'Copy the test results to allow SonarCloud to report coverage results.'
+
 - task: SonarCloudAnalyze@1
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Analyze SonarQube results and upload to SonarCloud.io.'

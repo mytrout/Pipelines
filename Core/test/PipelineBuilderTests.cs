@@ -57,7 +57,7 @@ namespace MyTrout.Pipelines.Tests
             // arrange
             var nextRequest = new PipelineRequest(context => Task.CompletedTask);
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.createInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
                                             .Returns(new SampleWithInvokeAsyncMethod(nextRequest));
             IStepActivator stepActivator = mockStepActivator.Object;
 
@@ -220,7 +220,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.createInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
@@ -241,7 +241,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.createInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
@@ -265,7 +265,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.createInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()

@@ -115,7 +115,7 @@ namespace MyTrout.Pipelines
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                object nextInstance = stepActivator.createInstance(stepType, nextRequest);
+                object nextInstance = stepActivator.CreateInstance(stepType, nextRequest);
 
                 if (nextInstance == null)
                 {
