@@ -54,8 +54,15 @@ steps:
   inputs:
      command: test
      projects: $(solution)
-     arguments: --configuration $(BuildConfiguration) --collect "XPlat Code Coverage" 
+     arguments: --configuration $(BuildConfiguration) --collect "XPlat Code Coverage" --collect "Code Coverage"
   displayName: 'Run the unit and simple integration tests.'
+
+- task: DotNetCoreCLI@2
+  inputs:
+     command: test
+     projects: $(solution)
+     arguments: --configuration $(BuildConfiguration) --collect "Code Coverage"
+  displayName: 'Run the unit and simple integration tests for SonarCloud.'
 
 - task: CopyFiles@2
   inputs:
