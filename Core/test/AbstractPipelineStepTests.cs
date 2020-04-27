@@ -44,14 +44,33 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
 
             // act
-            SampleStep result = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
+            SampleStep result = new SampleStep(logger, next);
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
             Assert.AreEqual(AbstractPipelineStepTests.NextAsync, result.NextItem);
+        }
+
+        [TestMethod]
+        public void Constructs_AbstractPipelineStep_With_Options_Successfully()
+        {
+            // arrange
+            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            SampleStepOptions options = new SampleStepOptions();
+
+            // act
+            SampleStepWithOptions result = new SampleStepWithOptions(logger, options, next);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(logger, result.Logger);
+            Assert.AreEqual(AbstractPipelineStepTests.NextAsync, result.NextItem);
+            Assert.AreEqual(options, result.Options);
         }
 
 #pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
@@ -61,9 +80,10 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
             PipelineContext context = new PipelineContext();
 
-            var step = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
+            var step = new SampleStep(logger, next);
 
             // act
             var result = step.InvokeAsync(context);
@@ -78,10 +98,11 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = null;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStep(logger, AbstractPipelineStepTests.NextAsync));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStep(logger, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -104,6 +125,23 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Options_Parameter_Is_Null()
+        {
+            // arrange
+            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            SampleStepOptions options = null;
+            string expectedParamName = nameof(options);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStepWithOptions(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
+        }
+
 #pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
         [TestMethod]
         public async Task Throws_ArgumentNullException_From_InvokeAsync_When_Context_Is_Null()
@@ -112,9 +150,10 @@ namespace MyTrout.Pipelines.Tests
             // arrange
             PipelineContext context = null;
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
             string expectedParamName = nameof(context);
 
-            var step = new SampleStep(logger, AbstractPipelineStepTests.NextAsync);
+            var step = new SampleStep(logger, next);
 
             // act
             var result = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => step.InvokeAsync(context));
@@ -151,6 +190,35 @@ namespace MyTrout.Pipelines.Tests
         {
             return Task.CompletedTask;
         }
+    }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleStepWithOptions : AbstractPipelineStep<SampleStep, SampleStepOptions>
+    {
+        public SampleStepWithOptions(ILogger<SampleStep> logger, SampleStepOptions options, PipelineRequest next)
+            : base(logger, options, next)
+        {
+            // no op
+        }
+
+        public PipelineRequest NextItem
+        {
+            get
+            {
+                return this.Next;
+            }
+        }
+
+        protected override Task InvokeAsyncCore(PipelineContext context)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleStepOptions
+    {
+        public string Option1 { get; set; }
     }
 #pragma warning restore CA1801 // Remove unused parameter
 #pragma warning restore IDE0060 // Remove unused parameter

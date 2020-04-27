@@ -1,4 +1,4 @@
-﻿// <copyright file="AbstractPipelineStep.cs" company="Chris Trout">
+﻿// <copyright file="AbstractPipelineStep{TStep}.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout

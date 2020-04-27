@@ -37,6 +37,6 @@ namespace MyTrout.Pipelines
         /// <param name="stepType">The type to be constructed.</param>
         /// <param name="nextRequest">The next step to execute.</param>
         /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(Type stepType, PipelineRequest nextRequest);
+        object createInstance(Type stepType, PipelineRequest nextRequest);
     }
 }
