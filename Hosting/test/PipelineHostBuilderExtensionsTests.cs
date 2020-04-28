@@ -26,8 +26,6 @@ namespace MyTrout.Pipelines.Hosting.Tests
 {
     using Microsoft.Extensions.Hosting;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using MyTrout.Pipelines;
-    using MyTrout.Pipelines.Hosting;
     using System;
     using System.Threading.Tasks;
 
@@ -35,8 +33,10 @@ namespace MyTrout.Pipelines.Hosting.Tests
     [TestClass]
     public class PipelineHostBuilderExtensionsTests
     {
+#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public async Task Returns_Correct_Count_Of_Executions_From_Pipeline_When_Called()
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             string[] args = Array.Empty<string>();
@@ -61,8 +61,10 @@ namespace MyTrout.Pipelines.Hosting.Tests
             Assert.AreEqual(expectedExecutionCount, TestingStep1.ExecutionCount);
         }
 
+#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public async Task Returns_Correct_Count_Of_Executions_From_Pipeline_When_UsePipelines_With_Activator_Is_Called()
+#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             string[] args = Array.Empty<string>();
@@ -91,13 +93,12 @@ namespace MyTrout.Pipelines.Hosting.Tests
         public void Throws_ArgumentNullException_From_Pipeline_When_HostBuilder_Is_Null()
         {
             // arrange
-            string[] args = Array.Empty<string>();
             PipelineBuilder[] builders = new PipelineBuilder[1]
             {
                 new PipelineBuilder()
-                     .AddStep<TestingStep2>()
-                    .AddStep<TestingStep2>()
-                    .AddStep<TestingStep2>()
+                        .AddStep<TestingStep2>()
+                        .AddStep<TestingStep2>()
+                        .AddStep<TestingStep2>()
             };
 
             IHostBuilder source = null;

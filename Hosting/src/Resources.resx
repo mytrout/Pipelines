@@ -129,4 +129,7 @@
   <data name="TASKS_ARE_COMPLETED" xml:space="preserve">
     <value>All Pipelines Tasks are completed.</value>
   </data>
+  <data name="UNHANDLED_EXCEPTION" xml:space="preserve">
+    <value>An unhandled exception occurred in the execution of the Pipeline.  Application behavior at this time is unstable.</value>
+  </data>
 </root>

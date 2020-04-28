@@ -28,7 +28,6 @@ namespace MyTrout.Pipelines.Hosting.Tests
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using MyTrout.Pipelines.Hosting;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

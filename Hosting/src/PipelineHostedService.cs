@@ -77,12 +77,20 @@ namespace MyTrout.Pipelines.Hosting
         /// </summary>
         public IStepActivator StepActivator { get; }
 
+        /* NOTES TO DEVELOPERS: The original implementation below used an async lambda until the Task.RunSynchronously() blocking
+         *                      thread method was found.  This stupidity is required because GenericHost implementors
+         *                      did not account for an async ApplicationStarted delegate and how exceptions could be thrown
+         *                      from a void delegate returning from the ApplicationStarted capability which would need to be
+         *                      handled via an AppDomain.Current.UnhandledException event handler.  The implementation below does
+         *                      not suffer from the same issue for **MOST** exceptions at the cost of blocking threads on a delegate call.
+         */
+
         /// <inheritdoc />
         public Task StartAsync(CancellationToken cancellationToken)
         {
             this.Logger.LogDebug(Resources.CALLING_METHOD_IN_TYPE(CultureInfo.CurrentCulture, nameof(this.StartAsync), nameof(PipelineHostedService)));
 
-            this.ApplicationLifetime.ApplicationStarted.Register(async () => await this.OnApplicationStarted(this.ApplicationLifetime.ApplicationStopping).ConfigureAwait(false));
+            this.ApplicationLifetime.ApplicationStarted.Register(() => this.OnApplicationStarted(this.ApplicationLifetime.ApplicationStopping));
             return Task.CompletedTask;
         }
 
@@ -94,32 +102,51 @@ namespace MyTrout.Pipelines.Hosting
         }
 
         /// <summary>
+        /// Forces the OnApplicationStartedAsync to be run synchronously and block the calling thread.
+        /// </summary>
+        /// <param name="cancellationToken">Indicates that the application execution has been aborted.</param>
+        private void OnApplicationStarted(CancellationToken cancellationToken)
+        {
+            this.OnApplicationStartedAsync(cancellationToken).RunSynchronously();
+        }
+
+        /// <summary>
         /// Executes the configured pipelines when the application is started.
         /// </summary>
         /// <param name="cancellationToken">Indicates that the application execution has been aborted.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        private async Task OnApplicationStarted(CancellationToken cancellationToken)
+        private async Task OnApplicationStartedAsync(CancellationToken cancellationToken)
         {
-            this.Logger.LogInformation(Resources.PIPELINE_TASKS_STARTING(CultureInfo.CurrentCulture));
+            try
+            {
+                this.Logger.LogInformation(Resources.PIPELINE_TASKS_STARTING(CultureInfo.CurrentCulture));
 
-            await Task.Delay(5).ConfigureAwait(false);
+                await Task.Delay(5).ConfigureAwait(false);
 
-            IEnumerable<PipelineRequest> pipelines = this.PipelineBuilders.Select(
-                                            x => x.Build(this.StepActivator));
+                IEnumerable<PipelineRequest> pipelines = this.PipelineBuilders.Select(
+                                                x => x.Build(this.StepActivator));
 
-            IEnumerable<Task> results = pipelines.Select(x => x.Invoke(
-                                                new PipelineContext()
-                                                {
-                                                    CancellationToken = cancellationToken
-                                                }));
+                IEnumerable<Task> results = pipelines.Select(x => x.Invoke(
+                                                    new PipelineContext()
+                                                    {
+                                                        CancellationToken = cancellationToken
+                                                    }));
 
-            this.Logger.LogDebug(Resources.BUILDERS_CONVERTED_TO_TASKS(CultureInfo.CurrentCulture));
+                this.Logger.LogDebug(Resources.BUILDERS_CONVERTED_TO_TASKS(CultureInfo.CurrentCulture));
 
-            await Task.WhenAll(results).ConfigureAwait(false);
+                await Task.WhenAll(results).ConfigureAwait(false);
 
-            this.Logger.LogInformation(Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture));
+                this.Logger.LogInformation(Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture));
 
-            this.ApplicationLifetime.StopApplication();
+                this.ApplicationLifetime.StopApplication();
+            }
+#pragma warning disable CA1031 // Prevent any Exception-derived Exception from causing the application to crash.
+            catch (Exception exc)
+            {
+                this.Logger.LogError(exc, Resources.UNHANDLED_EXCEPTION(CultureInfo.CurrentCulture));
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
         }
     }
 }
+ 
