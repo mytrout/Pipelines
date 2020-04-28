@@ -18,7 +18,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 16
-  patch: 1
+  patch: 2
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
   publishVstsFeed: 'mytrout'
@@ -54,33 +54,12 @@ steps:
   inputs:
      command: test
      projects: $(solution)
-     arguments: --configuration $(BuildConfiguration) --collect "XPlat Code Coverage" 
-  displayName: 'Run the unit and simple integration tests.'
+     arguments: --configuration $(BuildConfiguration) --collect "Code Coverage"
+  displayName: 'Run the unit and simple integration tests for SonarCloud.'
 
 - task: SonarCloudAnalyze@1
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Analyze SonarQube results and upload to SonarCloud.io.'
-
-#
-# Could not display code coverage in Azure DevOps with standard VS Test usages.
-# https://stackoverflow.com/questions/60893419/azure-devops-code-coverage-for-net-core-3-1/60894835#60894835
-#
-- task: DotNetCoreCLI@2
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'install --tool-path "$(Agent.TempDirectory)/tools" dotnet-reportgenerator-globaltool'
-  displayName: 'Install dotnet reportgenerator globaltool.'
-
-- script: '$(Agent.TempDirectory)/tools/reportgenerator -reports:$(Agent.TempDirectory)/**/coverage.cobertura.xml -targetDir:$(Build.SourcesDirectory)/TestResults/Coverage/Reports -reporttypes:Cobertura'
-  displayName: 'Create Cobertura code coverage reports.'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: $(Build.SourcesDirectory)/TestResults/Coverage/Reports/Cobertura.xml
-    failIfCoverageEmpty: true
-  displayName: 'Publish code coverage to Azure DevOps.'
 
 #
 # This step will fail to publish into an Azure DevOps Artifacts, 
