@@ -69,7 +69,7 @@ namespace MyTrout.Pipelines
                 throw new ArgumentNullException(nameof(context));
             }
 
-            return this.InvokeAsyncCore(context);
+            return this.InvokeCoreAsync(context);
         }
 
         /// <summary>
@@ -77,6 +77,6 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="context">The <see cref="PipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        protected abstract Task InvokeAsyncCore(PipelineContext context);
+        protected abstract Task InvokeCoreAsync(PipelineContext context);
     }
 }

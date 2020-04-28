@@ -6,28 +6,32 @@
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2019-2020 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.5.0-beta</Version>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
-    <FileVersion>0.5.0.0</FileVersion>
-    <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
+    <Version>0.1.0-beta</Version>
+    <NeutralLanguage></NeutralLanguage>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Description>Provides Pipeline steps to receive and send messages to Azure Service Bus.</Description>
     <PackageProjectUrl>https://dev.azure.com/mytrout/Pipelines</PackageProjectUrl>
     <RepositoryUrl>https://dev.azure.com/mytrout/Pipelines</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
+    <DocumentationFile>..\docs\MyTrout,Pipelines.Steps.IO.Azure.ServiceBus.xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <NoWarn>1701;1702;SA1413;CA1031;CA1303</NoWarn>
+    <OutputPath>..\docs\MyTrout,Pipelines.Steps.IO.Azure.ServiceBus.xml</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
+    <DocumentationFile>..\docs\MyTrout.Pipelines.Steps.IO.Azure.ServiceBus</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <NoWarn>1701;1702;SA1413;CA1031;CA1303</NoWarn>
+    <OutputPath>..\docs\MyTrout,Pipelines.Steps.IO.Azure.ServiceBus.xml</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,25 +39,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0">
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.6.13">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.6.1.17183">
+    <PackageReference Include="MyTrout.Pipelines" Version="0.16.0-beta" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.6.0.16497">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -61,6 +67,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Text.Json" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -86,5 +93,6 @@
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  
+
+
 </Project>

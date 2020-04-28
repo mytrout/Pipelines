@@ -186,7 +186,7 @@ namespace MyTrout.Pipelines.Tests
             }
         }
 
-        protected override Task InvokeAsyncCore(PipelineContext context)
+        protected override Task InvokeCoreAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }
@@ -209,7 +209,7 @@ namespace MyTrout.Pipelines.Tests
             }
         }
 
-        protected override Task InvokeAsyncCore(PipelineContext context)
+        protected override Task InvokeCoreAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }
