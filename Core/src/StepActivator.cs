@@ -55,7 +55,7 @@ namespace MyTrout.Pipelines
         public IServiceProvider ServiceProvider { get; }
 
         /// <inheritdoc />
-        public object CreateInstance(Type stepType, PipelineRequest nextRequest)
+        public object CreateInstance(Type stepType, IPipelineRequest nextRequest)
         {
             if (stepType == null)
             {
@@ -80,7 +80,7 @@ namespace MyTrout.Pipelines
                 var parametersForConstructor = new List<object>();
                 foreach (var parameter in constructor.GetParameters())
                 {
-                    if (parameter.ParameterType == typeof(PipelineRequest))
+                    if (parameter.ParameterType == typeof(IPipelineRequest))
                     {
                         parametersForConstructor.Add(nextRequest);
                         nextRequestParameterFound = true;

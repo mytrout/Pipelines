@@ -38,26 +38,12 @@ namespace MyTrout.Pipelines.Tests
     public class PipelineBuilderTests
     {
         [TestMethod]
-        public void Constructs_PipelineBuilder_Successfully()
-        {
-            // arrange
-            string expectedMethodName = "InvokeAsync";
-
-            // act
-            var result = new PipelineBuilder();
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMethodName, result.MethodName);
-        }
-
-        [TestMethod]
         public void Returns_Correct_PipelineRequest_Delegate_From_Build_Method()
         {
             // arrange
-            var nextRequest = new PipelineRequest(context => Task.CompletedTask);
+            var nextRequest = new NoOpStep();
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>()))
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>()))
                                             .Returns(new SampleWithInvokeAsyncMethod(nextRequest));
             IStepActivator stepActivator = mockStepActivator.Object;
 
@@ -70,7 +56,7 @@ namespace MyTrout.Pipelines.Tests
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(expectedTargetType, result.Target.GetType());
+            Assert.IsInstanceOfType(result, expectedTargetType);
         }
 
 #pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
@@ -93,7 +79,7 @@ namespace MyTrout.Pipelines.Tests
             var pipelineContext = new PipelineContext();
 
             // act
-            await pipeline.Invoke(pipelineContext).ConfigureAwait(false);
+            await pipeline.InvokeAsync(pipelineContext).ConfigureAwait(false);
 
             // assert
             Assert.IsTrue(pipelineContext.Items.ContainsKey("Message"), "No 'Message' item was added to the PipelineContext.");
@@ -136,6 +122,22 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Does_Not_Implement_IPipelineBuilder()
+        {
+            // arrange
+            var sut = new PipelineBuilder();
+            Type stepType = typeof(SampleWithoutIPipelineBuilder);
+            string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType));
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
         public void Throws_InvalidOperationException_From_AddStep_When_StepType_Is_Null()
         {
             // arrange
@@ -152,102 +154,17 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Does_Not_Contain_InvokeAsync_Method()
-        {
-            // arrange
-            var sut = new PipelineBuilder();
-            Type stepType = typeof(SampleWithoutInvokeAsyncMethod);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
-        }
-
-        [TestMethod]
-        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_Has_Wrong_ParameterType()
-        {
-            // arrange
-            var sut = new PipelineBuilder();
-            Type stepType = typeof(SampleWithWrongParameterType);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
-        }
-
-        [TestMethod]
-        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_Has_Too_Many_Parameters()
-        {
-            // arrange
-            var sut = new PipelineBuilder();
-            Type stepType = typeof(SampleWithTooManyParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
-        }
-
-        [TestMethod]
-        public void Throws_InvalidOperationException_From_AddStep_When_Step_InvokeAsync_Method_No_Parameters()
-        {
-            // arrange
-            var sut = new PipelineBuilder();
-            Type stepType = typeof(SampleWithNoParameters);
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, stepType.Name, sut.MethodName);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
-        }
-
-        [TestMethod]
         public void Throws_InvalidOperationException_From_Build_When_StepActivator_Returns_Null()
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(null);
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>())).Returns(null);
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
                     .AddStep<M1>();
 
-            string expectedMessage = Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, typeof(M1).Name);
-
-            // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
-        }
-
-        [TestMethod]
-        public void Throws_InvalidOperationException_From_Build_When_StepActivator_Returns_Type_Without_InvokeAsync_Method()
-        {
-            // arrange
-            var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
-            IStepActivator stepActivator = mockStepActivator.Object;
-
-            var sut = new PipelineBuilder()
-                    .AddStep<M1>();
-
-            string expectedMessage = Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, "Object", sut.MethodName);
+            string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(M1));
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
@@ -265,7 +182,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<PipelineRequest>())).Returns(new object());
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>())).Returns(new object());
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
@@ -293,40 +210,60 @@ namespace MyTrout.Pipelines.Tests
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable CA1801 // Remove unused parameter
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithoutInvokeAsyncMethod
+    public class SampleWithoutInvokeAsyncMethod : IPipelineRequest
     {
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
+
 #pragma warning disable VSTHRD200 // This class specifically NEEDS the method name to be wrong, so the test can fail.
         public Task Invoke(PipelineContext context)
 #pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             return Task.CompletedTask;
         }
+
+        public Task InvokeAsync(PipelineContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithInvokeAsyncMethod
+    public class SampleWithInvokeAsyncMethod : IPipelineRequest
     {
-        public SampleWithInvokeAsyncMethod(PipelineRequest next)
+        public SampleWithInvokeAsyncMethod(IPipelineRequest next)
         {
             this.Next = next;
         }
 
-        private PipelineRequest Next { get; }
+        private IPipelineRequest Next { get; }
+
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
 
         public Task InvokeAsync(PipelineContext context)
         {
-            return this.Next.Invoke(context);
+            return this.Next.InvokeAsync(context);
         }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class M1
+    public class M1 : IPipelineRequest
     {
-        private readonly PipelineRequest next;
+        private readonly IPipelineRequest next;
 
-        public M1(PipelineRequest next) => this.next = next;
+        public M1(IPipelineRequest next) => this.next = next;
 
         protected virtual string Key => "Sponge";
+
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
 
         public Task InvokeAsync(PipelineContext context)
         {
@@ -344,14 +281,14 @@ namespace MyTrout.Pipelines.Tests
                 context.Items.Add("Message", this.Key);
             }
 
-            return this.next(context);
+            return this.next.InvokeAsync(context);
         }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class M2 : M1
     {
-        public M2(PipelineRequest next)
+        public M2(IPipelineRequest next)
             : base(next)
         {
             // no op
@@ -363,7 +300,7 @@ namespace MyTrout.Pipelines.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class M3 : M1
     {
-        public M3(PipelineRequest next)
+        public M3(IPipelineRequest next)
             : base(next)
         {
             // no op
@@ -373,27 +310,16 @@ namespace MyTrout.Pipelines.Tests
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithWrongParameterType
+    public class SampleWithoutIPipelineBuilder
     {
-        public Task InvokeAsync(string context)
+        public SampleWithoutIPipelineBuilder(IPipelineRequest next)
         {
-            return Task.CompletedTask;
+            this.Next = next;
         }
-    }
 
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithTooManyParameters
-    {
-        public Task InvokeAsync(PipelineContext context, string item2)
-        {
-            return Task.CompletedTask;
-        }
-    }
+        public IPipelineRequest Next { get; }
 
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithNoParameters
-    {
-        public Task InvokeAsync()
+        public Task InvokeAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }
@@ -402,16 +328,31 @@ namespace MyTrout.Pipelines.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleWithConstructorParameter
     {
-        public SampleWithConstructorParameter(IDictionary<object, string> weirdParameter, PipelineRequest next)
+        public SampleWithConstructorParameter(IDictionary<object, string> weirdParameter, IPipelineRequest next)
         {
             this.WeirdParameter = weirdParameter ?? throw new ArgumentNullException(nameof(weirdParameter));
         }
 
-        public PipelineRequest Next { get; }
+        public IPipelineRequest Next { get; }
 
         public IDictionary<object, string> WeirdParameter { get; }
 
         public Task InvokeAsync()
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleWithAbstractPipelineImplementation : AbstractPipelineStep<SampleWithAbstractPipelineImplementation>
+    {
+        public SampleWithAbstractPipelineImplementation(ILogger<SampleWithAbstractPipelineImplementation> logger, IPipelineRequest next)
+            : base(logger, next)
+        {
+            // no op
+        }
+
+        protected override Task InvokeCoreAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }

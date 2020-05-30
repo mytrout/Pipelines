@@ -28,7 +28,6 @@ namespace MyTrout.Pipelines.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
-    using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
@@ -57,10 +56,10 @@ namespace MyTrout.Pipelines.Tests
             ILogger<StepActivator> logger = mockLogger.Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Information";
-            string expectedArgument2 = "SampleWithConstructorParameter(IDictionary`2, PipelineRequest) failed to intialize properly.";
+            string expectedArgument2 = "SampleWithConstructorParameter(IDictionary`2, IPipelineRequest) failed to intialize properly.";
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = typeof(SampleWithConstructorParameter);
-            var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
+            var pipelineRequest = new NoOpStep();
 
             var source = new StepActivator(logger, serviceProvider);
 
@@ -81,7 +80,7 @@ namespace MyTrout.Pipelines.Tests
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = typeof(SampleWithInvokeAsyncMethod);
-            var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
+            var pipelineRequest = new NoOpStep();
 
             var source = new StepActivator(logger, serviceProvider);
 
@@ -132,7 +131,7 @@ namespace MyTrout.Pipelines.Tests
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = null;
-            var nextRequest = new PipelineRequest(context => Task.CompletedTask);
+            var nextRequest = new NoOpStep();
 
             var sut = new StepActivator(logger, serviceProvider);
 
@@ -153,7 +152,7 @@ namespace MyTrout.Pipelines.Tests
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             var stepType = typeof(M1);
-            PipelineRequest nextRequest = null;
+            IPipelineRequest nextRequest = null;
 
             var sut = new StepActivator(logger, serviceProvider);
 
@@ -174,7 +173,7 @@ namespace MyTrout.Pipelines.Tests
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = typeof(SampleWithoutInvokeAsyncMethod);
-            var pipelineRequest = new PipelineRequest(context => Task.CompletedTask);
+            var pipelineRequest = new NoOpStep();
 
             var sut = new StepActivator(logger, serviceProvider);
 

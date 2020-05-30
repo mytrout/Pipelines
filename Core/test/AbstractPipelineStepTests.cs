@@ -34,7 +34,7 @@ namespace MyTrout.Pipelines.Tests
     [TestClass]
     public class AbstractPipelineStepTests
     {
-        public static Task NextAsync(PipelineContext context)
+        public static Task InvokeAsync(PipelineContext context)
         {
             return Task.CompletedTask;
         }
@@ -44,7 +44,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
 
             // act
             SampleStep result = new SampleStep(logger, next);
@@ -52,7 +52,7 @@ namespace MyTrout.Pipelines.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(AbstractPipelineStepTests.NextAsync, result.NextItem);
+            Assert.AreEqual(next, result.NextItem);
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
             SampleStepOptions options = new SampleStepOptions();
 
             // act
@@ -69,8 +69,24 @@ namespace MyTrout.Pipelines.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(AbstractPipelineStepTests.NextAsync, result.NextItem);
+            Assert.AreEqual(next, result.NextItem);
             Assert.AreEqual(options, result.Options);
+        }
+
+        [TestMethod]
+        public async Task Returns_Task_From_DisposeAsync()
+        {
+            // arrange
+            ILogger<SampleWithAbstractPipelineImplementation> logger = new Mock<ILogger<SampleWithAbstractPipelineImplementation>>().Object;
+            var source = new SampleWithAbstractPipelineImplementation(logger, new NoOpStep());
+
+            // act
+            await source.DisposeAsync();
+
+            // assert
+            Assert.IsTrue(true);
+
+            // No exceptions mean this worked appropriately.
         }
 
 #pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
@@ -80,7 +96,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
             PipelineContext context = new PipelineContext();
 
             var step = new SampleStep(logger, next);
@@ -98,7 +114,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = null;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
             string expectedParamName = nameof(logger);
 
             // act
@@ -114,7 +130,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = null;
+            IPipelineRequest next = null;
             string expectedParamName = nameof(next);
 
             // act
@@ -130,7 +146,7 @@ namespace MyTrout.Pipelines.Tests
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
             SampleStepOptions options = null;
             string expectedParamName = nameof(options);
 
@@ -150,7 +166,7 @@ namespace MyTrout.Pipelines.Tests
             // arrange
             PipelineContext context = null;
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            PipelineRequest next = AbstractPipelineStepTests.NextAsync;
+            IPipelineRequest next = new NoOpStep();
             string expectedParamName = nameof(context);
 
             var step = new SampleStep(logger, next);
@@ -172,13 +188,13 @@ namespace MyTrout.Pipelines.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleStep : AbstractPipelineStep<SampleStep>
     {
-        public SampleStep(ILogger<SampleStep> logger, PipelineRequest next)
+        public SampleStep(ILogger<SampleStep> logger, IPipelineRequest next)
             : base(logger, next)
         {
             // no op
         }
 
-        public PipelineRequest NextItem
+        public IPipelineRequest NextItem
         {
             get
             {
@@ -195,13 +211,13 @@ namespace MyTrout.Pipelines.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SampleStepWithOptions : AbstractPipelineStep<SampleStep, SampleStepOptions>
     {
-        public SampleStepWithOptions(ILogger<SampleStep> logger, SampleStepOptions options, PipelineRequest next)
+        public SampleStepWithOptions(ILogger<SampleStep> logger, SampleStepOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
-        public PipelineRequest NextItem
+        public IPipelineRequest NextItem
         {
             get
             {

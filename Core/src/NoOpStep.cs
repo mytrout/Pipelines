@@ -1,4 +1,4 @@
-﻿// <copyright file="AbstractPipelineStep{TStep,TOptions}.cs" company="Chris Trout">
+﻿// <copyright file="NoOpStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,33 +24,48 @@
 
 namespace MyTrout.Pipelines
 {
-    using Microsoft.Extensions.Logging;
     using System;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides a canonical implementation of a Pipeline Step which handles parameter validation and options.
+    /// Provides a step that does nothing.
     /// </summary>
-    /// <typeparam name="TStep">The class which implements this abstract class.</typeparam>
-    /// <typeparam name="TOptions">The class which provides configuration for this class.</typeparam>
-    public abstract class AbstractPipelineStep<TStep, TOptions> : AbstractPipelineStep<TStep>
-            where TStep : class, IPipelineRequest
-            where TOptions : class
+    public class NoOpStep : IPipelineRequest
     {
+        // NOTE TO DEVELOPERS: THIS CONSTRUCTOR DOES NOT HAVE ANY CODE.
+        //                     IF THAT CHANGES, UNIT TESTS WILL NEED TO BE WRITTEN.
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractPipelineStep{TStep,TOptions}" /> class with the requested parameters.
+        /// Initializes a new instance of the <see cref="NoOpStep" /> class.
         /// </summary>
-        /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
-        /// <param name="options">THe options to configure this pipeline.</param>
-        protected AbstractPipelineStep(ILogger<TStep> logger, TOptions options, IPipelineRequest next)
-            : base(logger, next)
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+        public NoOpStep()
         {
-            this.Options = options ?? throw new ArgumentNullException(nameof(options));
+            // no op
         }
 
         /// <summary>
-        /// Gets the options that configure this pipeline step.
+        /// Disposes of nothing since this step does nothing.
         /// </summary>
-        public TOptions Options { get; }
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
+
+        /// <summary>
+        /// Provides a step that does nothing.
+        /// </summary>
+        /// <param name="context">The <see cref="PipelineContext">context</see> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        public Task InvokeAsync(PipelineContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

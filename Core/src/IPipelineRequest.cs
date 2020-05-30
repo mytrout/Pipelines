@@ -1,4 +1,4 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="IPipelineRequest.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -25,18 +25,18 @@
 namespace MyTrout.Pipelines
 {
     using System;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Provides a standard pipeline request with asynchronous disposal.
     /// </summary>
-    public interface IStepActivator
+    public interface IPipelineRequest : IAsyncDisposable
     {
         /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+        /// Invokes the pipeline.
         /// </summary>
-        /// <param name="stepType">The type to be constructed.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(Type stepType, IPipelineRequest nextRequest);
+        /// <param name="context">The context for the pipeline.</param>
+        /// <returns>A <see cref="Task" /> that completes when the pipeline is completed.</returns>
+        public Task InvokeAsync(PipelineContext context);
     }
 }

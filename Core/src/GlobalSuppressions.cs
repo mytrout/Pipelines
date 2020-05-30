@@ -1,4 +1,4 @@
-﻿// <copyright file="PipelineDelegate.cs" company="Chris Trout">
+﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,14 +22,4 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
-{
-    using System.Threading.Tasks;
-
-    /// <summary>
-    /// Provides the delegate used for building a Pipeline.
-    /// </summary>
-    /// <param name="context">The context passed during pipeline execution.</param>
-    /// <returns>A <see cref="Task" />.</returns>
-    public delegate Task PipelineRequest(PipelineContext context);
-}
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller to PipelineBuilder.Build() should dispose of this instance.", Scope = "member", Target = "~M:MyTrout.Pipelines.PipelineBuilder.Build(MyTrout.Pipelines.IStepActivator)~MyTrout.Pipelines.PipelineRequestDelegate")]

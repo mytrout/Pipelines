@@ -1,4 +1,4 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="PipelineRequestDelegate.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,19 +24,12 @@
 
 namespace MyTrout.Pipelines
 {
-    using System;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Provides the delegate used for building a Pipeline.
     /// </summary>
-    public interface IStepActivator
-    {
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="stepType">The type to be constructed.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(Type stepType, IPipelineRequest nextRequest);
-    }
+    /// <param name="context">The context passed during pipeline execution.</param>
+    /// <returns>A <see cref="Task" />.</returns>
+    public delegate Task PipelineRequestDelegate(PipelineContext context);
 }

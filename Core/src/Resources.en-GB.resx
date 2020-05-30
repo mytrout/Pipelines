@@ -123,9 +123,6 @@
   <data name="CONTEXT_CANNOT_BE_CONSTRUCTED" xml:space="preserve">
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
-  <data name="METHOD_NOT_FOUND" xml:space="preserve">
-    <value>Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.</value>
-  </data>
   <data name="NULL_MIDDLEWARE" xml:space="preserve">
     <value>A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.</value>
   </data>
@@ -137,6 +134,9 @@
   </data>
   <data name="TYPE_MUST_BE_REFERENCE" xml:space="preserve">
     <value>'{0}' must be a reference type.</value>
+  </data>
+  <data name="TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST" xml:space="preserve">
+    <value>'{0} must implement the IPipelineRequest interface.</value>
   </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
     <value>Smoke Test (en-GB)</value>

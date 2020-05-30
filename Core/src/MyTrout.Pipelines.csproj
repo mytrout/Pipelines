@@ -89,4 +89,24 @@
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.LegacyThreadSwitchingMembers.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadAssertingMethods.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadSwitchingMethods.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MembersRequiringMainThread.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="DisposablePipelineRequest.cs" />
+  </ItemGroup>
+  
 </Project>

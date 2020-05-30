@@ -32,15 +32,15 @@ namespace MyTrout.Pipelines
     /// Provides a canonical implementation of a Pipeline Step which handles parameter validation.
     /// </summary>
     /// <typeparam name="TStep">The class which implements this abstract class.</typeparam>
-    public abstract class AbstractPipelineStep<TStep>
-            where TStep : class
+    public abstract class AbstractPipelineStep<TStep> : IPipelineRequest
+            where TStep : class, IPipelineRequest
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AbstractPipelineStep{TStep}" /> class with the requested parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        protected AbstractPipelineStep(ILogger<TStep> logger, PipelineRequest next)
+        protected AbstractPipelineStep(ILogger<TStep> logger, IPipelineRequest next)
         {
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.Next = next ?? throw new ArgumentNullException(nameof(next));
@@ -54,7 +54,17 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets the next step in the pipeline.
         /// </summary>
-        protected PipelineRequest Next { get; }
+        protected IPipelineRequest Next { get; }
+
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        /// <remarks>Developers who need to dispose of unmanaged resources should override this method.</remarks>
+        public virtual ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
 
         /// <summary>
         /// Invokes a step in the pipeline.

@@ -28,26 +28,23 @@ namespace MyTrout.Pipelines
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Builds the Pipeline by adding different step implenentations.
     /// </summary>
     public class PipelineBuilder
     {
+        // NOTE TO DEVELOPERS: If the PipelineBuilder constructor changes, then remove the
+        //                     ExcludeFromCodeCoverage attribute and write unit tests.
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PipelineBuilder" /> class.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public PipelineBuilder()
         {
             // no op
         }
-
-        /// <summary>
-        /// Gets the name of the method used by the pipeline.
-        /// </summary>
-        public virtual string MethodName => "InvokeAsync";
 
         /// <summary>
         /// Gets the types registered as Step for the Pipeline.
@@ -60,7 +57,7 @@ namespace MyTrout.Pipelines
         /// <typeparam name="T">The generic type to add to the pipeline.</typeparam>
         /// <returns>Returns a <see cref="PipelineBuilder" /> with the Step type added.</returns>
         public PipelineBuilder AddStep<T>()
-            where T : class
+            where T : class, IPipelineRequest
         {
             return this.AddStep(typeof(T));
         }
@@ -84,10 +81,13 @@ namespace MyTrout.Pipelines
                 throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType)));
             }
 
-            var method = stepType.GetMethod(this.MethodName);
-            this.ValidateMethod(stepType, method);
+            if (!typeof(IPipelineRequest).IsAssignableFrom(stepType))
+            {
+                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType)));
+            }
 
             this.StepTypes.Push(stepType);
+
             return this;
         }
 
@@ -96,7 +96,7 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="stepActivator">The service used to initialize instances of step.</param>
         /// <returns>A pipeline to execute.</returns>
-        public PipelineRequest Build(IStepActivator stepActivator)
+        public IPipelineRequest Build(IStepActivator stepActivator)
         {
             if (stepActivator == null)
             {
@@ -104,7 +104,7 @@ namespace MyTrout.Pipelines
             }
 
             // Configures the "final" delegate in the Pipeline.
-            var nextRequest = new PipelineRequest(context => Task.CompletedTask);
+            IPipelineRequest nextRequest = new NoOpStep();
 
             while (this.StepTypes.Any())
             {
@@ -115,35 +115,18 @@ namespace MyTrout.Pipelines
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                object nextInstance = stepActivator.CreateInstance(stepType, nextRequest);
+                IPipelineRequest nextInstance = stepActivator.CreateInstance(stepType, nextRequest) as IPipelineRequest;
 
                 if (nextInstance == null)
                 {
-                    throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, stepType.Name));
+                    throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, stepType.Name));
                 }
 
-                // if the IStepActivator returns a different type for any reason,
-                // using nextInstance.GetType() guarantees it contains the correct MethodName.
-                var nextInvoke = nextInstance.GetType().GetMethod(this.MethodName);
-                this.ValidateMethod(nextInstance.GetType(), nextInvoke);
-
-                nextRequest = (PipelineRequest)nextInvoke.CreateDelegate(typeof(PipelineRequest), nextInstance);
+                // Setting up for the next loop...
+                nextRequest = nextInstance;
             }
 
             return nextRequest;
-        }
-
-        private void ValidateMethod(Type originatingType, MethodInfo method)
-        {
-            var parameters = method?.GetParameters();
-            if (method == null
-                    || parameters == null
-                    || parameters.Length != 1
-                    || parameters[0].ParameterType != typeof(PipelineContext)
-                    || method.ReturnType != typeof(Task))
-            {
-                throw new InvalidOperationException(Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, originatingType.Name, this.MethodName));
-            }
         }
     }
 }
