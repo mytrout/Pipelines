@@ -1,3 +1,5 @@
+name: 'Pipelines.Steps.Azure.ServiceBus.$(date:yyyyMMdd).$(rev:.r)'
+
 trigger:
   branches:
     include:
@@ -39,7 +41,6 @@ steps:
     feedsToUse: 'select'
     includeNuGetOrg: true
     restoreSolution: '$(solution)'
-    vstsFeed: '$(publishVstsFeed)'
 
 - task: SonarCloudPrepare@1
   inputs:

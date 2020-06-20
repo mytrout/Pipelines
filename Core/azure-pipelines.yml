@@ -1,10 +1,12 @@
+name: 'Pipelines.Core.$(Date:yyyyMMdd)$(Rev:.r)'
+
 trigger:
   branches:
     include:
     - master
   paths:
     include:
-    - Core
+    - Core/**
     exclude:
     - README.md
     - License.md
@@ -39,7 +41,6 @@ steps:
     feedsToUse: 'select'
     includeNuGetOrg: true
     restoreSolution: '$(solution)'
-    vstsFeed: '$(publishVstsFeed)'
     
 - task: SonarCloudPrepare@1
   inputs:
