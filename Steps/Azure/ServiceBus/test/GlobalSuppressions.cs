@@ -1,4 +1,4 @@
-﻿// <copyright file="ConvertJsonDocumentToAzureMessageOptions.cs" company="Chris Trout">
+﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -21,25 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
-{
-    using Microsoft.Azure.ServiceBus;
-    using System.Collections.Generic;
-    using System.Text.Json;
 
-    /// <summary>
-    /// Options for converting a <see cref="JsonDocument" /> to an Azure <see cref="Message" />.
-    /// </summary>
-    public class ConvertJsonDocumentToAzureMessageOptions
-    {
-        /// <summary>
-        /// Gets or sets the pipeline context key to retrieve the <see cref="JsonDocument" />.
-        /// </summary>
-        public string JsonDocumentKey { get; set; }
-
-        /// <summary>
-        /// Gets the UserProperties that should be loaded from the <see cref="JsonDocument" /> to the <see cref="Message" />.
-        /// </summary>
-        public IList<string> UserPropertyNames { get; } = new List<string>();
-    }
-}
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This method is a delegate definition.  All parameters are required.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests.ReadMessageFromAzureSubscriptionStepTests.AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This method is a delegate definition.  All parameters are required.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests.ReadMessageFromAzureSubscriptionStepTests.TestHandlerWithContextAsync(Microsoft.Extensions.Logging.ILogger{MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep},Microsoft.Azure.ServiceBus.ISubscriptionClient,MyTrout.Pipelines.PipelineContext,Microsoft.Azure.ServiceBus.Message,System.Threading.CancellationToken[])~System.Threading.Tasks.Task{System.Boolean}")]

@@ -21,13 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Provides user-configurable options for the <see cref="WriteMessageToAzureTopicStep" /> step.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class WriteMessageToAzureTopicOptions
     {
+        /// <summary>
+        /// Gets or sets the connection string for Azure Service Bus.
+        /// </summary>
         public string AzureServiceBusConnectionString { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the Topic Name to which the message will be written.
+        /// </summary>
         public string TopicName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets UserProperty names that will be added to the Message from <see cref="PipelineContext" />, if they are available.
+        /// </summary>
+        public IEnumerable<string> UserProperties { get; set; } = new List<string>();
     }
 }

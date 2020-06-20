@@ -26,14 +26,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Reads a single message from an Azure Service Bus subscription.
     /// </summary>
-    public class ReadMessageFromAzureSubscriptionStep : AbstractPipelineStep<ReadMessageFromAzureSubscriptionStep>
+    public class ReadMessageFromAzureSubscriptionStep : AbstractPipelineStep<ReadMessageFromAzureSubscriptionStep, ReadMessageFromAzureSubscriptionOptions>
     {
+        private Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, PipelineContext, CancellationToken[], Task<bool>> evaluateHandler = ReadMessageFromAzureSubscriptionStep.EvaluateCancellationOfMessageAsync;
+
         private DateTimeOffset lastMessageProcessedAt;
 
         /// <summary>
@@ -41,21 +46,125 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public ReadMessageFromAzureSubscriptionStep(ILogger<ReadMessageFromAzureSubscriptionStep> logger, PipelineRequest next, ReadMessageFromAzureSubscriptionOptions options)
-            : base(logger, next)
+        /// <param name="options">Step-specific options for altering behavior.</param>
+        public ReadMessageFromAzureSubscriptionStep(ILogger<ReadMessageFromAzureSubscriptionStep> logger, IPipelineRequest next, ReadMessageFromAzureSubscriptionOptions options)
+            : base(logger, options, next)
         {
-            this.Options = options ?? throw new ArgumentNullException(nameof(options));
+            this.Logger.LogDebug($"Building connection to Azure Service Bus subscription '{this.Options.SubscriptionName}' on topic '{this.Options.TopicName}'.");
+
+            this.SubscriptionClient = new SubscriptionClient(
+                                            this.Options.AzureServiceBusConnectionString,
+                                            this.Options.TopicName,
+                                            this.Options.SubscriptionName,
+                                            ReceiveMode.PeekLock,
+                                            RetryPolicy.Default);
         }
 
         /// <summary>
-        /// Gets the options to alter behavior or provide configuration for the <see cref="ReadMessageFromAzureSubscriptionStep"/> class.
+        /// Gets or sets the function to evaluate cancellation tokens in the ProcessMessagesAsync method.
         /// </summary>
-        public ReadMessageFromAzureSubscriptionOptions Options { get; }
-
-        private static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, PipelineContext context)
+        /// <remarks>
+        /// This property is used for unit testing only and is not available during the normal pipeline building process.
+        /// </remarks>
+        public Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, PipelineContext, CancellationToken[], Task<bool>> EvaluateCancellationTokenHandler
         {
+            get
+            {
+                return this.evaluateHandler;
+            }
+            set
+            {
+                this.evaluateHandler = value ?? throw new ArgumentNullException(nameof(value));
+            }
+        }
+
+        /// <summary>
+        /// Gets the subscription client for Azure Service Bus.
+        /// </summary>
+        private ISubscriptionClient SubscriptionClient { get; }
+
+        /// <summary>
+        /// Evaluate whether a message should be cancelled.
+        /// </summary>
+        /// <param name="logger">The logger to report the cancellation.</param>
+        /// <param name="subscriptionClient">The Azure <see cref="SubscriptionClient"/> from which the message was received.</param>
+        /// <param name="message">The <see cref="Message"/> to be cancelled.</param>
+        /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
+        /// <returns></returns>
+        public static async Task<bool> EvaluateCancellationOfMessageAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, PipelineContext context, params CancellationToken[] tokens)
+        {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (subscriptionClient == null)
+            {
+                throw new ArgumentNullException(nameof(subscriptionClient));
+            }
+
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            if (tokens == null)
+            {
+                throw new ArgumentNullException(nameof(tokens));
+            }
+
+            bool result = tokens.Any(x => x.IsCancellationRequested);
+
+            try
+            {
+                if (result)
+                {
+                    logger.LogDebug(Resources.CANCELLATION_REQUESTED(CultureInfo.CurrentCulture, nameof(ReadMessageFromAzureSubscriptionStep)));
+                    await subscriptionClient.AbandonAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
+                }
+            }
+            catch (Exception exc)
+            {
+                context.Errors.Add(exc);
+            }
+
+            return await Task.FromResult(result).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="exceptionReceivedEventArgs"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, PipelineContext context)
+        {
+            if (exceptionReceivedEventArgs == null)
+            {
+                throw new ArgumentNullException(nameof(exceptionReceivedEventArgs));
+            }
+
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             context.Errors.Add(exceptionReceivedEventArgs.Exception);
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Dispose of any unmanaged resources.
+        /// </summary>
+        /// <returns>A completed <see cref="ValueTask"/>.</returns>
+        public async override ValueTask DisposeAsync()
+        {
+            await this.SubscriptionClient.CloseAsync().ConfigureAwait(false);
+            await base.DisposeAsync();
         }
 
         /// <summary>
@@ -63,71 +172,52 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeAsyncCore(PipelineContext context)
+        protected override async Task InvokeCoreAsync(PipelineContext context)
         {
             this.lastMessageProcessedAt = DateTimeOffset.UtcNow;
 
-            ISubscriptionClient subscriptionClient = null;
-
-            try
+            // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
+            var messageHandlerOptions = new MessageHandlerOptions((ExceptionReceivedEventArgs args) =>
+                                                ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(args, context))
             {
-                this.Logger.LogDebug($"Building connection to Azure Service Bus subscription '{this.Options.SubscriptionName}' on topic '{this.Options.TopicName}'.");
+                // Allow 1 concurrent call to simplify pipeline processing.
+                MaxConcurrentCalls = 1,
+                // Handle the message completion manually within the ProcessMessageAsync() call.
+                AutoComplete = false
+            };
 
-                subscriptionClient = new SubscriptionClient(
-                                            this.Options.AzureServiceBusConnectionString,
-                                            this.Options.TopicName,
-                                            this.Options.SubscriptionName,
-                                            ReceiveMode.PeekLock,
-                                            RetryPolicy.Default);
+            this.Logger.LogDebug("Hooking up the messaging processing handler and exception handler.");
 
-                // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
-                var messageHandlerOptions = new MessageHandlerOptions(
-                                                (ExceptionReceivedEventArgs args) =>
-                                                    ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(args, context))
-                {
-                    // Allow 1 concurrent call to simplify pipeline processing.
-                    MaxConcurrentCalls = 1,
-                    // Handle the message completion manually within the ProcessMessageAsync() call.
-                    AutoComplete = false
-                };
+            this.SubscriptionClient.RegisterMessageHandler(
+                        (Message message, CancellationToken token) =>
+                            this.ProcessMessagesAsync(message, context, token),
+                        messageHandlerOptions);
 
-                this.Logger.LogDebug("Hooking up the messaging processing handler and exception handler.");
-
-                subscriptionClient.RegisterMessageHandler(
-                            (Message message, CancellationToken token) =>
-                                this.ProcessMessagesAsync(message, token, subscriptionClient, context),
-                            messageHandlerOptions);
-
-                // Check periodically to determine if this process should stop checking for messages.
-                while (DateTimeOffset.UtcNow.Subtract(this.lastMessageProcessedAt) >= this.Options.TimeToWaitForNewMessage)
-                {
-                    this.Logger.LogDebug($"Entering wait state for {this.Options.TimeToWaitForNewMessage} to see if additional messages can be read.");
-
-                    await Task.Delay(this.Options.TimeToWaitBetweenMessageChecks, context.CancellationToken).ConfigureAwait(false);
-                }
-            }
-            catch (Exception exc)
+            // Check periodically to determine if this process should stop checking for messages.
+            while (DateTimeOffset.UtcNow.Subtract(this.lastMessageProcessedAt) <= this.Options.TimeToWaitForNewMessage)
             {
-                this.Logger.LogError(exc, $"Exception thrown in '{nameof(ReadMessageFromAzureSubscriptionStep)}'.");
-                context.Errors.Add(exc);
-            }
-            finally
-            {
-                await subscriptionClient.CloseAsync().ConfigureAwait(false);
+                this.Logger.LogDebug($"Entering wait state for {this.Options.TimeToWaitForNewMessage} to see if additional messages can be read.");
+
+                await Task.Delay(this.Options.TimeToWaitBetweenMessageChecks, context.CancellationToken).ConfigureAwait(false);
             }
         }
 
-        private async Task ProcessMessagesAsync(Message message, CancellationToken token, ISubscriptionClient subscriptionClient, PipelineContext context)
+        private async Task ProcessMessagesAsync(Message message, PipelineContext context, CancellationToken token)
         {
-            if (token.IsCancellationRequested || context.CancellationToken.IsCancellationRequested)
+            // If this method returns true, then cancellation has been requested.
+            if (await this.EvaluateCancellationTokenHandler.Invoke(
+                                            this.Logger,
+                                            this.SubscriptionClient,
+                                            message,
+                                            context,
+                                            new CancellationToken[2]
+                                            {
+                                                token,
+                                                context.CancellationToken
+                                            }).ConfigureAwait(false))
             {
-                this.Logger.LogDebug($"Cancellation requested while executing {nameof(ReadMessageFromAzureSubscriptionStep)}.");
-
-                // Guarantees that the next periodic check in InvokeAsyncCore will fail.
+                // Forces the Message wait loop to exit at the next check, if the cancellationToken hasn't forced and exit.
                 this.lastMessageProcessedAt = DateTimeOffset.MinValue;
-
-                await subscriptionClient.AbandonAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
-
                 return;
             }
 
@@ -135,30 +225,61 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             int errorCount = context.Errors.Count;
 
-            context.Items.TryGetValue(Constants.ReceivedMessage, out var previousMessage);
+            context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out var previousMessage);
+
+            bool configuredTheCorrelationId = false;
+
+            // Set up the CorrelationId, if it doesn't exist.
+            if (!context.Items.ContainsKey(WriteMessageToAzureTopicStep.CORRELATION_ID))
+            {
+                context.Items.Add(WriteMessageToAzureTopicStep.CORRELATION_ID, message.CorrelationId);
+                configuredTheCorrelationId = true;
+            }
 
             try
             {
                 if (previousMessage != null)
                 {
-                    context.Items.Remove(Constants.ReceivedMessage);
+                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
 
-                context.Items.Add(Constants.ReceivedMessage, message);
+                // Add the values in UserProperties to the context.
+                foreach (var key in this.Options.UserProperties)
+                {
+                    if (message.UserProperties.ContainsKey(key))
+                    {
+                        context.Items.Add(key, message.UserProperties[key]);
+                    }
+                }
 
-                await this.Next.Invoke(context).ConfigureAwait(false);
+                // Load inputStream and pass it into the InvokeAsync().
+                using (var inputStream = new MemoryStream(message.Body))
+                {
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
 
-                context.Items.Remove(Constants.ReceivedMessage);
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
+                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
+                }
+
+                // Remove the values in UserProperties from the context.
+                foreach (var key in this.Options.UserProperties)
+                {
+                    if (message.UserProperties.ContainsKey(key))
+                    {
+                        context.Items.Remove(key);
+                    }
+                }
 
                 if (context.Errors.Count > errorCount)
                 {
                     // Abandon the message because it did not process correctly.
-                    await subscriptionClient.AbandonAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
+                    await this.SubscriptionClient.AbandonAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
                 }
                 else
                 {
                     // Complete the message so that it is not received again.
-                    await subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
+                    await this.SubscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
                 }
             }
             catch (Exception exc)
@@ -167,14 +288,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
             finally
             {
+                if (configuredTheCorrelationId)
+                {
+                    context.Items.Remove(WriteMessageToAzureTopicStep.CORRELATION_ID);
+                }
+
                 if(previousMessage != null)
                 {
-                    if (context.Items.ContainsKey(Constants.ReceivedMessage))
+                    if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
                     {
-                        context.Items.Remove(Constants.ReceivedMessage);
+                        context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                     }
 
-                    context.Items.Add(Constants.ReceivedMessage, previousMessage);
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousMessage);
                 }
             }
         }

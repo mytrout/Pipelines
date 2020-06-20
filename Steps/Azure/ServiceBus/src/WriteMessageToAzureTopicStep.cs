@@ -27,69 +27,64 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     using Microsoft.Extensions.Logging;
     using System;
     using System.Globalization;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Writes a single message to an Azure Service Bus topic.
     /// </summary>
-    public class WriteMessageToAzureTopicStep : AbstractPipelineStep<WriteMessageToAzureTopicStep>
+    public class WriteMessageToAzureTopicStep : AbstractPipelineStep<WriteMessageToAzureTopicStep, WriteMessageToAzureTopicOptions>
     {
+        /// <summary>
+        /// Gets the Correlation ID of the message.
+        /// </summary>
+        public const string CORRELATION_ID = "CorrelationId";
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="WriteMessageToAzureTopicStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public WriteMessageToAzureTopicStep(ILogger<WriteMessageToAzureTopicStep> logger, PipelineRequest next, WriteMessageToAzureTopicOptions options)
-            : base(logger, next)
+        /// <param name="options">Step-specific options for altering behavior.</param>
+        public WriteMessageToAzureTopicStep(ILogger<WriteMessageToAzureTopicStep> logger, WriteMessageToAzureTopicOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
-            this.Options = options ?? throw new ArgumentNullException(nameof(options));
+            this.Logger.LogDebug($"Building connection to Azure Service Bus topic '{this.Options.TopicName}'.");
+
+            this.TopicClient = new TopicClient(this.Options.AzureServiceBusConnectionString, this.Options.TopicName, RetryPolicy.Default);
         }
 
+        private ITopicClient TopicClient { get;  }
+
         /// <summary>
-        /// Gets the options to alter behavior or provide configuration for the <see cref="ConvertJsonDocumentToAzureMessageStep"/> class.
+        /// Dispose of the <see cref="TopicClient"/>.
         /// </summary>
-        public WriteMessageToAzureTopicOptions Options { get; }
+        /// <returns>A completed <see cref="ValueTask"/>.</returns>
+        public override async ValueTask DisposeAsync()
+        {
+            await this.TopicClient.CloseAsync().ConfigureAwait(false);
+            await base.DisposeAsync().ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Writes a single message to an Azure Service Bus topic.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Logging messages do not need to be localized.")]
-        protected override async Task InvokeAsyncCore(PipelineContext context)
+        protected override async Task InvokeCoreAsync(PipelineContext context)
         {
-            if (context.Items.TryGetValue(Constants.SendMessage, out var messageObject)
-                    && messageObject is Message)
+            if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM)
+                    && context.Items[PipelineContextConstants.OUTPUT_STREAM] is Stream)
             {
-                Message message = messageObject as Message;
+                Message message = this.ConstructMessage(context);
 
-                ITopicClient topicClient = null;
+                this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
 
-                try
-                {
-                    this.Logger.LogDebug($"Building connection to Azure Service Bus topic '{this.Options.TopicName}'.");
+                await this.TopicClient.SendAsync(message).ConfigureAwait(false);
 
-                    topicClient = new TopicClient(this.Options.AzureServiceBusConnectionString, this.Options.TopicName, RetryPolicy.Default);
+                this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
 
-                    this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
-
-                    await topicClient.SendAsync(message).ConfigureAwait(false);
-
-                    this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
-
-                    await this.Next(context).ConfigureAwait(false);
-
-                    context.Items.Remove(Constants.SendMessage);
-                }
-                catch (Exception exc)
-                {
-                    this.Logger.LogError(exc, $"Exception thrown in '{nameof(WriteMessageToAzureTopicStep)}'.");
-                    context.Errors.Add(exc);
-                }
-                finally
-                {
-                    topicClient?.CloseAsync();
-                }
+                await this.Next.InvokeAsync(context).ConfigureAwait(false);
             }
             else
             {
@@ -97,6 +92,84 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 this.Logger.LogError(exc, $"Exception created in '{nameof(WriteMessageToAzureTopicStep)}'.");
                 context.Errors.Add(exc);
             }
+        }
+
+        /// <summary>
+        /// Converts a <see cref="System.IO.Stream" /> into a byte array.
+        /// </summary>
+        /// <param name="inputStream"><see cref="System.IO.Stream" /> to be converted.</param>
+        /// <returns>A byte array.</returns>
+        /// <remarks>
+        /// <para>
+        ///     This method has a short-cut if the <paramref name="inputStream"/> is a <see cref="MemoryStream" /> to avoid the copy operation.
+        /// </para>
+        /// <para>
+        /// <paramref name="inputStream"/> cannot be <see langword="null" />.
+        /// </para>
+        /// </remarks>
+        private static byte[] ConvertStreamToByteArray(Stream inputStream)
+        {
+            inputStream.Position = 0;
+
+            // The implementation of this method has been altered to guarantee that memoryStrem is never null.
+            // This boolean check guarantees that the incoming inputStream is copied into a MemoryStream, only if needed.
+            bool isMemoryStream = inputStream is MemoryStream;
+
+            MemoryStream memoryStream = (inputStream as MemoryStream) ?? new MemoryStream();
+
+            try
+            {
+                if(!isMemoryStream)
+                {
+                    inputStream.CopyToAsync(memoryStream);
+                }
+
+                return memoryStream.ToArray();
+            }
+            finally
+            {
+                memoryStream.Close();
+            }
+        }
+
+        /// <summary>
+        /// Constructs an Azure Message with the values from the <paramref name="context"/> based on the user-configured options.
+        /// </summary>
+        /// <param name="context">The <see cref="PipelineContext" /> for the currently executing pipeline.</param>
+        /// <returns>An Azure <see cref="Message" />.</returns>
+        private Message ConstructMessage(PipelineContext context)
+        {
+            var inputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            byte[] messageBody = WriteMessageToAzureTopicStep.ConvertStreamToByteArray(inputStream);
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            Message result = new Message(messageBody);
+
+            if (context.Items.ContainsKey(WriteMessageToAzureTopicStep.CORRELATION_ID))
+            {
+                result.CorrelationId = context.Items[WriteMessageToAzureTopicStep.CORRELATION_ID].ToString();
+            }
+            else
+            {
+                result.CorrelationId = context.CorrelationId.ToString();
+            }
+
+            // Sets UserProperties aka Filter Values on the Message, if they are available in the context.
+            foreach (var userProperty in this.Options.UserProperties)
+            {
+                if (context.Items.ContainsKey(userProperty))
+                {
+                    result.UserProperties.Add(userProperty, context.Items[userProperty]);
+                }
+                else
+                {
+                    this.Logger.LogDebug("PipelineContext: '{result.CorrelationId}' did not contain the user property: '{userProperty}'", result.CorrelationId, userProperty);
+                }
+            }
+
+            return result;
         }
     }
 }

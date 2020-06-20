@@ -151,6 +151,21 @@ namespace MyTrout.Pipelines.Hosting.Tests
             return this.next(context);
         }
     }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class TestingStepException
+    {
+        private readonly PipelineRequest next = null;
+
+        public TestingStepException(PipelineRequest next) => this.next = next;
+
+        public static int ExecutionCount { get; set; } = 0;
+
+        public Task InvokeAsync(PipelineContext context)
+        {
+            throw new InvalidOperationException("Try to destroy the service.");
+        }
+    }
 #pragma warning restore CA1801 // Remove unused parameter
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1822 // Mark members as static

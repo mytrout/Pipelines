@@ -24,17 +24,41 @@
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
     using System;
+    using System.Collections.Generic;
 
+    /// <summary>
+    /// Provides user-configurable options for the <see cref="ReadMessageFromAzureSubscriptionStep" /> step.
+    /// </summary>
     public class ReadMessageFromAzureSubscriptionOptions
     {
+        /// <summary>
+        /// Gets or sets the connection string for Azure Service Bus.
+        /// </summary>
         public string AzureServiceBusConnectionString { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the name of the topic to which the subscription belongs.
+        /// </summary>
         public string TopicName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the name of the subscription from which to read messages.
+        /// </summary>
         public string SubscriptionName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the time this step will wait for a new message until it times out.
+        /// </summary>
         public TimeSpan TimeToWaitForNewMessage { get; set; } = new TimeSpan(0, 1, 0);
 
-        public TimeSpan TimeToWaitBetweenMessageChecks { get; set; } = new TimeSpan(0, 0, 5);
+        /// <summary>
+        /// Gets or sets the time to wait between message checks.
+        /// </summary>
+        public TimeSpan TimeToWaitBetweenMessageChecks { get; set; } = new TimeSpan(0, 0, 2);
+
+        /// <summary>
+        /// Gets or sets UserProperty names that will be added to the Message from <see cref="PipelineContext" />, if they are available.
+        /// </summary>
+        public IEnumerable<string> UserProperties { get; set; } = new List<string>();
     }
 }

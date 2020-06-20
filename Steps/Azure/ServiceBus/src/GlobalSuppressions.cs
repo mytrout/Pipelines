@@ -1,5 +1,4 @@
-﻿// <copyright file="Constants.cs" company="Chris Trout">
-// MIT License
+﻿// MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
 //
@@ -21,21 +20,5 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
-{
-    /// <summary>
-    /// Constants for Azure Service Bus Steps.
-    /// </summary>
-    public static class Constants
-    {
-        /// <summary>
-        /// Reserved constant for a single Azure Service Bus Received Message.
-        /// </summary>
-        public const string ReceivedMessage = "RESERVED_RECEIVED_MESSAGE";
-
-        /// <summary>
-        /// Reserved constant for a single Azure Service Bus message ready to send.
-        /// </summary>
-        public const string SendMessage = "RESERVED_SEND_MESSAGE";
-    }
-}
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles this check in the InvokeAsync() method.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.WriteMessageToAzureTopicStep.InvokeCoreAsync(MyTrout.Pipelines.PipelineContext)~System.Threading.Tasks.Task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles this check in the InvokeAsync() method.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep.InvokeCoreAsync(MyTrout.Pipelines.PipelineContext)~System.Threading.Tasks.Task")]// <copyright file="GlobalSuppressions.cs" company="Chris Trout">

@@ -101,6 +101,7 @@ namespace MyTrout.Pipelines.Hosting
             return Task.CompletedTask;
         }
 
+
         /// <summary>
         /// Forces the OnApplicationStartedAsync to be run synchronously and block the calling thread.
         /// </summary>

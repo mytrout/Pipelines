@@ -29,6 +29,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using System;
+    using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
@@ -57,6 +58,36 @@ namespace MyTrout.Pipelines.Hosting.Tests
             Assert.AreEqual(logger, result.Logger);
             Assert.AreEqual(pipelineBuilders, result.PipelineBuilders);
             Assert.AreEqual(stepActivator, result.StepActivator);
+        }
+
+        [TestMethod]
+        public async Task Successfully_Catches_An_Exception_During_Pipeline_Run_Without_Crashing_PipelineServiceHost()
+        {
+            // arrange
+            string[] args = Array.Empty<string>();
+            PipelineBuilder[] pipelineBuilders = new PipelineBuilder[1]
+            {
+                new PipelineBuilder()
+                        .AddStep<TestingStep1>()
+                        .AddStep<TestingStep1>()
+                        .AddStep<TestingStepException>()
+            };
+
+            var host = Host.CreateDefaultBuilder(args)
+                            .UsePipelines(pipelineBuilders)
+                            .Build();
+
+            var expectedExecutionCount = 2;
+
+            // act
+            await host.RunAsync().ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(expectedExecutionCount, TestingStep1.ExecutionCount);
+
+            /* DEVELOPERS NOTE: If the test does not throw an Unhandled Exception,
+             * then it was successful.
+             */
         }
 
         [TestMethod]

@@ -89,6 +89,32 @@ namespace MyTrout.Pipelines.Tests
             // No exceptions mean this worked appropriately.
         }
 
+        [TestMethod]
+#pragma warning disable VSTHRD200 // Suppressed because the Async is part of the name of the method generating the exception
+        public void Returns_Context_Errors_From_InvokeAsync_When_Exception_Is_Thrown_In_InvokeCoreAsync()
+#pragma warning restore VSTHRD200 // Suppressed because the Async is part of the name of the method generating the exception
+        {
+            // arrange
+            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            PipelineContext context = new PipelineContext();
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Throws(new InvalidCastException());
+            IPipelineRequest next = mockNext.Object;
+
+            var step = new SampleStepCallingNext(logger, next);
+
+            int errorCount = 1;
+
+            // act
+            var result = step.InvokeAsync(context);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(errorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidCastException));
+            Assert.AreEqual(Task.CompletedTask, result);
+        }
+
 #pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public void Returns_Task_From_InvokeAsync()
@@ -108,6 +134,8 @@ namespace MyTrout.Pipelines.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(Task.CompletedTask, result);
         }
+
+
 
         [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Parameter_Is_Null()
@@ -228,6 +256,29 @@ namespace MyTrout.Pipelines.Tests
         protected override Task InvokeCoreAsync(PipelineContext context)
         {
             return Task.CompletedTask;
+        }
+    }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleStepCallingNext : AbstractPipelineStep<SampleStep>
+    {
+        public SampleStepCallingNext(ILogger<SampleStep> logger, IPipelineRequest next)
+            : base(logger, next)
+        {
+            // no op
+        }
+
+        public IPipelineRequest NextItem
+        {
+            get
+            {
+                return this.Next;
+            }
+        }
+
+        protected override Task InvokeCoreAsync(PipelineContext context)
+        {
+            return this.Next.InvokeAsync(context);
         }
     }
 

@@ -79,7 +79,15 @@ namespace MyTrout.Pipelines
                 throw new ArgumentNullException(nameof(context));
             }
 
-            return this.InvokeCoreAsync(context);
+            try
+            {
+                return this.InvokeCoreAsync(context);
+            }
+            catch (Exception exc)
+            {
+                context.Errors.Add(exc);
+                return Task.CompletedTask;
+            }
         }
 
         /// <summary>

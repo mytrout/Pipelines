@@ -32,6 +32,15 @@ steps:
 - task: NuGetToolInstaller@1
   displayName: 'Install latest version of NuGet tools.'
 
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreSolution: '$(solution)'
+    vstsFeed: '$(publishVstsFeed)'
+
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: '$(sonarCloudConnectionName)'
