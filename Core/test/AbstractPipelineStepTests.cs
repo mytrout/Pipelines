@@ -135,8 +135,6 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(Task.CompletedTask, result);
         }
 
-
-
         [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Parameter_Is_Null()
         {
