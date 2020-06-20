@@ -23,7 +23,7 @@ variables:
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
-  publishVstsFeed: 'mytrout'
+  publishVstsFeed: 'Pipelines/mytrout'
   sonarCloudConnectionName: 'SonarCloud.io - Pipelines'
   sonarCloudOrganization: 'mytrout'
   sonarCloudProjectKey: 'Pipelines.Core'
