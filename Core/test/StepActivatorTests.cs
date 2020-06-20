@@ -172,7 +172,7 @@ namespace MyTrout.Pipelines.Tests
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type stepType = typeof(SampleWithoutInvokeAsyncMethod);
+            Type stepType = typeof(SampleWithoutNextInConstructor);
             var pipelineRequest = new NoOpStep();
 
             var sut = new StepActivator(logger, serviceProvider);

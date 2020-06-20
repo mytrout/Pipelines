@@ -56,9 +56,9 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Provides a step that does nothing.
         /// </summary>
-        /// <param name="context">The <see cref="PipelineContext">context</see> passed during pipeline execution.</param>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             if (context == null)
             {

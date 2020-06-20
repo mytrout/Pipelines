@@ -210,21 +210,14 @@ namespace MyTrout.Pipelines.Tests
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable CA1801 // Remove unused parameter
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithoutInvokeAsyncMethod : IPipelineRequest
+    public class SampleWithoutNextInConstructor : IPipelineRequest
     {
         public ValueTask DisposeAsync()
         {
             return new ValueTask(Task.CompletedTask);
         }
 
-#pragma warning disable VSTHRD200 // This class specifically NEEDS the method name to be wrong, so the test can fail.
-        public Task Invoke(PipelineContext context)
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             throw new NotImplementedException();
         }
@@ -245,7 +238,7 @@ namespace MyTrout.Pipelines.Tests
             return new ValueTask(Task.CompletedTask);
         }
 
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             return this.Next.InvokeAsync(context);
         }
@@ -265,7 +258,7 @@ namespace MyTrout.Pipelines.Tests
             return new ValueTask(Task.CompletedTask);
         }
 
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             if (context == null)
             {
@@ -319,7 +312,7 @@ namespace MyTrout.Pipelines.Tests
 
         public IPipelineRequest Next { get; }
 
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             return Task.CompletedTask;
         }
@@ -352,7 +345,7 @@ namespace MyTrout.Pipelines.Tests
             // no op
         }
 
-        protected override Task InvokeCoreAsync(PipelineContext context)
+        protected override Task InvokeCoreAsync(IPipelineContext context)
         {
             return Task.CompletedTask;
         }

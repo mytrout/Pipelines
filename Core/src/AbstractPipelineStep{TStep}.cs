@@ -69,10 +69,10 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Invokes a step in the pipeline.
         /// </summary>
-        /// <param name="context">The <see cref="PipelineContext">context</see> passed during pipeline execution.</param>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is <see langword="null" />.</exception>
-        public Task InvokeAsync(PipelineContext context)
+        public Task InvokeAsync(IPipelineContext context)
         {
             if (context == null)
             {
@@ -93,8 +93,8 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Provides the implementation for this step.
         /// </summary>
-        /// <param name="context">The <see cref="PipelineContext">context</see> passed during pipeline execution.</param>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        protected abstract Task InvokeCoreAsync(PipelineContext context);
+        protected abstract Task InvokeCoreAsync(IPipelineContext context);
     }
 }

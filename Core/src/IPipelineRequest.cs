@@ -37,6 +37,6 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="context">The context for the pipeline.</param>
         /// <returns>A <see cref="Task" /> that completes when the pipeline is completed.</returns>
-        public Task InvokeAsync(PipelineContext context);
+        public Task InvokeAsync(IPipelineContext context);
     }
 }

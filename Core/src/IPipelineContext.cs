@@ -1,4 +1,4 @@
-﻿// <copyright file="PipelineContext.cs" company="Chris Trout">
+﻿// <copyright file="IPipelineContext.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -29,59 +29,44 @@ namespace MyTrout.Pipelines
     using System.Collections.Generic;
     using System.Threading;
 
-    /*  TO FUTURE DEVELOPERS: This class does not have any unit tests because it uses only
-     *                        compiler-based functionality which should always work.  If any other
-     *                        functionality is added to this class, including a constructor, then
-     *                        unit tests should be written to cover all functionality.
-     */
-
     /// <summary>
     /// Provides the context that is passed between step implenentation in the pipeline.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class PipelineContext : IPipelineContext
+    public interface IPipelineContext
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PipelineContext" /> class.
-        /// </summary>
-        public PipelineContext()
-        {
-            // no op
-        }
-
         /// <summary>
         /// Gets or sets the token used by callers to cancel the pipeline execution.
         /// </summary>
-        public CancellationToken CancellationToken { get; set; } = default;
+        CancellationToken CancellationToken { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.
         /// </summary>
-        public IConfiguration Configuration { get; set; }
+        IConfiguration Configuration { get; set; }
 
         /// <summary>
         /// Gets a correlation value that can be used to correlate log entries and reporting data.
         /// </summary>
-        public Guid CorrelationId { get; } = Guid.NewGuid();
+        Guid CorrelationId { get; }
 
         /// <summary>
         /// Gets a list of non-fatal exceptions reported by the pipeline.
         /// </summary>
-        public IList<Exception> Errors { get; } = new List<Exception>();
+        IList<Exception> Errors { get; }
 
         /// <summary>
         /// Gets a value indicating whether or not <see cref="Configuration"/> is available.
         /// </summary>
-        public bool IsConfigurationAvailable => this.Configuration != null;
+        bool IsConfigurationAvailable { get; }
 
         /// <summary>
         /// Gets context items which are passed between step instances during execution.
         /// </summary>
-        public IDictionary<string, object> Items { get; } = new Dictionary<string, object>();
+        IDictionary<string, object> Items { get; }
 
         /// <summary>
         /// Gets a UTC timestamp representing when this pipeline started its execution.
         /// </summary>
-        public DateTimeOffset Timestamp { get; } = DateTimeOffset.UtcNow;
+        DateTimeOffset Timestamp { get; }
     }
 }

@@ -31,5 +31,5 @@ namespace MyTrout.Pipelines
     /// </summary>
     /// <param name="context">The context passed during pipeline execution.</param>
     /// <returns>A <see cref="Task" />.</returns>
-    public delegate Task PipelineRequestDelegate(PipelineContext context);
+    public delegate Task PipelineRequestDelegate(IPipelineContext context);
 }
