@@ -40,12 +40,12 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     [TestClass]
     public class ReadMessageFromAzureSubscriptionStepTests
     {
-        public static async Task<bool> TestHandlerAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, PipelineContext context, params CancellationToken[] tokens)
+        public static async Task<bool> TestHandlerAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, params CancellationToken[] tokens)
         {
             return await Task.FromResult(true);
         }
 
-        public static async Task<bool> TestHandlerWithContextAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, PipelineContext context, Message message, params CancellationToken[] tokens)
+        public static async Task<bool> TestHandlerWithContextAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, IPipelineContext context, Message message, params CancellationToken[] tokens)
         {
             context.Items.Add("TEST_HANDLER_VERIED", true);
             return await Task.FromResult(true);
@@ -244,7 +244,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             {
                 // Allows PipelineContext to be passed in so that the delegate
                 EvaluateCancellationTokenHandler =
-                    delegate (ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, PipelineContext context, CancellationToken[] tokens)
+                    delegate (ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, CancellationToken[] tokens)
                     {
                         return ReadMessageFromAzureSubscriptionStepTests.TestHandlerWithContextAsync(logger, subscriptionClient, context, message, tokens);
                     }
@@ -527,7 +527,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             var source = new ReadMessageFromAzureSubscriptionStep(logger, next, options)
             {
                 EvaluateCancellationTokenHandler =
-                    async delegate (ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, PipelineContext context, CancellationToken[] tokens)
+                    async delegate (ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, CancellationToken[] tokens)
                     {
                         // Add a Cancelled Token to enable cancellation testing.
                         List<CancellationToken> workingTokens = new List<CancellationToken>(tokens);
@@ -751,7 +751,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var source = new ReadMessageFromAzureSubscriptionStep(logger, next, options);
 
-            Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, PipelineContext, CancellationToken[], Task<bool>> value = ReadMessageFromAzureSubscriptionStepTests.TestHandlerAsync;
+            Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, IPipelineContext, CancellationToken[], Task<bool>> value = ReadMessageFromAzureSubscriptionStepTests.TestHandlerAsync;
 
             // act
             source.EvaluateCancellationTokenHandler = value;

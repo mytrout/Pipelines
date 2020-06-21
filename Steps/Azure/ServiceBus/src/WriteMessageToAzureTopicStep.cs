@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(PipelineContext context)
+        protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
             if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM)
                     && context.Items[PipelineContextConstants.OUTPUT_STREAM] is Stream)
@@ -135,9 +135,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <summary>
         /// Constructs an Azure Message with the values from the <paramref name="context"/> based on the user-configured options.
         /// </summary>
-        /// <param name="context">The <see cref="PipelineContext" /> for the currently executing pipeline.</param>
+        /// <param name="context">The <see cref="IPipelineContext" /> for the currently executing pipeline.</param>
         /// <returns>An Azure <see cref="Message" />.</returns>
-        private Message ConstructMessage(PipelineContext context)
+        private Message ConstructMessage(IPipelineContext context)
         {
             var inputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 
@@ -165,7 +165,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 }
                 else
                 {
-                    this.Logger.LogDebug("PipelineContext: '{result.CorrelationId}' did not contain the user property: '{userProperty}'", result.CorrelationId, userProperty);
+                    this.Logger.LogDebug("IPipelineContext: '{result.CorrelationId}' did not contain the user property: '{userProperty}'", result.CorrelationId, userProperty);
                 }
             }
 

@@ -25,14 +25,14 @@ These tests are a mixture of unit and integration tests necessary to read an Azu
     1. Microsoft.Azure.ServiceBus 4.1.3
     2. Microsoft.Extensions.Configuration.Abstractions 3.1.1
     3. Microsoft.Extensions.Logging.Abstractions 3.1.0
-    4. MyTrout.Pipelines 0.20.0-beta
+    4. MyTrout.Pipelines 0.22.0-beta
 
 
 3.	Latest releases
 
-||||
-| Version    | Release Date | Details                        |
-| 0.1.0-beta | 20 JUNE 2020 | Initial release of the library |
+| Version    | Release Date | Details                                    |
+| 0.1.0-beta | 20 JUNE 2020 | Initial release of the library             |
+| 0.2.0-beta | 21 JUNE 2020 | Upgrade MyTrout.Pipelines to v.0.22.0-beta |
 
 4.	API references
 

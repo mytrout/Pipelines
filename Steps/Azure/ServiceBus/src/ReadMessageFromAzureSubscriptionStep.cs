@@ -37,7 +37,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     /// </summary>
     public class ReadMessageFromAzureSubscriptionStep : AbstractPipelineStep<ReadMessageFromAzureSubscriptionStep, ReadMessageFromAzureSubscriptionOptions>
     {
-        private Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, PipelineContext, CancellationToken[], Task<bool>> evaluateHandler = ReadMessageFromAzureSubscriptionStep.EvaluateCancellationOfMessageAsync;
+        private Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, IPipelineContext, CancellationToken[], Task<bool>> evaluateHandler = ReadMessageFromAzureSubscriptionStep.EvaluateCancellationOfMessageAsync;
 
         private DateTimeOffset lastMessageProcessedAt;
 
@@ -66,7 +66,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <remarks>
         /// This property is used for unit testing only and is not available during the normal pipeline building process.
         /// </remarks>
-        public Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, PipelineContext, CancellationToken[], Task<bool>> EvaluateCancellationTokenHandler
+        public Func<ILogger<ReadMessageFromAzureSubscriptionStep>, ISubscriptionClient, Message, IPipelineContext, CancellationToken[], Task<bool>> EvaluateCancellationTokenHandler
         {
             get
             {
@@ -91,7 +91,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="message">The <see cref="Message"/> to be cancelled.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
         /// <returns></returns>
-        public static async Task<bool> EvaluateCancellationOfMessageAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, PipelineContext context, params CancellationToken[] tokens)
+        public static async Task<bool> EvaluateCancellationOfMessageAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, params CancellationToken[] tokens)
         {
             if (logger == null)
             {
@@ -141,7 +141,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="exceptionReceivedEventArgs"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, PipelineContext context)
+        public static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, IPipelineContext context)
         {
             if (exceptionReceivedEventArgs == null)
             {
@@ -172,7 +172,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(PipelineContext context)
+        protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
             this.lastMessageProcessedAt = DateTimeOffset.UtcNow;
 
@@ -202,7 +202,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
         }
 
-        private async Task ProcessMessagesAsync(Message message, PipelineContext context, CancellationToken token)
+        private async Task ProcessMessagesAsync(Message message, IPipelineContext context, CancellationToken token)
         {
             // If this method returns true, then cancellation has been requested.
             if (await this.EvaluateCancellationTokenHandler.Invoke(

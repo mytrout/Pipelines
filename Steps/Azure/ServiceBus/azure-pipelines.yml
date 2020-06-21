@@ -6,7 +6,7 @@ trigger:
     - master
   paths:
     include:
-    - Steps/Azure/ServiceBus
+    - Steps/Azure/ServiceBus/*
     exclude:
     - README.md
     - License.md
@@ -15,20 +15,35 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/Steps/Azure/ServiceBus/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  major: 0
-  minor: 1
-  patch: 0
-  buildId: $[counter(variables['patch'], 0)]
-  suffix: '-beta'
-  publishVstsFeed: 'mytrout'
-  sonarCloudConnectionName: 'SonarCloud.io - Pipelines'
-  sonarCloudOrganization: 'mytrout'
-  sonarCloudProjectKey: 'Pipelines.Steps.ServiceBus'
-  sonarCloudProjectName: 'Pipelines.Steps.ServiceBus'
-  sonarCloudEnabled: 'YES'
+- group: 'Azure Service Bus'
+- name: 'solution'
+  value: '**/Steps/Azure/ServiceBus/*.sln'
+- name: 'buildPlatform'
+  value:  'Any CPU'
+- name: 'buildConfiguration'
+  value:  'Release'
+- name: 'major'
+  value:  0
+- name: 'minor'
+  value:  2
+- name: 'patch'
+  value:  0
+- name: 'buildId'
+  value:  $[counter(variables['patch'], 0)]
+- name: 'suffix'
+  value:  '-beta'
+- name: 'publishVstsFeed'
+  value: 'Pipelines/mytrout'
+- name: 'sonarCloudConnectionName'
+  value:  'SonarCloud.io - Pipelines'
+- name: 'sonarCloudOrganization'
+  value:  'mytrout'
+- name: 'sonarCloudProjectKey'
+  value:  'Pipelines.Steps.ServiceBus'
+- name: 'sonarCloudProjectName'
+  value:  'Pipelines.Steps.ServiceBus'
+- name: 'sonarCloudEnabled'
+  value:  'YES'
   
 steps:
 - task: NuGetToolInstaller@1
@@ -60,12 +75,26 @@ steps:
      arguments: '--configuration $(buildConfiguration) --force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)'
   displayName: 'Build the solution.'
 
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: '[System.Environment]::SetEnvironmentVariable(''PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING'', ''$(ConnectionString)'',[System.EnvironmentVariableTarget]::Machine)'
+    failOnStderr: true
+  displayName: 'Add the Azure Service Bus Connection String to the build server.'
+    
 - task: DotNetCoreCLI@2
   inputs:
      command: test
      projects: $(solution)
      arguments: --configuration $(BuildConfiguration) --collect "Code Coverage"
   displayName: 'Run the unit and simple integration tests for SonarCloud.'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: '[System.Environment]::SetEnvironmentVariable(''PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING'', ''CLEARED FROM THE SERVER'',[System.EnvironmentVariableTarget]::Machine)'
+    failOnStderr: true
+  displayName: 'Clear the Azure Service Bus Connection String from the build server.'
 
 - task: SonarCloudAnalyze@1
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
@@ -79,7 +108,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)/**/*.nupkg;!$(Build.SourcesDirectory)/**/*.symbols.nupkg'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg;'
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(publishVstsFeed)'
     allowPackageConflicts: true
