@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7C30B959-8AB9-4868-8A71-6BD4C026A38F}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
 		azure-pipelines.yml = azure-pipelines.yml
 		License.md = License.md
 		README.md = README.md
