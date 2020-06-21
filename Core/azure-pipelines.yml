@@ -6,7 +6,7 @@ trigger:
     - master
   paths:
     include:
-    - Core/**
+    - Core/*
     exclude:
     - README.md
     - License.md
@@ -20,7 +20,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 22
-  patch: 2
+  patch: 3
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
   publishVstsFeed: 'Pipelines/mytrout'
