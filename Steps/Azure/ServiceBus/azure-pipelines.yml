@@ -39,9 +39,9 @@ variables:
 - name: 'sonarCloudOrganization'
   value:  'mytrout'
 - name: 'sonarCloudProjectKey'
-  value:  'Pipelines.Steps.ServiceBus'
+  value:  'Pipelines.Steps.Azure.ServiceBus'
 - name: 'sonarCloudProjectName'
-  value:  'Pipelines.Steps.ServiceBus'
+  value:  'Pipelines.Steps.Azure.ServiceBus'
 - name: 'sonarCloudEnabled'
   value:  'YES'
   
