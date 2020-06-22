@@ -73,6 +73,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            context.AssertParameterIsNotNull(nameof(context));
+
             if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM)
                     && context.Items[PipelineContextConstants.OUTPUT_STREAM] is Stream)
             {

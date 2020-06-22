@@ -44,22 +44,22 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyTrout.Pipelines" Version="0.22.0-beta" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.6.0.16497">
+    <PackageReference Include="MyTrout.Pipelines" Version="0.23.0-beta" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.8.0.18411">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

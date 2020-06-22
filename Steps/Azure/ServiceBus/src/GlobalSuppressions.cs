@@ -1,4 +1,5 @@
-﻿// MIT License
+﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+// MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
 //
@@ -20,5 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles this check in the InvokeAsync() method.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.WriteMessageToAzureTopicStep.InvokeCoreAsync(MyTrout.Pipelines.PipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles this check in the InvokeAsync() method.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep.InvokeCoreAsync(MyTrout.Pipelines.PipelineContext)~System.Threading.Tasks.Task")]// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep.EvaluateCancellationOfMessageAsync(Microsoft.Extensions.Logging.ILogger{MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep},Microsoft.Azure.ServiceBus.ISubscriptionClient,Microsoft.Azure.ServiceBus.Message,MyTrout.Pipelines.IPipelineContext,System.Threading.CancellationToken[])~System.Threading.Tasks.Task{System.Boolean}")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.WriteMessageToAzureTopicStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]

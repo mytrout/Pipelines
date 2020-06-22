@@ -89,33 +89,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="logger">The logger to report the cancellation.</param>
         /// <param name="subscriptionClient">The Azure <see cref="SubscriptionClient"/> from which the message was received.</param>
         /// <param name="message">The <see cref="Message"/> to be cancelled.</param>
+        /// <param name="context">The context f0r the currently executing pipeline.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
         /// <returns></returns>
         public static async Task<bool> EvaluateCancellationOfMessageAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, params CancellationToken[] tokens)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (subscriptionClient == null)
-            {
-                throw new ArgumentNullException(nameof(subscriptionClient));
-            }
-
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            if (tokens == null)
-            {
-                throw new ArgumentNullException(nameof(tokens));
-            }
+            logger.AssertParameterIsNotNull(nameof(logger));
+            subscriptionClient.AssertParameterIsNotNull(nameof(subscriptionClient));
+            message.AssertParameterIsNotNull(nameof(message));
+            context.AssertParameterIsNotNull(nameof(context));
+            tokens.AssertParameterIsNotNull(nameof(tokens));
 
             bool result = tokens.Any(x => x.IsCancellationRequested);
 
@@ -164,7 +147,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public async override ValueTask DisposeAsync()
         {
             await this.SubscriptionClient.CloseAsync().ConfigureAwait(false);
-            await base.DisposeAsync();
+            await base.DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -174,6 +157,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            context.AssertParameterIsNotNull(nameof(context));
+
             this.lastMessageProcessedAt = DateTimeOffset.UtcNow;
 
             // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.

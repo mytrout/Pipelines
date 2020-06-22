@@ -23,8 +23,8 @@ These tests are a mixture of unit and integration tests necessary to read an Azu
 
 2.	Software dependencies
     1. Microsoft.Azure.ServiceBus 4.1.3
-    2. Microsoft.Extensions.Configuration.Abstractions 3.1.1
-    3. Microsoft.Extensions.Logging.Abstractions 3.1.0
+    2. Microsoft.Extensions.Configuration.Abstractions 3.1.5
+    3. Microsoft.Extensions.Logging.Abstractions 3.1.5
     4. MyTrout.Pipelines 0.22.0-beta
 
 
@@ -33,6 +33,7 @@ These tests are a mixture of unit and integration tests necessary to read an Azu
 | Version    | Release Date | Details                                    |
 | 0.1.0-beta | 20 JUNE 2020 | Initial release of the library             |
 | 0.2.0-beta | 21 JUNE 2020 | Upgrade MyTrout.Pipelines to v.0.22.0-beta |
+| 0.3.0-beta | 21 JUNE 2020 | Upgrade MyTrout.Pipelines to v.0.23.0-beta |
 
 4.	API references
 
@@ -47,7 +48,7 @@ WriteMessageToAzureSubscriptionOptions
 * UTF8 encodes the Stream contained in OUTPUT_STREAM and writes it to the Message.Body.
 
 # Build and Test
-An azure-pipelines.yml exists in the /Core directory.  It is usable with any Azure DevOps instance.
+An azure-pipelines.yml exists in the /Steps/Azure/ServiceBus directory.  It is usable with any Azure DevOps instance.
 
 TO DEVELOPERS:
 All of the tests with a ReadMessageFromAzureSubscriptionOptions class are written to use the options defined in this class for all subsequent Topic or Subscription calls.

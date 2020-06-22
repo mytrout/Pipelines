@@ -25,7 +25,7 @@ variables:
 - name: 'major'
   value:  0
 - name: 'minor'
-  value:  2
+  value:  3
 - name: 'patch'
   value:  0
 - name: 'buildId'
