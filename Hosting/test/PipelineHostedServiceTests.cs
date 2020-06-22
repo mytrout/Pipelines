@@ -47,16 +47,16 @@ namespace MyTrout.Pipelines.Hosting.Tests
             ILogger<PipelineHostedService> logger = new Mock<ILogger<PipelineHostedService>>().Object;
             IHostApplicationLifetime applicationLifetime = new Mock<IHostApplicationLifetime>().Object;
             IStepActivator stepActivator = new Mock<IStepActivator>().Object;
-            PipelineBuilder[] pipelineBuilders = Array.Empty<PipelineBuilder>();
+            PipelineBuilder pipelineBuilder = new PipelineBuilder();
 
             // act
-            var result = new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilders);
+            var result = new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilder);
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(applicationLifetime, result.ApplicationLifetime);
             Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(pipelineBuilders, result.PipelineBuilders);
+            Assert.AreEqual(pipelineBuilder, result.PipelineBuilder);
             Assert.AreEqual(stepActivator, result.StepActivator);
         }
 
@@ -65,31 +65,21 @@ namespace MyTrout.Pipelines.Hosting.Tests
         {
             // arrange
             string[] args = Array.Empty<string>();
-            PipelineBuilder[] pipelineBuilders = new PipelineBuilder[1]
-            {
-                new PipelineBuilder()
-                        .AddStep<TestingStep1>()
-                        .AddStep<TestingStep1>()
-                        .AddStep<TestingStepException>()
-            };
+            PipelineBuilder pipelineBuilder = new PipelineBuilder()
+                                                    .AddStep<TestingStepException>();
 
             var host = Host.CreateDefaultBuilder(args)
-                            .UsePipelines(pipelineBuilders)
+                            .UsePipeline(pipelineBuilder)
                             .Build();
-
-            var expectedExecutionCount = 2;
 
             // act
             await host.RunAsync().ConfigureAwait(false);
 
             // assert
-            Assert.AreEqual(expectedExecutionCount, TestingStep1.ExecutionCount);
-
-            /* DEVELOPERS NOTE: If the test does not throw an Unhandled Exception,
-             * then it was successful.
-             */
+            // DEVELOPERS NOTE: If the test does not throw an Unhandled Exception, then it was successful.
         }
 
+  
         [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_ApplicationLifetime_Parameter_Is_Null()
         {
@@ -97,12 +87,12 @@ namespace MyTrout.Pipelines.Hosting.Tests
             ILogger<PipelineHostedService> logger = new Mock<ILogger<PipelineHostedService>>().Object;
             IHostApplicationLifetime applicationLifetime = null;
             IStepActivator stepActivator = new Mock<IStepActivator>().Object;
-            PipelineBuilder[] pipelineBuilders = Array.Empty<PipelineBuilder>();
+            PipelineBuilder pipelineBuilder = new PipelineBuilder();
 
             string expectedParamName = nameof(applicationLifetime);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilders));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilder));
 
             // assert
             Assert.IsNotNull(result);
@@ -116,12 +106,12 @@ namespace MyTrout.Pipelines.Hosting.Tests
             ILogger<PipelineHostedService> logger = null;
             IHostApplicationLifetime applicationLifetime = new Mock<IHostApplicationLifetime>().Object;
             IStepActivator stepActivator = new Mock<IStepActivator>().Object;
-            PipelineBuilder[] pipelineBuilders = Array.Empty<PipelineBuilder>();
+            PipelineBuilder pipelineBuilder = new PipelineBuilder();
 
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilders));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilder));
 
             // assert
             Assert.IsNotNull(result);
@@ -135,12 +125,12 @@ namespace MyTrout.Pipelines.Hosting.Tests
             ILogger<PipelineHostedService> logger = new Mock<ILogger<PipelineHostedService>>().Object;
             IHostApplicationLifetime applicationLifetime = new Mock<IHostApplicationLifetime>().Object;
             IStepActivator stepActivator = new Mock<IStepActivator>().Object;
-            PipelineBuilder[] pipelineBuilders = null;
+            PipelineBuilder pipelineBuilder = null;
 
-            string expectedParamName = nameof(pipelineBuilders);
+            string expectedParamName = nameof(pipelineBuilder);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilders));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilder));
 
             // assert
             Assert.IsNotNull(result);
@@ -154,12 +144,12 @@ namespace MyTrout.Pipelines.Hosting.Tests
             ILogger<PipelineHostedService> logger = new Mock<ILogger<PipelineHostedService>>().Object;
             IHostApplicationLifetime applicationLifetime = new Mock<IHostApplicationLifetime>().Object;
             IStepActivator stepActivator = null;
-            PipelineBuilder[] pipelineBuilders = Array.Empty<PipelineBuilder>();
+            PipelineBuilder pipelineBuilder = new PipelineBuilder();
 
             string expectedParamName = nameof(stepActivator);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilders));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new PipelineHostedService(logger, applicationLifetime, stepActivator, pipelineBuilder));
 
             // assert
             Assert.IsNotNull(result);

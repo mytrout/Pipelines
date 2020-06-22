@@ -27,9 +27,7 @@ namespace MyTrout.Pipelines.Hosting
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -44,17 +42,17 @@ namespace MyTrout.Pipelines.Hosting
         /// <param name="logger">The logger for the pipeline application service.</param>
         /// <param name="applicationLifetime">The lifetime of the <see cref="IHost" /> application.</param>
         /// <param name="stepActivator">The activator that constructs steps from <see cref="Type" />.</param>
-        /// <param name="pipelineBuilders">The list of <see cref="PipelineBuilder" /> hosted by this <see cref="IHost" />.</param>
+        /// <param name="pipelineBuilder">The <see cref="PipelineBuilder" /> hosted by this <see cref="IHost" />.</param>
         public PipelineHostedService(
                                 ILogger<PipelineHostedService> logger,
                                 IHostApplicationLifetime applicationLifetime,
                                 IStepActivator stepActivator,
-                                params PipelineBuilder[] pipelineBuilders)
+                                PipelineBuilder pipelineBuilder)
         {
             this.ApplicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.StepActivator = stepActivator ?? throw new ArgumentNullException(nameof(stepActivator));
-            this.PipelineBuilders = pipelineBuilders ?? throw new ArgumentNullException(nameof(pipelineBuilders));
+            this.PipelineBuilder = pipelineBuilder ?? throw new ArgumentNullException(nameof(pipelineBuilder));
         }
 
         /// <summary>
@@ -70,7 +68,7 @@ namespace MyTrout.Pipelines.Hosting
         /// <summary>
         /// Gets the list of <see cref="PipelineBuilder" /> hosted by this <see cref="IHost" />.
         /// </summary>
-        public IEnumerable<PipelineBuilder> PipelineBuilders { get; }
+        public PipelineBuilder PipelineBuilder { get; }
 
         /// <summary>
         /// Gets the activator which creates instances of the step <see cref="Type" />.
@@ -101,14 +99,15 @@ namespace MyTrout.Pipelines.Hosting
             return Task.CompletedTask;
         }
 
-
         /// <summary>
         /// Forces the OnApplicationStartedAsync to be run synchronously and block the calling thread.
         /// </summary>
         /// <param name="cancellationToken">Indicates that the application execution has been aborted.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Using GetResult() in Console Applications where multiple threads are not being run is acceptable.")]
+
         private void OnApplicationStarted(CancellationToken cancellationToken)
         {
-            this.OnApplicationStartedAsync(cancellationToken).RunSynchronously();
+            this.OnApplicationStartedAsync(cancellationToken).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -118,28 +117,22 @@ namespace MyTrout.Pipelines.Hosting
         /// <returns>A <see cref="Task" />.</returns>
         private async Task OnApplicationStartedAsync(CancellationToken cancellationToken)
         {
+            PipelineContext context = new PipelineContext()
+            {
+                CancellationToken = cancellationToken
+            };
+
             try
             {
                 this.Logger.LogInformation(Resources.PIPELINE_TASKS_STARTING(CultureInfo.CurrentCulture));
 
                 await Task.Delay(5).ConfigureAwait(false);
 
-                IEnumerable<PipelineRequest> pipelines = this.PipelineBuilders.Select(
-                                                x => x.Build(this.StepActivator));
+                IPipelineRequest pipeline = this.PipelineBuilder.Build(this.StepActivator);
 
-                IEnumerable<Task> results = pipelines.Select(x => x.Invoke(
-                                                    new PipelineContext()
-                                                    {
-                                                        CancellationToken = cancellationToken
-                                                    }));
-
-                this.Logger.LogDebug(Resources.BUILDERS_CONVERTED_TO_TASKS(CultureInfo.CurrentCulture));
-
-                await Task.WhenAll(results).ConfigureAwait(false);
+                await pipeline.InvokeAsync(context).ConfigureAwait(false);
 
                 this.Logger.LogInformation(Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture));
-
-                this.ApplicationLifetime.StopApplication();
             }
 #pragma warning disable CA1031 // Prevent any Exception-derived Exception from causing the application to crash.
             catch (Exception exc)
@@ -147,7 +140,15 @@ namespace MyTrout.Pipelines.Hosting
                 this.Logger.LogError(exc, Resources.UNHANDLED_EXCEPTION(CultureInfo.CurrentCulture));
             }
 #pragma warning restore CA1031 // Do not catch general exception types
+            finally
+            {
+                foreach (var error in context.Errors)
+                {
+                    this.Logger.LogError(error, Resources.HANDLED_EXCEPTION(CultureInfo.CurrentCulture));
+                }
+
+                this.ApplicationLifetime.StopApplication();
+            }
         }
     }
 }
- 

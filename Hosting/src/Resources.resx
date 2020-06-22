@@ -123,6 +123,9 @@
   <data name="CALLING_METHOD_IN_TYPE" xml:space="preserve">
     <value>Calling {0}() in '{1}'.</value>
   </data>
+  <data name="HANDLED_EXCEPTION" xml:space="preserve">
+    <value>A handled exception occurred in the execution of the Pipeline.  </value>
+  </data>
   <data name="PIPELINE_TASKS_STARTING" xml:space="preserve">
     <value>Pipeline Tasks are starting.</value>
   </data>

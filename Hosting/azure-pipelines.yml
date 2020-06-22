@@ -1,4 +1,4 @@
-name: 'Pipelines.Core.Hosting.$(Date:yyyyMMdd)$(Rev:.r)'
+name: 'Pipelines.Hosting.$(Date:yyyyMMdd)$(Rev:.r)'
 
 trigger:
   branches:
@@ -6,7 +6,7 @@ trigger:
     - master
   paths:
     include:
-    - Hosting
+    - Hosting/*
     exclude:
     - README.md
     - License.md
@@ -19,11 +19,11 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 17
+  minor: 18
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
-  publishVstsFeed: 'mytrout'
+  publishVstsFeed: 'Pipelines/mytrout'
   sonarCloudConnectionName: 'SonarCloud.io - Pipelines'
   sonarCloudOrganization: 'mytrout'
   sonarCloudProjectKey: 'Pipelines.Hosting'
@@ -33,6 +33,14 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
   displayName: 'Install latest version of NuGet tools.'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreSolution: '$(solution)'
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
@@ -79,7 +87,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)/**/*.nupkg;!$(Build.SourcesDirectory)/**/*.symbols.nupkg'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg;'
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(publishVstsFeed)'
     allowPackageConflicts: true

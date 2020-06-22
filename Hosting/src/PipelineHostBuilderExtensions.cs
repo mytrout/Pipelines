@@ -37,11 +37,11 @@ namespace MyTrout.Pipelines.Hosting
         /// Configures a pipeline service with the default <see cref="IStepActivator" />.
         /// </summary>
         /// <param name="source">An <see cref="IHostBuilder" /> instance.</param>
-        /// <param name="builders">The pipelines to be configured.</param>
+        /// <param name="builder">The pipelines to be configured.</param>
         /// <returns>An <see cref="IHostBuilder" /> with the specified pipelines configured.</returns>
-        public static IHostBuilder UsePipelines(this IHostBuilder source, params PipelineBuilder[] builders)
+        public static IHostBuilder UsePipeline(this IHostBuilder source, PipelineBuilder builder)
         {
-            return PipelineHostBuilderExtensions.UsePipelines<StepActivator>(source, builders);
+            return PipelineHostBuilderExtensions.UsePipeline<StepActivator>(source, builder);
         }
 
         /// <summary>
@@ -49,10 +49,10 @@ namespace MyTrout.Pipelines.Hosting
         /// </summary>
         /// <typeparam name="TStepActivator">A custom <see cref="IStepActivator" /> implementation.</typeparam>
         /// <param name="source">An <see cref="IHostBuilder" /> instance.</param>
-        /// <param name="builders">The pipelines to be configured.</param>
+        /// <param name="builder">The pipelines to be configured.</param>
         /// <returns>An <see cref="IHostBuilder" /> with the specified pipelines configured.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <see langword="null" />.</exception>
-        public static IHostBuilder UsePipelines<TStepActivator>(this IHostBuilder source, params PipelineBuilder[] builders)
+        public static IHostBuilder UsePipeline<TStepActivator>(this IHostBuilder source, PipelineBuilder builder)
             where TStepActivator : class, IStepActivator
         {
             if (source == null)
@@ -63,7 +63,7 @@ namespace MyTrout.Pipelines.Hosting
             var result = source.ConfigureServices((hostContext, services) =>
             {
                 services.AddLogging();
-                services.AddSingleton(builders);
+                services.AddSingleton(builder);
                 services.AddTransient<IStepActivator, TStepActivator>();
                 services.AddHostedService<PipelineHostedService>();
             });

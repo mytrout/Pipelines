@@ -33,23 +33,19 @@ namespace MyTrout.Pipelines.Hosting.Tests
     [TestClass]
     public class PipelineHostBuilderExtensionsTests
     {
-#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public async Task Returns_Correct_Count_Of_Executions_From_Pipeline_When_Called()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             string[] args = Array.Empty<string>();
-            PipelineBuilder[] pipelineBuilders = new PipelineBuilder[1]
-            {
+            PipelineBuilder pipelineBuilder =
                 new PipelineBuilder()
                         .AddStep<TestingStep1>()
                         .AddStep<TestingStep1>()
-                        .AddStep<TestingStep1>()
-            };
+                        .AddStep<TestingStep1>();
 
             var host = Host.CreateDefaultBuilder(args)
-                            .UsePipelines(pipelineBuilders)
+                            .UsePipeline(pipelineBuilder)
                             .Build();
 
             var expectedExecutionCount = 3;
@@ -61,23 +57,18 @@ namespace MyTrout.Pipelines.Hosting.Tests
             Assert.AreEqual(expectedExecutionCount, TestingStep1.ExecutionCount);
         }
 
-#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public async Task Returns_Correct_Count_Of_Executions_From_Pipeline_When_UsePipelines_With_Activator_Is_Called()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             string[] args = Array.Empty<string>();
-            PipelineBuilder[] pipelineBuilders = new PipelineBuilder[1]
-            {
-                new PipelineBuilder()
-                     .AddStep<TestingStep2>()
-                    .AddStep<TestingStep2>()
-                    .AddStep<TestingStep2>()
-            };
+            PipelineBuilder pipelineBuilder = new PipelineBuilder()
+                                                    .AddStep<TestingStep2>()
+                                                    .AddStep<TestingStep2>()
+                                                    .AddStep<TestingStep2>();
 
             var host = Host.CreateDefaultBuilder(args)
-                            .UsePipelines<StepActivator>(pipelineBuilders)
+                            .UsePipeline<StepActivator>(pipelineBuilder)
                             .Build();
 
             var expectedExecutionCount = 3;
@@ -93,19 +84,16 @@ namespace MyTrout.Pipelines.Hosting.Tests
         public void Throws_ArgumentNullException_From_Pipeline_When_HostBuilder_Is_Null()
         {
             // arrange
-            PipelineBuilder[] builders = new PipelineBuilder[1]
-            {
-                new PipelineBuilder()
-                        .AddStep<TestingStep2>()
-                        .AddStep<TestingStep2>()
-                        .AddStep<TestingStep2>()
-            };
+            PipelineBuilder builder = new PipelineBuilder()
+                                            .AddStep<TestingStep2>()
+                                            .AddStep<TestingStep2>()
+                                            .AddStep<TestingStep2>();
 
             IHostBuilder source = null;
             string expectedParamName = nameof(source);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => PipelineHostBuilderExtensions.UsePipelines(source, builders));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => PipelineHostBuilderExtensions.UsePipeline(source, builder));
 
             // assert
             Assert.IsNotNull(result);
@@ -118,54 +106,74 @@ namespace MyTrout.Pipelines.Hosting.Tests
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
 #pragma warning disable CA1801 // Remove unused parameter
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class TestingStep1
+    public class TestingStep1 : IPipelineRequest
     {
-        private readonly PipelineRequest next = null;
+        private readonly IPipelineRequest next = null;
 
-        public TestingStep1(PipelineRequest next) => this.next = next;
+        public TestingStep1(IPipelineRequest next) => this.next = next;
 
         public static int ExecutionCount { get; set; } = 0;
 
-        public Task InvokeAsync(PipelineContext context)
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
+
+        public Task InvokeAsync(IPipelineContext context)
         {
             Console.WriteLine($"TestingStep1 {TestingStep1.ExecutionCount}");
             TestingStep1.ExecutionCount++;
-            return this.next(context);
+            return this.next.InvokeAsync(context);
         }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class TestingStep2
+    public class TestingStep2 : IPipelineRequest
     {
-        private readonly PipelineRequest next = null;
+        private readonly IPipelineRequest next = null;
 
-        public TestingStep2(PipelineRequest next) => this.next = next;
+        public TestingStep2(IPipelineRequest next) => this.next = next;
 
         public static int ExecutionCount { get; set; } = 0;
 
-        public Task InvokeAsync(PipelineContext context)
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
+
+        public Task InvokeAsync(IPipelineContext context)
         {
             Console.WriteLine($"TestingStep2 {TestingStep2.ExecutionCount}");
             TestingStep2.ExecutionCount++;
-            return this.next(context);
+            return this.next.InvokeAsync(context);
         }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class TestingStepException
+    public class TestingStepException : IPipelineRequest
     {
-        private readonly PipelineRequest next = null;
+        private readonly IPipelineRequest next = null;
 
-        public TestingStepException(PipelineRequest next) => this.next = next;
+        public TestingStepException(IPipelineRequest next) => this.next = next;
 
         public static int ExecutionCount { get; set; } = 0;
 
-        public Task InvokeAsync(PipelineContext context)
+        public ValueTask DisposeAsync()
         {
+            return new ValueTask(Task.CompletedTask);
+        }
+
+        public Task InvokeAsync(IPipelineContext context)
+        {
+            context.Errors.Add(new InvalidTimeZoneException());
+            TestingStepException.ExecutionCount += 1;
             throw new InvalidOperationException("Try to destroy the service.");
+
         }
     }
+#pragma warning restore CA1303 // Do not pass literals as localized parameters
 #pragma warning restore CA1801 // Remove unused parameter
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1822 // Mark members as static
