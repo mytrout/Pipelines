@@ -74,10 +74,7 @@ namespace MyTrout.Pipelines
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is <see langword="null" />.</exception>
         public Task InvokeAsync(IPipelineContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            context.AssertParameterIsNotNull(nameof(context));
 
             try
             {

@@ -34,11 +34,6 @@ namespace MyTrout.Pipelines.Tests
     [TestClass]
     public class AbstractPipelineStepTests
     {
-        public static Task InvokeAsync(PipelineContext context)
-        {
-            return Task.CompletedTask;
-        }
-
         [TestMethod]
         public void Constructs_AbstractPipelineStep_Successfully()
         {
@@ -90,9 +85,7 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-#pragma warning disable VSTHRD200 // Suppressed because the Async is part of the name of the method generating the exception
         public void Returns_Context_Errors_From_InvokeAsync_When_Exception_Is_Thrown_In_InvokeCoreAsync()
-#pragma warning restore VSTHRD200 // Suppressed because the Async is part of the name of the method generating the exception
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
@@ -115,10 +108,8 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(Task.CompletedTask, result);
         }
 
-#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public void Returns_Task_From_InvokeAsync()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
@@ -184,10 +175,8 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
-#pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
         [TestMethod]
         public async Task Throws_ArgumentNullException_From_InvokeAsync_When_Context_Is_Null()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             PipelineContext context = null;

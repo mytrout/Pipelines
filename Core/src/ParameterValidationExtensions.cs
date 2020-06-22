@@ -1,4 +1,4 @@
-﻿// <copyright file="NoOpStep.cs" company="Chris Trout">
+﻿// <copyright file="ParameterValidationExtensions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -25,44 +25,31 @@
 namespace MyTrout.Pipelines
 {
     using System;
-    using System.Threading.Tasks;
+    using System.Globalization;
 
     /// <summary>
-    /// Provides a step that does nothing.
+    /// Provides standardized parameter validation for any method.
     /// </summary>
-    public class NoOpStep : IPipelineRequest
+    public static class ParameterValidationExtensions
     {
-        // NOTE TO DEVELOPERS: THIS CONSTRUCTOR DOES NOT HAVE ANY CODE.
-        //                     IF THAT CHANGES, UNIT TESTS WILL NEED TO BE WRITTEN.
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoOpStep" /> class.
+        /// Asserts that the provided parameter is not <see langword="null" />.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        public NoOpStep()
+        /// <typeparam name="TParameterType">The type of parameter being tested.</typeparam>
+        /// <param name="source">The parameter value to be tested.</param>
+        /// <param name="parameterName">The parameter name used in the <see cref="ArgumentNullException"/>, if the <paramref name="source"/> is <see langword="null" />.</param>
+        public static void AssertParameterIsNotNull<TParameterType>(this TParameterType source, string parameterName)
+            where TParameterType : class
         {
-            // no op
-        }
+            if (string.IsNullOrWhiteSpace(parameterName))
+            {
+                throw new InvalidOperationException(Resources.PARAMETER_MUST_BE_SUPPLIED(CultureInfo.CurrentCulture));
+            }
 
-        /// <summary>
-        /// Disposes of nothing since this step does nothing.
-        /// </summary>
-        /// <returns>A completed <see cref="ValueTask" />.</returns>
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
-        /// <summary>
-        /// Provides a step that does nothing.
-        /// </summary>
-        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
-        /// <returns>A <see cref="Task" />.</returns>
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            context.AssertParameterIsNotNull(nameof(context));
-
-            return Task.CompletedTask;
+            if (source == null)
+            {
+                throw new ArgumentNullException(parameterName);
+            }
         }
     }
 }

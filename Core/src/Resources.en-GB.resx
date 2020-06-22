@@ -126,6 +126,9 @@
   <data name="NULL_MIDDLEWARE" xml:space="preserve">
     <value>A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.</value>
   </data>
+  <data name="PARAMETER_MUST_BE_SUPPLIED" xml:space="preserve">
+    <value>parameterName must be supplied in AssertParameterIsNotNull.</value>
+  </data>
   <data name="SERVICEPROVIDER_LACKS_PARAMETER" xml:space="preserve">
     <value>ServiceProvider does not contain one of the parameters required for '{0}'.</value>
   </data>

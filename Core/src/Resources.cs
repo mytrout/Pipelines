@@ -125,54 +125,6 @@ namespace MyTrout.Pipelines
 		}
 		
 		/// <summary>
-		/// Looks up a localized string like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string METHOD_NOT_FOUND()
-		{
-			return Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string METHOD_NOT_FOUND(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("METHOD_NOT_FOUND", culture);
-		}
-				
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string METHOD_NOT_FOUND(params object[] args)
-		{
-			return Resources.METHOD_NOT_FOUND(CultureInfo.CurrentCulture, args);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Step type '{0}' must contain an '{1}' method with one parameter of type 'PipelineContext' and a return value of 'Task'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string METHOD_NOT_FOUND(CultureInfo culture, params object[] args)
-		{
-			return string.Format(culture, Resources.ResourceManager.GetString("METHOD_NOT_FOUND", culture), args);
-		}
-
-		/// <summary>
 		/// Looks up a localized string like "A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
@@ -194,6 +146,30 @@ namespace MyTrout.Pipelines
 		public static string NULL_MIDDLEWARE(CultureInfo culture)
 		{
 			return Resources.ResourceManager.GetString("NULL_MIDDLEWARE", culture);
+		}
+		
+		/// <summary>
+		/// Looks up a localized string like "parameterName must be supplied in AssertParameterIsNotNull.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PARAMETER_MUST_BE_SUPPLIED()
+		{
+			return Resources.PARAMETER_MUST_BE_SUPPLIED(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "parameterName must be supplied in AssertParameterIsNotNull.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PARAMETER_MUST_BE_SUPPLIED(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PARAMETER_MUST_BE_SUPPLIED", culture);
 		}
 		
 		/// <summary>

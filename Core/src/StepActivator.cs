@@ -57,15 +57,8 @@ namespace MyTrout.Pipelines
         /// <inheritdoc />
         public object CreateInstance(Type stepType, IPipelineRequest nextRequest)
         {
-            if (stepType == null)
-            {
-                throw new ArgumentNullException(nameof(stepType));
-            }
-
-            if (nextRequest == null)
-            {
-                throw new ArgumentNullException(nameof(nextRequest));
-            }
+            stepType.AssertParameterIsNotNull(nameof(stepType));
+            nextRequest.AssertParameterIsNotNull(nameof(nextRequest));
 
             object result = null;
 

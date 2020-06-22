@@ -71,10 +71,7 @@ namespace MyTrout.Pipelines
         /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
         public PipelineBuilder AddStep(Type stepType)
         {
-            if (stepType == null)
-            {
-                throw new ArgumentNullException(nameof(stepType));
-            }
+            stepType.AssertParameterIsNotNull(nameof(stepType));
 
             if (stepType.IsValueType)
             {
@@ -98,10 +95,7 @@ namespace MyTrout.Pipelines
         /// <returns>A pipeline to execute.</returns>
         public IPipelineRequest Build(IStepActivator stepActivator)
         {
-            if (stepActivator == null)
-            {
-                throw new ArgumentNullException(nameof(stepActivator));
-            }
+            stepActivator.AssertParameterIsNotNull(nameof(stepActivator));
 
             // Configures the "final" delegate in the Pipeline.
             IPipelineRequest nextRequest = new NoOpStep();
