@@ -26,6 +26,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
 {
     using Microsoft.Extensions.Hosting;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Threading.Tasks;
 

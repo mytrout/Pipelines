@@ -26,6 +26,7 @@ namespace MyTrout.Pipelines.Hosting
 {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using MyTrout.Pipelines.Core;
     using System;
 
     /// <summary>

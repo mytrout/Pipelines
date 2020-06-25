@@ -26,6 +26,7 @@ namespace MyTrout.Pipelines.Hosting
 {
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Globalization;
     using System.Threading;
