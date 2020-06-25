@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
     using System;
@@ -54,7 +54,7 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets the next step in the pipeline.
         /// </summary>
-        protected IPipelineRequest Next { get; }
+        public IPipelineRequest Next { get; }
 
         /// <summary>
         /// Disposes of any disposable resources for this instance.

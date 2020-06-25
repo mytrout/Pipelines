@@ -27,6 +27,8 @@ namespace MyTrout.Pipelines.Tests
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core.Tests;
+    using MyTrout.Pipelines.Steps;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

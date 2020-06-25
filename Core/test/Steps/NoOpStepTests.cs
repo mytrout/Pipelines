@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Tests
+namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
@@ -63,25 +63,6 @@ namespace MyTrout.Pipelines.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(Task.CompletedTask, result);
-        }
-
-#pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
-        [TestMethod]
-        public async Task Throws_ArgumentNullException_From_InvokeAsync_When_Context_Is_Null()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
-        {
-            // arrange
-            PipelineContext context = null;
-            string expectedParamName = nameof(context);
-
-            var step = new NoOpStep();
-
-            // act
-            var result = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => step.InvokeAsync(context));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedParamName, result.ParamName);
         }
     }
 }

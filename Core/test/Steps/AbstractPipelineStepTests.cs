@@ -22,11 +22,12 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Tests
+namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core.Tests;
     using System;
     using System.Threading.Tasks;
 

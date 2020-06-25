@@ -22,8 +22,9 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Core
 {
+    using MyTrout.Pipelines.Steps;
     using System;
     using System.Collections.Generic;
     using System.Globalization;

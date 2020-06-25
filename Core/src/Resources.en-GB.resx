@@ -123,6 +123,12 @@
   <data name="CONTEXT_CANNOT_BE_CONSTRUCTED" xml:space="preserve">
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
+  <data name="INPUT_STREAM_DOES_NOT_EXIST" xml:space="preserve">
+    <value>Input Stream does not exist in the Pipeline context.</value>
+  </data>
+  <data name="INPUT_STREAM_IS_NOT_TYPE_STREAM" xml:space="preserve">
+    <value>Input Stream is not a type of Stream.</value>
+  </data>
   <data name="NULL_MIDDLEWARE" xml:space="preserve">
     <value>A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.</value>
   </data>
