@@ -1,4 +1,4 @@
-﻿// <copyright file="WriteFileToFileSystemStep.cs" company="Chris Trout">
+﻿// <copyright file="WriteStreamToFileSystemStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout

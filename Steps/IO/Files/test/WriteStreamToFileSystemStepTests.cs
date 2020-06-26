@@ -62,7 +62,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             // cleanup
             await result.DisposeAsync().ConfigureAwait(false);
-
         }
 
         [TestMethod]

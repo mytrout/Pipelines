@@ -1,4 +1,4 @@
-﻿// <copyright file="ReadFileFromFileSystemOptions.cs" company="Chris Trout">
+﻿// <copyright file="ReadStreamFromFileSystemOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout

@@ -39,7 +39,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     [TestClass]
     public class ReadStreamFromFileSystemStepTests
     {
-
         [TestMethod]
         public async Task Constructs_ReadStreamFromFileSystemTests_Successfully()
         {

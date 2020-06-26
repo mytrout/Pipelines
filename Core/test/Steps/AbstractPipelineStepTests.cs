@@ -111,6 +111,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_Without_Error_From_InvokeAsync()
         {
             // arrange
+            int errorCount = 0;
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
             IPipelineRequest next = new NoOpStep();
             PipelineContext context = new PipelineContext();
@@ -121,7 +122,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             await step.InvokeAsync(context);
 
             // assert
-            // No Exceptions means the method ran successfully.
+            Assert.AreEqual(errorCount, context.Errors.Count);
         }
 
         [TestMethod]
