@@ -157,7 +157,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             // assert
             Assert.AreEqual(errorCount, context.Errors.Count);
             Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(Resources.INPUT_STREAM_DOES_NOT_EXIST(CultureInfo.CurrentCulture), context.Errors[0].Message);
+            Assert.AreEqual(Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM), context.Errors[0].Message);
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             // assert
             Assert.AreEqual(errorCount, context.Errors.Count);
             Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(Resources.INPUT_STREAM_IS_NOT_TYPE_STREAM(CultureInfo.CurrentCulture), context.Errors[0].Message);
+            Assert.AreEqual(Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM), context.Errors[0].Message);
         }
 
         [TestMethod]

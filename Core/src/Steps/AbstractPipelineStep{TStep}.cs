@@ -72,18 +72,17 @@ namespace MyTrout.Pipelines.Steps
         /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is <see langword="null" />.</exception>
-        public Task InvokeAsync(IPipelineContext context)
+        public async Task InvokeAsync(IPipelineContext context)
         {
             context.AssertParameterIsNotNull(nameof(context));
 
             try
             {
-                return this.InvokeCoreAsync(context);
+                await this.InvokeCoreAsync(context).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
                 context.Errors.Add(exc);
-                return Task.CompletedTask;
             }
         }
 

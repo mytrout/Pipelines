@@ -125,53 +125,53 @@ namespace MyTrout.Pipelines
 		}
 		
 		/// <summary>
-		/// Looks up a localized string like "Input Stream does not exist in the Pipeline context.".
+		/// Looks up a localized string like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INPUT_STREAM_DOES_NOT_EXIST()
+		public static string NO_STREAM_IN_CONTEXT()
 		{
-			return Resources.INPUT_STREAM_DOES_NOT_EXIST(CultureInfo.CurrentCulture);
+			return Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Input Stream does not exist in the Pipeline context.".
+		/// Looks up a localized string using a specific culture like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INPUT_STREAM_DOES_NOT_EXIST(CultureInfo culture)
+		public static string NO_STREAM_IN_CONTEXT(CultureInfo culture)
 		{
-			return Resources.ResourceManager.GetString("INPUT_STREAM_DOES_NOT_EXIST", culture);
+			return Resources.ResourceManager.GetString("NO_STREAM_IN_CONTEXT", culture);
 		}
-		
+				
 		/// <summary>
-		/// Looks up a localized string like "Input Stream is not a type of Stream.".
+		/// Looks up a localized string using a specific culture like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INPUT_STREAM_IS_NOT_TYPE_STREAM()
+		public static string NO_STREAM_IN_CONTEXT(params object[] args)
 		{
-			return Resources.INPUT_STREAM_IS_NOT_TYPE_STREAM(CultureInfo.CurrentCulture);
+			return Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, args);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Input Stream is not a type of Stream.".
+		/// Looks up a localized string using a specific culture like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INPUT_STREAM_IS_NOT_TYPE_STREAM(CultureInfo culture)
+		public static string NO_STREAM_IN_CONTEXT(CultureInfo culture, params object[] args)
 		{
-			return Resources.ResourceManager.GetString("INPUT_STREAM_IS_NOT_TYPE_STREAM", culture);
+			return string.Format(culture, Resources.ResourceManager.GetString("NO_STREAM_IN_CONTEXT", culture), args);
 		}
-		
+
 		/// <summary>
 		/// Looks up a localized string like "A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.".
 		/// </summary>
@@ -266,6 +266,54 @@ namespace MyTrout.Pipelines
 		public static string SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo culture, params object[] args)
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("SERVICEPROVIDER_LACKS_PARAMETER", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "'{0}' is not a type of Stream.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM()
+		{
+			return Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' is not a type of Stream.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' is not a type of Stream.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(params object[] args)
+		{
+			return Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' is not a type of Stream.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM", culture), args);
 		}
 
 		/// <summary>

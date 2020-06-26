@@ -1,4 +1,4 @@
-﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+﻿// <copyright file="DeleteFileOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,6 +22,21 @@
 // SOFTWARE.
 // </copyright>
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.DeleteFileStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.ReadStreamFromFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.WriteStreamToFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+namespace MyTrout.Pipelines.Steps.IO.Files
+{
+    /// <summary>
+    /// Provides caller-configurable options to change the behavior of <see cref="DeleteFileStep"/>.
+    /// </summary>
+    public class DeleteFileOptions
+    {
+        /// <summary>
+        /// Gets or sets a base directory for the source file name.
+        /// </summary>
+        public string DeleteFileBaseDirectory { get; set; }
+
+        /// <summary>
+        /// Gets or sets a parameter name used to load the file name.
+        /// </summary>
+        public string ParameterName { get; set; }
+    }
+}

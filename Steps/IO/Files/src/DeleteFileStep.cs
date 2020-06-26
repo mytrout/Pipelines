@@ -1,4 +1,4 @@
-﻿// <copyright file="MoveInputStreamToOutputStreamStep.cs" company="Chris Trout">
+﻿// <copyright file="DeleteFileStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -21,56 +21,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-namespace MyTrout.Pipelines.Steps
+
+namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
     using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Move the Input Stream to Output Stream in the pipeline.
+    /// Deletes a file located in one location.
     /// </summary>
-    public class MoveInputStreamToOutputStreamStep : AbstractPipelineStep<MoveInputStreamToOutputStreamStep>
+    public class DeleteFileStep : AbstractPipelineStep<DeleteFileStep, DeleteFileOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoveInputStreamToOutputStreamStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="DeleteFileStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public MoveInputStreamToOutputStreamStep(ILogger<MoveInputStreamToOutputStreamStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        /// <param name="options">Step-specific options for altering behavior.</param>
+        public DeleteFileStep(ILogger<DeleteFileStep> logger, IPipelineRequest next, DeleteFileOptions options)
+            : base(logger, options, next)
         {
             // no op
         }
 
         /// <summary>
-        /// Copy the Input Stream to Output Stream in the pipeline.
+        /// Moves file from one location to another.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
+        protected override Task InvokeCoreAsync(IPipelineContext context)
         {
-            Stream workingStream = null;
+            context.AssertParameterIsNotNull(this.Options.ParameterName);
+            context.AssertFileNameParameterIsValid(this.Options.ParameterName, this.Options.DeleteFileBaseDirectory);
 
-            context.AssertStreamParameterIsValid(PipelineContextConstants.INPUT_STREAM);
+            string sourceFile = context.Items[this.Options.ParameterName] as string;
 
-            try
+            if (!Path.IsPathFullyQualified(sourceFile))
             {
-                workingStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
-
-                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-
-                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, workingStream);
-
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                sourceFile = Path.Combine(this.Options.DeleteFileBaseDirectory, sourceFile);
             }
-            finally
-            {
-                context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
 
-                // Matches the value passed into the constructor.
-                context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream);
-            }
+            sourceFile = Path.GetFullPath(sourceFile);
+
+            File.Move(sourceFile, sourceFile);
+
+            return Task.CompletedTask;
         }
     }
 }

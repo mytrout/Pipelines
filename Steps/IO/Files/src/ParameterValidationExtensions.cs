@@ -22,15 +22,12 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using System;
     using System.Globalization;
     using System.IO;
 
-    /// <summary>
-    /// Provides standardized parameter validation for any method.
-    /// </summary>
     public static class ParameterValidationExtensions
     {
         /// <summary>
@@ -39,40 +36,36 @@ namespace MyTrout.Pipelines
         /// <typeparam name="TParameterType">The type of parameter being tested.</typeparam>
         /// <param name="source">The parameter value to be tested.</param>
         /// <param name="parameterName">The parameter name used in the <see cref="ArgumentNullException"/>, if the <paramref name="source"/> is <see langword="null" />.</param>
-        public static void AssertParameterIsNotNull<TParameterType>(this TParameterType source, string parameterName)
-            where TParameterType : class
-        {
-            if (string.IsNullOrWhiteSpace(parameterName))
-            {
-                throw new InvalidOperationException(Resources.PARAMETER_MUST_BE_SUPPLIED(CultureInfo.CurrentCulture));
-            }
-
-            if (source == null)
-            {
-                throw new ArgumentNullException(parameterName);
-            }
-        }
-
-        /// <summary>
-        /// Asserts the the <see cref="PipelineContext"/> contains an item for <paramref name="streamName"/> and that the value is a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
-        /// <param name="streamName">The name of the <see cref="Stream"/> value to test.</param>
-        public static void AssertStreamParameterIsValid(this IPipelineContext source, string streamName)
+        /// <param name="baseDirectory">The base directory that limits where files are able to be read.</param>
+        public static void AssertFileNameParameterIsValid(this IPipelineContext source, string parameterName, string baseDirectory)
         {
             source.AssertParameterIsNotNull(nameof(source));
 
-            if (!source.Items.TryGetValue(streamName, out object workingItem))
+            if (!source.Items.ContainsKey(parameterName))
             {
-                throw new InvalidOperationException(Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, streamName));
+                source.Errors.Add(new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName)));
             }
             else
             {
-                Stream workingStream = workingItem as Stream;
+                string workingFile = source.Items[parameterName] as string;
 
-                if (workingStream == null)
+                if (string.IsNullOrWhiteSpace(workingFile))
                 {
-                    throw new InvalidOperationException(Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, streamName));
+                    source.Errors.Add(new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName)));
+                }
+                else
+                {
+                    if (!Path.IsPathFullyQualified(workingFile))
+                    {
+                        workingFile = Path.Combine(baseDirectory, workingFile);
+                    }
+
+                    workingFile = Path.GetFullPath(workingFile);
+
+                    if (!workingFile.StartsWith(baseDirectory, StringComparison.Ordinal))
+                    {
+                        source.Errors.Add(new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile)));
+                    }
                 }
             }
         }

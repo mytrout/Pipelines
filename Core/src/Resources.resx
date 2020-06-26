@@ -123,11 +123,8 @@
   <data name="CONTEXT_CANNOT_BE_CONSTRUCTED" xml:space="preserve">
     <value>PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.</value>
   </data>
-  <data name="INPUT_STREAM_DOES_NOT_EXIST" xml:space="preserve">
-    <value>Input Stream does not exist in the Pipeline context.</value>
-  </data>
-  <data name="INPUT_STREAM_IS_NOT_TYPE_STREAM" xml:space="preserve">
-    <value>Input Stream is not a type of Stream.</value>
+  <data name="NO_STREAM_IN_CONTEXT" xml:space="preserve">
+    <value>'{0}' does not exist in the Pipeline context.</value>
   </data>
   <data name="NULL_MIDDLEWARE" xml:space="preserve">
     <value>A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.</value>
@@ -137,6 +134,9 @@
   </data>
   <data name="SERVICEPROVIDER_LACKS_PARAMETER" xml:space="preserve">
     <value>ServiceProvider does not contain one of the parameters required for '{0}'.</value>
+  </data>
+  <data name="STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM" xml:space="preserve">
+    <value>'{0}' is not a type of Stream.</value>
   </data>
   <data name="TYPE_FAILED_TO_INITIALIZE" xml:space="preserve">
     <value>{0}({1}) failed to intialize properly.</value>

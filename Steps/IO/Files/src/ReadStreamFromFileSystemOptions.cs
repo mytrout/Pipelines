@@ -1,4 +1,4 @@
-﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+﻿// <copyright file="ReadFileFromFileSystemOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,6 +22,20 @@
 // SOFTWARE.
 // </copyright>
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.DeleteFileStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.ReadStreamFromFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.WriteStreamToFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+namespace MyTrout.Pipelines.Steps.IO.Files
+{
+    /*
+     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+     */
+
+    /// <summary>
+    /// Provides caller-configurable options to change the behavior of <see cref="ReadStreamFromFileSystemStep"/>.
+    /// </summary>
+    public class ReadStreamFromFileSystemOptions
+    {
+        /// <summary>
+        /// Gets or sets the base directory from where files are read.
+        /// </summary>
+        public string ReadFileBaseDirectory { get; set; }
+    }
+}

@@ -19,7 +19,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 24
+  minor: 25
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'

@@ -86,7 +86,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public void Returns_Context_Errors_From_InvokeAsync_When_Exception_Is_Thrown_In_InvokeCoreAsync()
+        public async Task Returns_Context_Errors_From_InvokeAsync_When_Exception_Is_Thrown_In_InvokeCoreAsync()
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
@@ -100,17 +100,15 @@ namespace MyTrout.Pipelines.Steps.Tests
             int errorCount = 1;
 
             // act
-            var result = step.InvokeAsync(context);
+            await step.InvokeAsync(context);
 
             // assert
-            Assert.IsNotNull(result);
             Assert.AreEqual(errorCount, context.Errors.Count);
             Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidCastException));
-            Assert.AreEqual(Task.CompletedTask, result);
         }
 
         [TestMethod]
-        public void Returns_Task_From_InvokeAsync()
+        public async Task Returns_Without_Error_From_InvokeAsync()
         {
             // arrange
             ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
@@ -120,11 +118,10 @@ namespace MyTrout.Pipelines.Steps.Tests
             var step = new SampleStep(logger, next);
 
             // act
-            var result = step.InvokeAsync(context);
+            await step.InvokeAsync(context);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(Task.CompletedTask, result);
+            // No Exceptions means the method ran successfully.
         }
 
         [TestMethod]

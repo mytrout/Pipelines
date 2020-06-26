@@ -23,3 +23,5 @@
 // </copyright>
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller to PipelineBuilder.Build() should dispose of this instance.", Scope = "member", Target = "~M:MyTrout.Pipelines.PipelineBuilder.Build(MyTrout.Pipelines.IStepActivator)~MyTrout.Pipelines.PipelineRequestDelegate")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check for this parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.AbstractStreamHandlingStep`2.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check for this parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.MoveInputStreamToOutputStreamStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
