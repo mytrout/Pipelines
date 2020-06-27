@@ -1,4 +1,4 @@
-﻿// <copyright file="MoveFileOptions.cs" company="Chris Trout">
+﻿// <copyright file="FileConstants.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,24 +24,19 @@
 
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-
     /// <summary>
-    /// Provides caller-configurable options to change the behavior of <see cref="MoveFileStep"/>.
+    /// Constants defined for <see cref="PipelineContext" /> items for file-based steps.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class MoveFileOptions
+    public static class FileConstants
     {
         /// <summary>
-        /// Gets or sets a base directory for the source file name.
+        /// Indicates that this <see cref="PipelineContext" /> item is the file name used as the source file for read or move operations.
         /// </summary>
-        public string MoveSourceFileBaseDirectory { get; set; }
+        public const string SOURCE_FILE = "PIPELINE_SOURCE_FILE_NAME";
 
         /// <summary>
-        /// Gets or sets a base directory for the target file name.
+        /// Indicates that this <see cref="PipelineContext" /> item is the file name used as the destination (or target) file for delete, move, or write operations.
         /// </summary>
-        public string MoveTargetFileBaseDirectory { get; set; }
+        public const string TARGET_FILE = "PIPELINE_TARGET_FILE_NAME";
     }
 }

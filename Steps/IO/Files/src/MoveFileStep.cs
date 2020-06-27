@@ -53,25 +53,21 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertFileNameParameterIsValid(PipelineFileConstants.SOURCE_FILE, this.Options.MoveFileSourceBaseDirectory);
-            context.AssertFileNameParameterIsValid(PipelineFileConstants.TARGET_FILE, this.Options.MoveFileTargetBaseDirectory);
+            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.MoveSourceFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.MoveTargetFileBaseDirectory);
 
-            string sourceFile = context.Items[PipelineFileConstants.SOURCE_FILE] as string;
-            string targetFile = context.Items[PipelineFileConstants.TARGET_FILE] as string;
+            string sourceFile = context.Items[FileConstants.SOURCE_FILE] as string;
+            sourceFile = sourceFile.GetFullyQualifiedPath(this.Options.MoveSourceFileBaseDirectory);
 
-            if (!Path.IsPathFullyQualified(sourceFile))
+            string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
+            targetFile = targetFile.GetFullyQualifiedPath(this.Options.MoveTargetFileBaseDirectory);
+
+            string workingPath = Path.GetDirectoryName(targetFile);
+
+            if (!Directory.Exists(workingPath))
             {
-                sourceFile = Path.Combine(this.Options.MoveFileSourceBaseDirectory, sourceFile);
+                Directory.CreateDirectory(workingPath);
             }
-
-            sourceFile = Path.GetFullPath(sourceFile);
-
-            if (!Path.IsPathFullyQualified(targetFile))
-            {
-                targetFile = Path.Combine(this.Options.MoveFileSourceBaseDirectory, targetFile);
-            }
-
-            targetFile = Path.GetFullPath(targetFile);
 
             File.Move(sourceFile, targetFile);
 

@@ -40,7 +40,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     public class ReadStreamFromFileSystemStepTests
     {
         [TestMethod]
-        public async Task Constructs_ReadStreamFromFileSystemTests_Successfully()
+        public async Task Constructs_ReadStreamFromFileSystemStep_Successfully()
         {
             // arrange
             string inputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
@@ -81,7 +81,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
@@ -139,7 +139,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.SOURCE_FILE);
+            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -166,7 +166,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string fullPathAndFileName = inputFilePath + fileName;
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, string.Empty);
+            context.Items.Add(FileConstants.SOURCE_FILE, string.Empty);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
@@ -182,7 +182,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.SOURCE_FILE);
+            string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -209,7 +209,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string fullPathAndFileName = inputFilePath + fileName;
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, fullPathAndFileName);
+            context.Items.Add(FileConstants.SOURCE_FILE, fullPathAndFileName);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
@@ -254,7 +254,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
             context.Items.Add("FILE_CONTENTS", contents);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
@@ -300,7 +300,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
             context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
@@ -358,7 +358,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.SOURCE_FILE);
+            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -388,7 +388,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
             context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;

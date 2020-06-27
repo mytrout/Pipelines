@@ -26,8 +26,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
-    using System;
-    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -56,58 +54,20 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            if (!context.Items.ContainsKey(PipelineFileConstants.TARGET_FILE))
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.WriteFileBaseDirectory);
+            context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
+
+            string workingFile = context.Items[FileConstants.TARGET_FILE] as string;
+            workingFile = workingFile.GetFullyQualifiedPath(this.Options.WriteFileBaseDirectory);
+
+            Stream workingStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+
+            using (FileStream outputStream = File.OpenWrite(workingFile))
             {
-                context.Errors.Add(new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.TARGET_FILE)));
+                await workingStream.CopyToAsync(outputStream).ConfigureAwait(false);
             }
-            else
-            {
-                string workingFile = context.Items[PipelineFileConstants.TARGET_FILE] as string;
 
-                if (string.IsNullOrWhiteSpace(workingFile))
-                {
-                    context.Errors.Add(new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.TARGET_FILE)));
-                }
-                else
-                {
-                    if (!Path.IsPathFullyQualified(workingFile))
-                    {
-                        workingFile = Path.Combine(this.Options.WriteFileBaseDirectory, workingFile);
-                    }
-
-                    workingFile = Path.GetFullPath(workingFile);
-
-                    if (!workingFile.StartsWith(this.Options.WriteFileBaseDirectory, StringComparison.OrdinalIgnoreCase))
-                    {
-                        context.Errors.Add(new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, this.Options.WriteFileBaseDirectory, workingFile)));
-                    }
-                    else
-                    {
-                        if (!context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object workingItem))
-                        {
-                            context.Errors.Add(new InvalidOperationException(Resources.NO_OUTPUT_STREAM(CultureInfo.CurrentCulture)));
-                        }
-                        else
-                        {
-                            Stream workingStream = workingItem as Stream;
-
-                            if (workingStream == null)
-                            {
-                                context.Errors.Add(new InvalidOperationException(Resources.INVALID_OUTPUT_STREAM(CultureInfo.CurrentCulture)));
-                            }
-                            else
-                            {
-                                using (FileStream outputStream = File.OpenWrite(workingFile))
-                                {
-                                    await workingStream.CopyToAsync(outputStream).ConfigureAwait(false);
-                                }
-
-                                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                            }
-                        }
-                    }
-                }
-            }
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
         }
     }
 }

@@ -28,12 +28,14 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     using System.Globalization;
     using System.IO;
 
+    /// <summary>
+    /// Provides standardized parameter validation for any file-based InvokeAsync methods.
+    /// </summary>
     public static class ParameterValidationExtensions
     {
         /// <summary>
         /// Asserts that the provided parameter is not <see langword="null" />.
         /// </summary>
-        /// <typeparam name="TParameterType">The type of parameter being tested.</typeparam>
         /// <param name="source">The parameter value to be tested.</param>
         /// <param name="parameterName">The parameter name used in the <see cref="ArgumentNullException"/>, if the <paramref name="source"/> is <see langword="null" />.</param>
         /// <param name="baseDirectory">The base directory that limits where files are able to be read.</param>
@@ -43,7 +45,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             if (!source.Items.ContainsKey(parameterName))
             {
-                source.Errors.Add(new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName)));
+                throw new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName));
             }
             else
             {
@@ -51,7 +53,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
                 if (string.IsNullOrWhiteSpace(workingFile))
                 {
-                    source.Errors.Add(new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName)));
+                    throw new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName));
                 }
                 else
                 {
@@ -64,7 +66,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
                     if (!workingFile.StartsWith(baseDirectory, StringComparison.Ordinal))
                     {
-                        source.Errors.Add(new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile)));
+                        throw new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile));
                     }
                 }
             }

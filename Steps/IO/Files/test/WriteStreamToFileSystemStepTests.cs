@@ -79,7 +79,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             using (var stream = new MemoryStream(body))
             {
                 PipelineContext context = new PipelineContext();
-                context.Items.Add(PipelineFileConstants.TARGET_FILE, fileName);
+                context.Items.Add(FileConstants.TARGET_FILE, fileName);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
@@ -140,7 +140,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.TARGET_FILE);
+                string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -170,7 +170,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             using (var stream = new MemoryStream(body))
             {
                 PipelineContext context = new PipelineContext();
-                context.Items.Add(PipelineFileConstants.TARGET_FILE, string.Empty);
+                context.Items.Add(FileConstants.TARGET_FILE, string.Empty);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
@@ -188,7 +188,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.TARGET_FILE);
+                string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -218,7 +218,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             using (var stream = new MemoryStream(body))
             {
                 PipelineContext context = new PipelineContext();
-                context.Items.Add(PipelineFileConstants.TARGET_FILE, fullPathAndFileName);
+                context.Items.Add(FileConstants.TARGET_FILE, fullPathAndFileName);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
@@ -266,7 +266,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             using (var stream = new MemoryStream(body))
             {
                 PipelineContext context = new PipelineContext();
-                context.Items.Add(PipelineFileConstants.TARGET_FILE, fileName);
+                context.Items.Add(FileConstants.TARGET_FILE, fileName);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
@@ -283,7 +283,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Resources.NO_OUTPUT_STREAM(CultureInfo.CurrentCulture);
+                string expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -313,7 +313,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string stream = "Not an Actual Stream object.";
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineFileConstants.TARGET_FILE, fileName);
+            context.Items.Add(FileConstants.TARGET_FILE, fileName);
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
             var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
@@ -331,7 +331,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             int errorCount = 1;
 
-            string expectedMessage = Resources.INVALID_OUTPUT_STREAM(CultureInfo.CurrentCulture);
+            string expectedMessage = Pipelines.Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);

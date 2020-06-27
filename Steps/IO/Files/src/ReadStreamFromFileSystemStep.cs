@@ -1,4 +1,4 @@
-﻿// <copyright file="ReadFileFromFileSystemStep.cs" company="Chris Trout">
+﻿// <copyright file="ReadStreamFromFileSystemStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -26,8 +26,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
-    using System;
-    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -56,66 +54,37 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            if (!context.Items.ContainsKey(PipelineFileConstants.SOURCE_FILE))
+            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.ReadFileBaseDirectory);
+
+            string workingFile = context.Items[FileConstants.SOURCE_FILE] as string;
+            workingFile = workingFile.GetFullyQualifiedPath(this.Options.ReadFileBaseDirectory);
+
+            if (context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out object previous))
             {
-                context.Errors.Add(new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.SOURCE_FILE)));
+                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
             }
-            else
+
+            try
             {
-                string workingFile = context.Items[PipelineFileConstants.SOURCE_FILE] as string;
-
-                if (string.IsNullOrWhiteSpace(workingFile))
+                using (var inputStream = File.OpenRead(workingFile))
                 {
-                    context.Errors.Add(new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineFileConstants.SOURCE_FILE)));
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
+                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
-                else
+            }
+            finally
+            {
+                if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
                 {
-                    if (!Path.IsPathFullyQualified(workingFile))
-                    {
-                        workingFile = Path.Combine(this.Options.ReadFileBaseDirectory, workingFile);
-                    }
+                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
+                }
 
-                    workingFile = Path.GetFullPath(workingFile);
-
-                    if (!workingFile.StartsWith(this.Options.ReadFileBaseDirectory, StringComparison.Ordinal))
-                    {
-                        context.Errors.Add(new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, this.Options.ReadFileBaseDirectory, workingFile)));
-                    }
-                    else
-                    {
-                        if (context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out object previous))
-                        {
-                            context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-                        }
-
-                        try
-                        {
-                            using (var inputStream = File.OpenRead(workingFile))
-                            {
-                                context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
-
-                                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-                                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-                            }
-                        }
-                        catch (Exception exc)
-                        {
-                            context.Errors.Add(exc);
-                        }
-                        finally
-                        {
-                            if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
-                            {
-                                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-                            }
-
-                            if (previous != null)
-                            {
-                                context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
-                            }
-                        }
-                    }
+                if (previous != null)
+                {
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
                 }
             }
         }

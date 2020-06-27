@@ -29,7 +29,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Deletes a file located in one location.
+    /// Deletes a file located on the file system.
     /// </summary>
     public class DeleteFileStep : AbstractPipelineStep<DeleteFileStep, DeleteFileOptions>
     {
@@ -53,19 +53,13 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertParameterIsNotNull(this.Options.ParameterName);
-            context.AssertFileNameParameterIsValid(this.Options.ParameterName, this.Options.DeleteFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.DeleteFileBaseDirectory);
 
-            string sourceFile = context.Items[this.Options.ParameterName] as string;
+            string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
 
-            if (!Path.IsPathFullyQualified(sourceFile))
-            {
-                sourceFile = Path.Combine(this.Options.DeleteFileBaseDirectory, sourceFile);
-            }
+            targetFile = targetFile.GetFullyQualifiedPath(this.Options.DeleteFileBaseDirectory);
 
-            sourceFile = Path.GetFullPath(sourceFile);
-
-            File.Move(sourceFile, sourceFile);
+            File.Delete(targetFile);
 
             return Task.CompletedTask;
         }

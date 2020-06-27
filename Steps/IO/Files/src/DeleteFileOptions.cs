@@ -24,19 +24,19 @@
 
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
+    /*
+     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+     */
+
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="DeleteFileStep"/>.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class DeleteFileOptions
     {
         /// <summary>
         /// Gets or sets a base directory for the source file name.
         /// </summary>
         public string DeleteFileBaseDirectory { get; set; }
-
-        /// <summary>
-        /// Gets or sets a parameter name used to load the file name.
-        /// </summary>
-        public string ParameterName { get; set; }
     }
 }

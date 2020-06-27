@@ -53,78 +53,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
 		/// <summary>
-		/// Looks up a localized string like "Cancellation requested while executing '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string CANCELLATION_REQUESTED()
-		{
-			return Resources.CANCELLATION_REQUESTED(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Cancellation requested while executing '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string CANCELLATION_REQUESTED(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("CANCELLATION_REQUESTED", culture);
-		}
-				
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Cancellation requested while executing '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string CANCELLATION_REQUESTED(params object[] args)
-		{
-			return Resources.CANCELLATION_REQUESTED(CultureInfo.CurrentCulture, args);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Cancellation requested while executing '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string CANCELLATION_REQUESTED(CultureInfo culture, params object[] args)
-		{
-			return string.Format(culture, Resources.ResourceManager.GetString("CANCELLATION_REQUESTED", culture), args);
-		}
-
-		/// <summary>
-		/// Looks up a localized string like "Output Stream is not a valid Stream.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVALID_OUTPUT_STREAM()
-		{
-			return Resources.INVALID_OUTPUT_STREAM(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "Output Stream is not a valid Stream.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string INVALID_OUTPUT_STREAM(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("INVALID_OUTPUT_STREAM", culture);
-		}
-		
-		/// <summary>
 		/// Looks up a localized string like "PipelineContext does not contain a key named '{0}'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
@@ -173,31 +101,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		}
 
 		/// <summary>
-		/// Looks up a localized string like "No Output Stream is available to write to the file system.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string NO_OUTPUT_STREAM()
-		{
-			return Resources.NO_OUTPUT_STREAM(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "No Output Stream is available to write to the file system.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string NO_OUTPUT_STREAM(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("NO_OUTPUT_STREAM", culture);
-		}
-		
-		/// <summary>
-		/// Looks up a localized string like "WARNING -> Path traversal issue on '{0}' trying to access '{1}'.".
+		/// Looks up a localized string like "WARNING -> Path traversal attempt on '{0}' trying to access '{1}'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -209,7 +113,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal issue on '{0}' trying to access '{1}'.".
+		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal attempt on '{0}' trying to access '{1}'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -221,7 +125,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal issue on '{0}' trying to access '{1}'.".
+		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal attempt on '{0}' trying to access '{1}'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -233,7 +137,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal issue on '{0}' trying to access '{1}'.".
+		/// Looks up a localized string using a specific culture like "WARNING -> Path traversal attempt on '{0}' trying to access '{1}'.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]

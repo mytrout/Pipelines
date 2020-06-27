@@ -31,6 +31,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="ReadStreamFromFileSystemStep"/>.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ReadStreamFromFileSystemOptions
     {
         /// <summary>

@@ -117,20 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CACELLATION_REQUESTED" xml:space="preserve">
-    <value>Cancellation requested while executing '{0}'.</value>
-  </data>
-  <data name="INVALID_OUTPUT_STREAM" xml:space="preserve">
-    <value>Output Stream is not a valid Stream.</value>
-  </data>
   <data name="KEY_DOES_NOT_EXIST_IN_CONTEXT" xml:space="preserve">
     <value>PipelineContext does not contain a key named '{0}'.</value>
   </data>
-  <data name="NO_OUTPUT_STREAM" xml:space="preserve">
-    <value>No Output Stream is available to write to the file system.</value>
-  </data>
   <data name="PATH_TRAVERSAL_ISSUE" xml:space="preserve">
-    <value>WARNING -&gt; Path traversal issue on '{0}' trying to access '{1}'.</value>
+    <value>WARNING -&gt; Path traversal attempt on '{0}' trying to access '{1}'.</value>
   </data>
   <data name="VALUE_IS_WHITESPACE_IN_CONTEXT" xml:space="preserve">
     <value>PipelineContext does not contain a non-whitespace value for '{0}'.</value>
