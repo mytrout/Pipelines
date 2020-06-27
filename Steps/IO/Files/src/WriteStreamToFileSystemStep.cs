@@ -25,7 +25,6 @@
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
-    using MyTrout.Pipelines;
     using System.IO;
     using System.Threading.Tasks;
 
