@@ -1,0 +1,101 @@
+name: 'Pipelines.Steps.Cryptography-$(major).$(minor).$(patch).$(buildId)$(suffix)'
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/Cryptography/*
+    exclude:
+    - README.md
+    - License.md
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/Steps/Cryptography/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  major: 0
+  minor: 2
+  patch: 1
+  buildId: $[counter(variables['patch'], 0)]
+  suffix: '-beta'
+  publishVstsFeed: 'Pipelines/mytrout'
+  sonarCloudConnectionName: 'SonarCloud.io - Pipelines'
+  sonarCloudOrganization: 'mytrout'
+  sonarCloudProjectKey: 'Pipelines.Steps.Cryptography'
+  sonarCloudProjectName: 'Pipelines.Steps.Cryptography'
+  sonarCloudEnabled: 'YES'
+  
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Install latest version of NuGet tools.'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreSolution: '$(solution)'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreSolution: '$(solution)'
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: '$(sonarCloudConnectionName)'
+    organization: '$(sonarCloudOrganization)'
+    scannerMode: 'MSBuild'
+    projectKey: '$(sonarCloudProjectKey)'
+    projectName: '$(sonarCloudProjectName)'
+    projectVersion: '$(major).$(minor).$(patch)$(suffix)'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  displayName: 'Prepare SonarQube analysis.'
+
+- task: DotNetCoreCLI@2
+  inputs:
+     command: build
+     projects: $(solution)
+     arguments: '--configuration $(buildConfiguration) --force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)'
+  displayName: 'Build the solution.'
+
+- task: DotNetCoreCLI@2
+  inputs:
+     command: test
+     projects: $(solution)
+     arguments: --configuration $(BuildConfiguration) --collect "Code Coverage"
+  displayName: 'Run the unit and simple integration tests for SonarCloud.'
+
+- task: SonarCloudAnalyze@1
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  displayName: 'Analyze SonarQube results and upload to SonarCloud.io.'
+
+#
+# This step will fail to publish into an Azure DevOps Artifacts, 
+#     if the "[project] Build Service" Account does not have Contributor access to the NuGet Feed
+#     and/or "Allow project-scoped builds" is not enabled for that account on the NuGet feed.
+#
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg;'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '$(publishVstsFeed)'
+    allowPackageConflicts: true
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Publish the nuget package to ADO artifacts.'
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  displayName: 'Publish SonarCloud results to ADO pipeline results.'
