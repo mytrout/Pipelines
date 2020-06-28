@@ -25,14 +25,13 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
-    using MyTrout.Pipelines;
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// TODO: Mark-up the summary of this step.
+    /// Decrypts the <see cref="PipelineContextConstants.INPUT_STREAM" /> using AES256.
     /// </summary>
     public class DecryptStreamWithAes256Step : AbstractPipelineStep<DecryptStreamWithAes256Step, DecryptStreamWithAes256Options>
     {
@@ -71,7 +70,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                 using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
                 {
-                    using (StreamReader reader = new StreamReader(cryptoStream))
+                    using (StreamReader reader = new StreamReader(cryptoStream, Encoding.UTF8, false, 1024, true))
                     {
                         byte[] output = Encoding.UTF8.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 

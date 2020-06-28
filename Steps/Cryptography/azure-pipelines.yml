@@ -1,4 +1,4 @@
-name: 'Pipelines.Steps.Cryptography-$(major).$(minor).$(patch).$(buildId)$(suffix)'
+name: 'Pipelines.Steps.Cryptography $(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:
@@ -20,7 +20,7 @@ variables:
   buildConfiguration: 'Release'
   major: 0
   minor: 2
-  patch: 1
+  patch: 2
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
   publishVstsFeed: 'Pipelines/mytrout'
