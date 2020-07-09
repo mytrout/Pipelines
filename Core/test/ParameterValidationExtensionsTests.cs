@@ -46,6 +46,19 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
+        public void Returns_From_AssertParameterIsNotWhiteSpace_When_Source_Is_Not_WhiteSpace()
+        {
+            // arrange
+            string expectedValue = "Non-null value";
+            string parameterName = "paramName";
+
+            // act
+            expectedValue.AssertParameterIsNotWhiteSpace(parameterName);
+
+            // assert - No assertions are necessary.  If no exception is thrown, the parameter is not whitespace
+        }
+
+        [TestMethod]
         public void Throws_ArgumentNullException_From_AssertParameterIsNotNull_When_Source_Is_Null()
         {
             // arrange
@@ -54,6 +67,51 @@ namespace MyTrout.Pipelines.Tests
 
             // act
             var result = Assert.ThrowsException<ArgumentNullException>(() => expectedValue.AssertParameterIsNotNull<string>(parameterName));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(parameterName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_AssertParameterIsNotWhiteSpace_When_Source_Is_Null()
+        {
+            // arrange
+            string expectedValue = null;
+            string parameterName = "paramName";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => expectedValue.AssertParameterIsNotWhiteSpace(parameterName));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(parameterName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_AssertParameterIsNotWhiteSpace_When_Source_Is_Empty()
+        {
+            // arrange
+            string expectedValue = string.Empty;
+            string parameterName = "paramName";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => expectedValue.AssertParameterIsNotWhiteSpace(parameterName));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(parameterName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_AssertParameterIsNotWhiteSpace_When_Source_Is_WhiteSpace()
+        {
+            // arrange
+            string expectedValue = "\r\n\t";
+            string parameterName = "paramName";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => expectedValue.AssertParameterIsNotWhiteSpace(parameterName));
 
             // assert
             Assert.IsNotNull(result);
@@ -71,6 +129,23 @@ namespace MyTrout.Pipelines.Tests
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => expectedValue.AssertParameterIsNotNull<string>(parameterName));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_AssertParameterIsNotWhiteSpace_When_ParameterName_Is_Null()
+        {
+            // arrange
+            string expectedValue = "Non-null value";
+            string parameterName = null;
+
+            string expectedMessage = "parameterName must be supplied in AssertParameterIsNotNull.";
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => expectedValue.AssertParameterIsNotWhiteSpace(parameterName));
 
             // assert
             Assert.IsNotNull(result);

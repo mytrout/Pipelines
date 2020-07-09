@@ -54,6 +54,24 @@ namespace MyTrout.Pipelines
         }
 
         /// <summary>
+        /// Asserts that the provided parameter is not <see langword="null" />.
+        /// </summary>
+        /// <param name="source">The parameter value to be tested.</param>
+        /// <param name="parameterName">The parameter name used in the <see cref="ArgumentNullException"/>, if the <paramref name="source"/> is <see langword="null" />.</param>
+        public static void AssertParameterIsNotWhiteSpace(this string source, string parameterName)
+        {
+            if (string.IsNullOrWhiteSpace(parameterName))
+            {
+                throw new InvalidOperationException(Resources.PARAMETER_MUST_BE_SUPPLIED(CultureInfo.CurrentCulture));
+            }
+
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                throw new ArgumentNullException(parameterName);
+            }
+        }
+
+        /// <summary>
         /// Asserts the the <see cref="PipelineContext"/> contains an item for <paramref name="streamName"/> and that the value is a <see cref="Stream"/>.
         /// </summary>
         /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
