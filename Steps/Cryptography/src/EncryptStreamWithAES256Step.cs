@@ -98,42 +98,34 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected async override Task InvokeCoreAsync(IPipelineContext context)
         {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
             context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
 
-            Stream unencryptedStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
-
-            var cryptoProvider = new AesCryptoServiceProvider();
-
-            try
+            using (var cryptoProvider = new AesCryptoServiceProvider())
             {
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-                byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionKey);
-                byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionInitializationVector);
-
-                ICryptoTransform encryptor = cryptoProvider.CreateEncryptor(key, initializationVector);
-
-                var encryptedStream = new MemoryStream();
-
-                using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
+                using (var unencryptedStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
                 {
-                    using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, true))
+                    byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionKey);
+                    byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionInitializationVector);
+
+                    ICryptoTransform encryptor = cryptoProvider.CreateEncryptor(key, initializationVector);
+
+                    var encryptedStream = new MemoryStream();
+
+                    using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
                     {
-                        await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
+                        using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
+                        {
+                            await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
+                        }
                     }
+
+                    // Reset to the starting position to allow writers to write the entire stream.
+                    encryptedStream.Position = 0;
+
+                    context.Items[PipelineContextConstants.OUTPUT_STREAM] = encryptedStream;
                 }
-
-                // Reset to the starting position to allow writers to write the entire stream.
-                encryptedStream.Position = 0;
-
-                context.Items[PipelineContextConstants.OUTPUT_STREAM] = encryptedStream;
-            }
-            finally
-            {
-                cryptoProvider.Dispose();
-
-                unencryptedStream.Close();
-                unencryptedStream.Dispose();
             }
         }
     }
