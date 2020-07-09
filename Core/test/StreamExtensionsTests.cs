@@ -24,7 +24,6 @@
 
 namespace MyTrout.Pipelines.Tests
 {
-
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Diagnostics.CodeAnalysis;
