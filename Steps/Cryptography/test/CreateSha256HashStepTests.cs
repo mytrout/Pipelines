@@ -43,11 +43,12 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
+            var options = new CreateSha256HashOptions();
 
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            var result = new CreateSha256HashStep(logger, next);
+            var result = new CreateSha256HashStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -61,6 +62,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             // arrange
             int errorCount = 1;
             var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
+            var options = new CreateSha256HashOptions();
 
             PipelineContext context = new PipelineContext();
 
@@ -69,7 +71,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
-            var source = new CreateSha256HashStep(logger, next);
+            var source = new CreateSha256HashStep(logger, options, next);
 
             var expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
@@ -100,6 +102,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                     context.Items.Add("TEST_CHECK_HASH", expectedHash);
 
                     var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
+                    var options = new CreateSha256HashOptions();
 
                     var nextMock = new Mock<IPipelineRequest>();
                     nextMock.Setup(x => x.InvokeAsync(context))
@@ -107,7 +110,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                                             .Returns(Task.CompletedTask);
                     var next = nextMock.Object;
 
-                    var source = new CreateSha256HashStep(logger, next);
+                    var source = new CreateSha256HashStep(logger, options, next);
 
                     // act
                     await source.InvokeAsync(context);

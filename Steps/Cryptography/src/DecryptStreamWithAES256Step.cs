@@ -63,16 +63,16 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
             try
             {
-                byte[] key = Encoding.UTF8.GetBytes(this.Options.DecryptionKey);
-                byte[] initializationVector = Encoding.UTF8.GetBytes(this.Options.DecryptionInitializationVector);
+                byte[] key = this.Options.DecryptionEncoding.GetBytes(this.Options.DecryptionKey);
+                byte[] initializationVector = this.Options.DecryptionEncoding.GetBytes(this.Options.DecryptionInitializationVector);
 
                 ICryptoTransform decryptor = cryptoProvider.CreateDecryptor(key, initializationVector);
 
                 using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
                 {
-                    using (StreamReader reader = new StreamReader(cryptoStream, Encoding.UTF8, false, 1024, true))
+                    using (StreamReader reader = new StreamReader(cryptoStream, this.Options.DecryptionEncoding, false, 1024, true))
                     {
-                        byte[] output = Encoding.UTF8.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
+                        byte[] output = this.Options.DecryptionEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
                         using (var outputStream = new MemoryStream(output))
                         {

@@ -34,15 +34,16 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// <summary>
     /// Creates a SHA256 Hash of the pipeline's <see cref="PipelineContextConstants.OUTPUT_STREAM"/>.
     /// </summary>
-    public class CreateSha256HashStep : AbstractPipelineStep<CreateSha256HashStep>
+    public class CreateSha256HashStep : AbstractPipelineStep<CreateSha256HashStep, CreateSha256HashOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateSha256HashStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public CreateSha256HashStep(ILogger<CreateSha256HashStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public CreateSha256HashStep(ILogger<CreateSha256HashStep> logger, CreateSha256HashOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
@@ -55,7 +56,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertStreamParameterIsValid(this.Options.HashStreamKey);
 
             if (context.Items.TryGetValue(CryptographyConstants.HASH_STREAM, out object previousHash))
             {
@@ -67,16 +68,16 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                 context.Items.Remove(CryptographyConstants.HASH_STRING);
             }
 
-            Stream inputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+            Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
 
             long previousStreamPosition = inputStream.Position;
             inputStream.Position = 0;
 
             try
             {
-                using (StreamReader reader = new StreamReader(inputStream, Encoding.UTF8, false, 1024, true))
+                using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
                 {
-                    byte[] workingResult = Encoding.UTF8.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
+                    byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
                     using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
                     {

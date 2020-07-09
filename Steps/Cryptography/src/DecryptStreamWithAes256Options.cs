@@ -24,6 +24,8 @@
 
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
+    using System.Text;
+
     /*
      *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
      */
@@ -34,6 +36,11 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class DecryptStreamWithAes256Options
     {
+        /// <summary>
+        /// Gets or sets the <see cref="Encoding"/> used to decrypt this value.
+        /// </summary>
+        public Encoding DecryptionEncoding { get; set; } = Encoding.UTF8;
+
         /// <summary>
         /// Gets or sets the initialization vector used to decrypt the value.
         /// </summary>

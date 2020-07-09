@@ -1,4 +1,4 @@
-﻿// <copyright file="EncryptStreamWithAes256Options.cs" company="Chris Trout">
+﻿// <copyright file="CreateSha256HashOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -31,24 +31,19 @@ namespace MyTrout.Pipelines.Steps.Cryptography
      */
 
     /// <summary>
-    /// Provides caller-configurable options to change the behavior of <see cref="EncryptStreamWithAes256Step"/>.
+    /// Provides caller-configurable options to change the behavior of <see cref="CreateSha256HashOptions"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class EncryptStreamWithAes256Options
+    public class CreateSha256HashOptions
     {
         /// <summary>
-        /// Gets or sets the <see cref="Encoding"/> used to encrypt this value.
+        /// Gets or sets the <see cref="Encoding"/> used to hash this value.
         /// </summary>
-        public Encoding EncryptionEncoding { get; set; } = Encoding.UTF8;
+        public Encoding HashEncoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
-        /// Gets or sets the initialization vector used to encrypt the value.
+        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="PipelineContext"/>.
         /// </summary>
-        public string EncryptionInitializationVector { get; set; }
-
-        /// <summary>
-        /// Gets or sets the key used to encrypt the value.
-        /// </summary>
-        public string EncryptionKey { get; set; }
+        public string HashStreamKey { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
     }
 }

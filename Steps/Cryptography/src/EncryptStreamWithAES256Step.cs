@@ -106,39 +106,34 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
             try
             {
-                byte[] key = Encoding.UTF8.GetBytes(this.Options.EncryptionKey);
-                byte[] initializationVector = Encoding.UTF8.GetBytes(this.Options.EncryptionInitializationVector);
+                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
+                byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionKey);
+                byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionInitializationVector);
 
                 ICryptoTransform encryptor = cryptoProvider.CreateEncryptor(key, initializationVector);
 
-                using (MemoryStream encryptedStream = new MemoryStream())
+                var encryptedStream = new MemoryStream();
+
+                using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
                 {
-                    using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
+                    using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, true))
                     {
-                        using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, Encoding.UTF8, false, 1024, true))
-                        {
-                            await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
-                        }
+                        await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
                     }
-
-                    // Reset to the starting position to allow writers to write the entire stream.
-                    encryptedStream.Position = 0;
-
-                    context.Items[PipelineContextConstants.OUTPUT_STREAM] = encryptedStream;
-
-                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
                 }
+
+                // Reset to the starting position to allow writers to write the entire stream.
+                encryptedStream.Position = 0;
+
+                context.Items[PipelineContextConstants.OUTPUT_STREAM] = encryptedStream;
             }
             finally
             {
                 cryptoProvider.Dispose();
 
-                if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM))
-                {
-                    context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
-                }
-
-                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, unencryptedStream);
+                unencryptedStream.Close();
+                unencryptedStream.Dispose();
             }
         }
     }

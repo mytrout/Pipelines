@@ -111,11 +111,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             PipelineContext context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
-            context.Items.Add("TEST_CHECK_ENCRYPTED_CONTENTS", encryptedContents);
 
             var nextMock = new Mock<IPipelineRequest>();
             nextMock.Setup(x => x.InvokeAsync(context))
-                                    .Callback(() => this.AssertEncryptedValue(context))
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
@@ -131,8 +129,16 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             }
 
             Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
-            Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-            Assert.IsTrue(outputStream.CanWrite, "This stream should still be open.");
+
+            var resultStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+
+            Assert.IsTrue(resultStream.CanRead, "This stream should still be open.");
+
+            using (var reader = new StreamReader(resultStream))
+            {
+                string result = await reader.ReadToEndAsync().ConfigureAwait(false);
+                Assert.AreEqual(result, encryptedContents);
+            }
         }
 
         private void AssertEncryptedValue(PipelineContext context)
