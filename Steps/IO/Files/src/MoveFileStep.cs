@@ -51,8 +51,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
-        protected override Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
             context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.MoveSourceFileBaseDirectory);
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.MoveTargetFileBaseDirectory);
 
@@ -70,8 +72,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             }
 
             File.Move(sourceFile, targetFile);
-
-            return Task.CompletedTask;
         }
     }
 }

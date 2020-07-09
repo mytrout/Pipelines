@@ -53,6 +53,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.WriteFileBaseDirectory);
             context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
 
@@ -65,8 +67,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             {
                 await workingStream.CopyToAsync(outputStream).ConfigureAwait(false);
             }
-
-            await this.Next.InvokeAsync(context).ConfigureAwait(false);
         }
     }
 }

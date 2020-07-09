@@ -100,6 +100,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 // assert
                 Assert.IsTrue(File.Exists(fullPathAndFileName));
+                Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "The stream should be open.");
                 Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
 
                 // cleanup
