@@ -52,7 +52,7 @@ namespace MyTrout.Pipelines.Steps
         {
             Stream workingStream = null;
 
-            context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
             try
             {

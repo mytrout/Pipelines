@@ -26,7 +26,6 @@ namespace MyTrout.Pipelines
 {
     using System;
     using System.Globalization;
-    using System.IO;
 
     /// <summary>
     /// Provides standardized parameter validation for any method.
@@ -68,30 +67,6 @@ namespace MyTrout.Pipelines
             if (string.IsNullOrWhiteSpace(source))
             {
                 throw new ArgumentNullException(parameterName);
-            }
-        }
-
-        /// <summary>
-        /// Asserts the the <see cref="PipelineContext"/> contains an item for <paramref name="streamName"/> and that the value is a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
-        /// <param name="streamName">The name of the <see cref="Stream"/> value to test.</param>
-        public static void AssertStreamParameterIsValid(this IPipelineContext source, string streamName)
-        {
-            source.AssertParameterIsNotNull(nameof(source));
-
-            if (!source.Items.TryGetValue(streamName, out object workingItem))
-            {
-                throw new InvalidOperationException(Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, streamName));
-            }
-            else
-            {
-                Stream workingStream = workingItem as Stream;
-
-                if (workingStream == null)
-                {
-                    throw new InvalidOperationException(Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, streamName));
-                }
             }
         }
     }

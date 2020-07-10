@@ -157,7 +157,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             // assert
             Assert.AreEqual(errorCount, context.Errors.Count);
             Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM), context.Errors[0].Message);
+            Assert.AreEqual(Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM), context.Errors[0].Message);
         }
 
         [TestMethod]
@@ -177,13 +177,15 @@ namespace MyTrout.Pipelines.Steps.Tests
 
             var source = new MoveOutputStreamToInputStreamStep(logger, next);
 
+            string expectedMessage = Resources.CONTEXT_VALUE_NOT_EXPECTED_TYPE(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM, typeof(Stream));
+
             // act
             await source.InvokeAsync(context);
 
             // assert
             Assert.AreEqual(errorCount, context.Errors.Count);
             Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM), context.Errors[0].Message);
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
         [TestMethod]
