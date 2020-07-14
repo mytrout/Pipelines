@@ -73,7 +73,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             var source = new CreateSha256HashStep(logger, options, next);
 
-            var expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
             // act
             await source.InvokeAsync(context);
@@ -95,6 +95,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             {
                 using (var outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
                 {
+                    outputStream.Position = 0;
                     PipelineContext context = new PipelineContext();
                     context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
                     context.Items.Add(CryptographyConstants.HASH_STREAM, previousHash);
@@ -106,7 +107,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
                     var nextMock = new Mock<IPipelineRequest>();
                     nextMock.Setup(x => x.InvokeAsync(context))
-                                            .Callback(() => this.AssertHashedValue(context))
                                             .Returns(Task.CompletedTask);
                     var next = nextMock.Object;
 
@@ -123,9 +123,18 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
                     Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
                     Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                    Assert.IsTrue(outputStream.CanWrite, "Stream should not be closed.");
-                    Assert.AreEqual(previousHash, context.Items[CryptographyConstants.HASH_STREAM]);
-                    Assert.AreEqual(previousHashString, context.Items[CryptographyConstants.HASH_STRING]);
+                    Assert.IsTrue(outputStream.CanRead, "Stream should not be closed.");
+
+                    using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
+                    {
+                        using (StreamReader reader = new StreamReader(hashStream, leaveOpen: true))
+                        {
+                            var actualHash = await reader.ReadToEndAsync();
+                            Assert.AreEqual(expectedHash, actualHash);
+                        }
+                    }
+
+                    Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
                 }
             }
         }

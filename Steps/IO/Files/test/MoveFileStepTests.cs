@@ -123,6 +123,110 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Source_File_Does_Not_Exists()
+        {
+            // arrange
+            string sourceFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullSourcePathAndFileName = sourceFilePath + fileName;
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.TARGET_FILE, fileName);
+
+            var logger = new Mock<ILogger<MoveFileStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            MoveFileOptions options = new MoveFileOptions()
+            {
+                MoveSourceFileBaseDirectory = sourceFilePath,
+                MoveTargetFileBaseDirectory = targetFilePath
+            };
+
+            var source = new MoveFileStep(logger, next, options);
+
+            int errorCount = 1;
+            var expectedMessage = Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, fullSourcePathAndFileName);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(errorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+        }
+
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Target_File_Already_Exists()
+        {
+            // arrange
+            string sourceFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullSourcePathAndFileName = sourceFilePath + fileName;
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            Directory.CreateDirectory(targetFilePath);
+
+            string contents = "Et tu, Brute?";
+            File.WriteAllText(fullSourcePathAndFileName, contents);
+            File.WriteAllText(fullTargetPathAndFileName, contents);
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.TARGET_FILE, fileName);
+
+            var logger = new Mock<ILogger<MoveFileStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            MoveFileOptions options = new MoveFileOptions()
+            {
+                MoveSourceFileBaseDirectory = sourceFilePath,
+                MoveTargetFileBaseDirectory = targetFilePath
+            };
+
+            var source = new MoveFileStep(logger, next, options);
+
+            int errorCount = 1;
+            var expectedMessage = Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, fullTargetPathAndFileName);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(errorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+            File.Delete(fullSourcePathAndFileName);
+            File.Delete(fullTargetPathAndFileName);
+            Directory.Delete(targetFilePath);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Source_Path_Traversal_Has_Been_Discovered()
         {
             // arrange

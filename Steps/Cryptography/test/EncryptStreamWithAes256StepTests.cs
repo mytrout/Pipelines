@@ -73,7 +73,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             var source = new EncryptStreamWithAes256Step(logger, options, next);
 
-            var expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+            var expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
             // act
             await source.InvokeAsync(context);
@@ -138,17 +138,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             {
                 string result = await reader.ReadToEndAsync().ConfigureAwait(false);
                 Assert.AreEqual(result, encryptedContents);
-            }
-        }
-
-        private void AssertEncryptedValue(PipelineContext context)
-        {
-            var stream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
-
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string result = reader.ReadToEnd();
-                Assert.AreEqual(context.Items["TEST_CHECK_ENCRYPTED_CONTENTS"], result);
             }
         }
     }

@@ -101,30 +101,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 		}
 
 		/// <summary>
-		/// Looks up a localized string like "PipelineContext did not contain a valid message to send.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string NO_MESSAGE_TO_SEND_IN_CONTEXT()
-		{
-			return Resources.NO_MESSAGE_TO_SEND_IN_CONTEXT(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext did not contain a valid message to send.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string NO_MESSAGE_TO_SEND_IN_CONTEXT(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("NO_MESSAGE_TO_SEND_IN_CONTEXT", culture);
-		}
-		
-		/// <summary>
 		/// Looks up a localized string like "Smoke Test (en-US)".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]

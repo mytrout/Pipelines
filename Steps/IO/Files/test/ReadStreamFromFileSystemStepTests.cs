@@ -139,7 +139,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -182,7 +182,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
+            string expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -240,6 +240,49 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_Invoke_Async_When_Source_FileName_Does_Not_Exist()
+        {
+            // arrange
+            int errorCount = 1;
+
+            string inputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullPathAndFileName = inputFilePath + fileName;
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(FileConstants.SOURCE_FILE, fullPathAndFileName);
+
+            var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            {
+                ReadFileBaseDirectory = inputFilePath
+            };
+
+            var source = new ReadStreamFromFileSystemStep(logger, next, options);
+
+            string expectedMessage = Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, fullPathAndFileName);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(errorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_With_InputStream_From_InvokeAsync()
         {
             // arrange
@@ -261,7 +304,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Callback(() => this.VerifyContext(context))
+                                    .Callback(() => ReadStreamFromFileSystemStepTests.VerifyContext(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
@@ -358,7 +401,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             var source = new ReadStreamFromFileSystemStep(logger, next, options);
 
-            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -417,7 +460,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             File.Delete(fullPathAndFileName);
         }
 
-        private void VerifyContext(PipelineContext context)
+        private static void VerifyContext(PipelineContext context)
         {
             Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM), "Input Stream does not exist in Pipeline Context.");
 

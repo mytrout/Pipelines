@@ -53,51 +53,99 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
 		/// <summary>
-		/// Looks up a localized string like "PipelineContext does not contain a key named '{0}'.".
+		/// Looks up a localized string like "File '{0}' already exists.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string KEY_DOES_NOT_EXIST_IN_CONTEXT()
+		public static string FILE_ALREADY_EXISTS()
 		{
-			return Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture);
+			return Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a key named '{0}'.".
+		/// Looks up a localized string using a specific culture like "File '{0}' already exists.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo culture)
+		public static string FILE_ALREADY_EXISTS(CultureInfo culture)
 		{
-			return Resources.ResourceManager.GetString("KEY_DOES_NOT_EXIST_IN_CONTEXT", culture);
+			return Resources.ResourceManager.GetString("FILE_ALREADY_EXISTS", culture);
 		}
 				
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a key named '{0}'.".
+		/// Looks up a localized string using a specific culture like "File '{0}' already exists.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string KEY_DOES_NOT_EXIST_IN_CONTEXT(params object[] args)
+		public static string FILE_ALREADY_EXISTS(params object[] args)
 		{
-			return Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, args);
+			return Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, args);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a key named '{0}'.".
+		/// Looks up a localized string using a specific culture like "File '{0}' already exists.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo culture, params object[] args)
+		public static string FILE_ALREADY_EXISTS(CultureInfo culture, params object[] args)
 		{
-			return string.Format(culture, Resources.ResourceManager.GetString("KEY_DOES_NOT_EXIST_IN_CONTEXT", culture), args);
+			return string.Format(culture, Resources.ResourceManager.GetString("FILE_ALREADY_EXISTS", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "File '{0}' does not exist.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string FILE_DOES_NOT_EXIST()
+		{
+			return Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "File '{0}' does not exist.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string FILE_DOES_NOT_EXIST(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("FILE_DOES_NOT_EXIST", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "File '{0}' does not exist.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string FILE_DOES_NOT_EXIST(params object[] args)
+		{
+			return Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "File '{0}' does not exist.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string FILE_DOES_NOT_EXIST(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("FILE_DOES_NOT_EXIST", culture), args);
 		}
 
 		/// <summary>
@@ -146,54 +194,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 		public static string PATH_TRAVERSAL_ISSUE(CultureInfo culture, params object[] args)
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("PATH_TRAVERSAL_ISSUE", culture), args);
-		}
-
-		/// <summary>
-		/// Looks up a localized string like "PipelineContext does not contain a non-whitespace value for '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string VALUE_IS_WHITESPACE_IN_CONTEXT()
-		{
-			return Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a non-whitespace value for '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo culture)
-		{
-			return Resources.ResourceManager.GetString("VALUE_IS_WHITESPACE_IN_CONTEXT", culture);
-		}
-				
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a non-whitespace value for '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string VALUE_IS_WHITESPACE_IN_CONTEXT(params object[] args)
-		{
-			return Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, args);
-		}
-
-		/// <summary>
-		/// Looks up a localized string using a specific culture like "PipelineContext does not contain a non-whitespace value for '{0}'.".
-		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo culture, params object[] args)
-		{
-			return string.Format(culture, Resources.ResourceManager.GetString("VALUE_IS_WHITESPACE_IN_CONTEXT", culture), args);
 		}
 
 		/// <summary>

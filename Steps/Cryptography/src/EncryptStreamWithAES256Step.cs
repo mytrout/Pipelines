@@ -100,7 +100,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
             using (var cryptoProvider = new AesCryptoServiceProvider())
             {

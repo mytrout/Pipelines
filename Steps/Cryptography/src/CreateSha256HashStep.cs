@@ -28,7 +28,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     using System;
     using System.IO;
     using System.Security.Cryptography;
-    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -49,67 +48,43 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         }
 
         /// <summary>
-        /// Generates a SHA256 Hash of the <see cref="PipelineContextConstants.OUTPUT_STREAM"/>.
+        /// Generates a SHA256 Hash of the <see cref="CreateSha256HashOptions.HashStreamKey" />.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertStreamParameterIsValid(this.Options.HashStreamKey);
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            if (context.Items.TryGetValue(CryptographyConstants.HASH_STREAM, out object previousHash))
+            context.AssertValueIsValid<Stream>(this.Options.HashStreamKey);
+
+            if (context.Items.ContainsKey(CryptographyConstants.HASH_STREAM))
             {
                 context.Items.Remove(CryptographyConstants.HASH_STREAM);
             }
 
-            if (context.Items.TryGetValue(CryptographyConstants.HASH_STRING, out object previousHashString))
+            if (context.Items.ContainsKey(CryptographyConstants.HASH_STRING))
             {
                 context.Items.Remove(CryptographyConstants.HASH_STRING);
             }
 
             Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
 
-            long previousStreamPosition = inputStream.Position;
             inputStream.Position = 0;
 
-            try
+            using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
             {
-                using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
+                byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
+
+                using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
                 {
-                    byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
+                    byte[] workingHash = hashProvider.ComputeHash(workingResult);
+                    string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-                    using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
-                    {
-                        byte[] workingHash = hashProvider.ComputeHash(workingResult);
-                        string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
+                    context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
 
-                        context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
-
-                        using (var hashStream = new MemoryStream(workingHash))
-                        {
-                            context.Items.Add(CryptographyConstants.HASH_STREAM, hashStream);
-
-                            await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                context.Items.Remove(CryptographyConstants.HASH_STREAM);
-                context.Items.Remove(CryptographyConstants.HASH_STRING);
-
-                inputStream.Position = previousStreamPosition;
-
-                if (previousHash != null)
-                {
-                    context.Items.Add(CryptographyConstants.HASH_STREAM, previousHash);
-                }
-
-                if (previousHashString != null)
-                {
-                    context.Items.Add(CryptographyConstants.HASH_STRING, previousHashString);
+                    context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
                 }
             }
         }

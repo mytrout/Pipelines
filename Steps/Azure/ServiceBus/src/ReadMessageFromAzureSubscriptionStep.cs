@@ -126,15 +126,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns></returns>
         public static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, IPipelineContext context)
         {
-            if (exceptionReceivedEventArgs == null)
-            {
-                throw new ArgumentNullException(nameof(exceptionReceivedEventArgs));
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            exceptionReceivedEventArgs.AssertParameterIsNotNull(nameof(exceptionReceivedEventArgs));
+            context.AssertParameterIsNotNull(nameof(context));
 
             context.Errors.Add(exceptionReceivedEventArgs.Exception);
             return Task.CompletedTask;

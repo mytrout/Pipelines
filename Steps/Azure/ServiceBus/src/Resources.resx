@@ -120,9 +120,6 @@
   <data name="CANCELLATION_REQUESTED" xml:space="preserve">
     <value>Cancellation requested while executing '{0}'.</value>
   </data>
-  <data name="NO_MESSAGE_TO_SEND_IN_CONTEXT" xml:space="preserve">
-    <value>PipelineContext did not contain a valid message to send.</value>
-  </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
     <value>Smoke Test (en-US)</value>
   </data>

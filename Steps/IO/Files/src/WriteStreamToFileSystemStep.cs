@@ -25,6 +25,8 @@
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -56,10 +58,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.WriteFileBaseDirectory);
-            context.AssertStreamParameterIsValid(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
             string workingFile = context.Items[FileConstants.TARGET_FILE] as string;
+
             workingFile = workingFile.GetFullyQualifiedPath(this.Options.WriteFileBaseDirectory);
+
+            if (File.Exists(workingFile))
+            {
+                throw new InvalidOperationException(Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, workingFile));
+            }
 
             Stream workingStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 

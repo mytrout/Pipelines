@@ -56,10 +56,7 @@ namespace MyTrout.Pipelines.Hosting
         public static IHostBuilder UsePipeline<TStepActivator>(this IHostBuilder source, PipelineBuilder builder)
             where TStepActivator : class, IStepActivator
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            source.AssertParameterIsNotNull(nameof(source));
 
             var result = source.ConfigureServices((hostContext, services) =>
             {

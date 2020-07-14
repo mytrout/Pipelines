@@ -141,7 +141,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
+                string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -157,7 +157,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_FIleName_Is_Empty()
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_FileName_Is_Empty()
         {
             // arrange
             string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
@@ -189,7 +189,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
+                string expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -284,7 +284,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
                 int errorCount = 1;
 
-                string expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+                string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -332,7 +332,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             int errorCount = 1;
 
-            string expectedMessage = Pipelines.Resources.STREAM_VALUE_IN_CONTEXT_IS_NOT_STREAM(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+            string expectedMessage = Pipelines.Resources.CONTEXT_VALUE_NOT_EXPECTED_TYPE(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM, typeof(Stream));
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -344,6 +344,56 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             // cleanup
             await source.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Target_FileName_Already_Exists()
+        {
+            // arrange
+            string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string contents = "What is the text here?";
+            byte[] body = Encoding.UTF8.GetBytes(contents);
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullPathAndFileName = outputFilePath + fileName;
+            await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
+
+            using (var stream = new MemoryStream(body))
+            {
+                PipelineContext context = new PipelineContext();
+                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
+                context.Items.Add(FileConstants.TARGET_FILE, fullPathAndFileName);
+
+                var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
+
+                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                {
+                    WriteFileBaseDirectory = outputFilePath
+                };
+
+                var source = new WriteStreamToFileSystemStep(logger, next, options);
+
+                int errorCount = 1;
+
+                string expectedMessage = Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, fullPathAndFileName);
+
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+                Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+
+                // cleanup
+                File.Delete(fullPathAndFileName);
+                await source.DisposeAsync().ConfigureAwait(false);
+            }
         }
     }
 }

@@ -42,33 +42,20 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         public static void AssertFileNameParameterIsValid(this IPipelineContext source, string parameterName, string baseDirectory)
         {
             source.AssertParameterIsNotNull(nameof(source));
+            source.AssertStringIsNotWhiteSpace(parameterName);
 
-            if (!source.Items.ContainsKey(parameterName))
+            string workingFile = source.Items[parameterName] as string;
+
+            if (!Path.IsPathFullyQualified(workingFile))
             {
-                throw new InvalidOperationException(Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName));
+                workingFile = Path.Combine(baseDirectory, workingFile);
             }
-            else
+
+            workingFile = Path.GetFullPath(workingFile);
+
+            if (!workingFile.StartsWith(baseDirectory, StringComparison.Ordinal))
             {
-                string workingFile = source.Items[parameterName] as string;
-
-                if (string.IsNullOrWhiteSpace(workingFile))
-                {
-                    throw new InvalidOperationException(Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, parameterName));
-                }
-                else
-                {
-                    if (!Path.IsPathFullyQualified(workingFile))
-                    {
-                        workingFile = Path.Combine(baseDirectory, workingFile);
-                    }
-
-                    workingFile = Path.GetFullPath(workingFile);
-
-                    if (!workingFile.StartsWith(baseDirectory, StringComparison.Ordinal))
-                    {
-                        throw new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile));
-                    }
-                }
+                throw new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile));
             }
         }
     }

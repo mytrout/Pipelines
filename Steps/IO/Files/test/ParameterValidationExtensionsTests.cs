@@ -92,7 +92,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
             string validFileName = $"{Guid.NewGuid()}.txt";
 
-            string expectedMessage = Resources.KEY_DOES_NOT_EXIST_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => ParameterValidationExtensions.AssertFileNameParameterIsValid(source, FileConstants.TARGET_FILE, validPath));
@@ -112,7 +112,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string invalidFileName = "\r\n\t";
 
             source.Items.Add(FileConstants.TARGET_FILE, invalidFileName);
-            string expectedMessage = Resources.VALUE_IS_WHITESPACE_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
+            string expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => ParameterValidationExtensions.AssertFileNameParameterIsValid(source, FileConstants.TARGET_FILE, validPath));

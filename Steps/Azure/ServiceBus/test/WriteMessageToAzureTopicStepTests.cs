@@ -32,6 +32,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.IO;
     using System.Text;
     using System.Threading;
@@ -245,14 +246,15 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var source = new WriteMessageToAzureTopicStep(logger, options, next);
 
+            string expectedMessage = MyTrout.Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
             // act
             await source.InvokeAsync(context);
 
             // assert
             Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
             Assert.AreEqual(errorCount, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], typeof(ServiceBusException));
-            Assert.AreEqual(ServiceBus.Resources.NO_MESSAGE_TO_SEND_IN_CONTEXT(), context.Errors[0].Message);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
         [TestMethod]

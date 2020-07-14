@@ -74,7 +74,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             var source = new DecryptStreamWithAes256Step(logger, options, next);
 
-            var expectedMessage = Pipelines.Resources.NO_STREAM_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM);
+            var expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM);
 
             // act
             await source.InvokeAsync(context);

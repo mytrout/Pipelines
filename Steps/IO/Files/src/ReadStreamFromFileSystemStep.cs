@@ -25,6 +25,8 @@
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -57,6 +59,11 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             string workingFile = context.Items[FileConstants.SOURCE_FILE] as string;
             workingFile = workingFile.GetFullyQualifiedPath(this.Options.ReadFileBaseDirectory);
+
+            if (!File.Exists(workingFile))
+            {
+                throw new InvalidOperationException(Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, workingFile));
+            }
 
             if (context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out object previous))
             {

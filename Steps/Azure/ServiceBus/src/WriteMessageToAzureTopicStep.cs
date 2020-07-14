@@ -25,8 +25,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
-    using System;
-    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -75,25 +73,17 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         {
             context.AssertParameterIsNotNull(nameof(context));
 
-            if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM)
-                    && context.Items[PipelineContextConstants.OUTPUT_STREAM] is Stream)
-            {
-                Message message = this.ConstructMessage(context);
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-                this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-                await this.TopicClient.SendAsync(message).ConfigureAwait(false);
+            Message message = this.ConstructMessage(context);
 
-                this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
+            this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
 
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-            }
-            else
-            {
-                Exception exc = new ServiceBusException(false, Resources.NO_MESSAGE_TO_SEND_IN_CONTEXT(CultureInfo.CurrentCulture));
-                this.Logger.LogError(exc, $"Exception created in '{nameof(WriteMessageToAzureTopicStep)}'.");
-                context.Errors.Add(exc);
-            }
+            await this.TopicClient.SendAsync(message).ConfigureAwait(false);
+
+            this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
         }
 
         /// <summary>

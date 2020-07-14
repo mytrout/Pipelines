@@ -55,7 +55,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected async override Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertStreamParameterIsValid(PipelineContextConstants.INPUT_STREAM);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
             Stream encryptedStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
 
