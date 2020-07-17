@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Unzips a <see cref="Stream"/> and calls downstream once for each file in the zip archive.
+    /// Unzips a <see cref="System.IO.Stream"/> and calls downstream once for each file in the zip archive.
     /// </summary>
     public class CreateNewZipArchiveStep : AbstractPipelineStep<CreateNewZipArchiveStep>
     {
