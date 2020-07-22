@@ -22,13 +22,14 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Core
 {
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
 
     /// <inheritdoc />
     public class StepActivator : IStepActivator
@@ -55,9 +56,9 @@ namespace MyTrout.Pipelines
         public IServiceProvider ServiceProvider { get; }
 
         /// <inheritdoc />
-        public object CreateInstance(Type stepType, IPipelineRequest nextRequest)
+        public object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest)
         {
-            stepType.AssertParameterIsNotNull(nameof(stepType));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
             nextRequest.AssertParameterIsNotNull(nameof(nextRequest));
 
             object result = null;
@@ -65,7 +66,7 @@ namespace MyTrout.Pipelines
             // Indicates whether at least one constructor has a PipelineRequest parameter.
             bool oneConstructorContainsNextRequestParameter = false;
 
-            foreach (var constructor in stepType.GetConstructors()
+            foreach (var constructor in pipelineStep.StepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
                 bool nextRequestParameterFound = false;
@@ -79,9 +80,13 @@ namespace MyTrout.Pipelines
                         nextRequestParameterFound = true;
                         oneConstructorContainsNextRequestParameter = true;
                     }
-                    else
+                    else if (pipelineStep.StepContext == null)
                     {
                         parametersForConstructor.Add(this.ServiceProvider.GetService(parameter.ParameterType));
+                    }
+                    else
+                    {
+                        parametersForConstructor.Add(this.RetrieveMultiContextParameter(pipelineStep, parameter));
                     }
                 }
 
@@ -104,7 +109,7 @@ namespace MyTrout.Pipelines
                     string parameters = string.Join(", ", constructor.GetParameters().Select(x => x.ParameterType.Name));
                     this.Logger.LogInformation(exc, Resources.TYPE_FAILED_TO_INITIALIZE(
                                                             CultureInfo.CurrentCulture,
-                                                            stepType.Name,
+                                                            pipelineStep.StepType.Name,
                                                             parameters));
 
                     // try other constructors rather than rethrowing the exception.
@@ -113,10 +118,33 @@ namespace MyTrout.Pipelines
 
             if (!oneConstructorContainsNextRequestParameter)
             {
-                throw new InvalidOperationException(Resources.CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER(CultureInfo.CurrentCulture, stepType.Name));
+                throw new InvalidOperationException(Resources.CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER(CultureInfo.CurrentCulture, pipelineStep.StepType.Name));
             }
 
             return result;
+        }
+
+        private object RetrieveMultiContextParameter(StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            var contextBase = typeof(IDictionary<,>);
+            var contextBaseTypes = new Type[]
+            {
+                            typeof(string),
+                            parameter.ParameterType
+            };
+            var contextType = contextBase.MakeGenericType(contextBaseTypes);
+
+            dynamic potentialValues = this.ServiceProvider.GetService(contextType);
+
+            // potentialValues is an IDictionary<string, parameter.ParameterType>
+            if (potentialValues.ContainsKey(pipelineStep.StepContext))
+            {
+                return potentialValues[pipelineStep.StepContext];
+            }
+            else
+            {
+                throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
+            }
         }
     }
 }

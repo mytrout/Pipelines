@@ -22,23 +22,16 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Core
 {
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Threading;
 
-    /*  TO FUTURE DEVELOPERS: This class does not have any unit tests because it uses only
-     *                        compiler-based functionality which should always work.  If any other
-     *                        functionality is added to this class, including a constructor, then
-     *                        unit tests should be written to cover all functionality.
-     */
-
     /// <summary>
     /// Provides the context that is passed between step implenentation in the pipeline.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class PipelineContext : IPipelineContext
     {
         /// <summary>

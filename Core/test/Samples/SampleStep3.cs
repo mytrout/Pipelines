@@ -1,4 +1,4 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="SampleStep3.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,21 +22,17 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Samples.Tests
 {
-    using System;
-
-    /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-    /// </summary>
-    public interface IStepActivator
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleStep3 : SampleStep1
     {
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        public SampleStep3(IPipelineRequest next)
+            : base(next)
+        {
+            // no op
+        }
+
+        protected override string Key => "SquarePants";
     }
 }

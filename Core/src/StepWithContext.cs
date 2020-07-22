@@ -1,4 +1,4 @@
-﻿// <copyright file="AbstractPipelineStep{TStep,TOptions}.cs" company="Chris Trout">
+﻿// <copyright file="StepWithContext.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,35 +22,34 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Steps
+namespace MyTrout.Pipelines
 {
-    using Microsoft.Extensions.Logging;
     using System;
 
     /// <summary>
-    /// Provides a canonical implementation of a Pipeline Step which handles parameter validation and options.
+    /// Provides the ability to configure a Pipeline Step multiple times with different configurations in the same pipeline.
     /// </summary>
-    /// <typeparam name="TStep">The class which implements this abstract class.</typeparam>
-    /// <typeparam name="TOptions">The class which provides configuration for this class.</typeparam>
-    public abstract class AbstractPipelineStep<TStep, TOptions> : AbstractPipelineStep<TStep>
-            where TStep : class, IPipelineRequest
-            where TOptions : class
+    public class StepWithContext
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AbstractPipelineStep{TStep,TOptions}" /> class with the requested parameters.
+        /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
         /// </summary>
-        /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
-        /// <param name="options">THe options to configure this pipeline.</param>
-        protected AbstractPipelineStep(ILogger<TStep> logger, TOptions options, IPipelineRequest next)
-            : base(logger, next)
+        /// <param name="stepType">The type to be constructed.</param>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
+        public StepWithContext(Type stepType, string stepContext)
         {
-            this.Options = options ?? throw new ArgumentNullException(nameof(options));
+            this.StepType = stepType ?? throw new ArgumentNullException(nameof(stepType));
+            this.StepContext = stepContext;
         }
 
         /// <summary>
-        /// Gets the options that configure this pipeline step.
+        /// Gets the step to be configured multiple times.
         /// </summary>
-        public TOptions Options { get; }
+        public Type StepType { get; }
+
+        /// <summary>
+        /// Gets the context to be used to configure this instance of the step.
+        /// </summary>
+        public string StepContext { get; }
     }
 }

@@ -22,14 +22,16 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Tests
+namespace MyTrout.Pipelines.Core.Tests
 {
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using MyTrout.Pipelines.Core.Tests;
+    using MyTrout.Pipelines.Samples.Tests;
     using MyTrout.Pipelines.Steps;
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
@@ -51,47 +53,76 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Returns_Null_From_InitializeStep_When_Step_Cannot_Be_Constructed()
+        public void Returns_Null_From_CreateInstance_When_Step_Cannot_Be_Constructed()
         {
             // arrange
             var mockLogger = new Mock<ILogger<StepActivator>>();
             ILogger<StepActivator> logger = mockLogger.Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Information";
-            string expectedArgument2 = "SampleWithConstructorParameter(IDictionary`2, IPipelineRequest) failed to intialize properly.";
+            string expectedArgument2 = "SampleWithConstructorParameterStep(IDictionary`2, IPipelineRequest) failed to intialize properly.";
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type stepType = typeof(SampleWithConstructorParameter);
+            Type stepType = typeof(SampleWithConstructorParameterStep);
             var pipelineRequest = new NoOpStep();
+            string stepContext = null;
 
             var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.CreateInstance(stepType, pipelineRequest);
+            var result = source.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest);
 
             // assert
-            Assert.IsNull(result, "Result should be null because SampleWithConstructorParameter should not be buildable under those circumstances.");
+            Assert.IsNull(result, "Result should be null because SampleWithConstructorParameterStep should not be buildable under those circumstances.");
             Assert.AreEqual(expectedLogMessages, mockLogger.Invocations.Count, "Expected only 1 log message.");
             Assert.AreEqual(expectedArgument0, mockLogger.Invocations[0].Arguments[0].ToString(), "Argument 0 should be 'Information' representing the logging level.");
             Assert.AreEqual(expectedArgument2, mockLogger.Invocations[0].Arguments[2].ToString(), "Argument 2 should have the same exception message text.");
         }
 
         [TestMethod]
-        public void Returns_Valid_Step_Instance_From_InitializeStep()
+        public void Returns_Valid_Step_Instance_From_CreateInstance()
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type stepType = typeof(SampleWithInvokeAsyncMethod);
+            Type stepType = typeof(SampleWithLoggerStep);
+            var pipelineRequest = new NoOpStep();
+            string stepContext = null;
+
+            var source = new StepActivator(logger, serviceProvider);
+
+            // act
+            var result = source.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, stepType);
+        }
+
+        [TestMethod]
+        public void Returns_Valid_Step_Instance_From_CreateInstance_When_Multiple_Contexts_Are_Defined()
+        {
+            // arrange
+            var items = new Dictionary<string, SampleOptions>()
+            {
+                { "first-context", new SampleOptions("first-context") },
+                { "last-context", new SampleOptions("last-context") }
+            };
+
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+            Mock<IServiceProvider> mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IDictionary<string, SampleOptions>)))
+                                .Returns(items);
+            var serviceProvider = mockServiceProvider.Object;
+
             var pipelineRequest = new NoOpStep();
 
             var source = new StepActivator(logger, serviceProvider);
 
             // act
-            var result = source.CreateInstance(stepType, pipelineRequest);
+            var result = source.CreateInstance(new StepWithContext(typeof(SampleWithOptionsStep), "first-context"), pipelineRequest);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, stepType);
         }
 
         [TestMethod]
@@ -127,20 +158,21 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_InitializeStep_When_StepType_Is_Null()
+        public void Throws_ArgumentNullException_From_CreateInstance_When_StepType_Is_Null()
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = null;
             var nextRequest = new NoOpStep();
+            string stepContext = null;
 
             var sut = new StepActivator(logger, serviceProvider);
 
             var expectedParamName = nameof(stepType);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -148,20 +180,21 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_InitializeStep_When_PipelineRequest_Is_Null()
+        public void Throws_ArgumentNullException_From_CreateInstance_When_PipelineRequest_Is_Null()
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            var stepType = typeof(M1);
+            var stepType = typeof(SampleStep1);
             IPipelineRequest nextRequest = null;
+            string stepContext = null;
 
             var sut = new StepActivator(logger, serviceProvider);
 
             var expectedParamName = nameof(nextRequest);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(stepType, nextRequest));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), nextRequest));
 
             // assert
             Assert.IsNotNull(result);
@@ -169,20 +202,50 @@ namespace MyTrout.Pipelines.Tests
         }
 
         [TestMethod]
-        public void Throws_InvalidOperationException_From_InitializeStep_When_StepType_Does_Not_Have_InvokeAsync_Method()
+        public void Throws_InvalidOperationException_From_CreateInstance_When_StepType_Does_Not_Have_InvokeAsync_Method()
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
-            Type stepType = typeof(SampleWithoutNextInConstructor);
+            Type stepType = typeof(SampleWithoutNextInConstructorStep);
             var pipelineRequest = new NoOpStep();
+            string stepContext = null;
 
             var sut = new StepActivator(logger, serviceProvider);
 
             var expectedMessage = $"'{stepType.Name}' step does not contain a constructor that has a PipelineRequest parameter.";
 
             // act
-            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(stepType, pipelineRequest));
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_CreateInstance_When_Contexts_Is_Not_Defined()
+        {
+            // arrange
+            var items = new Dictionary<string, SampleOptions>()
+            {
+                { "first-context", new SampleOptions("first-context") },
+                { "last-context", new SampleOptions("last-context") }
+            };
+
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+            Mock<IServiceProvider> mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IDictionary<string, SampleOptions>)))
+                                .Returns(items);
+            var serviceProvider = mockServiceProvider.Object;
+
+            var pipelineRequest = new NoOpStep();
+
+            var source = new StepActivator(logger, serviceProvider);
+            string expectedMessage = Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, typeof(SampleOptions).Name, typeof(SampleWithOptionsStep).Name);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => source.CreateInstance(new StepWithContext(typeof(SampleWithOptionsStep), "second-context"), pipelineRequest));
 
             // assert
             Assert.IsNotNull(result);

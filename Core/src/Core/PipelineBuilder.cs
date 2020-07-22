@@ -50,7 +50,7 @@ namespace MyTrout.Pipelines.Core
         /// <summary>
         /// Gets the types registered as Step for the Pipeline.
         /// </summary>
-        private Stack<Type> StepTypes { get; } = new Stack<Type>();
+        private Stack<StepWithContext> StepTypes { get; } = new Stack<StepWithContext>();
 
         /// <summary>
         /// Adds step to this pipeline.
@@ -60,7 +60,19 @@ namespace MyTrout.Pipelines.Core
         public PipelineBuilder AddStep<T>()
             where T : class, IPipelineRequest
         {
-            return this.AddStep(typeof(T));
+            return this.AddStep(typeof(T), null);
+        }
+
+        /// <summary>
+        /// Adds step to this pipeline.
+        /// </summary>
+        /// <typeparam name="T">The generic type to add to the pipeline.</typeparam>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified; stepContext is ignored if the value is <see langword="null"/>.</param>
+        /// <returns>Returns a <see cref="PipelineBuilder" /> with the Step type added.</returns>
+        public PipelineBuilder AddStep<T>(string stepContext)
+            where T : class, IPipelineRequest
+        {
+            return this.AddStep(typeof(T), stepContext);
         }
 
         /// <summary>
@@ -71,6 +83,19 @@ namespace MyTrout.Pipelines.Core
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepType"/> is <see langword="null" />.</exception>
         /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
         public PipelineBuilder AddStep(Type stepType)
+        {
+            return this.AddStep(stepType, null);
+        }
+
+        /// <summary>
+        /// Adds Step to this pipeline.
+        /// </summary>
+        /// <param name="stepType">The <see cref="Type" /> to add to the pipeline.</param>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified; stepCntext is ignored if the value is <see langword="null"/>.</param>
+        /// <returns>Returns a <see cref="PipelineBuilder" /> with the step type added.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepType"/> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
+        public PipelineBuilder AddStep(Type stepType, string stepContext)
         {
             stepType.AssertParameterIsNotNull(nameof(stepType));
 
@@ -84,7 +109,7 @@ namespace MyTrout.Pipelines.Core
                 throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType)));
             }
 
-            this.StepTypes.Push(stepType);
+            this.StepTypes.Push(new StepWithContext(stepType, stepContext));
 
             return this;
         }
@@ -103,18 +128,18 @@ namespace MyTrout.Pipelines.Core
 
             while (this.StepTypes.Any())
             {
-                Type stepType = this.StepTypes.Pop();
+                StepWithContext step = this.StepTypes.Pop();
 
-                if (stepType == null)
+                if (step == null || step.StepType == null)
                 {
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                IPipelineRequest nextInstance = stepActivator.CreateInstance(stepType, nextRequest) as IPipelineRequest;
+                var nextInstance = stepActivator.CreateInstance(step, nextRequest) as IPipelineRequest;
 
                 if (nextInstance == null)
                 {
-                    throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, stepType.Name));
+                    throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, step.StepType.Name));
                 }
 
                 // Setting up for the next loop...

@@ -1,4 +1,4 @@
-name: 'Pipelines.Core.$(Date:yyyyMMdd)$(Rev:.r)'
+name: 'Pipelines.Steps.Data $(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:
@@ -6,7 +6,7 @@ trigger:
     - master
   paths:
     include:
-    - Core/*
+    - Steps/Data/*
     exclude:
     - README.md
     - License.md
@@ -15,19 +15,19 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/Core/*.sln'
+  solution: '**/Steps/Data/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  major: 1
-  minor: 0
+  major: 0
+  minor: 1
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
-  suffix: ''
+  suffix: '-beta'
   publishVstsFeed: 'Pipelines/mytrout'
   sonarCloudConnectionName: 'SonarCloud.io - Pipelines'
   sonarCloudOrganization: 'mytrout'
-  sonarCloudProjectKey: 'Pipelines.Core'
-  sonarCloudProjectName: 'Pipelines.Core'
+  sonarCloudProjectKey: 'Pipelines.Steps.Data'
+  sonarCloudProjectName: 'Pipelines.Steps.Data'
   sonarCloudEnabled: 'YES'
   
 steps:
@@ -41,7 +41,15 @@ steps:
     feedsToUse: 'select'
     includeNuGetOrg: true
     restoreSolution: '$(solution)'
-    
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    includeNuGetOrg: true
+    restoreSolution: '$(solution)'
+
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: '$(sonarCloudConnectionName)'
@@ -71,7 +79,6 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Analyze SonarQube results and upload to SonarCloud.io.'
 
-
 #
 # This step will fail to publish into an Azure DevOps Artifacts, 
 #     if the "[project] Build Service" Account does not have Contributor access to the NuGet Feed
@@ -80,10 +87,10 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg;'
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(publishVstsFeed)'
-    allowPackageConflicts: false
+    allowPackageConflicts: true
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'Publish the nuget package to ADO artifacts.'
 

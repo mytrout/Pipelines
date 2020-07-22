@@ -22,7 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Tests
+namespace MyTrout.Pipelines.Core.Tests
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,25 +42,29 @@ namespace MyTrout.Pipelines.Tests
             const int expectedItemCount = 0;
             const int expectedExceptionCount = 0;
             Guid invalidCorrelationId = Guid.Empty;
-            CancellationToken expectedCancellationToken = CancellationToken.None;
+            using (CancellationTokenSource expectedCancellationSource = new CancellationTokenSource())
+            {
+                // act
+                var result = new PipelineContext()
+                {
+                    CancellationToken = expectedCancellationSource.Token
+                };
 
-            // act
-            var result = new PipelineContext();
+                DateTimeOffset endingOffset = DateTimeOffset.UtcNow;
 
-            DateTimeOffset endingOffset = DateTimeOffset.UtcNow;
-
-            // assert
-            Assert.IsNotNull(result, "PipelineContext should not be null.");
-            Assert.AreEqual(expectedCancellationToken, result.CancellationToken, "CancellationToken should be CancellationToken.None.");
-            Assert.IsNull(result.Configuration, "Configuration should be null.");
-            Assert.AreNotEqual(invalidCorrelationId, result.CorrelationId, "CorrelationID cannot be Guid.Empty.");
-            Assert.IsNotNull(result.Errors, "PipelineContext.Errors should not be null.");
-            Assert.AreEqual(expectedExceptionCount, result.Errors.Count);
-            Assert.IsFalse(result.IsConfigurationAvailable, "IsConfigurationAvailable should be false.");
-            Assert.IsNotNull(result.Items, "PipelineContext.Items should not be null.");
-            Assert.AreEqual(expectedItemCount, result.Items.Count);
-            Assert.IsTrue(startingOffset < result.Timestamp, "StartingOffset is greater than or equal to the PipelineContext.Timestamp.");
-            Assert.IsTrue(endingOffset > result.Timestamp, "EndingOffset is less than or equal to the PipelineContext.Timestamp.");
+                // assert
+                Assert.IsNotNull(result, "PipelineContext should not be null.");
+                Assert.AreEqual(expectedCancellationSource.Token, result.CancellationToken, "CancellationToken should be CancellationToken.None.");
+                Assert.IsNull(result.Configuration, "Configuration should be null.");
+                Assert.AreNotEqual(invalidCorrelationId, result.CorrelationId, "CorrelationID cannot be Guid.Empty.");
+                Assert.IsNotNull(result.Errors, "PipelineContext.Errors should not be null.");
+                Assert.AreEqual(expectedExceptionCount, result.Errors.Count);
+                Assert.IsFalse(result.IsConfigurationAvailable, "IsConfigurationAvailable should be false.");
+                Assert.IsNotNull(result.Items, "PipelineContext.Items should not be null.");
+                Assert.AreEqual(expectedItemCount, result.Items.Count);
+                Assert.IsTrue(startingOffset < result.Timestamp, "StartingOffset is greater than or equal to the PipelineContext.Timestamp.");
+                Assert.IsTrue(endingOffset > result.Timestamp, "EndingOffset is less than or equal to the PipelineContext.Timestamp.");
+            }
         }
 
         [TestMethod]

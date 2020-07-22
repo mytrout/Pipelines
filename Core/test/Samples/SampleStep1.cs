@@ -1,4 +1,4 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="SampleStep1.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,21 +22,42 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Samples.Tests
 {
     using System;
+    using System.Threading.Tasks;
 
-    /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-    /// </summary>
-    public interface IStepActivator
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleStep1 : IPipelineRequest
     {
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        private readonly IPipelineRequest next;
+
+        public SampleStep1(IPipelineRequest next) => this.next = next;
+
+        protected virtual string Key => "Sponge";
+
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(Task.CompletedTask);
+        }
+
+        public Task InvokeAsync(IPipelineContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            if (context.Items.ContainsKey("Message"))
+            {
+                context.Items["Message"] += $" {this.Key}";
+            }
+            else
+            {
+                context.Items.Add("Message", this.Key);
+            }
+
+            return this.next.InvokeAsync(context);
+        }
     }
 }

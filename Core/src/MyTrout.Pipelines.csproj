@@ -21,7 +21,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310</NoWarn>
+    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -29,7 +29,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310</NoWarn>
+    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,6 +45,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0">
@@ -107,6 +108,10 @@
   
   <ItemGroup>
     <Compile Remove="DisposablePipelineRequest.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Steps\" />
   </ItemGroup>
   
 </Project>

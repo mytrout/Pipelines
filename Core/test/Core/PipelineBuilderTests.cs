@@ -27,6 +27,7 @@ namespace MyTrout.Pipelines.Core.Tests
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Samples.Tests;
     using MyTrout.Pipelines.Steps;
     using System;
     using System.Collections.Generic;
@@ -43,14 +44,16 @@ namespace MyTrout.Pipelines.Core.Tests
         {
             // arrange
             var nextRequest = new NoOpStep();
+            var logger = new Mock<ILogger<SampleWithInvokeAsyncMethodStep>>().Object;
+
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>()))
-                                            .Returns(new SampleWithInvokeAsyncMethod(nextRequest));
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<StepWithContext>(), It.IsAny<IPipelineRequest>()))
+                                            .Returns(new SampleWithInvokeAsyncMethodStep(logger, nextRequest));
             IStepActivator stepActivator = mockStepActivator.Object;
 
-            var sut = new PipelineBuilder().AddStep<SampleWithInvokeAsyncMethod>();
+            var sut = new PipelineBuilder().AddStep<SampleWithInvokeAsyncMethodStep>();
 
-            var expectedTargetType = typeof(SampleWithInvokeAsyncMethod);
+            var expectedTargetType = typeof(SampleWithInvokeAsyncMethodStep);
 
             // act
             var result = sut.Build(stepActivator);
@@ -60,10 +63,8 @@ namespace MyTrout.Pipelines.Core.Tests
             Assert.IsInstanceOfType(result, expectedTargetType);
         }
 
-#pragma warning disable VSTHRD200 // Test method name should reflect what it is testing, not Async.
         [TestMethod]
         public async Task Returns_Correct_Message_From_ConstructedPipeline()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
@@ -71,9 +72,9 @@ namespace MyTrout.Pipelines.Core.Tests
             IStepActivator stepActivator = new StepActivator(logger, serviceProvider);
 
             var pipeline = new PipelineBuilder()
-                                        .AddStep<M1>()
-                                        .AddStep<M2>()
-                                        .AddStep<M3>()
+                                        .AddStep<SampleStep1>()
+                                        .AddStep<SampleStep2>()
+                                        .AddStep<SampleStep3>()
                                         .Build(stepActivator);
 
             var expectedMessage = "Sponge Bob SquarePants";
@@ -94,7 +95,7 @@ namespace MyTrout.Pipelines.Core.Tests
             IStepActivator stepActivator = null;
 
             var sut = new PipelineBuilder()
-                    .AddStep<M1>();
+                    .AddStep<SampleStep1>();
 
             string expectedParamName = nameof(stepActivator);
 
@@ -127,7 +128,7 @@ namespace MyTrout.Pipelines.Core.Tests
         {
             // arrange
             var sut = new PipelineBuilder();
-            Type stepType = typeof(SampleWithoutIPipelineBuilder);
+            Type stepType = typeof(SampleWithoutIPipelineRequestStep);
             string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType));
 
             // act
@@ -159,13 +160,13 @@ namespace MyTrout.Pipelines.Core.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>())).Returns(null);
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<StepWithContext>(), It.IsAny<IPipelineRequest>())).Returns(null);
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
-                    .AddStep<M1>();
+                    .AddStep<SampleStep1>();
 
-            string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(M1));
+            string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(SampleStep1));
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.Build(stepActivator));
@@ -183,15 +184,15 @@ namespace MyTrout.Pipelines.Core.Tests
         {
             // arrange
             var mockStepActivator = new Mock<IStepActivator>();
-            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<Type>(), It.IsAny<IPipelineRequest>())).Returns(new object());
+            mockStepActivator.Setup(x => x.CreateInstance(It.IsAny<StepWithContext>(), It.IsAny<IPipelineRequest>())).Returns(new object());
             IStepActivator stepActivator = mockStepActivator.Object;
 
             var sut = new PipelineBuilder()
-                    .AddStep<M1>();
+                    .AddStep<SampleStep1>();
 
             // Force a null into the PipelineBuilder's Step
             PropertyInfo propertyInfo = typeof(PipelineBuilder).GetProperty("StepTypes", BindingFlags.NonPublic | BindingFlags.Instance);
-            var stack = propertyInfo.GetMethod.Invoke(sut, null) as Stack<Type>;
+            var stack = propertyInfo.GetMethod.Invoke(sut, null) as Stack<StepWithContext>;
             stack.Push(null);
 
             string expectedMessage = Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture);
@@ -203,157 +204,44 @@ namespace MyTrout.Pipelines.Core.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMessage, result.Message);
         }
-    }
 
-    // Allow multiple testing classes here because there are so many options to test.
-#pragma warning disable SA1402 // File may only contain a single type
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1801 // Remove unused parameter
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithoutNextInConstructor : IPipelineRequest
-    {
-        public ValueTask DisposeAsync()
+        [TestMethod]
+        public async Task Validates_StepWithContext_Values_Passed_To_StepActivator_Using_Each_AddStep_OVerload()
         {
-            return new ValueTask(Task.CompletedTask);
-        }
+            // arrange
+            var logger = new Mock<ILogger<StepActivator>>().Object;
 
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithInvokeAsyncMethod : IPipelineRequest
-    {
-        public SampleWithInvokeAsyncMethod(IPipelineRequest next)
-        {
-            this.Next = next;
-        }
-
-        private IPipelineRequest Next { get; }
-
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            return this.Next.InvokeAsync(context);
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class M1 : IPipelineRequest
-    {
-        private readonly IPipelineRequest next;
-
-        public M1(IPipelineRequest next) => this.next = next;
-
-        protected virtual string Key => "Sponge";
-
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            if (context == null)
+            Dictionary<string, SampleOptions> options = new Dictionary<string, SampleOptions>()
             {
-                throw new ArgumentNullException(nameof(context));
-            }
+                { "leading-context", new SampleOptions("leading-context") },
+                { "trailing-context", new SampleOptions("trailing-context") }
+            };
 
-            if (context.Items.ContainsKey("Message"))
-            {
-                context.Items["Message"] += $" {this.Key}";
-            }
-            else
-            {
-                context.Items.Add("Message", this.Key);
-            }
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IDictionary<string, SampleOptions>))).Returns(options);
+            var serviceProvider = mockServiceProvider.Object;
 
-            return this.next.InvokeAsync(context);
+            IStepActivator stepActivator = new StepActivator(logger, serviceProvider);
+
+            var sut = new PipelineBuilder()
+                            .AddStep<SampleStep1>()
+                            .AddStep(typeof(SampleStep2))
+                            .AddStep<SampleWithOptionsStep>("leading-context")
+                            .AddStep<SampleWithOptionsStep>("trailing-context")
+                            .AddStep<SampleStep3>();
+
+            var expectedMessage = "Sponge Bob leading-context trailing-context SquarePants";
+            PipelineContext pipelineContext = new PipelineContext();
+
+            // act
+            IPipelineRequest result = sut.Build(stepActivator);
+
+            // assert
+            await result.InvokeAsync(pipelineContext).ConfigureAwait(false);
+
+            // assert
+            Assert.IsTrue(pipelineContext.Items.ContainsKey("Message"), "No 'Message' item was added to the PipelineContext.");
+            Assert.AreEqual(expectedMessage, pipelineContext.Items["Message"]);
         }
     }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class M2 : M1
-    {
-        public M2(IPipelineRequest next)
-            : base(next)
-        {
-            // no op
-        }
-
-        protected override string Key => "Bob";
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class M3 : M1
-    {
-        public M3(IPipelineRequest next)
-            : base(next)
-        {
-            // no op
-        }
-
-        protected override string Key => "SquarePants";
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithoutIPipelineBuilder
-    {
-        public SampleWithoutIPipelineBuilder(IPipelineRequest next)
-        {
-            this.Next = next;
-        }
-
-        public IPipelineRequest Next { get; }
-
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithConstructorParameter
-    {
-        public SampleWithConstructorParameter(IDictionary<object, string> weirdParameter, IPipelineRequest next)
-        {
-            this.WeirdParameter = weirdParameter ?? throw new ArgumentNullException(nameof(weirdParameter));
-        }
-
-        public IPipelineRequest Next { get; }
-
-        public IDictionary<object, string> WeirdParameter { get; }
-
-        public Task InvokeAsync()
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithAbstractPipelineImplementation : AbstractPipelineStep<SampleWithAbstractPipelineImplementation>
-    {
-        public SampleWithAbstractPipelineImplementation(ILogger<SampleWithAbstractPipelineImplementation> logger, IPipelineRequest next)
-            : base(logger, next)
-        {
-            // no op
-        }
-
-        protected override Task InvokeCoreAsync(IPipelineContext context)
-        {
-            return Task.CompletedTask;
-        }
-    }
-#pragma warning restore CA1801 // Remove unused parameter
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore SA1402 // File may only contain a single type
-
 }

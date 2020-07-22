@@ -1,4 +1,4 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithoutNextInConstructorStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,21 +22,29 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Samples.Tests
 {
-    using System;
+    using Microsoft.Extensions.Logging;
+    using System.Threading.Tasks;
 
-    /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-    /// </summary>
-    public interface IStepActivator
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleWithoutNextInConstructorStep : IPipelineRequest
     {
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        public SampleWithoutNextInConstructorStep(ILogger<SampleWithoutNextInConstructorStep> logger)
+        {
+            this.Logger = logger;
+        }
+
+        private ILogger<SampleWithoutNextInConstructorStep> Logger { get; }
+
+        public ValueTask DisposeAsync()
+        {
+            return default;
+        }
+
+        public Task InvokeAsync(IPipelineContext context)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

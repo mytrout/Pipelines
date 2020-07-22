@@ -15,8 +15,10 @@ The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
     Install-Package MyTrout.Pipelines
 
 # Software dependencies
-    1. Microsoft.Extensions.Configuration.Abstractions 3.1.5
-    2. Microsoft.Extensions.Logging.Abstractions 3.1.5
+    1. Microsoft.CSharp 4.7.0 (required because of dynamic keyword usage for multi-context steps)
+    2. Microsoft.Extensions.Configuration.Abstractions 3.1.5
+    3. Microsoft.Extensions.Logging.Abstractions 3.1.5
+
 
 # How do I use Pipelines?
 

@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+// <copyright file="UnitTest1.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2020 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,18 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
-{
-    using System;
 
-    /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-    /// </summary>
-    public interface IStepActivator
+
+namespace MyTrout.Pipelines.Steps.Data.Tests
+{
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    [TestClass]
+    public class UnitTest1
     {
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        [TestMethod]
+        public void TestMethod1()
+        {
+        }
     }
 }

@@ -144,6 +144,9 @@
   <data name="SERVICEPROVIDER_LACKS_PARAMETER" xml:space="preserve">
     <value>ServiceProvider does not contain one of the parameters required for '{0}'.</value>
   </data>
+  <data name="STEP_CONTEXT_NOT_FOUND" xml:space="preserve">
+    <value>'IDictionary&lt;string,{0}&gt;' could not be found in ServiceProvider during the initialization of '{1}' step.</value>
+  </data>
   <data name="TYPE_FAILED_TO_INITIALIZE" xml:space="preserve">
     <value>{0}({1}) failed to intialize properly.</value>
   </data>

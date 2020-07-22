@@ -1,4 +1,4 @@
-﻿// <copyright file="NoOpStepTests.cs" company="Chris Trout">
+﻿// <copyright file="StepWithContextTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -25,45 +25,43 @@
 namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using MyTrout.Pipelines.Core;
     using System;
-    using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class NoOpStepTests
+    public class StepWithContextTests
     {
         [TestMethod]
-        public async Task Returns_Task_From_DisposeAsync()
+        public void Constructs_StepWithContext_Successfully()
         {
             // arrange
-            var source = new NoOpStep();
+            Type expectedStepType = typeof(NoOpStep);
+            string expectedStepContext = "context";
 
             // act
-            await source.DisposeAsync();
-
-            // assert
-            Assert.IsTrue(true);
-
-            // No exceptions mean this worked appropriately.
-        }
-
-#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
-        [TestMethod]
-        public void Returns_Task_From_InvokeAsync()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
-        {
-            // arrange
-            PipelineContext context = new PipelineContext();
-
-            var step = new NoOpStep();
-
-            // act
-            var result = step.InvokeAsync(context);
+            var result = new StepWithContext(expectedStepType, expectedStepContext);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(Task.CompletedTask, result);
+            Assert.AreEqual(expectedStepType, result.StepType);
+            Assert.AreEqual(expectedStepContext, result.StepContext);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_StepType_Is_Null()
+        {
+            // arrange
+            Type expectedStepType = null;
+            string expectedStepContext = "context";
+
+            string expectedParamName = "stepType";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepWithContext(expectedStepType, expectedStepContext));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
     }
 }
