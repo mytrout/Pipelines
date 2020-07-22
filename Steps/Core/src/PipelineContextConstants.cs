@@ -1,4 +1,4 @@
-﻿// <copyright file="SampleWithOptionsStep.cs" company="Chris Trout">
+﻿// <copyright file="PipelineContextConstants.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,25 +22,21 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Samples.Tests
+namespace MyTrout.Pipelines.Steps
 {
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithOptionsStep : SampleStep1
+    /// <summary>
+    /// Constants defined for <see cref="PipelineContext" /> items across all Steps.
+    /// </summary>
+    public static class PipelineContextConstants
     {
-        public SampleWithOptionsStep(SampleOptions options, IPipelineRequest next)
-            : base(next)
-        {
-            this.Options = options;
-        }
+        /// <summary>
+        /// Indicates that this <see cref="PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered input to the Pipeline.
+        /// </summary>
+        public const string INPUT_STREAM = "PIPELINE_INPUT_STREAM";
 
-        protected override string Key
-        {
-            get
-            {
-                return this.Options.ConnectionString;
-            }
-        }
-
-        public SampleOptions Options { get; private set; }
+        /// <summary>
+        /// Indicates that this <see cref="PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered output from the Pipeline.
+        /// </summary>
+        public const string OUTPUT_STREAM = "PIPELINE_OUTPUT_STREAM";
     }
 }

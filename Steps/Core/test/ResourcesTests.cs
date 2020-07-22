@@ -1,4 +1,4 @@
-﻿// <copyright file="SampleWithOptionsStep.cs" company="Chris Trout">
+﻿// <copyright file="ResourcesTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,25 +22,43 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Samples.Tests
+namespace MyTrout.Pipelines.Steps.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.Globalization;
+
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithOptionsStep : SampleStep1
+    [TestClass]
+    public class ResourcesTests
     {
-        public SampleWithOptionsStep(SampleOptions options, IPipelineRequest next)
-            : base(next)
+        [TestMethod]
+        public void Returns_US_English_On_SMOKE_TEST()
         {
-            this.Options = options;
+            // arrange
+            var cultureInfo = new CultureInfo("en-US");
+            const string expectedSmokeTest = "Smoke Test (en-US)";
+
+            // act
+            string result = Resources._SMOKE_TEST(cultureInfo);
+
+            // assert
+            Assert.AreEqual(expectedSmokeTest, result);
         }
 
-        protected override string Key
+        /* Will reinstate this test when we have time to properly test localization. */
+        [TestMethod]
+        public void Returns_GB_English_On_SMOKE_TEST()
         {
-            get
-            {
-                return this.Options.ConnectionString;
-            }
-        }
+            // arrange
+            var cultureInfo = new CultureInfo("en-GB");
+            const string expectedSmokeTest = "Smoke Test (en-GB)";
 
-        public SampleOptions Options { get; private set; }
+            // act
+            string result = Resources._SMOKE_TEST(cultureInfo);
+
+            // assert
+            Assert.AreEqual(expectedSmokeTest, result);
+        }
     }
 }
