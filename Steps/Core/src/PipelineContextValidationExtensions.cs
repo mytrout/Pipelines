@@ -29,14 +29,14 @@ namespace MyTrout.Pipelines.Steps
     using System.IO;
 
     /// <summary>
-    /// Provides standardized validation of values in the <see cref="PipelineContext"/>.
+    /// Provides standardized validation of values in the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
     /// </summary>
     public static class PipelineContextValidationExtensions
     {
         /// <summary>
-        /// Asserts the <see cref="PipelineContext"/> contains a string for <paramref name="key"/> and that the value is not <see langword="null"/>, empty or whitespace.
+        /// Asserts the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> contains a string for <paramref name="key"/> and that the value is not <see langword="null"/>, empty or whitespace.
         /// </summary>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
+        /// <param name="source">The <see cref="MyTrout.Pipelines.Core.PipelineContext"/> being tested.</param>
         /// <param name="key">The name of the <see cref="Stream"/> value to test.</param>
         public static void AssertStringIsNotWhiteSpace(this IPipelineContext source, string key)
         {
@@ -49,10 +49,10 @@ namespace MyTrout.Pipelines.Steps
         }
 
         /// <summary>
-        /// Asserts that the <see cref="PipelineContext"/> contains an item for <paramref name="key"/> and that the value can be cast to <typeparamref name="TValue"/>.
+        /// Asserts that the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> contains an item for <paramref name="key"/> and that the value can be cast to <typeparamref name="TValue"/>.
         /// </summary>
         /// <typeparam name="TValue">The <see cref="Type"/> of the value to be tested.</typeparam>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
+        /// <param name="source">The <see cref="MyTrout.Pipelines.Core.PipelineContext"/> being tested.</param>
         /// <param name="key">The name of the <see cref="Stream"/> value to test.</param>
         public static void AssertValueIsValid<TValue>(this IPipelineContext source, string key)
         {

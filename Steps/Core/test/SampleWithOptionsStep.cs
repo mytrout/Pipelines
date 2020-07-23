@@ -1,4 +1,4 @@
-﻿// <copyright file="PipelineContextConstants.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithOptionsStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,21 +22,31 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Steps
+namespace MyTrout.Pipelines.Steps.Tests
 {
-    /// <summary>
-    /// Constants defined for <see cref="MyTrout.Pipelines.Core.PipelineContext" /> items across all Steps.
-    /// </summary>
-    public static class PipelineContextConstants
-    {
-        /// <summary>
-        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered input to the Pipeline.
-        /// </summary>
-        public const string INPUT_STREAM = "PIPELINE_INPUT_STREAM";
+    using Microsoft.Extensions.Logging;
+    using System.Threading.Tasks;
 
-        /// <summary>
-        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered output from the Pipeline.
-        /// </summary>
-        public const string OUTPUT_STREAM = "PIPELINE_OUTPUT_STREAM";
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleWithOptionsStep : AbstractPipelineStep<SampleWithOptionsStep, SampleOptions>
+    {
+        public SampleWithOptionsStep(ILogger<SampleWithOptionsStep> logger, SampleOptions options, IPipelineRequest next)
+            : base(logger, options, next)
+        {
+            // no op
+        }
+
+        public IPipelineRequest NextItem
+        {
+            get
+            {
+                return this.Next;
+            }
+        }
+
+        protected override Task InvokeCoreAsync(IPipelineContext context)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

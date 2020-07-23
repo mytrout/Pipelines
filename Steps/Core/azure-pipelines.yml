@@ -1,4 +1,4 @@
-name: 'Pipelines.Steps v$(major).$(minor).$(patch).$(buildId)$(suffix)'
+name: 'Pipelines.Steps.Core v$(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:

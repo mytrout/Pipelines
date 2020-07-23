@@ -69,6 +69,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\MyTrout.Pipelines.csproj" />
+    <ProjectReference Include="..\src\MyTrout.Pipelines.Steps.csproj" />
   </ItemGroup>
 </Project>

@@ -24,8 +24,10 @@
 
 namespace MyTrout.Pipelines.Steps.Tests
 {
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Threading.Tasks;
 
@@ -46,19 +48,19 @@ namespace MyTrout.Pipelines.Steps.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(next, result.NextItem);
+            Assert.AreEqual(next, result.Next);
         }
 
         [TestMethod]
         public void Constructs_AbstractPipelineStep_With_Options_Successfully()
         {
             // arrange
-            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            ILogger<SampleWithOptionsStep> logger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
             IPipelineRequest next = new NoOpStep();
-            SampleStepOptions options = new SampleStepOptions();
+            SampleOptions options = new SampleOptions();
 
             // act
-            SampleStepWithOptions result = new SampleStepWithOptions(logger, options, next);
+            SampleWithOptionsStep result = new SampleWithOptionsStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -71,8 +73,8 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_Task_From_DisposeAsync()
         {
             // arrange
-            ILogger<SampleWithAbstractPipelineImplementation> logger = new Mock<ILogger<SampleWithAbstractPipelineImplementation>>().Object;
-            var source = new SampleWithAbstractPipelineImplementation(logger, new NoOpStep());
+            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            var source = new SampleStep(logger, new NoOpStep());
 
             // act
             await source.DisposeAsync();
@@ -93,7 +95,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             mockNext.Setup(x => x.InvokeAsync(context)).Throws(new InvalidCastException());
             IPipelineRequest next = mockNext.Object;
 
-            var step = new SampleStepCallingNext(logger, next);
+            var step = new SampleStep(logger, next);
 
             int errorCount = 1;
 
@@ -159,13 +161,13 @@ namespace MyTrout.Pipelines.Steps.Tests
         public void Throws_ArgumentNullException_From_Constructor_When_Options_Parameter_Is_Null()
         {
             // arrange
-            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
+            ILogger<SampleWithOptionsStep> logger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
             IPipelineRequest next = new NoOpStep();
-            SampleStepOptions options = null;
+            SampleOptions options = null;
             string expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleStepWithOptions(logger, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SampleWithOptionsStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -191,88 +193,4 @@ namespace MyTrout.Pipelines.Steps.Tests
             Assert.AreEqual(expectedParamName, result.ParamName);
         }
     }
-
-    // Allow testing class here because it is used by no other class in the tests.
-#pragma warning disable SA1402 // File may only contain a single type
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1801 // Remove unused parameter
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleStep : AbstractPipelineStep<SampleStep>
-    {
-        public SampleStep(ILogger<SampleStep> logger, IPipelineRequest next)
-            : base(logger, next)
-        {
-            // no op
-        }
-
-        public IPipelineRequest NextItem
-        {
-            get
-            {
-                return this.Next;
-            }
-        }
-
-        protected override Task InvokeCoreAsync(IPipelineContext context)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleStepWithOptions : AbstractPipelineStep<SampleStep, SampleStepOptions>
-    {
-        public SampleStepWithOptions(ILogger<SampleStep> logger, SampleStepOptions options, IPipelineRequest next)
-            : base(logger, options, next)
-        {
-            // no op
-        }
-
-        public IPipelineRequest NextItem
-        {
-            get
-            {
-                return this.Next;
-            }
-        }
-
-        protected override Task InvokeCoreAsync(IPipelineContext context)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleStepCallingNext : AbstractPipelineStep<SampleStep>
-    {
-        public SampleStepCallingNext(ILogger<SampleStep> logger, IPipelineRequest next)
-            : base(logger, next)
-        {
-            // no op
-        }
-
-        public IPipelineRequest NextItem
-        {
-            get
-            {
-                return this.Next;
-            }
-        }
-
-        protected override Task InvokeCoreAsync(IPipelineContext context)
-        {
-            return this.Next.InvokeAsync(context);
-        }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleStepOptions
-    {
-        public string Option1 { get; set; }
-    }
-#pragma warning restore CA1801 // Remove unused parameter
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore SA1402 // File may only contain a single type
 }

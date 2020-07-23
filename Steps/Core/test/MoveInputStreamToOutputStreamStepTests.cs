@@ -24,8 +24,10 @@
 
 namespace MyTrout.Pipelines.Steps.Tests
 {
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Globalization;
     using System.IO;

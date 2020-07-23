@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Globalization;
     using System.IO;
