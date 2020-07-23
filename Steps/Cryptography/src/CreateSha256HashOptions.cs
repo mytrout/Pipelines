@@ -42,7 +42,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         public Encoding HashEncoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
-        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="PipelineContext"/>.
+        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
         /// </summary>
         public string HashStreamKey { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
     }

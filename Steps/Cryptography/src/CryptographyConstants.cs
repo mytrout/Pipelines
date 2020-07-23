@@ -30,12 +30,12 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     public static class CryptographyConstants
     {
         /// <summary>
-        /// Indicates that this <see cref="PipelineContext" /> item is a <see cref="System.IO.Stream" /> that contains a hash.
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Stream" /> that contains a hash.
         /// </summary>
         public const string HASH_STREAM = "PIPELINE_HASH_STREAM";
 
         /// <summary>
-        /// Indicates that this <see cref="PipelineContext" /> item is a string hexidecimal representation of the hash.
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a string hexidecimal representation of the hash.
         /// </summary>
         public const string HASH_STRING = "PIPELINE_HASH_STRING";
     }
