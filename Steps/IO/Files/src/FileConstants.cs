@@ -25,17 +25,17 @@
 namespace MyTrout.Pipelines.Steps.IO.Files
 {
     /// <summary>
-    /// Constants defined for <see cref="PipelineContext" /> items for file-based steps.
+    /// Constants defined for <see cref="MyTrout.Pipelines.Core.PipelineContext" /> items for file-based steps.
     /// </summary>
     public static class FileConstants
     {
         /// <summary>
-        /// Indicates that this <see cref="PipelineContext" /> item is the file name used as the source file for read or move operations.
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the file name used as the source file for read or move operations.
         /// </summary>
         public const string SOURCE_FILE = "PIPELINE_SOURCE_FILE_NAME";
 
         /// <summary>
-        /// Indicates that this <see cref="PipelineContext" /> item is the file name used as the destination (or target) file for delete, move, or write operations.
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the file name used as the destination (or target) file for delete, move, or write operations.
         /// </summary>
         public const string TARGET_FILE = "PIPELINE_TARGET_FILE_NAME";
     }

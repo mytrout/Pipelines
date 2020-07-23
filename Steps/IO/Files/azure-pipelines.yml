@@ -1,4 +1,4 @@
-name: 'Pipelines.Steps.IO.Files.$(Date:yyyyMMdd)$(Rev:.r)'
+name: 'Pipelines.Steps.IO.Files v$(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:
@@ -19,7 +19,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 4
+  minor: 5
   patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'

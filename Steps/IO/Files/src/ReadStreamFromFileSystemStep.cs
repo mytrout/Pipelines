@@ -31,7 +31,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Reads a file from the File System and puts it into the <see cref="PipelineContext" /> as an input <see cref="Stream"/>.
+    /// Reads a file from the File System and puts it into the <see cref="MyTrout.Pipelines.Core.PipelineContext" /> as an input <see cref="Stream"/>.
     /// </summary>
     public class ReadStreamFromFileSystemStep : AbstractPipelineStep<ReadStreamFromFileSystemStep, ReadStreamFromFileSystemOptions>
     {

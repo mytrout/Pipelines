@@ -31,7 +31,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Writes a file tp the File System from an output <see cref="Stream"/> in <see cref="PipelineContext"/>.
+    /// Writes a file tp the File System from an output <see cref="Stream"/> in <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
     /// </summary>
     public class WriteStreamToFileSystemStep : AbstractPipelineStep<WriteStreamToFileSystemStep, WriteStreamToFileSystemOptions>
     {
