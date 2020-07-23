@@ -25,17 +25,17 @@
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
     /// <summary>
-    /// Constants defined for <see cref="PipelineContext" /> items for Compression-related steps.
+    /// Constants defined for <see cref="MyTrout.Pipelines.Core.PipelineContext" /> items for Compression-related steps.
     /// </summary>
     public static class CompressionConstants
     {
         /// <summary>
-        /// Indicates that this <see cref="PipelineContext" /> item is a <see cref="System.IO.Compression.ZipArchive" />.
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Compression.ZipArchive" />.
         /// </summary>
         public const string ZIP_ARCHIVE = "COMPRESSION_ZIP_ARCHIVE";
 
         /// <summary>
-        /// Inidicaltes that this <see cref="PipelineContext"/> item is the name of a <see cref="System.IO.Compression.ZipArchiveEntry"/>.
+        /// Inidicaltes that this <see cref="MyTrout.Pipelines.Core.PipelineContext"/> item is the name of a <see cref="System.IO.Compression.ZipArchiveEntry"/>.
         /// </summary>
         public const string ZIP_ARCHIVE_ENTRY_NAME = "COMPRESSION_ZIP_ARCHIVE_ENTRY_NAME";
     }

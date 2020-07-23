@@ -29,6 +29,8 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
     using Microsoft.VisualBasic;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core;
+    using MyTrout.Pipelines.Steps;
     using MyTrout.Pipelines.Steps.IO.Compression;
     using System;
     using System.Collections.Generic;

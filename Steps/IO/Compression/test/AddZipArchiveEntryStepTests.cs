@@ -27,6 +27,8 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using MyTrout.Pipelines.Core;
+    using MyTrout.Pipelines.Steps;
     using MyTrout.Pipelines.Steps.IO.Compression;
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -298,7 +300,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
             int errorCount = 1;
-            string expectedMessage = Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture);
+            string expectedMessage = Steps.IO.Compression.Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture);
 
             using (var zipStream = new MemoryStream())
             {

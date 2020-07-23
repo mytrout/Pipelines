@@ -1,4 +1,4 @@
-name: 'Pipelines.Steps.IO.Compression.$(Date:yyyyMMdd)$(Rev:.r)'
+name: 'Pipelines.Steps.IO.Compression v$(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:
@@ -19,8 +19,8 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 0
-  minor: 1
-  patch: 2
+  minor: 2
+  patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: '-beta'
   publishVstsFeed: 'Pipelines/mytrout'

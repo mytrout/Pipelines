@@ -29,14 +29,14 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     using System.IO.Compression;
 
     /// <summary>
-    /// Provides standardized validation of values in the <see cref="PipelineContext"/>.
+    /// Provides standardized validation of values in the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
     /// </summary>
     public static class PipelineContextValidationExtensions
     {
         /// <summary>
-        /// Asserts that the <see cref="PipelineContext"/> contains a <see cref="ZipArchive"/> for <paramref name="key"/> and is readable.
+        /// Asserts that the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> contains a <see cref="ZipArchive"/> for <paramref name="key"/> and is readable.
         /// </summary>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
+        /// <param name="source">The <see cref="MyTrout.Pipelines.Core.PipelineContext"/> being tested.</param>
         /// <param name="key">The name of the item to test.</param>
         public static void AssertZipArchiveIsReadable(this IPipelineContext source, string key)
         {
@@ -54,9 +54,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         }
 
         /// <summary>
-        /// Asserts that the <see cref="PipelineContext"/> contains a <see cref="ZipArchive"/> for <paramref name="key"/> and is updatable.
+        /// Asserts that the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> contains a <see cref="ZipArchive"/> for <paramref name="key"/> and is updatable.
         /// </summary>
-        /// <param name="source">The <see cref="PipelineContext"/> being tested.</param>
+        /// <param name="source">The <see cref="MyTrout.Pipelines.Core.PipelineContext"/> being tested.</param>
         /// <param name="key">The name of the item to test.</param>
         public static void AssertZipArchiveIsUpdatable(this IPipelineContext source, string key)
         {
