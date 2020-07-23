@@ -29,6 +29,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines;
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Collections.Generic;
     using System.IO;

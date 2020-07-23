@@ -1,4 +1,4 @@
-name: 'Pipelines.Steps.Azure.ServiceBus.$(date:yyyyMMdd).$(rev:.r)'
+name: 'Pipelines.Steps.Azure.ServiceBus v$(major).$(minor).$(patch).$(buildId)$(suffix)'
 
 trigger:
   branches:
@@ -25,7 +25,7 @@ variables:
 - name: 'major'
   value:  0
 - name: 'minor'
-  value:  6
+  value:  7
 - name: 'patch'
   value:  0
 - name: 'buildId'
