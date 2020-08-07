@@ -44,16 +44,19 @@ namespace MyTrout.Pipelines.Hosting
         /// <param name="applicationLifetime">The lifetime of the <see cref="IHost" /> application.</param>
         /// <param name="stepActivator">The activator that constructs steps from <see cref="Type" />.</param>
         /// <param name="pipelineBuilder">The <see cref="PipelineBuilder" /> hosted by this <see cref="IHost" />.</param>
+        /// <param name="context">The <see cref="PipelineContext" /> used by this <see cref="PipelineContext" />.</param>
         public PipelineHostedService(
                                 ILogger<PipelineHostedService> logger,
                                 IHostApplicationLifetime applicationLifetime,
                                 IStepActivator stepActivator,
-                                PipelineBuilder pipelineBuilder)
+                                PipelineBuilder pipelineBuilder,
+                                PipelineContext context)
         {
             this.ApplicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
+            this.Context = context ?? throw new ArgumentNullException(nameof(context));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.StepActivator = stepActivator ?? throw new ArgumentNullException(nameof(stepActivator));
             this.PipelineBuilder = pipelineBuilder ?? throw new ArgumentNullException(nameof(pipelineBuilder));
+            this.StepActivator = stepActivator ?? throw new ArgumentNullException(nameof(stepActivator));
         }
 
         /// <summary>
@@ -70,6 +73,11 @@ namespace MyTrout.Pipelines.Hosting
         /// Gets the list of <see cref="PipelineBuilder" /> hosted by this <see cref="IHost" />.
         /// </summary>
         public PipelineBuilder PipelineBuilder { get; }
+
+        /// <summary>
+        /// Gets the <see cref="PipelineContext"/> used by the pipeline.
+        /// </summary>
+        public PipelineContext Context { get; }
 
         /// <summary>
         /// Gets the activator which creates instances of the step <see cref="Type" />.
@@ -118,32 +126,27 @@ namespace MyTrout.Pipelines.Hosting
         /// <returns>A <see cref="Task" />.</returns>
         private async Task OnApplicationStartedAsync(CancellationToken cancellationToken)
         {
-            PipelineContext context = new PipelineContext()
-            {
-                CancellationToken = cancellationToken
-            };
+            this.Context.CancellationToken = cancellationToken;
 
             try
             {
                 this.Logger.LogInformation(Resources.PIPELINE_TASKS_STARTING(CultureInfo.CurrentCulture));
 
-                await Task.Delay(5).ConfigureAwait(false);
-
                 IPipelineRequest pipeline = this.PipelineBuilder.Build(this.StepActivator);
 
-                await pipeline.InvokeAsync(context).ConfigureAwait(false);
+                await pipeline.InvokeAsync(this.Context).ConfigureAwait(false);
 
                 this.Logger.LogInformation(Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture));
             }
 #pragma warning disable CA1031 // Prevent any Exception-derived Exception from causing the application to crash.
             catch (Exception exc)
             {
-                this.Logger.LogError(exc, Resources.UNHANDLED_EXCEPTION(CultureInfo.CurrentCulture));
+                this.Context.Errors.Add(exc);
             }
 #pragma warning restore CA1031 // Do not catch general exception types
             finally
             {
-                foreach (var error in context.Errors)
+                foreach (var error in this.Context.Errors)
                 {
                     this.Logger.LogError(error, Resources.HANDLED_EXCEPTION(CultureInfo.CurrentCulture));
                 }

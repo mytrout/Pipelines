@@ -1,0 +1,18 @@
+{
+  "Key": "This value should be overridden.",
+  "TestingOptions": {
+    "Key":  "This value should be overridden."
+  },
+  "context-1": {
+    "Key": "Moe"
+  },
+  "context-2": {
+    "Key": "Larry"
+  },
+  "context-3": {
+    "Key": "&"
+  },
+  "context-4": {
+    "Key": "Curly"
+  }
+}

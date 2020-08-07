@@ -1,4 +1,4 @@
-﻿// <copyright file="PipelineHostBuilderExtensions.cs" company="Chris Trout">
+﻿// <copyright file="UsePipelineExtensions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Hosting
     /// <summary>
     /// Extensions to configure pipeline services in <see cref="IHostBuilder" />.
     /// </summary>
-    public static class PipelineHostBuilderExtensions
+    public static class UsePipelineExtensions
     {
         /// <summary>
         /// Configures a pipeline service with the default <see cref="IStepActivator" />.
@@ -42,7 +42,19 @@ namespace MyTrout.Pipelines.Hosting
         /// <returns>An <see cref="IHostBuilder" /> with the specified pipelines configured.</returns>
         public static IHostBuilder UsePipeline(this IHostBuilder source, PipelineBuilder builder)
         {
-            return PipelineHostBuilderExtensions.UsePipeline<StepActivator>(source, builder);
+            return source.UsePipeline<StepActivator>(builder);
+        }
+
+        /// <summary>
+        /// Configures a pipeline service with a default <see cref="IStepActivator" />.
+        /// </summary>
+        /// <param name="source">An <see cref="IHostBuilder" /> instance.</param>
+        /// <param name="pipelineAction">An <see cref="Action{PipelineBuilder}"/> to build the <see cref="PipelineBuilder"/>.</param>
+        /// <returns>An <see cref="IHostBuilder" /> with the specified pipelines configured.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <see langword="null" />.</exception>
+        public static IHostBuilder UsePipeline(this IHostBuilder source, Action<PipelineBuilder> pipelineAction)
+        {
+            return source.UsePipeline<StepActivator>(pipelineAction);
         }
 
         /// <summary>
@@ -57,18 +69,40 @@ namespace MyTrout.Pipelines.Hosting
             where TStepActivator : class, IStepActivator
         {
             source.AssertParameterIsNotNull(nameof(source));
+            source.AssertParameterIsNotNull(nameof(builder));
 
-            var result = source.ConfigureServices((hostContext, services) =>
-            {
-                services.AddLogging();
-                services.AddSingleton(builder);
-                services.AddTransient<IStepActivator, TStepActivator>();
-                services.AddHostedService<PipelineHostedService>();
-            });
-
-            source.UseConsoleLifetime(options => options.SuppressStatusMessages = true);
+            var result = AddStepDependencyExtensions.BuildStepContext(source)
+                            .ConfigureServices((hostContext, services) =>
+                            {
+                                services.AddLogging();
+                                services.AddSingleton(builder);
+                                services.AddTransient<IStepActivator, TStepActivator>();
+                                services.AddHostedService<PipelineHostedService>();
+                                services.AddSingleton(new PipelineContext());
+                            })
+                            .UseConsoleLifetime(options => options.SuppressStatusMessages = true);
 
             return result;
+        }
+
+        /// <summary>
+        /// Configures a pipeline service with the default <see cref="IStepActivator" />.
+        /// </summary>
+        /// <typeparam name="TStepActivator">A custom <see cref="IStepActivator" /> implementation.</typeparam>
+        /// <param name="source">An <see cref="IHostBuilder" /> instance.</param>
+        /// <param name="pipelineAction">An <see cref="Action{PipelineBuilder}"/> to build the <see cref="PipelineBuilder"/>.</param>
+        /// <returns>An <see cref="IHostBuilder" /> with the specified pipelines configured.</returns>
+        public static IHostBuilder UsePipeline<TStepActivator>(this IHostBuilder source, Action<PipelineBuilder> pipelineAction)
+            where TStepActivator : class, IStepActivator
+        {
+            source.AssertParameterIsNotNull(nameof(source));
+            pipelineAction.AssertParameterIsNotNull(nameof(pipelineAction));
+
+            PipelineBuilder builder = new PipelineBuilder();
+
+            pipelineAction.Invoke(builder);
+
+            return source.UsePipeline<TStepActivator>(builder);
         }
     }
 }

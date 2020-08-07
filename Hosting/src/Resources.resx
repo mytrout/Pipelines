@@ -123,6 +123,9 @@
   <data name="CALLING_METHOD_IN_TYPE" xml:space="preserve">
     <value>Calling {0}() in '{1}'.</value>
   </data>
+  <data name="CONTEXT_WRONG_TYPE" xml:space="preserve">
+    <value>The Step Dependencies with Context is either null or isn't of type 'Dictionary&lt;Type, Dictionary&lt;string, Func&lt;IServiceProvider, {0}&gt;&gt;&gt;'</value>
+  </data>
   <data name="HANDLED_EXCEPTION" xml:space="preserve">
     <value>A handled exception occurred in the execution of the Pipeline.  </value>
   </data>
