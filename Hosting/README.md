@@ -2,7 +2,7 @@
 
 MyTrout.Pipelines.Hosting provides helper classes to run a pipeline using Microsoft's Generic Host.
 
-MyTrout.Pipelines.Hosting targets .NET Standard 2.1 ([coverage](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support): .NET Core 3.1)
+MyTrout.Pipelines.Hosting targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
 
 For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
 
@@ -15,7 +15,9 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 # Software dependencies
     1. Microsoft.Hosting 3.1.5
     2. Microsoft.Hosting.Abstractions 3.1.5
-    3. MyTrout.Pipelines 1.0.1
+    3. MyTrout.Pipelines 1.1.<any>
+
+All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
 # How do I use Pipelines.Hosting?
 

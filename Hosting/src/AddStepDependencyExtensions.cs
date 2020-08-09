@@ -233,7 +233,13 @@ namespace MyTrout.Pipelines.Hosting
                 {
                     dynamic sourceDictionary = source.Properties[key];
 
-                    Type dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
+                    Type? dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
+
+                    if (dependencyType == null)
+                    {
+                        throw new InvalidOperationException(Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, key));
+                    }
+
                     var contextBaseTypes = new Type[]
                         {
                             typeof(string),
@@ -256,8 +262,6 @@ namespace MyTrout.Pipelines.Hosting
                             // At pipelilne build-time, the pipeline needs an IDictionary<string, <type>>
                             // with all of the instances populated.
                             dynamic serviceDictionary = Activator.CreateInstance(implementationType);
-
-                            Type dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
 
                             foreach (string key in sourceDictionary[dependencyType].Keys)
                             {

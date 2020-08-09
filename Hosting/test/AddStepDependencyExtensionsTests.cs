@@ -28,8 +28,10 @@ namespace MyTrout.Pipelines.Hosting.Tests
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
     using MyTrout.Pipelines.Core;
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -425,6 +427,38 @@ namespace MyTrout.Pipelines.Hosting.Tests
             var result = Assert.ThrowsException<InvalidOperationException>(() => 
                             hostBuilder.AddStepDependency<TestingOptions>("context-1", new TestingOptions() { Key = "Shemp" }));
             
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_PipelineBuilder_When_HostBuilder_Properties_Contains_Null_Value_For_Type_In_The_Dictionary()
+        {
+            // arrange
+            var hostBuilder = Host.CreateDefaultBuilder();
+
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(TestingOptions).FullName}";
+            var dictionary = new Dictionary<string, Dictionary<string, Func<IServiceProvider, TestingOptions>>>()
+                                {
+                                    { string.Empty, new Dictionary<string, Func<IServiceProvider, TestingOptions>>() }
+                                };
+
+            hostBuilder.Properties[keyName] = dictionary;
+
+            string expectedMessage = Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, keyName);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() =>
+                                                    hostBuilder.ConfigureServices(services =>
+                                                    {
+                                                        services.AddSingleton(new TestingOptions() { Key = "Moe" });
+                                                    })
+                                                    .UsePipeline(builder =>
+                                                    {
+                                                        builder.AddStep<TestingStep5>();
+                                                    }));
+
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMessage, result.Message);

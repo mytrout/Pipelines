@@ -1,3 +1,8 @@
+## 1.2.0
+- Upgrade Hosting to MyTrout.Pipelines v1.1.*
+- Generate the snupkg file for symbols for MyTrout.Pipelines.Hosting.
+- Upgrade MyTrout.Pipelines.Hosting to nullable reference types.
+
 ## 1.1.0
 - Upgrade Hosting to MyTrout.Pipelines v1.0.1
 - Support a step being configured multiple times with different configurations in the same pipeline via AddStepDependency.
