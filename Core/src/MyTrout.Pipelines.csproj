@@ -14,24 +14,22 @@
     <PackageProjectUrl>https://dev.azure.com/mytrout/Pipelines</PackageProjectUrl>
     <RepositoryUrl>https://dev.azure.com/mytrout/Pipelines</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
+    <NoWarn>1701;1702;SA1413;S4792</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
-  </PropertyGroup>
-
+  
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
@@ -88,30 +86,6 @@
   
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.LegacyThreadSwitchingMembers.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadAssertingMethods.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadSwitchingMethods.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MembersRequiringMainThread.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="DisposablePipelineRequest.cs" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Steps\" />
   </ItemGroup>
   
 </Project>

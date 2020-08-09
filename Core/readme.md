@@ -2,13 +2,17 @@
 
 MyTrout.Pipelines provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
-MyTrout.Pipelines targets .NET Standard 2.1 ([coverage](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support): .NET Core 3.1)
+MyTrout.Pipelines targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support).
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
 ![](pipeline-drawing.jpg)
 
 The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
+
+For more details on implementing Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/README.md)
+
+For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../Hosting/README.md)
 
 # Installing via NuGet
 
@@ -19,6 +23,7 @@ The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
     2. Microsoft.Extensions.Configuration.Abstractions 3.1.5
     3. Microsoft.Extensions.Logging.Abstractions 3.1.5
 
+All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
 # How do I use Pipelines?
 
@@ -78,12 +83,12 @@ The previous code would execute per the text below:
 * M3 Step - All code in M3.InvokeAsync() after the call to NoOpStep.InvokeAsync().
 
 # How do I write a "simple" Step?
-At a minimum, each step should implement the [IPipelineRequest](Core/src/IPipelineRequest.cs) interface which implements [IAsyncDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.iasyncdisposable?view=dotnet-plat-ext-3.1). 
+At a minimum, each step should implement the [IPipelineRequest](src/IPipelineRequest.cs) interface which implements [IAsyncDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.iasyncdisposable?view=dotnet-plat-ext-3.1). 
 
-Review the [NoOpStep](Core/src/Steps/NoOpStep.cs) for the minimum viable implementation.
+Review the [NoOpStep](../Steps/Core/src/NoOpStep.cs) for the minimum viable implementation.
 
 # How do I write a "simple" step without user-configurable options?
-To simplify the implemenation of a step, use the [AbstractPipelineStep&lt;TStep&gt;](Core/src/Steps/AbstractPipelineStep{TStep}.cs).
+To simplify the implemenation of a step, use the [AbstractPipelineStep&lt;TStep&gt;](../Steps/Core/src/AbstractPipelineStep{TStep}.cs).
 
 The base class provides the following capabilities to shortcut development time:
 * an implementation of IAsyncDisposable so that steps that have no resources can ignore that implementation.
@@ -118,7 +123,7 @@ namespace Steps.SampleCode
 ```
 
 # How do I write a "simple" step that has an Options configurable class in the recommended pattern?
-To simplify the implemenation of a step, use the [AbstractPipelineStep&lt;TStep,tOptions&gt;](Core/src/Steps/AbstractPipelineStep{TStep,TOptions}.cs).
+To simplify the implemenation of a step, use the [AbstractPipelineStep&lt;TStep,tOptions&gt;](Steps/Core/src/AbstractPipelineStep{TStep,TOptions}.cs).
 
 The base class provides the following capabilities to shortcut development time:
 * an implementation of IAsyncDisposable so that steps that have no resources can ignore that implementation.

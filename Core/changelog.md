@@ -1,3 +1,10 @@
+## 1.0.2
+- Generate the snupkg file for symbols for MyTrout.Pipelines.Core.
+- Update changelog for MyTrout.Pipelines v1.0.1.
+
+## 1.0.1
+- Minor change in Tests to correct a SonarQube issue about unused property.
+
 ## 1.0.0
 - Support a single step type being configured multiple times in the same pipeline via StepContext.
 - Move StepActivetor from the MyTrout.Pipelines namespace to MyTrout.Pipelines.Core namespace to better reflect its usage and dependencies.
