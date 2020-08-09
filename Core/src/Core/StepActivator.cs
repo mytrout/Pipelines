@@ -56,12 +56,12 @@ namespace MyTrout.Pipelines.Core
         public IServiceProvider ServiceProvider { get; }
 
         /// <inheritdoc />
-        public object CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest)
+        public object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest)
         {
             pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
             nextRequest.AssertParameterIsNotNull(nameof(nextRequest));
 
-            object result = null;
+            object? result = null;
 
             // Indicates whether at least one constructor has a PipelineRequest parameter.
             bool oneConstructorContainsNextRequestParameter = false;

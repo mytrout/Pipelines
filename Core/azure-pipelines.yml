@@ -19,8 +19,8 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   major: 1
-  minor: 0
-  patch: 2
+  minor: 1
+  patch: 0
   buildId: $[counter(variables['patch'], 0)]
   suffix: ''
   publishVstsFeed: 'Pipelines/mytrout'

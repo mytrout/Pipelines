@@ -36,7 +36,7 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="stepType">The type to be constructed.</param>
         /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
-        public StepWithContext(Type stepType, string stepContext)
+        public StepWithContext(Type stepType, string? stepContext)
         {
             this.StepType = stepType ?? throw new ArgumentNullException(nameof(stepType));
             this.StepContext = stepContext;
@@ -50,6 +50,6 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets the context to be used to configure this instance of the step.
         /// </summary>
-        public string StepContext { get; }
+        public string? StepContext { get; }
     }
 }

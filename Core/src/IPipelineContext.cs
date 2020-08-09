@@ -42,7 +42,7 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.
         /// </summary>
-        IConfiguration Configuration { get; set; }
+        IConfiguration? Configuration { get; set; }
 
         /// <summary>
         /// Gets a correlation value that can be used to correlate log entries and reporting data.

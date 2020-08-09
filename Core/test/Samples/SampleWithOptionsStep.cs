@@ -33,6 +33,8 @@ namespace MyTrout.Pipelines.Samples.Tests
             this.Options = options;
         }
 
+        public SampleOptions Options { get; private set; }
+
         protected override string Key
         {
             get
@@ -40,7 +42,5 @@ namespace MyTrout.Pipelines.Samples.Tests
                 return this.Options.ConnectionString;
             }
         }
-
-        public SampleOptions Options { get; private set; }
     }
 }

@@ -60,7 +60,19 @@ namespace MyTrout.Pipelines.Core
         public PipelineBuilder AddStep<T>()
             where T : class, IPipelineRequest
         {
-            return this.AddStep(typeof(T), null);
+            if (typeof(T).IsValueType)
+            {
+                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, typeof(T)));
+            }
+
+            if (!typeof(IPipelineRequest).IsAssignableFrom(typeof(T)))
+            {
+                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, typeof(T).Name));
+            }
+
+            this.StepTypes.Push(new StepWithContext(typeof(T), null));
+
+            return this;
         }
 
         /// <summary>
@@ -84,7 +96,21 @@ namespace MyTrout.Pipelines.Core
         /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
         public PipelineBuilder AddStep(Type stepType)
         {
-            return this.AddStep(stepType, null);
+            stepType.AssertParameterIsNotNull(nameof(stepType));
+
+            if (stepType.IsValueType)
+            {
+                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType)));
+            }
+
+            if (!typeof(IPipelineRequest).IsAssignableFrom(stepType))
+            {
+                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType)));
+            }
+
+            this.StepTypes.Push(new StepWithContext(stepType, null));
+
+            return this;
         }
 
         /// <summary>
@@ -135,9 +161,7 @@ namespace MyTrout.Pipelines.Core
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                var nextInstance = stepActivator.CreateInstance(step, nextRequest) as IPipelineRequest;
-
-                if (nextInstance == null)
+                if (!(stepActivator.CreateInstance(step, nextRequest) is IPipelineRequest nextInstance))
                 {
                     throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, step.StepType.Name));
                 }

@@ -1,4 +1,5 @@
-## 1.0.2
+## 1.1.0
+- Correct 'Cannot convert null literal to non-nullable reference type.' warnings because of nullable reference type configuration.
 - Generate the snupkg file for symbols for MyTrout.Pipelines.Core.
 - Update changelog for MyTrout.Pipelines v1.0.1.
 
