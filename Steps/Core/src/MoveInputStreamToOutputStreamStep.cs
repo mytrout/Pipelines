@@ -51,7 +51,7 @@ namespace MyTrout.Pipelines.Steps
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            Stream workingStream = null;
+            Stream? workingStream = null;
 
             context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
@@ -61,7 +61,9 @@ namespace MyTrout.Pipelines.Steps
 
                 context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
 
+#pragma warning disable CS8604 // Null check was performed by AssertValueIsValud.
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, workingStream);
+#pragma warning restore CS8604 // Null check was performed by AssertValueIsValud.
 
                 await this.Next.InvokeAsync(context).ConfigureAwait(false);
             }
@@ -69,8 +71,11 @@ namespace MyTrout.Pipelines.Steps
             {
                 context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
 
+#pragma warning disable CS8604 // Null check was performed by AssertValueIsValud.
+
                 // Matches the value passed into the constructor.
                 context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream);
+#pragma warning restore CS8604 // Null check was performed by AssertValueIsValud.
             }
         }
     }

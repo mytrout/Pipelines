@@ -80,7 +80,9 @@ namespace MyTrout.Pipelines.Steps
             {
                 await this.InvokeCoreAsync(context).ConfigureAwait(false);
             }
+#pragma warning disable CA1031 // Catch a general exception type to make sure it is added to context and not thrown above this method.
             catch (Exception exc)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 context.Errors.Add(exc);
             }

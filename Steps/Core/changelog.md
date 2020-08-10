@@ -1,13 +1,15 @@
+
 ## 1.0.0
+- Upgrade Hosting to MyTrout.Pipelines v1.1.*
+- Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.
+- Implement nullable reference types.
 - Support a single step type being configured multiple times in the same pipeline via StepContext.
-- Move StepActivetor from the MyTrout.Pipelines namespace to MyTrout.Pipelines.Core namespace to better reflect its usage and dependencies.
-- Move PipelineContext to the MyTrout.Pipelines.Steps.Core assembly.
 - Move PipelineContextConstants to the MyTrout.Pipelines.Steps.Core assembly.
 - Move PipelineContextValidationExtensions to the MyTrout.Pipelines.Steps.Core assembly.
 - Move StreamExtensions to the MyTrout.Pipelines.Steps.Core assembly.
 
 ## 0.27.0-beta
-- Refactor PIpelineComntext and Parameter Validation Extension methods into two different classes.
+- Refactor PIpelineContext and Parameter Validation Extension methods into two different classes.
 
 ## 0.26.3-beta
 - Add AssertParameterIsNotWhiteSpace to the Parameter Validation Extensions.

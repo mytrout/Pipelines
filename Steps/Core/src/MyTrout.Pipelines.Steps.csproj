@@ -10,26 +10,24 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <FileVersion>0.5.0.0</FileVersion>
-    <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
+    <Description>Provides step base classes and pipeline Stream manipulation implementations MyTrout.Pipelines.</Description>
     <PackageProjectUrl>https://dev.azure.com/mytrout/Pipelines</PackageProjectUrl>
     <RepositoryUrl>https://dev.azure.com/mytrout/Pipelines</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>..\docs\mytrout.Pipelines.Core.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;CA1031;CA1707;SA1310;SA1413</NoWarn>
+    <NoWarn>1701;1702;SA1413;S4792</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,7 +54,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyTrout.Pipelines" Version="1.0.1" />
+    <PackageReference Include="MyTrout.Pipelines" Version="1.1.*" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.8.0.18411">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -89,26 +87,6 @@
   
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.LegacyThreadSwitchingMembers.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadAssertingMethods.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MainThreadSwitchingMethods.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\donald.trout\.nuget\packages\microsoft.visualstudio.threading.analyzers\16.6.13\build\AdditionalFiles\vs-threading.MembersRequiringMainThread.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="DisposablePipelineRequest.cs" />
   </ItemGroup>
   
 </Project>
