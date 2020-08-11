@@ -1,3 +1,5 @@
+## 1.0.1
+- Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
 
 ## 1.0.0
 - Upgrade Hosting to MyTrout.Pipelines v1.1.*
