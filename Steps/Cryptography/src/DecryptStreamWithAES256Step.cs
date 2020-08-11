@@ -57,7 +57,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         {
             context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
+#pragma warning disable CS8600 // AssertValueIsValid<Stream> guarantees a non-null value here.
             Stream encryptedStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
+#pragma warning restore CS8600
 
             var cryptoProvider = new AesCryptoServiceProvider();
 
@@ -92,7 +94,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                     context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
 
+#pragma warning disable CS8604 // AssertValueIsValid<Stream> guarantees a non-null value here.
                 context.Items.Add(PipelineContextConstants.INPUT_STREAM, encryptedStream);
+#pragma warning restore CS8604
             }
         }
     }

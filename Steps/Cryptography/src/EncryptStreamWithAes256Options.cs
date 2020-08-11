@@ -29,6 +29,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /*
      *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
      */
+#pragma warning disable CS8618 // These properties must be initialized by configuration.
 
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="EncryptStreamWithAes256Step"/>.
@@ -51,4 +52,5 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// </summary>
         public string EncryptionKey { get; set; }
     }
+#pragma warning restore CS8618 // These properties must be initialized by configuration.
 }

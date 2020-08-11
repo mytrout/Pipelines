@@ -26,6 +26,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using System.Text;
 
+#pragma warning disable CS8618 // These properties must be initialized by configuration.
     /*
      *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
      */
@@ -51,4 +52,5 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// </summary>
         public string DecryptionKey { get; set; }
     }
+#pragma warning restore CS8618 // These properties must be initialized by configuration.
 }

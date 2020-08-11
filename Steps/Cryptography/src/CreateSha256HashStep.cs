@@ -69,9 +69,13 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                 context.Items.Remove(CryptographyConstants.HASH_STRING);
             }
 
+#pragma warning disable CS8600 // AssertValueIsValid<Stream> guarantees that this value is not null.
             Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
+#pragma warning restore CS8600
 
+#pragma warning disable CS8602 // AssertValueIsValid<Stream> guarantees that this value is not null.
             inputStream.Position = 0;
+#pragma warning restore CS8602
 
             using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
             {

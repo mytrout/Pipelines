@@ -117,7 +117,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                     {
                         using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
                         {
+#pragma warning disable CS8604 // AssertValueIsValid<Stream> guarantees a non-null value.
                             await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
+#pragma warning restore CS8604
                         }
                     }
 

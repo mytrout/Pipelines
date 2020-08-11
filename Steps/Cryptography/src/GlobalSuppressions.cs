@@ -22,6 +22,12 @@
 // SOFTWARE.
 // </copyright>
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.EncryptStreamWithAes256Step.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.DecryptStreamWithAes256Step.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.CreateSha256HashStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.EncryptStreamWithAes256Step.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.DecryptStreamWithAes256Step.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Cryptography.CreateSha256HashStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Cryptography.CryptographyConstants.HASH_STREAM")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Cryptography.CryptographyConstants.HASH_STRING")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Cryptography.CryptographyConstants.HASH_STREAM")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Cryptography.CryptographyConstants.HASH_STRING")]

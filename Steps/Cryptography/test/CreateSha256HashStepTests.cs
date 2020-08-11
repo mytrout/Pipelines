@@ -139,17 +139,5 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                 }
             }
         }
-
-        private void AssertHashedValue(PipelineContext context)
-        {
-            var stream = context.Items[CryptographyConstants.HASH_STREAM] as Stream;
-
-            byte[] workingResult = EncryptStreamWithAes256Step.ConvertStreamToByteArray(stream);
-
-            string result = BitConverter.ToString(workingResult).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
-
-            Assert.AreEqual(context.Items["TEST_CHECK_HASH"], result);
-            Assert.AreEqual(context.Items["TEST_CHECK_HASH"], context.Items[CryptographyConstants.HASH_STRING]);
-        }
     }
 }

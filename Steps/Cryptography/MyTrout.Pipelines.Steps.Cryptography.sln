@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67F02512-AF55-41A7-B5D7-4F0C6872C8A5}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
+		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
 		stylecop.json = stylecop.json
