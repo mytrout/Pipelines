@@ -25,10 +25,8 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.IO;
     using System.Security.Cryptography;
-    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -46,48 +44,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             : base(logger, options, next)
         {
             // no op
-        }
-
-        /// <summary>
-        /// Converts a <see cref="Stream" /> into an array of <see cref="byte"/>.
-        /// </summary>
-        /// <param name="inputStream"><see cref="Stream"/> to be converted.</param>
-        /// <returns>A byte array.</returns>
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        public static byte[] ConvertStreamToByteArray(Stream inputStream)
-        {
-            if (inputStream == null)
-            {
-                throw new ArgumentNullException(nameof(inputStream));
-            }
-
-            inputStream.Position = 0;
-
-            // The implementation of this method has been altered to guarantee that memoryStrem is never null.
-            // This boolean check guarantees that the incoming inputStream is copied into a MemoryStream, only if needed.
-            bool isMemoryStream = inputStream is MemoryStream;
-
-#pragma warning disable CA2000 // Caller is responsible for disposing of inputStream.  This method dispose of new MemoryStream().
-            MemoryStream memoryStream = (inputStream as MemoryStream) ?? new MemoryStream();
-#pragma warning restore CA2000 // Dispose objects before losing scope
-
-            try
-            {
-                if (!isMemoryStream)
-                {
-                    inputStream.CopyToAsync(memoryStream);
-                }
-
-                return memoryStream.ToArray();
-            }
-            finally
-            {
-                if (!isMemoryStream)
-                {
-                    memoryStream.Close();
-                    memoryStream.Dispose();
-                }
-            }
         }
 
         /// <summary>
@@ -118,8 +74,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                         using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
                         {
 #pragma warning disable CS8604 // AssertValueIsValid<Stream> guarantees a non-null value.
-                            await cryptoStream.WriteAsync(ConvertStreamToByteArray(unencryptedStream)).ConfigureAwait(false);
+                            byte[] workingArray = await StreamExtensions.ConvertStreamToByteArrayAsync(unencryptedStream).ConfigureAwait(false);
 #pragma warning restore CS8604
+                            await cryptoStream.WriteAsync(workingArray).ConfigureAwait(false);
                         }
                     }
 

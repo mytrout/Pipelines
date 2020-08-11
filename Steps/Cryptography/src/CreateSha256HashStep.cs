@@ -81,6 +81,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             {
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
+#pragma warning disable S4790 // SonarQube -> False Positive because it doesn't recognize SHA256CryptoServiceProvider as SHA256.
                 using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
                 {
                     byte[] workingHash = hashProvider.ComputeHash(workingResult);
@@ -90,6 +91,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                     context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
                 }
+#pragma warning restore S4790
             }
         }
     }
