@@ -1,3 +1,8 @@
+# MyTrout.Pipelines.Hosting Change Log
+
+## 1.2.1
+- Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
+
 ## 1.2.0
 - Upgrade Hosting to MyTrout.Pipelines v1.1.*
 - Generate the snupkg file for symbols for MyTrout.Pipelines.Hosting.
