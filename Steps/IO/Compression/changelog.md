@@ -2,6 +2,7 @@
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.
 - Implement nullable reference types.
+- Suppress SonarQube S5042 security warnings as they are false positives - 'this may be a problem' rather than 'this *IS* a problem'.
 
 ## 0.2.0-beta
 - Correct documentation on CompressionConstants and PipelineContextValidationExtensions.

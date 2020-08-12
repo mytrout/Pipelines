@@ -82,7 +82,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogInformation(Resources.ZIP_ARCHIVE_ENTRY_CREATED(CultureInfo.CurrentCulture, zipEntryFileName));
 
+#pragma warning disable S5042 // This is a brand-new archive entry. Caller should not provide zip-bombed content.
             using (var entryStream = archiveEntry.Open())
+#pragma warning restore S5042
             {
 #pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 await outputStream.CopyToAsync(entryStream).ConfigureAwait(false);

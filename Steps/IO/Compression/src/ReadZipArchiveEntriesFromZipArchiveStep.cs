@@ -74,7 +74,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
                 foreach (var archiveEntry in zipArchive.Entries)
 #pragma warning restore CS8602
                 {
+#pragma warning disable S5042 // The receiver of this stream must determine how much data is acceptable and where it can be written.
                     using (var outputStream = archiveEntry.Open())
+#pragma warning restore S5042
                     {
                         context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, archiveEntry.Name);
                         context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);

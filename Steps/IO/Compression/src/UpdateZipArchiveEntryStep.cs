@@ -74,7 +74,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
             var archiveEntry = zipArchive.GetEntry(zipEntryFileName);
 #pragma warning restore CS8602
 
+#pragma warning disable S5042 // The receiver of this stream must determine how much data is acceptable and where it can be written.
             using (var archiveStream = archiveEntry.Open())
+#pragma warning restore S5042
             {
 #pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 await outputStream.CopyToAsync(archiveStream).ConfigureAwait(false);
