@@ -57,18 +57,22 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
+#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
             ZipArchive zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
+#pragma warning restore CS8600
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
-            if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object previousOutputStream))
+            if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object? previousOutputStream))
             {
                 context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
             }
 
             try
             {
+#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 foreach (var archiveEntry in zipArchive.Entries)
+#pragma warning restore CS8602
                 {
                     using (var outputStream = archiveEntry.Open())
                     {

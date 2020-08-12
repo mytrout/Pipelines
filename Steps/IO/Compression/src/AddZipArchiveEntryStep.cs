@@ -64,9 +64,14 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
             var zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
-            string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
 
+#pragma warning disable CS8600 // AssertStringIsNotWhiteSpace guarantees that this value is not null.
+            string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
+#pragma warning restore CS8600
+
+#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
             if (zipArchive.Mode == ZipArchiveMode.Read)
+#pragma warning restore CS8602
             {
                 throw new InvalidOperationException(Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture));
             }
@@ -79,7 +84,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             using (var entryStream = archiveEntry.Open())
             {
+#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 await outputStream.CopyToAsync(entryStream).ConfigureAwait(false);
+#pragma warning restore CS8602
             }
         }
     }

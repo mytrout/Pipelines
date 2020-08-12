@@ -56,7 +56,9 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
+#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
             Stream archiveStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
+#pragma warning restore CS8600
 
             try
             {
@@ -74,17 +76,19 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
                     context.Items.Remove(CompressionConstants.ZIP_ARCHIVE);
                 }
 
-                if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object previousOutputStream))
+                if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object? previousOutputStream))
                 {
-                    if (previousOutputStream is IAsyncDisposable)
+                    if (previousOutputStream is IAsyncDisposable workingStream)
                     {
-                        await (previousOutputStream as IAsyncDisposable).DisposeAsync().ConfigureAwait(false);
+                        await workingStream.DisposeAsync().ConfigureAwait(false);
                     }
 
                     context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
                 }
 
+#pragma warning disable CS8604 // AssertValueIsValid guarantees that this value is not null.
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, archiveStream);
+#pragma warning restore CS8604
             }
         }
     }

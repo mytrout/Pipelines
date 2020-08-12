@@ -45,9 +45,13 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             source.AssertValueIsValid<ZipArchive>(key);
 
+#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
             ZipArchive zipArchive = source.Items[key] as ZipArchive;
+#pragma warning restore CS8600
 
+#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
             if (zipArchive.Mode == ZipArchiveMode.Create)
+#pragma warning restore CS8602
             {
                 throw new InvalidOperationException(Resources.ZIP_ARCHIVE_IS_NOT_READABLE(CultureInfo.CurrentCulture));
             }
@@ -65,9 +69,13 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             source.AssertValueIsValid<ZipArchive>(key);
 
+#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
             ZipArchive zipArchive = source.Items[key] as ZipArchive;
+#pragma warning restore CS8600
 
+#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
             if (zipArchive.Mode == ZipArchiveMode.Read)
+#pragma warning restore CS8602
             {
                 throw new InvalidOperationException(Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture));
             }

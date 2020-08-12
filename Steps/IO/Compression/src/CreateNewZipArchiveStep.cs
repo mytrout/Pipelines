@@ -54,16 +54,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            if (context.Items.TryGetValue(CompressionConstants.ZIP_ARCHIVE, out object previousArchive))
+            if (context.Items.TryGetValue(CompressionConstants.ZIP_ARCHIVE, out object? previousArchive))
             {
                 context.Items.Remove(CompressionConstants.ZIP_ARCHIVE);
             }
 
-            if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object previousOutputStream))
+            if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object? previousOutputStream))
             {
-                if (previousOutputStream is IAsyncDisposable)
+                if (previousOutputStream is IAsyncDisposable workingStream)
                 {
-                    await (previousOutputStream as IAsyncDisposable).DisposeAsync().ConfigureAwait(false);
+                    await workingStream.DisposeAsync().ConfigureAwait(false);
                 }
 
                 context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
