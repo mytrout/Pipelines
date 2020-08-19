@@ -22,8 +22,19 @@
 // SOFTWARE.
 // </copyright>
 
+using System.Diagnostics.CodeAnalysis;
+
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.DeleteFileStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.MoveFileStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.ReadStreamFromFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.WriteStreamToFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.MoveFileStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.WriteStreamToFileSystemStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.IO.Files.ParameterValidationExtensions.AssertFileNameParameterIsValid(MyTrout.Pipelines.IPipelineContext,System.String,System.String)")]
+
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.IO.Files.FileConstants.SOURCE_FILE")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.IO.Files.FileConstants.TARGET_FILE")]
+
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.IO.Files.FileConstants.SOURCE_FILE")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.IO.Files.FileConstants.TARGET_FILE")]
