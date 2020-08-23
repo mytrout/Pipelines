@@ -32,10 +32,10 @@ variables:
   value: 0
 
 - name: 'patch'
-  value: $[counter(variables['major'].variables['minor'].variables['suffix'].variables['Build.SourceBranchName'].variables['Build.Reason'], 0)]
+  value: 0
 
 - name: 'buildId'
-  value: $[counter(variables['major'], 1)]
+  value: $[counter(variables['patch'], 0)]
 
 - name: 'suffix'
   value: ''
