@@ -25,6 +25,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
     using Microsoft.Azure.ServiceBus;
     using Microsoft.Extensions.Logging;
+    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// Gets the Correlation ID of the message.
         /// </summary>
         public const string CORRELATION_ID = "CorrelationId";
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WriteMessageToAzureTopicStep" /> class with the specified parameters.
         /// </summary>
@@ -77,7 +78,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-            Message message = this.ConstructMessage(context);
+            Message message = await this.ConstructMessageAsync(context).ConfigureAwait(false);
 
             this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
 
@@ -87,55 +88,15 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         }
 
         /// <summary>
-        /// Converts a <see cref="System.IO.Stream" /> into a byte array.
-        /// </summary>
-        /// <param name="inputStream"><see cref="System.IO.Stream" /> to be converted.</param>
-        /// <returns>A byte array.</returns>
-        /// <remarks>
-        /// <para>
-        ///     This method has a short-cut if the <paramref name="inputStream"/> is a <see cref="MemoryStream" /> to avoid the copy operation.
-        /// </para>
-        /// <para>
-        /// <paramref name="inputStream"/> cannot be <see langword="null" />.
-        /// </para>
-        /// </remarks>
-        private static byte[] ConvertStreamToByteArray(Stream inputStream)
-        {
-            inputStream.Position = 0;
-
-            // The implementation of this method has been altered to guarantee that memoryStrem is never null.
-            // This boolean check guarantees that the incoming inputStream is copied into a MemoryStream, only if needed.
-            bool isMemoryStream = inputStream is MemoryStream;
-
-            MemoryStream memoryStream = (inputStream as MemoryStream) ?? new MemoryStream();
-
-            try
-            {
-                if(!isMemoryStream)
-                {
-                    inputStream.CopyToAsync(memoryStream);
-                }
-
-                return memoryStream.ToArray();
-            }
-            finally
-            {
-                memoryStream.Close();
-            }
-        }
-
-        /// <summary>
         /// Constructs an Azure Message with the values from the <paramref name="context"/> based on the user-configured options.
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext" /> for the currently executing pipeline.</param>
         /// <returns>An Azure <see cref="Message" />.</returns>
-        private Message ConstructMessage(IPipelineContext context)
+        private async Task<Message> ConstructMessageAsync(IPipelineContext context)
         {
             var inputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            byte[] messageBody = WriteMessageToAzureTopicStep.ConvertStreamToByteArray(inputStream);
-#pragma warning restore CS8604 // Possible null reference argument.
+            byte[] messageBody = await inputStream.ConvertStreamToByteArrayAsync().ConfigureAwait(false);
 
             Message result = new Message(messageBody);
 
@@ -157,7 +118,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 }
                 else
                 {
-                    this.Logger.LogDebug("IPipelineContext: '{result.CorrelationId}' did not contain the user property: '{userProperty}'", result.CorrelationId, userProperty);
+                    this.Logger.LogDebug(Resources.USER_PROPERTY_MISSING(CultureInfo.CurrentCulture, result.CorrelationId, userProperty));
                 }
             }
 

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "servicebusNamespace": "mytrout-developer",
+    "saasKeyName": "All-Access",
+    "resourceId1": "[resourceId('Microsoft.ServiceBus/namespaces', variables('servicebusNamespace'))]",
+    "resourceId2": "[resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', variables('servicebusNamespace'), variables('saasKeyName'))]",
+    "apiVersion": "2017-04-01"
+  },
+  "resources": [],
+  "outputs": {
+    "connectionString": {
+      "type": "string",
+      "value": "[listKeys(variables('resourceId2'), variables('apiVersion')).primaryConnectionString]"
+    }
+  }
+}

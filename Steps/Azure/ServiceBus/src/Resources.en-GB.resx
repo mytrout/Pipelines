@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CACELLATION_REQUESTED" xml:space="preserve">
+  <data name="CANCELLATION_REQUESTED" xml:space="preserve">
     <value>Cancellation requested while executing '{0}'.</value>
+  </data>
+  <data name="HOOKING_UP_HANDLER" xml:space="preserve">
+    <value>Hooking up the messaging processing handler and exception handler.</value>
+  </data>
+  <data name="USER_PROPERTY_MISSING" xml:space="preserve">
+    <value>IPipelineContext: '{0}' did not contain the user property: '{1}'</value>
   </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
     <value>Smoke Test (en-GB)</value>

@@ -9,7 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CF1D60C8-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0F74148-500D-4D75-B665-8394E07FBAD1}"
 	ProjectSection(SolutionItems) = preProject
+		azure-arm-resourcegroup.json = azure-arm-resourcegroup.json
+		azure-arm-servicebus.json = azure-arm-servicebus.json
 		azure-pipelines.yml = azure-pipelines.yml
+		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
 		stylecop.json = stylecop.json

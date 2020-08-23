@@ -43,7 +43,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public string TopicName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets UserProperty names that will be added to the Message from <see cref="PipelineContext" />, if they are available.
+        /// Gets or sets UserProperty names that will be added to the Message from <see cref="MyTrout.Pipelines.Core.PipelineContext" />, if they are available.
         /// </summary>
         public IEnumerable<string> UserProperties { get; set; } = new List<string>();
     }

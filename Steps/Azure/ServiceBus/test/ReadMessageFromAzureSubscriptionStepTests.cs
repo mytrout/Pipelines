@@ -326,7 +326,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
             var messageHandlerOptions = new MessageHandlerOptions((ExceptionReceivedEventArgs args) =>
-                            ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(args, context))
+                            ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandlerAsync(args, context))
             {
                 // Allow 1 concurrent call to simplify pipeline processing.
                 MaxConcurrentCalls = 1,
@@ -967,7 +967,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             string paramName = nameof(context);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(exceptionReceivedEventArgs, context));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandlerAsync(exceptionReceivedEventArgs, context));
 
             // assert
             Assert.IsNotNull(result);
@@ -987,7 +987,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             string paramName = nameof(exceptionReceivedEventArgs);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(exceptionReceivedEventArgs, context));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandlerAsync(exceptionReceivedEventArgs, context));
 
             // assert
             Assert.IsNotNull(result);

@@ -72,6 +72,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             {
                 return this.evaluateHandler;
             }
+
             set
             {
                 this.evaluateHandler = value ?? throw new ArgumentNullException(nameof(value));
@@ -91,7 +92,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="message">The <see cref="Message"/> to be cancelled.</param>
         /// <param name="context">The context f0r the currently executing pipeline.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
-        /// <returns></returns>
+        /// <returns><see langword="true"/> if the message was cancelled; otherwise <see langword="false"/>.</returns>
         public static async Task<bool> EvaluateCancellationOfMessageAsync(ILogger<ReadMessageFromAzureSubscriptionStep> logger, ISubscriptionClient subscriptionClient, Message message, IPipelineContext context, params CancellationToken[] tokens)
         {
             logger.AssertParameterIsNotNull(nameof(logger));
@@ -119,12 +120,12 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         }
 
         /// <summary>
-        /// 
+        /// Logs any exceptions into the <see cref="IPipelineContext.Errors"/> collection.
         /// </summary>
-        /// <param name="exceptionReceivedEventArgs"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, IPipelineContext context)
+        /// <param name="exceptionReceivedEventArgs">Arguments for the Exception Received event.</param>
+        /// <param name="context">The PipelineContext to which to add the exception.</param>
+        /// <returns>A completed Task.</returns>
+        public static Task ExceptionReceivedHandlerAsync(ExceptionReceivedEventArgs exceptionReceivedEventArgs, IPipelineContext context)
         {
             exceptionReceivedEventArgs.AssertParameterIsNotNull(nameof(exceptionReceivedEventArgs));
             context.AssertParameterIsNotNull(nameof(context));
@@ -156,15 +157,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
             var messageHandlerOptions = new MessageHandlerOptions((ExceptionReceivedEventArgs args) =>
-                                                ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandler(args, context))
+                                                ReadMessageFromAzureSubscriptionStep.ExceptionReceivedHandlerAsync(args, context))
             {
                 // Allow 1 concurrent call to simplify pipeline processing.
                 MaxConcurrentCalls = 1,
+
                 // Handle the message completion manually within the ProcessMessageAsync() call.
                 AutoComplete = false
             };
 
-            this.Logger.LogDebug("Hooking up the messaging processing handler and exception handler.");
+            this.Logger.LogDebug(Resources.HOOKING_UP_HANDLER(CultureInfo.CurrentCulture));
 
             this.SubscriptionClient.RegisterMessageHandler(
                         (Message message, CancellationToken token) =>
@@ -188,11 +190,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                                             this.SubscriptionClient,
                                             message,
                                             context,
-                                            new CancellationToken[2]
-                                            {
-                                                token,
-                                                context.CancellationToken
-                                            }).ConfigureAwait(false))
+                                            new CancellationToken[2] { token, context.CancellationToken }).ConfigureAwait(false))
             {
                 // Forces the Message wait loop to exit at the next check, if the cancellationToken hasn't forced and exit.
                 this.lastMessageProcessedAt = DateTimeOffset.MinValue;
@@ -271,7 +269,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                     context.Items.Remove(WriteMessageToAzureTopicStep.CORRELATION_ID);
                 }
 
-                if(previousMessage != null)
+                if (previousMessage != null)
                 {
                     if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
                     {
