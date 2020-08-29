@@ -1,4 +1,4 @@
-// <copyright file="UnitTest1.cs" company="Chris Trout">
+﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -22,18 +22,6 @@
 // SOFTWARE.
 // </copyright>
 
+using System.Diagnostics.CodeAnalysis;
 
-
-namespace MyTrout.Pipelines.Steps.Data.Tests
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-    [TestClass]
-    public class UnitTest1
-    {
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
-    }
-}
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the validation of the parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Data.SupplementContextWithDatabaseRecordStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]

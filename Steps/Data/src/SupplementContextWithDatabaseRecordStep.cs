@@ -26,75 +26,110 @@ namespace MyTrout.Pipelines.Steps.Data
 {
     using Dapper;
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.Common;
-    using System.Net.Mime;
-    using System.Runtime.InteropServices.ComTypes;
+    using System.Globalization;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
+    /// </summary>
     public class SupplementContextWithDatabaseRecordStep : AbstractPipelineStep<SupplementContextWithDatabaseRecordStep, SupplementContextWithDatabaseRecordOptions>
     {
-        public SupplementContextWithDatabaseRecordStep(ILogger<SupplementContextWithDatabaseRecordStep> logger, SupplementContextWithDatabaseRecordOptions options, IPipelineRequest next)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SupplementContextWithDatabaseRecordStep"/> class with the specified options.
+        /// </summary>
+        /// <param name="logger">The logger for this step.</param>
+        /// <param name="providerFactory">An <see cref="DbProviderFactory"/> instance.</param>
+        /// <param name="next">The next step in the pipeline.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
+        public SupplementContextWithDatabaseRecordStep(ILogger<SupplementContextWithDatabaseRecordStep> logger, DbProviderFactory providerFactory, SupplementContextWithDatabaseRecordOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            // no op
+            this.ProviderFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
         }
 
+        /// <summary>
+        /// Gets a <see cref="DbProviderFactory"/> instance.
+        /// </summary>
+        public DbProviderFactory ProviderFactory { get; }
+
+        /// <summary>
+        /// Reads one record from the database, supplements the <paramref name="context"/> and restores the original values once downstream processing is completed.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            var factory = DbProviderFactories.GetFactory(this.Options.ProviderInvariantName);
+            DynamicParameters parameters = new DynamicParameters();
 
-
-            object parameters = null;
+            foreach (var parameterName in this.Options.ParameterNames)
+            {
+                parameters.Add(parameterName, context.Items[parameterName]);
+            }
 
             List<string> addedFields = new List<string>();
             Dictionary<string, object> previousValues = new Dictionary<string, object>();
-            using (var connection = factory.CreateConnection())
+
+            bool hasProcessedOneRecord = false;
+
+            using (var connection = this.ProviderFactory.CreateConnection())
             {
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement, parameters).ConfigureAwait(false))
+                using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false))
                 {
-                    reader.Read();
-
-                    for (int index = 0; index < reader.FieldCount; index++)
+                    if (await reader.ReadAsync().ConfigureAwait(false))
                     {
-                        string fieldName = reader.GetName(index);
-                        if (context.Items.ContainsKey(fieldName))
+                        hasProcessedOneRecord = true;
+
+                        for (int index = 0; index < reader.FieldCount; index++)
                         {
-                            // Cache the previous values to restore them after the "next" processing is completed.
-                            previousValues.Add(fieldName, context.Items[fieldName]);
-                            context.Items[fieldName] = reader.GetValue(index);
-                        }
-                        else
-                        {
-                            // Add the new value into a different cache to be removed after "next" processing.
-                            context.Items.Add(fieldName, reader.GetValue(index));
-                            addedFields.Add(fieldName);
+                            string fieldName = reader.GetName(index);
+                            if (context.Items.ContainsKey(fieldName))
+                            {
+                                // Cache the previous values to restore them after the "next" processing is completed.
+                                previousValues.Add(fieldName, context.Items[fieldName]);
+                                addedFields.Add(fieldName);
+                                context.Items[fieldName] = reader.GetValue(index);
+                            }
+                            else
+                            {
+                                // Add the new value into a different cache to be removed after "next" processing.
+                                context.Items.Add(fieldName, reader.GetValue(index));
+                                addedFields.Add(fieldName);
+                            }
                         }
                     }
-
-                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-                    // Remove the fields that were added.
-                    foreach (string field in addedFields)
+                    else
                     {
-                        if (context.Items.ContainsKey(field))
-                        {
-                            context.Items.Remove(field);
-                        }
+                        context.Errors.Add(new InvalidOperationException(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep))));
                     }
+                }
+            } // Closed the connection to prevent any resource leakage into later steps.
 
-                    // Change the fields back to their previous values.
-                    foreach (KeyValuePair<string, object> field in previousValues)
+            if (hasProcessedOneRecord)
+            {
+                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
+                // Remove all of the field values that were added or altered.
+                foreach (string field in addedFields)
+                {
+                    if (context.Items.ContainsKey(field))
                     {
-                        if (context.Items.ContainsKey(field.Key))
-                        {
-                            context.Items[field.Key] = field.Value;
-                        }
+                        context.Items.Remove(field);
+                    }
+                }
+
+                // Add the previous values back.
+                foreach (KeyValuePair<string, object> field in previousValues)
+                {
+                    if (!context.Items.ContainsKey(field.Key))
+                    {
+                        context.Items.Add(field.Key, field.Value);
                     }
                 }
             }

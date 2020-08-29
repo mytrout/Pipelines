@@ -1,0 +1,84 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "defaultValue": "Central US",
+      "type": "string"
+    },
+    "administratorLogin": {
+      "defaultValue": "ClarkKent",
+      "type": "string"
+    },
+    "administratorLoginPassword": {
+      "defaultValue": "9dH3c9Y&s2@#A",
+      "type": "securestring"
+    },
+    "databaseName": {
+      "defaultValue": "mytrout-sqlserver-db",
+      "type": "string"
+    },
+    "databaseServerName": {
+      "defaultValue": "mytrout-sqlserver-svr",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Sql/servers",
+      "location": "[parameters('location')]",
+      "name": "[parameters('databaseServerName')]",
+      "properties": {
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-10-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('databaseServerName'))]"
+          ],
+          "location": "[parameters('location')]",
+          "name": "[parameters('databaseName')]",
+          "properties": {
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "maxSizeBytes": 34359738368,
+            "sampleName": "",
+            "zoneRedundant": false,
+            "licenseType": "",
+            "readScale": "Disabled",
+            "readReplicaCount": 0,
+            "minCapacity": "",
+            "autoPauseDelay": ""
+          },
+          "sku": {
+            "name": "GP_S_Gen5_1",
+            "tier": "GeneralPurpose"
+          },
+          "type": "databases"
+        },
+        {
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('databaseServerName'))]"
+          ],
+          "location": "[parameters('location')]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          },
+          "type": "firewallrules"
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "ConnectionString": {
+      "type": "string",
+      "value": "[concat('Server=tcp:', reference(parameters('databaseServerName')).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';Persist Security Info=False;User ID=', parameters('administratorLogin'), '@', parameters('databaseServerName'), ';Password=', parameters('administratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;')]"
+    }
+  }
+}
