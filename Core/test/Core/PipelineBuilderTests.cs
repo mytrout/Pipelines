@@ -124,6 +124,23 @@ namespace MyTrout.Pipelines.Core.Tests
         }
 
         [TestMethod]
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Is_A_Value_Type_And_StepContext_Is_Specified()
+        {
+            // arrange
+            var sut = new PipelineBuilder();
+            Type stepType = typeof(int);
+            string expectedMessage = Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType));
+            string stepContext = "Step-Context-1";
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType, stepContext));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
         public void Throws_InvalidOperationException_From_AddStep_When_StepType_Does_Not_Implement_IPipelineBuilder()
         {
             // arrange
@@ -133,6 +150,23 @@ namespace MyTrout.Pipelines.Core.Tests
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_AddStep_When_StepType_Does_Not_Implement_IPipelineBuilder_And_StepContext_Is_Specified()
+        {
+            // arrange
+            var sut = new PipelineBuilder();
+            Type stepType = typeof(SampleWithoutIPipelineRequestStep);
+            string expectedMessage = Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType));
+            string stepContext = "Step-Context-1";
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => sut.AddStep(stepType, stepContext));
 
             // assert
             Assert.IsNotNull(result);

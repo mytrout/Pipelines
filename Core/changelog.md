@@ -1,3 +1,8 @@
+MyTrout.Pipelines.Core Change Log
+# 1.1.1
+- Remove unused parameter validations from AddStep<T> method.
+- Add unit tests to bring this library up to 100% Code Coverage.
+
 ## 1.1.0
 - Correct 'Cannot convert null literal to non-nullable reference type.' warnings because of nullable reference type configuration.
 - Generate the snupkg file for symbols for MyTrout.Pipelines.Core.

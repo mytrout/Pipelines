@@ -60,16 +60,6 @@ namespace MyTrout.Pipelines.Core
         public PipelineBuilder AddStep<T>()
             where T : class, IPipelineRequest
         {
-            if (typeof(T).IsValueType)
-            {
-                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, typeof(T)));
-            }
-
-            if (!typeof(IPipelineRequest).IsAssignableFrom(typeof(T)))
-            {
-                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, typeof(T).Name));
-            }
-
             this.StepTypes.Push(new StepWithContext(typeof(T), null));
 
             return this;
