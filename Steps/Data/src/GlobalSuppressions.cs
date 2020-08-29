@@ -24,4 +24,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the validation of the parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Data.SaveContextToDatabaseStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
 [assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the validation of the parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Data.SupplementContextWithDatabaseRecordStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Data.DatabaseConstants.DATABASE_ROWS_AFFECTED")]
+
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Data.DatabaseConstants.DATABASE_ROWS_AFFECTED")]

@@ -1,4 +1,4 @@
-﻿// <copyright file="SupplementContextWithDatabaseRecordStep.cs" company="Chris Trout">
+﻿// <copyright file="SaveContextToDatabaseStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -27,24 +27,22 @@ namespace MyTrout.Pipelines.Steps.Data
     using Dapper;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Collections.Generic;
     using System.Data.Common;
-    using System.Globalization;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
     /// </summary>
-    public class SupplementContextWithDatabaseRecordStep : AbstractPipelineStep<SupplementContextWithDatabaseRecordStep, SupplementContextWithDatabaseRecordOptions>
+    public class SaveContextToDatabaseStep : AbstractPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SupplementContextWithDatabaseRecordStep"/> class with the specified options.
+        /// Initializes a new instance of the <see cref="SaveContextToDatabaseStep"/> class with the specified options.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="providerFactory">An <see cref="DbProviderFactory"/> instance.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public SupplementContextWithDatabaseRecordStep(ILogger<SupplementContextWithDatabaseRecordStep> logger, DbProviderFactory providerFactory, SupplementContextWithDatabaseRecordOptions options, IPipelineRequest next)
+        public SaveContextToDatabaseStep(ILogger<SaveContextToDatabaseStep> logger, DbProviderFactory providerFactory, SaveContextToDatabaseOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             this.ProviderFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
@@ -62,6 +60,8 @@ namespace MyTrout.Pipelines.Steps.Data
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
             DynamicParameters parameters = new DynamicParameters();
 
             foreach (var parameterName in this.Options.ParameterNames)
@@ -69,62 +69,18 @@ namespace MyTrout.Pipelines.Steps.Data
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
-            List<string> addedFields = new List<string>();
-            Dictionary<string, object> previousValues = new Dictionary<string, object>();
-
-            bool hasProcessedOneRecord = false;
-
             using (var connection = this.ProviderFactory.CreateConnection())
             {
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false))
-                {
-                    if (await reader.ReadAsync().ConfigureAwait(false))
-                    {
-                        hasProcessedOneRecord = true;
+                int result = await connection.ExecuteAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false);
 
-                        for (int index = 0; index < reader.FieldCount; index++)
-                        {
-                            string fieldName = reader.GetName(index);
-                            if (context.Items.ContainsKey(fieldName))
-                            {
-                                // Cache the previous values to restore them after the "next" processing is completed.
-                                previousValues.Add(fieldName, context.Items[fieldName]);
-
-                                // Allows the value to be added back to reduce Cognitive Complexity.
-                                context.Items.Remove(fieldName);
-                            }
-
-                            context.Items.Add(fieldName, reader.GetValue(index));
-                            addedFields.Add(fieldName);
-                        }
-                    }
-                    else
-                    {
-                        context.Errors.Add(new InvalidOperationException(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep))));
-                    }
-                }
-            } // Closed the connection to prevent any resource leakage into later steps.
-
-            if (hasProcessedOneRecord)
-            {
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-                // Remove all of the field values that were added or altered.
-                foreach (string field in addedFields)
-                {
-                    context.Items.Remove(field);
-                }
-
-                // Add the previous values back.
-                foreach (KeyValuePair<string, object> field in previousValues)
-                {
-                    context.Items.Add(field.Key, field.Value);
-                }
+                context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
             }
+
+            await Task.CompletedTask.ConfigureAwait(false);
         }
     }
 }

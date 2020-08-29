@@ -34,6 +34,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
     using System.Data.Common;
     using System.Data.SqlClient;
     using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
 
     [TestClass]
@@ -152,14 +153,31 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             await sut.InvokeAsync(context).ConfigureAwait(false);
 
             // assert
-            // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
-            Assert.IsTrue(context.Items.ContainsKey("CartoonId"), "Context does not contain CartoonId.");
-            Assert.AreEqual(expectedId, context.Items["CartoonId"]);
-            Assert.IsFalse(context.Items.ContainsKey("Name"), "Context contains Name.");
-            Assert.IsFalse(context.Items.ContainsKey("Description"), "Context contains Description."); 
-            Assert.IsFalse(context.Items.ContainsKey("IsActive"), "Context contains IsActive.");
-            Assert.IsFalse(context.Items.ContainsKey("ModifiedBy"), "Context contains ModifiedBy.");
-            Assert.IsFalse(context.Items.ContainsKey("ModifiedDate"), "Context contains ModifiedDate.");
+            try
+            {
+                if (context.Errors.Any())
+                {
+                    throw context.Errors[0];
+                }
+
+                // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
+                Assert.IsTrue(context.Items.ContainsKey("CartoonId"), "Context does not contain CartoonId.");
+                Assert.AreEqual(expectedId, context.Items["CartoonId"]);
+                Assert.IsFalse(context.Items.ContainsKey("Name"), "Context contains Name.");
+                Assert.IsFalse(context.Items.ContainsKey("Description"), "Context contains Description.");
+                Assert.IsFalse(context.Items.ContainsKey("IsActive"), "Context contains IsActive.");
+                Assert.IsFalse(context.Items.ContainsKey("ModifiedBy"), "Context contains ModifiedBy.");
+                Assert.IsFalse(context.Items.ContainsKey("ModifiedDate"), "Context contains ModifiedDate.");
+            }
+            finally
+            {
+                // cleanup
+                using (var connection = providerFactory.CreateConnection())
+                {
+                    connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
+                    await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = expectedId }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
+                }
+            }
         }
 
         [TestMethod]

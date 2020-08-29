@@ -1,4 +1,4 @@
-﻿// <copyright file="SupplementContextWithDatabaseRecordOptions.cs" company="Chris Trout">
+﻿// <copyright file="SaveContextToDatabaseOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -37,7 +37,7 @@ namespace MyTrout.Pipelines.Steps.Data
     /// Provides user-configurable options for the <see cref="SaveContextToDatabaseStep" /> step.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SupplementContextWithDatabaseRecordOptions
+    public class SaveContextToDatabaseOptions
     {
         /// <summary>
         /// Gets or sets the SQL Statement that should be executed by this step.
