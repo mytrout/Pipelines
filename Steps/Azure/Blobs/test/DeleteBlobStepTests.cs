@@ -63,12 +63,68 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Is_Deleted_Successfully()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Is_Deleted_Successfully_After_Next()
         {
             // arrange
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
-                ExecutionTiming = DeleteBlobTimings.After | DeleteBlobTimings.Before,
+                ExecutionTiming = DeleteBlobTimings.After,
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+            };
+
+            string blobContainerName = Guid.NewGuid().ToString("D");
+            string blobName = Guid.NewGuid().ToString("N");
+
+            BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
+            await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes("Enough is enough!")))
+            {
+                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
+            }
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(BlobConstants.TARGET_BLOB, blobName);
+            context.Items.Add(BlobConstants.TARGET_CONTAINER_NAME, blobContainerName);
+
+            var logger = new Mock<ILogger<DeleteBlobStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(async () =>
+                                    {
+                                        // Assert that the BEFORE delete was NOT called.
+                                        Assert.IsTrue(await containerClient.GetBlobClient(blobName).ExistsAsync().ConfigureAwait(false), "The blob does not exist in the BEFORE block and should.");
+                                    })
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            var source = new DeleteBlobStep(logger, next, options);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            Assert.IsFalse(await containerClient.GetBlobClient(blobName).ExistsAsync().ConfigureAwait(false), "The blob still exists in the AFTER block and should not.");
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+            await containerClient.DeleteAsync().ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Is_Deleted_Successfully_Before_Next()
+        {
+            // arrange
+            DeleteBlobOptions options = new DeleteBlobOptions()
+            {
+                ExecutionTiming = DeleteBlobTimings.Before,
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
@@ -95,12 +151,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                                     {
                                         // Assert that the BEFORE delete was called.
                                         Assert.IsFalse(await containerClient.GetBlobClient(blobName).ExistsAsync().ConfigureAwait(false), "The blob still exists in the BEFORE block and should not.");
-
-                                        // Re-establish a new blob to be deleted by AFTER.
-                                        using (var stream = new MemoryStream(Encoding.UTF8.GetBytes("Enough is enough!")))
-                                        {
-                                            await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
-                                        }
                                     })
                                     .Returns(Task.CompletedTask);
 
@@ -116,8 +166,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             {
                 throw context.Errors[0];
             }
-
-            Assert.IsFalse(await containerClient.GetBlobClient(blobName).ExistsAsync().ConfigureAwait(false), "The blob still exists in the AFTER block and should not.");
 
             // cleanup
             await source.DisposeAsync().ConfigureAwait(false);

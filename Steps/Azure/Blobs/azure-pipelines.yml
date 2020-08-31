@@ -32,7 +32,7 @@ variables:
   value: 1
 
 - name: 'patch'
-  value: 0
+  value: 1
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
@@ -44,10 +44,10 @@ variables:
 - group: 'SonarQube Analysis'
 
 - name: 'sonarCloudProjectKey'
-  value: 'Pipelines.Steps.Azure.BlobStorage'
+  value: 'Pipelines.Steps.Azure.Blobs'
 
 - name: 'sonarCloudProjectName'
-  value: 'Pipelines.Steps.Azure.BlobStorage'
+  value: 'Pipelines.Steps.Azure.Blobs'
 
 - name: 'primarySourceBranch'
   value: 'refs/heads/master'
