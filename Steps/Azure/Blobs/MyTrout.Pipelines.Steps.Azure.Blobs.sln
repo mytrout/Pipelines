@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3C223D1D-5F75-4DA7-9E0A-A46BB0128447}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7587A676-7D4A-41DC-AFAA-35CD94AF4693}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BA5AD7D-EF72-4358-A62D-170BF123696D}"
+	ProjectSection(SolutionItems) = preProject
+		azure-arm-blobs.json = azure-arm-blobs.json
+		azure-arm-resourcegroup.json = azure-arm-resourcegroup.json
+		azure-pipelines.yml = azure-pipelines.yml
+		changelog.md = changelog.md
+		License.md = License.md
+		README.md = README.md
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.Blobs", "src\MyTrout.Pipelines.Steps.Azure.Blobs.csproj", "{82451764-0F4F-410F-84FE-4260D88528ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.Blobs.Tests", "test\MyTrout.Pipelines.Steps.Azure.Blobs.Tests.csproj", "{7E6268F5-4AA9-4977-8F59-C07818662EBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82451764-0F4F-410F-84FE-4260D88528ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82451764-0F4F-410F-84FE-4260D88528ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82451764-0F4F-410F-84FE-4260D88528ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82451764-0F4F-410F-84FE-4260D88528ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E6268F5-4AA9-4977-8F59-C07818662EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E6268F5-4AA9-4977-8F59-C07818662EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E6268F5-4AA9-4977-8F59-C07818662EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E6268F5-4AA9-4977-8F59-C07818662EBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82451764-0F4F-410F-84FE-4260D88528ED} = {3C223D1D-5F75-4DA7-9E0A-A46BB0128447}
+		{7E6268F5-4AA9-4977-8F59-C07818662EBD} = {7587A676-7D4A-41DC-AFAA-35CD94AF4693}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4BB0C0F6-A049-4CCF-9953-AB474031465F}
+	EndGlobalSection
+EndGlobal

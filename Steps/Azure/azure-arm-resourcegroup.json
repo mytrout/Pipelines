@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "defaultValue":  "Central US",
+      "type": "String"
+    },
+    "resourceGroupName": {
+      "defaultValue":  "mytrout-developer-rg",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-01-01",
+      "type": "Microsoft.Resources/resourceGroups",
+      "name": "[parameters('resourceGroupName')]",
+      "location": "[parameters('location')]"
+    }
+  ]
+}
