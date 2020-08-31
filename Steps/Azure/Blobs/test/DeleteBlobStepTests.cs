@@ -117,9 +117,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                 throw context.Errors[0];
             }
 
-            // Delay the test because Exists call is failing in Azure.
-            System.Threading.Thread.Sleep(100);
-
             Assert.IsFalse(await containerClient.GetBlobClient(blobName).ExistsAsync().ConfigureAwait(false), "The blob still exists in the AFTER block and should not.");
 
             // cleanup

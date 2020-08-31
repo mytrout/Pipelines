@@ -54,34 +54,30 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// <remarks><paramref name="context"/> is guaranteed to not be <see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            BlobContainerClient client = null;
-            string connectionString = await this.Options.RetrieveConnectionStringAsync().ConfigureAwait(false);
-
             if (this.Options.ExecutionTiming.HasFlag(DeleteBlobTimings.Before))
             {
-                await DeleteBlobStep.DeleteBlobAsync(context, client, connectionString).ConfigureAwait(false);
+                await DeleteBlobStep.DeleteBlobAsync(context, this.Options).ConfigureAwait(false);
             }
 
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             if (this.Options.ExecutionTiming.HasFlag(DeleteBlobTimings.After))
             {
-                await DeleteBlobStep.DeleteBlobAsync(context, client, connectionString).ConfigureAwait(false);
+                await DeleteBlobStep.DeleteBlobAsync(context, this.Options).ConfigureAwait(false);
             }
         }
 
-        private static async Task DeleteBlobAsync(IPipelineContext context, BlobContainerClient client, string connectionString)
+        private static async Task DeleteBlobAsync(IPipelineContext context, DeleteBlobOptions options)
         {
             context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_CONTAINER_NAME);
             context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_BLOB);
 
+            string connectionString = await options.RetrieveConnectionStringAsync().ConfigureAwait(false);
+
             string targetContainer = context.Items[BlobConstants.TARGET_CONTAINER_NAME] as string;
             string targetBlob = context.Items[BlobConstants.TARGET_BLOB] as string;
 
-            if (client == null)
-            {
-                client = new BlobContainerClient(connectionString, targetContainer);
-            }
+            BlobContainerClient client = new BlobContainerClient(connectionString, targetContainer);
 
             if (await client.ExistsAsync().ConfigureAwait(false))
             {
