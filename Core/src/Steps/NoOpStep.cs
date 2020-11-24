@@ -24,7 +24,6 @@
 
 namespace MyTrout.Pipelines.Steps
 {
-    using System;
     using System.Threading.Tasks;
 
     /// <summary>

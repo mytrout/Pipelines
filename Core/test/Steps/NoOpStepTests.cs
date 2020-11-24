@@ -33,21 +33,6 @@ namespace MyTrout.Pipelines.Steps.Tests
     [TestClass]
     public class NoOpStepTests
     {
-        [TestMethod]
-        public async Task Returns_Task_From_DisposeAsync()
-        {
-            // arrange
-            var source = new NoOpStep();
-
-            // act
-            await source.DisposeAsync();
-
-            // assert
-            Assert.IsTrue(true);
-
-            // No exceptions mean this worked appropriately.
-        }
-
 #pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public void Returns_Task_From_InvokeAsync()
