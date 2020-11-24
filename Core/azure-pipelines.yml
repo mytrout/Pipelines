@@ -16,7 +16,7 @@ pool:
 
 variables:
 - name: 'solution'
-  value: '**/Core/*.sln'
+  value: '$(Build.SourcesDirectory)/Core/*.sln'
 
 - name: 'buildPlatform'
   value: 'Any CPU'

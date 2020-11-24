@@ -55,6 +55,21 @@ steps:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'Publish the nuget package to ADO artifacts.'
 
+  #
+  # This step will fail to publish into NuGet.org
+  #     if/when the ApiKey that is generated on the NuGet.org site is not appropriately configured
+  #     in a NuGet Service Connection named 'NuGet.org for MyTrout.* Service Connection'
+  #
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).*nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGet.org for MyTrout.* Service Connection'
+    allowPackageConflicts: false
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Publish the nuget package to NuGet.org.'
+
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
