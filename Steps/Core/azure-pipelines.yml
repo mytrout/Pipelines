@@ -25,13 +25,13 @@ variables:
   value: 'Release'
 
 - name: 'major'
-  value: 1 
+  value: 2
 
 - name: 'minor'
   value: 0
 
 - name: 'patch'
-  value: 1
+  value: 0
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
