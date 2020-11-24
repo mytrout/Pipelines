@@ -45,7 +45,6 @@ namespace MyTrout.Pipelines.Tests
             Assert.AreEqual(expectedSmokeTest, result);
         }
 
-        /* Will reinstate this test when we have time to properly test localization. */
         [TestMethod]
         public void Returns_GB_English_On_SMOKE_TEST()
         {

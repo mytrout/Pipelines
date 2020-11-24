@@ -60,7 +60,7 @@ namespace MyTrout.Pipelines.Core.Tests
             ILogger<StepActivator> logger = mockLogger.Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Information";
-            string expectedArgument2 = "SampleWithConstructorParameterStep(IDictionary`2, IPipelineRequest) failed to intialize properly.";
+            string expectedArgument2 = "SampleWithConstructorParameterStep(IDictionary`2, IPipelineRequest) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.";
             IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
             Type stepType = typeof(SampleWithConstructorParameterStep);
             var pipelineRequest = new NoOpStep();
@@ -83,7 +83,12 @@ namespace MyTrout.Pipelines.Core.Tests
         {
             // arrange
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
-            IServiceProvider serviceProvider = new Mock<IServiceProvider>().Object;
+            ILogger<SampleWithLoggerStep> stepLogger = new Mock<ILogger<SampleWithLoggerStep>>().Object;
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(ILogger<SampleWithLoggerStep>))).Returns(stepLogger);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
             Type stepType = typeof(SampleWithLoggerStep);
             var pipelineRequest = new NoOpStep();
             string stepContext = null;
@@ -237,6 +242,29 @@ namespace MyTrout.Pipelines.Core.Tests
             Mock<IServiceProvider> mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(x => x.GetService(typeof(IDictionary<string, SampleOptions>)))
                                 .Returns(items);
+            var serviceProvider = mockServiceProvider.Object;
+
+            var pipelineRequest = new NoOpStep();
+
+            var source = new StepActivator(logger, serviceProvider);
+            string expectedMessage = Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, typeof(SampleOptions).Name, typeof(SampleWithOptionsStep).Name);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => source.CreateInstance(new StepWithContext(typeof(SampleWithOptionsStep), "second-context"), pipelineRequest));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_CreateInstance_When_Context_Is_Null()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+            Mock<IServiceProvider> mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IDictionary<string, SampleOptions>)))
+                                .Returns(null);
             var serviceProvider = mockServiceProvider.Object;
 
             var pipelineRequest = new NoOpStep();

@@ -151,7 +151,7 @@ namespace MyTrout.Pipelines.Core
                     throw new InvalidOperationException(Resources.NULL_MIDDLEWARE(CultureInfo.CurrentCulture));
                 }
 
-                if (!(stepActivator.CreateInstance(step, nextRequest) is IPipelineRequest nextInstance))
+                if (stepActivator.CreateInstance(step, nextRequest) is not IPipelineRequest nextInstance)
                 {
                     throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, step.StepType.Name));
                 }

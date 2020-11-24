@@ -30,7 +30,7 @@ namespace MyTrout.Pipelines.Steps
     /// <summary>
     /// Provides a step that does nothing.
     /// </summary>
-    public class NoOpStep : IPipelineRequest
+    public sealed class NoOpStep : IPipelineRequest
     {
         // NOTE TO DEVELOPERS: THIS CONSTRUCTOR DOES NOT HAVE ANY CODE.
         //                     IF THAT CHANGES, UNIT TESTS WILL NEED TO BE WRITTEN.

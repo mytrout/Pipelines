@@ -148,7 +148,7 @@
     <value>'IDictionary&lt;string,{0}&gt;' could not be found in ServiceProvider during the initialization of '{1}' step.</value>
   </data>
   <data name="TYPE_FAILED_TO_INITIALIZE" xml:space="preserve">
-    <value>{0}({1}) failed to intialize properly.</value>
+    <value>{0}({1}) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.</value>
   </data>
   <data name="TYPE_MUST_BE_REFERENCE" xml:space="preserve">
     <value>'{0}' must be a reference type.</value>

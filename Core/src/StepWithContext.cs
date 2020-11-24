@@ -29,7 +29,7 @@ namespace MyTrout.Pipelines
     /// <summary>
     /// Provides the ability to configure a Pipeline Step multiple times with different configurations in the same pipeline.
     /// </summary>
-    public class StepWithContext
+    public record StepWithContext
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
@@ -45,11 +45,11 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets the step to be configured multiple times.
         /// </summary>
-        public Type StepType { get; }
+        public Type StepType { get; init; }
 
         /// <summary>
         /// Gets the context to be used to configure this instance of the step.
         /// </summary>
-        public string? StepContext { get; }
+        public string? StepContext { get; init; }
     }
 }

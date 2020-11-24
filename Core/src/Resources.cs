@@ -52,6 +52,7 @@ namespace MyTrout.Pipelines
 		/// </summary>
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
+
 		/// <summary>
 		/// Looks up a localized string like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
@@ -75,7 +76,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' step does not contain a constructor that has a PipelineRequest parameter.".
 		/// </summary>
@@ -99,6 +101,7 @@ namespace MyTrout.Pipelines
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("CONSTRUCTOR_LACKS_PIPELINEREQUEST_PARAMETER", culture), args);
 		}
+
 
 		/// <summary>
 		/// Looks up a localized string like "PipelineContext cannot be constructed without a null, empty, or whitespace PipelineName.".
@@ -124,6 +127,7 @@ namespace MyTrout.Pipelines
 			return Resources.ResourceManager.GetString("CONTEXT_CANNOT_BE_CONSTRUCTED", culture);
 		}
 		
+
 		/// <summary>
 		/// Looks up a localized string like "'{0}' context value is null.".
 		/// </summary>
@@ -147,7 +151,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("CONTEXT_VALUE_IS_NULL", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' context value is null.".
 		/// </summary>
@@ -172,6 +177,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("CONTEXT_VALUE_IS_NULL", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "'{0}' context value is null, whitespace or empty.".
 		/// </summary>
@@ -195,7 +201,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("CONTEXT_VALUE_IS_WHITESPACE", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' context value is null, whitespace or empty.".
 		/// </summary>
@@ -220,6 +227,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("CONTEXT_VALUE_IS_WHITESPACE", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "'{0}' is not a type of '{1}'.".
 		/// </summary>
@@ -243,7 +251,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("CONTEXT_VALUE_NOT_EXPECTED_TYPE", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' is not a type of '{1}'.".
 		/// </summary>
@@ -268,6 +277,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("CONTEXT_VALUE_NOT_EXPECTED_TYPE", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
@@ -291,7 +301,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("NO_KEY_IN_CONTEXT", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' does not exist in the Pipeline context.".
 		/// </summary>
@@ -315,6 +326,7 @@ namespace MyTrout.Pipelines
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("NO_KEY_IN_CONTEXT", culture), args);
 		}
+
 
 		/// <summary>
 		/// Looks up a localized string like "A 'null' step was added to the Pipeline which prevents the pipeline from being built as requested.".
@@ -340,6 +352,7 @@ namespace MyTrout.Pipelines
 			return Resources.ResourceManager.GetString("NULL_MIDDLEWARE", culture);
 		}
 		
+
 		/// <summary>
 		/// Looks up a localized string like "parameterName must be supplied in AssertParameterIsNotNull.".
 		/// </summary>
@@ -364,6 +377,7 @@ namespace MyTrout.Pipelines
 			return Resources.ResourceManager.GetString("PARAMETER_MUST_BE_SUPPLIED", culture);
 		}
 		
+
 		/// <summary>
 		/// Looks up a localized string like "ServiceProvider does not contain one of the parameters required for '{0}'.".
 		/// </summary>
@@ -387,7 +401,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("SERVICEPROVIDER_LACKS_PARAMETER", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "ServiceProvider does not contain one of the parameters required for '{0}'.".
 		/// </summary>
@@ -412,6 +427,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("SERVICEPROVIDER_LACKS_PARAMETER", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "'IDictionary&lt;string,{0}&gt;' could not be found in ServiceProvider during the initialization of '{1}' step.".
 		/// </summary>
@@ -435,7 +451,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("STEP_CONTEXT_NOT_FOUND", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'IDictionary&lt;string,{0}&gt;' could not be found in ServiceProvider during the initialization of '{1}' step.".
 		/// </summary>
@@ -460,8 +477,9 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("STEP_CONTEXT_NOT_FOUND", culture), args);
 		}
 
+
 		/// <summary>
-		/// Looks up a localized string like "{0}({1}) failed to intialize properly.".
+		/// Looks up a localized string like "{0}({1}) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -473,7 +491,7 @@ namespace MyTrout.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -483,9 +501,10 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("TYPE_FAILED_TO_INITIALIZE", culture);
 		}
-				
+		
+		
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -497,7 +516,7 @@ namespace MyTrout.Pipelines
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly.".
+		/// Looks up a localized string using a specific culture like "{0}({1}) failed to intialize properly due to one of the following reasons: no IPipelineRequest parameter was found, an injected parameter was null, StepContext was null, or StepContext did not contain a non-null value for the appropriate context.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -507,6 +526,7 @@ namespace MyTrout.Pipelines
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("TYPE_FAILED_TO_INITIALIZE", culture), args);
 		}
+
 
 		/// <summary>
 		/// Looks up a localized string like "'{0}' must be a reference type.".
@@ -531,7 +551,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("TYPE_MUST_BE_REFERENCE", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0}' must be a reference type.".
 		/// </summary>
@@ -556,6 +577,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("TYPE_MUST_BE_REFERENCE", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "'{0} must implement the IPipelineRequest interface.".
 		/// </summary>
@@ -579,7 +601,8 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST", culture);
 		}
-				
+		
+		
 		/// <summary>
 		/// Looks up a localized string using a specific culture like "'{0} must implement the IPipelineRequest interface.".
 		/// </summary>
@@ -604,6 +627,7 @@ namespace MyTrout.Pipelines
 			return string.Format(culture, Resources.ResourceManager.GetString("TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST", culture), args);
 		}
 
+
 		/// <summary>
 		/// Looks up a localized string like "Smoke Test (en-US)".
 		/// </summary>
@@ -627,5 +651,6 @@ namespace MyTrout.Pipelines
 		{
 			return Resources.ResourceManager.GetString("_SMOKE_TEST", culture);
 		}
-		}
+		
+}
 }
