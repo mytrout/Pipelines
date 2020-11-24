@@ -41,11 +41,6 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         public IDictionary<object, string> WeirdParameter { get; }
 
-        public ValueTask DisposeAsync()
-        {
-            return default;
-        }
-
         public Task InvokeAsync(IPipelineContext context)
         {
             return Task.CompletedTask;

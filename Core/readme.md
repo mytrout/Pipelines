@@ -92,11 +92,6 @@ namespace MyTrout.Pipelines.Samples.Simple
 
         protected virtual string Message => "I";
 
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
         public Task InvokeAsync(IPipelineContext context)
         {
             if (context == null)

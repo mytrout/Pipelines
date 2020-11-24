@@ -24,13 +24,12 @@
 
 namespace MyTrout.Pipelines
 {
-    using System;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides a standard pipeline request with asynchronous disposal.
+    /// Provides a standard pipeline request.
     /// </summary>
-    public interface IPipelineRequest : IAsyncDisposable
+    public interface IPipelineRequest
     {
         /// <summary>
         /// Invokes the pipeline.

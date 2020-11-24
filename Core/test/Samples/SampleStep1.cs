@@ -36,11 +36,6 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         protected virtual string Key => "Sponge";
 
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
         public Task InvokeAsync(IPipelineContext context)
         {
             if (context == null)

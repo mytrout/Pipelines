@@ -40,11 +40,6 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         private IPipelineRequest Next { get; }
 
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
         public Task InvokeAsync(IPipelineContext context)
         {
             return this.Next.InvokeAsync(context);

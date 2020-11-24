@@ -1,17 +1,15 @@
 # MyTrout.Pipelines.Core Change Log
 
-## 2.0.1
+## 2.0.2
+- Remove the IAsyncDisposable requirement because it complicated the implementation without providing any deconstruction value.
 - Alter StepActivator to allow null parameters to allow object construction to blow up which reduces method complexity.
 - Update azure-pipelines.yaml to use the build-nuget-template.
-
-## 2.0.0
 - Making the documentation more clear about what the exceution order will be in readme.md.
 - Changed the Target Framework to .NET 5.0.
 - Changed StepWithContext to a an immutable record, instead of a class.
 - Changed NoOpStep to sealed to eliminate need to call GC.SuppressFinalize() to correct a warning.
 - Removed Warning Suppressions from GlobalSuppressions.cs because the warning no longer applied to the code in .NET 5.0.
 - Removed derefence null and null reference warnings in StepActivator.
-- Removed CA1031 suppression for catching System.Exception in StepActivator by adding the list of exceptions thrown by ConstructorInfo.Invoke().
 - Removed unnecessary initialzation of PipelineContext.CancellationToken property.
 - Updated TYPE_FAILED_TO_INITIALIZE resource to reflect all of the cases where the StepActivator could fail to initialize a constructor parameter.
 - Removed GlobalSuppressions.cs as the file does not contain any suppressions.

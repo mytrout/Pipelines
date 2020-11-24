@@ -45,15 +45,6 @@ namespace MyTrout.Pipelines.Steps
         }
 
         /// <summary>
-        /// Disposes of nothing since this step does nothing.
-        /// </summary>
-        /// <returns>A completed <see cref="ValueTask" />.</returns>
-        public ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
-        /// <summary>
         /// Provides a step that does nothing.
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
