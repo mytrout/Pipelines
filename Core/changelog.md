@@ -1,5 +1,10 @@
-MyTrout.Pipelines.Core Change Log
-# 2.0.0
+# MyTrout.Pipelines.Core Change Log
+
+## 2.0.1
+- Alter StepActivator to allow null parameters to allow object construction to blow up which reduces method complexity.
+- Update azure-pipelines.yaml to use the build-nuget-template.
+
+## 2.0.0
 - Making the documentation more clear about what the exceution order will be in readme.md.
 - Changed the Target Framework to .NET 5.0.
 - Changed StepWithContext to a an immutable record, instead of a class.
@@ -14,7 +19,7 @@ MyTrout.Pipelines.Core Change Log
 - Removed comments that stated GB localization tests did not work.
 - Corrected the Returns_Valid_Step_Instance_From_CreateInstance() test after stricter requirements were applied to object construction in the StepActivator class.
 
-# 1.1.1
+## 1.1.1
 - Remove unused parameter validations from AddStep<T> method.
 - Add unit tests to bring this library up to 100% Code Coverage.
 
