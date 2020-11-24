@@ -45,7 +45,7 @@ namespace MyTrout.Pipelines.Core
         /// <summary>
         /// Gets or sets the token used by callers to cancel the pipeline execution.
         /// </summary>
-        public CancellationToken CancellationToken { get; set; } = default;
+        public CancellationToken CancellationToken { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.

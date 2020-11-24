@@ -82,7 +82,14 @@ namespace MyTrout.Pipelines.Core
                     }
                     else if (pipelineStep.StepContext == null)
                     {
-                        parametersForConstructor.Add(this.ServiceProvider.GetService(parameter.ParameterType));
+                        object? parameterValue = this.ServiceProvider.GetService(parameter.ParameterType);
+                        if (parameterValue == null)
+                        {
+                            // To prevent null reference exceptions in deeper code, this constructor will be ignored
+                            continue;
+                        }
+
+                        parametersForConstructor.Add(parameterValue);
                     }
                     else
                     {
@@ -101,9 +108,8 @@ namespace MyTrout.Pipelines.Core
                     result = constructor.Invoke(parametersForConstructor.ToArray());
                     break;
                 }
-#pragma warning disable CA1031 // Catch the general exception so all failures can be logged.
+#pragma warning disable CA1031  // because exceptions can be swallowed here, disable this warning.
                 catch (Exception exc)
-#pragma warning restore CA1031
                 {
                     // returns string.Empty if there are no parameters.
                     string parameters = string.Join(", ", constructor.GetParameters().Select(x => x.ParameterType.Name));
@@ -114,6 +120,7 @@ namespace MyTrout.Pipelines.Core
 
                     // try other constructors rather than rethrowing the exception.
                 }
+#pragma warning restore CA1031
             }
 
             if (!oneConstructorContainsNextRequestParameter)
@@ -134,9 +141,14 @@ namespace MyTrout.Pipelines.Core
             };
             var contextType = contextBase.MakeGenericType(contextBaseTypes);
 
-            dynamic potentialValues = this.ServiceProvider.GetService(contextType);
+            dynamic? potentialValues = this.ServiceProvider.GetService(contextType);
 
-            // potentialValues is an IDictionary<string, parameter.ParameterType>
+            if (potentialValues == null)
+            {
+                throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
+            }
+
+            // potentialValues should be IDictionary<string, parameter.ParameterType> here.
             if (potentialValues.ContainsKey(pipelineStep.StepContext))
             {
                 return potentialValues[pipelineStep.StepContext];
