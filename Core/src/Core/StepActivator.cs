@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Core
             {
                 bool nextRequestParameterFound = false;
 
-                var parametersForConstructor = new List<object>();
+                var parametersForConstructor = new List<object?>();
                 foreach (var parameter in constructor.GetParameters())
                 {
                     if (parameter.ParameterType == typeof(IPipelineRequest))
@@ -82,14 +82,7 @@ namespace MyTrout.Pipelines.Core
                     }
                     else if (pipelineStep.StepContext == null)
                     {
-                        object? parameterValue = this.ServiceProvider.GetService(parameter.ParameterType);
-                        if (parameterValue == null)
-                        {
-                            // To prevent null reference exceptions in deeper code, this constructor will be ignored
-                            continue;
-                        }
-
-                        parametersForConstructor.Add(parameterValue);
+                        parametersForConstructor.Add(this.ServiceProvider.GetService(parameter.ParameterType));
                     }
                     else
                     {
