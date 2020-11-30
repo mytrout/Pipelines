@@ -1,5 +1,10 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 2.0.0
+- Changed the Target Framework to .NET 5.0.
+- Limit MyTrout.Pipelines versions to >= 2.0.2 and < 3.0 in the nuget package.
+- Eliminate nullable warnings either by fixing the issue or research and suppression.
+
 ## 1.2.1
 - Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
 

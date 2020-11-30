@@ -25,8 +25,8 @@
 namespace MyTrout.Pipelines.Hosting.Tests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class TestingOptions
+    public class FailedTestingOptions
     {
-        public string Key { get; set; }
+        public string Keys { get; set; }
     }
 }

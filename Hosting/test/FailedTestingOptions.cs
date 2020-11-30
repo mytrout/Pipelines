@@ -1,4 +1,4 @@
-﻿// <copyright file="TestingStep5.cs" company="Chris Trout">
+﻿// <copyright file="TestingOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,33 +24,9 @@
 
 namespace MyTrout.Pipelines.Hosting.Tests
 {
-    using System.Threading.Tasks;
-
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class TestingStep5 : IPipelineRequest
+    public class TestingOptions
     {
-        protected readonly IPipelineRequest next = null;
-
-        public TestingOptions Options { get; }
-
-        public TestingStep5(TestingOptions options, IPipelineRequest next)
-        {
-            this.next = next;
-            this.Options = options;
-        }
-
-        public Task InvokeAsync(IPipelineContext context)
-        {
-            if (context.Items.ContainsKey("MESSAGE"))
-            {
-                context.Items["MESSAGE"] = $"{context.Items["MESSAGE"]}{this.Options.Key} ";
-            }
-            else
-            {
-                context.Items.Add("MESSAGE", $"{this.Options.Key} ");
-            }
-
-            return this.next.InvokeAsync(context);
-        }
+        public string Key { get; set; }
     }
 }

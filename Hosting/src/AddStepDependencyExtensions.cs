@@ -24,6 +24,7 @@
 
 namespace MyTrout.Pipelines.Hosting
 {
+    using Microsoft.CSharp.RuntimeBinder;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -233,7 +234,15 @@ namespace MyTrout.Pipelines.Hosting
                 {
                     dynamic sourceDictionary = source.Properties[key];
 
-                    Type? dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
+                    Type? dependencyType = null;
+                    try
+                    {
+                        dependencyType = (sourceDictionary.Keys as IEnumerable<object>)?.First() as Type;
+                    }
+                    catch (RuntimeBinderException)
+                    {
+                        throw new InvalidOperationException(Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, key));
+                    }
 
                     if (dependencyType == null)
                     {
@@ -259,6 +268,14 @@ namespace MyTrout.Pipelines.Hosting
                     {
                         services.AddTransient(contextType, (IServiceProvider provider) =>
                         {
+#pragma warning disable CS8600, CS8602, CS8603
+                            /*
+                             *  IMPORTANT NOTE TO DEVELOPERS:
+                             *  As long as this lambda continues to only construct Dictionary<string, (sometype)>
+                             *  then the suppression should be warranted.  If you make ANY changes to the type
+                             *  that this lambda constructs, a complete evaluation whether these suppressions are
+                             *  appropriate should be performed.
+                             */
                             // At pipelilne build-time, the pipeline needs an IDictionary<string, <type>>
                             // with all of the instances populated.
                             dynamic serviceDictionary = Activator.CreateInstance(implementationType);
@@ -269,6 +286,7 @@ namespace MyTrout.Pipelines.Hosting
                             }
 
                             return serviceDictionary;
+#pragma warning restore CS8600, CS8602, CS8603
                         });
                     });
                 }

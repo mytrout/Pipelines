@@ -463,5 +463,63 @@ namespace MyTrout.Pipelines.Hosting.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedMessage, result.Message);
         }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_PipelineBuilder_When_HostBuilder_Properties_Contains_Non_Enumerable_Object_For_Type_In_The_Dictionary()
+        {
+            // arrange
+            var hostBuilder = Host.CreateDefaultBuilder();
+
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(FailedTestingOptions).FullName}";
+            var dictionary = new FailedTestingOptions();
+
+            hostBuilder.Properties[keyName] = dictionary;
+
+            string expectedMessage = Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, keyName);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() =>
+                                                    hostBuilder.ConfigureServices(services =>
+                                                    {
+                                                        services.AddSingleton(new FailedTestingOptions());
+                                                    })
+                                                    .UsePipeline(builder =>
+                                                    {
+                                                        builder.AddStep<TestingStep5>();
+                                                    }));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_PipelineBuilder_When_HostBuilder_Properties_Contains_Type_With_No_Keys_Property_In_The_Dictionary()
+        {
+            // arrange
+            var hostBuilder = Host.CreateDefaultBuilder();
+
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(FailedTestingOptions).FullName}";
+            var dictionary = new TestingOptions();
+
+            hostBuilder.Properties[keyName] = dictionary;
+
+            string expectedMessage = Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, keyName);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() =>
+                                                    hostBuilder.ConfigureServices(services =>
+                                                    {
+                                                        services.AddSingleton(new TestingOptions());
+                                                    })
+                                                    .UsePipeline(builder =>
+                                                    {
+                                                        builder.AddStep<TestingStep5>();
+                                                    }));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
     }
 }
