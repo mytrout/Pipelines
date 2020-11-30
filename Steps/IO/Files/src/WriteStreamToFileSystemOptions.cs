@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// Provides caller-configurable options to change the behavior of <see cref="WriteStreamToFileSystemStep"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class WriteStreamToFileSystemOptions
+    public sealed class WriteStreamToFileSystemOptions
     {
         /// <summary>
         /// Gets or sets the base directory to which the application should write the file.

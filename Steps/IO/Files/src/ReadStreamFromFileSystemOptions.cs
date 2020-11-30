@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// Provides caller-configurable options to change the behavior of <see cref="ReadStreamFromFileSystemStep"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class ReadStreamFromFileSystemOptions
+    public sealed class ReadStreamFromFileSystemOptions
     {
         /// <summary>
         /// Gets or sets the base directory from where files are read.

@@ -2,7 +2,7 @@
 
 MyTrout.Pipelines.Steps.IO.Files provides Pipeline steps to read, write, delete, and move files on the file system.
 
-MyTrout.Pipelines.Steps.IO.Files targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
@@ -16,7 +16,7 @@ For a list of available steps, see [Available Steps](../README.md)
 
 # Software dependencies
 
-    1. MyTrout.Pipelines.Steps 1.0.*
+    1. MyTrout.Pipelines.Steps 2.*
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

@@ -59,11 +59,7 @@ namespace MyTrout.Pipelines.Steps
             source.AssertParameterIsNotNull(nameof(source));
             key.AssertParameterIsNotWhiteSpace(nameof(key));
 
-            if (!source.Items.TryGetValue(key, out object workingItem))
-            {
-                throw new InvalidOperationException(Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, key));
-            }
-            else
+            if (source.Items.TryGetValue(key, out object? workingItem))
             {
                 try
                 {
@@ -79,6 +75,10 @@ namespace MyTrout.Pipelines.Steps
                     // The InvalidCastException means the object is of the wrong type.
                     throw new InvalidOperationException(Resources.CONTEXT_VALUE_NOT_EXPECTED_TYPE(CultureInfo.CurrentCulture, key, typeof(TValue)));
                 }
+            }
+            else
+            {
+                throw new InvalidOperationException(Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, key));
             }
         }
     }

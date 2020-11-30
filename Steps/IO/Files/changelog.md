@@ -1,5 +1,11 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 2.0.0
+- Change all Step and Options classes to sealed.
+- Changed the Target Framework to .NET 5.0.
+- Limit MyTrout.Pipelines versions to >= 2.0.2 and < 3.0 in the nuget package.
+- Remove all informational compiler messages.
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.

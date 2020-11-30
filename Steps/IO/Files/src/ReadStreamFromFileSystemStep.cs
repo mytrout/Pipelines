@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// <summary>
     /// Reads a file from the File System and puts it into the <see cref="MyTrout.Pipelines.Core.PipelineContext" /> as an input <see cref="Stream"/>.
     /// </summary>
-    public class ReadStreamFromFileSystemStep : AbstractPipelineStep<ReadStreamFromFileSystemStep, ReadStreamFromFileSystemOptions>
+    public sealed class ReadStreamFromFileSystemStep : AbstractPipelineStep<ReadStreamFromFileSystemStep, ReadStreamFromFileSystemOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadStreamFromFileSystemStep" /> class with the specified parameters.

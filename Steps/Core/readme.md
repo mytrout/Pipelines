@@ -2,7 +2,7 @@
 
 MyTrout.Pipelines.Steps provides step base classes and pipeline Stream manipulation implementations MyTrout.Pipelines.
 
-MyTrout.Pipelines.Steps targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+MyTrout.Pipelines.Steps targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
@@ -20,9 +20,9 @@ For a list of available steps, see [Available Steps](../Steps/README.md)
 
 # Software dependencies
     1. Microsoft.CSharp 4.7.0 (required because of dynamic keyword usage for multi-context steps)
-    2. Microsoft.Extensions.Configuration.Abstractions 3.1.5
-    3. Microsoft.Extensions.Logging.Abstractions 3.1.5
-    4. MyTrout.Pipelines 1.1.*
+    2. Microsoft.Extensions.Configuration.Abstractions 5.0.0
+    3. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    4. MyTrout.Pipelines 2.0.*
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

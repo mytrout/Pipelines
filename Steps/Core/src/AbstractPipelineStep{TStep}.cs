@@ -57,16 +57,6 @@ namespace MyTrout.Pipelines.Steps
         public IPipelineRequest Next { get; }
 
         /// <summary>
-        /// Disposes of any disposable resources for this instance.
-        /// </summary>
-        /// <returns>A completed <see cref="ValueTask" />.</returns>
-        /// <remarks>Developers who need to dispose of unmanaged resources should override this method.</remarks>
-        public virtual ValueTask DisposeAsync()
-        {
-            return new ValueTask(Task.CompletedTask);
-        }
-
-        /// <summary>
         /// Invokes a step in the pipeline.
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>

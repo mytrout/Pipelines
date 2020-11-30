@@ -31,7 +31,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// <summary>
     /// Deletes a file located on the file system.
     /// </summary>
-    public class DeleteFileStep : AbstractPipelineStep<DeleteFileStep, DeleteFileOptions>
+    public sealed class DeleteFileStep : AbstractPipelineStep<DeleteFileStep, DeleteFileOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteFileStep" /> class with the specified parameters.

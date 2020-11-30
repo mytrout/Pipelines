@@ -54,24 +54,6 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public async Task Returns_Task_From_DisposeAsync()
-        {
-            // arrange
-            ILogger<MoveInputStreamToOutputStreamStep> logger = new Mock<ILogger<MoveInputStreamToOutputStreamStep>>().Object;
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            var source = new MoveInputStreamToOutputStreamStep(logger, next);
-
-            // act
-            await source.DisposeAsync();
-
-            // assert
-            Assert.IsTrue(true);
-
-            // No exceptions mean this worked appropriately.
-        }
-
-        [TestMethod]
         public async Task Provides_OutputStream_In_InvokeAsync_To_Downstream_Callers()
         {
             // arrange

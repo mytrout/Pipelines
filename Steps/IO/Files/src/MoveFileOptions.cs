@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// Provides caller-configurable options to change the behavior of <see cref="MoveFileStep"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class MoveFileOptions
+    public sealed class MoveFileOptions
     {
         /// <summary>
         /// Gets or sets a base directory for the source file name.

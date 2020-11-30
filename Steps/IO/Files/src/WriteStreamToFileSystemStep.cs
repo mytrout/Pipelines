@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// <summary>
     /// Writes a file tp the File System from an output <see cref="Stream"/> in <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
     /// </summary>
-    public class WriteStreamToFileSystemStep : AbstractPipelineStep<WriteStreamToFileSystemStep, WriteStreamToFileSystemOptions>
+    public sealed class WriteStreamToFileSystemStep : AbstractPipelineStep<WriteStreamToFileSystemStep, WriteStreamToFileSystemOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WriteStreamToFileSystemStep" /> class with the specified parameters.

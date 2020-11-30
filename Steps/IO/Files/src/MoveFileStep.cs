@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     /// <summary>
     /// Moves a file from one location to another.
     /// </summary>
-    public class MoveFileStep : AbstractPipelineStep<MoveFileStep, MoveFileOptions>
+    public sealed class MoveFileStep : AbstractPipelineStep<MoveFileStep, MoveFileOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveFileStep" /> class with the specified parameters.

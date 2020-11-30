@@ -1,3 +1,10 @@
+#MyTrout.Pipelines.Steps change log
+
+## 2.0.2
+- Changed the Target Framework to .NET 5.0.
+- Remove IAsyncDisposable from all step implementations.
+- Limit MyTrout.Pipelines versions to >= 2.0.2 and < 3.0 in the nuget package.
+
 ## 1.0.1
 - Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
 

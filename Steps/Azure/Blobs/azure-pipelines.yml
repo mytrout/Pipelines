@@ -26,19 +26,19 @@ variables:
   value: 'Release'
 
 - name: 'major'
-  value: 0
+  value: '0'
 
 - name: 'minor'
-  value: 1
+  value: '2'
 
 - name: 'patch'
-  value: 1
+  value: '0'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
 
 - name: 'suffix'
-  value: '-beta'
+  value: '-beta.2'
 
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'

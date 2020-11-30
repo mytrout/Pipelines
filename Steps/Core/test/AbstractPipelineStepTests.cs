@@ -70,22 +70,6 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public async Task Returns_Task_From_DisposeAsync()
-        {
-            // arrange
-            ILogger<SampleStep> logger = new Mock<ILogger<SampleStep>>().Object;
-            var source = new SampleStep(logger, new NoOpStep());
-
-            // act
-            await source.DisposeAsync();
-
-            // assert
-            Assert.IsTrue(true);
-
-            // No exceptions mean this worked appropriately.
-        }
-
-        [TestMethod]
         public async Task Returns_Context_Errors_From_InvokeAsync_When_Exception_Is_Thrown_In_InvokeCoreAsync()
         {
             // arrange
