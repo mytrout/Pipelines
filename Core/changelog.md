@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 2.0.7
+ - Remove the Pipelines.Steps.Core project from building and analyzing during the Azure DevOps Pipelines.Core project build.
+ 
 ## 2.0.4
 - Change the project and repository urls from dev.azure.com/mytrout to github.com.
 
