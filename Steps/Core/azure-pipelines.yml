@@ -24,20 +24,10 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: 2
-
-- name: 'minor'
-  value: 0
-
-- name: 'patch'
-  value: 0
+- group: 'MyTrout.Pipelines.Steps.Core.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
-
-- name: 'suffix'
-  value: ''
 
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
@@ -49,7 +39,7 @@ variables:
   value: 'Pipelines.Steps.Core'
 
 - name: 'primarySourceBranch'
-  value: 'refs/heads/master'
+  value: 'refs/heads/feature/upgrade_to_net5.0'
   
 steps:
   - template: ../../nuget-build-template.yml

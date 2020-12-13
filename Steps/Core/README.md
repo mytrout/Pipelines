@@ -2,7 +2,13 @@
 
 MyTrout.Pipelines.Steps provides step base classes and pipeline Stream manipulation implementations MyTrout.Pipelines.
 
-MyTrout.Pipelines.Steps targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=14&branchName=master)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.Steps.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+MyTrout.Pipelines.Steps targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
@@ -12,7 +18,7 @@ For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
 
 For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
 
-For a list of available steps, see [Available Steps](../Steps/README.md)
+For a list of available steps, see [Available Steps](../README.md)
 
 # Installing via NuGet
 
@@ -20,14 +26,14 @@ For a list of available steps, see [Available Steps](../Steps/README.md)
 
 # Software dependencies
     1. Microsoft.CSharp 4.7.0 (required because of dynamic keyword usage for multi-context steps)
-    2. Microsoft.Extensions.Configuration.Abstractions 3.1.5
-    3. Microsoft.Extensions.Logging.Abstractions 3.1.5
-    4. MyTrout.Pipelines 1.1.*
+    2. Microsoft.Extensions.Configuration.Abstractions 5.0.0
+    3. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    4. MyTrout.Pipelines 2.0.7 minimum, 2.*.* is acceptable.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
 # How do I write a "simple" Step?
-At a minimum, each step should implement the [IPipelineRequest](../Core/src/IPipelineRequest.cs) interface which implements [IAsyncDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.iasyncdisposable?view=dotnet-plat-ext-3.1). 
+At a minimum, each step should implement the [IPipelineRequest](../../Core/src/IPipelineRequest.cs) interface.
 
 Review the [NoOpStep](../Core/src/Steps/NoOpStep.cs) for the minimum viable implementation.
 
