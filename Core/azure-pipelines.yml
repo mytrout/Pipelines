@@ -8,6 +8,7 @@ trigger:
     include:
     - Core/*
     exclude:
+    - Steps/Core/*
     - README.md
     - License.md
 
@@ -28,9 +29,6 @@ variables:
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
-
-- name: 'suffix'
-  value: ''
 
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
