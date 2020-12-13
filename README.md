@@ -2,7 +2,7 @@
 Provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
 [![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=13&branchName=master)
-[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
