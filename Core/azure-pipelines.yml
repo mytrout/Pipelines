@@ -36,9 +36,6 @@ variables:
 
 - group: 'MyTrout.Pipelines.Version'
 
-- name: 'patch'
-  value: $[counter(variables['minor'], 0)]
-
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
 
