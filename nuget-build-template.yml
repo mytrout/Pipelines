@@ -58,5 +58,5 @@ steps:
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], variables['primarySourceBranch']), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Publish SonarCloud results to ADO pipeline results.'
