@@ -24,14 +24,7 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: 2
-
-- name: 'minor'
-  value: 0
-
-- name: 'patch'
-  value: 2
+- group: 'MyTrout.Pipelines.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
