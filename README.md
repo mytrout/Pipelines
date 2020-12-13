@@ -1,6 +1,11 @@
 # Pipelines
 Provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=13&branchName=master)
+https://img.shields.io/nuget/v/MyTrout.Pipelines.svg
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
+
 MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
