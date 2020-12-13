@@ -17,7 +17,7 @@ pool:
 
 variables:
 - name: 'solution'
-  value: '**/Core/*.sln'
+  value: 'Core/*.sln'
 
 - name: 'buildPlatform'
   value: 'Any CPU'
