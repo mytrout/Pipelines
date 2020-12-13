@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 2.0.8
+ - Add the pr tag to the azure-pipelines.yml due to differences between Azure DevOps repos and GitHub repos.
+
 ## 2.0.7
  - Remove the Pipelines.Steps.Core project from building and analyzing during the Azure DevOps Pipelines.Core project build.
  

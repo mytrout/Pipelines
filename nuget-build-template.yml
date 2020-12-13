@@ -18,7 +18,7 @@ steps:
     projectKey: '$(sonarCloudProjectKey)'
     projectName: '$(sonarCloudProjectName)'
     projectVersion: '$(major).$(minor).$(patch)$(suffix)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], variables['primarySourceBranch']), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Prepare SonarQube analysis.'
 
 - task: DotNetCoreCLI@2
@@ -36,7 +36,7 @@ steps:
   displayName: 'Run the unit and simple integration tests for SonarCloud.'
 
 - task: SonarCloudAnalyze@1
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'variables['primarySourceBranch']'), eq(variables['sonarCloudEnabled'], 'YES'))
   displayName: 'Analyze SonarQube results and upload to SonarCloud.io.'
 
 

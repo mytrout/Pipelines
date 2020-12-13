@@ -6,6 +6,7 @@
  - Move versioning out of the azure-pipelines.yml and into Azure DevOps.
  - Remove deprecated Microsoft.CodeAnalysis.NetAnalyzers library.
  - Remove deprecated Microsoft.CodeAnalysis.FxCopAnalyzers library.
+ - Use primarySourceBranch variable for builds to allow SonarQube analysis to be performed on feature branches.
 
 ## 1.0.1
 - Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
