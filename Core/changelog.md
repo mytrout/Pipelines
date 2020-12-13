@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 2.0.4
+- Change the project and repository urls from dev.azure.com/mytrout to github.com.
+
 ## 2.0.1
 - Alter StepActivator to allow null parameters to allow object construction to blow up which reduces method complexity.
 - Update azure-pipelines.yaml to use the build-nuget-template.
