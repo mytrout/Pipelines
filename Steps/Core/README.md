@@ -10,7 +10,7 @@ If three steps named M1, M2, and M3 were added to the Pipeline, here is the exec
 
 For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
 
-For more details on Pipelines.Hosting, see [Pipelines.Hosting](../Hosting/README.md)
+For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
 
 For a list of available steps, see [Available Steps](../Steps/README.md)
 
