@@ -39,7 +39,7 @@ variables:
   value: 'Pipelines.Steps.Core'
 
 - name: 'primarySourceBranch'
-  value: 'refs/heads/feature/upgrade_to_net5.0'
+  value: 'refs/heads/master'
   
 steps:
   - template: ../../nuget-build-template.yml
