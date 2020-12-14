@@ -59,7 +59,7 @@ namespace MyTrout.Pipelines.Steps
             source.AssertParameterIsNotNull(nameof(source));
             key.AssertParameterIsNotWhiteSpace(nameof(key));
 
-            if (!source.Items.TryGetValue(key, out object workingItem))
+            if (!source.Items.TryGetValue(key, out object? workingItem))
             {
                 throw new InvalidOperationException(Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, key));
             }
