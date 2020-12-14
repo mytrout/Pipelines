@@ -12,6 +12,18 @@ trigger:
     - README.md
     - License.md
 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Core/*
+    exclude:
+    - Steps/Core/*
+    - README.md
+    - License.md
+
 pool:
   vmImage: 'windows-latest'
 
@@ -39,7 +51,7 @@ variables:
 - name: 'sonarCloudProjectName'
   value: 'Pipelines.Core'
 
-- name: 'primarySourceBranch'
+- name: 'sonarCloudSourceBranch'
   value: 'refs/heads/master'
   
 steps:
