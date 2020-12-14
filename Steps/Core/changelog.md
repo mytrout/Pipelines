@@ -1,3 +1,13 @@
+# MyTrout.Pipelines.Steps.Core Change Log
+
+## 2.0.6
+ - Upgrade to .NET 5.0
+ - Change the project and repository urls from dev.azure.com/mytrout to github.com.
+ - Move versioning out of the azure-pipelines.yml and into Azure DevOps.
+ - Remove deprecated Microsoft.CodeAnalysis.NetAnalyzers library.
+ - Remove deprecated Microsoft.CodeAnalysis.FxCopAnalyzers library.
+ - Use primarySourceBranch variable for builds to allow SonarQube analysis to be performed on feature branches.
+
 ## 1.0.1
 - Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
 
@@ -11,7 +21,7 @@
 - Move StreamExtensions to the MyTrout.Pipelines.Steps.Core assembly.
 
 ## 0.27.0-beta
-- Refactor PIpelineContext and Parameter Validation Extension methods into two different classes.
+- Refactor PipelineContext and Parameter Validation Extension methods into two different classes.
 
 ## 0.26.3-beta
 - Add AssertParameterIsNotWhiteSpace to the Parameter Validation Extensions.

@@ -11,6 +11,17 @@ trigger:
     - README.md
     - License.md
 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/Core/*
+    exclude:
+    - README.md
+    - License.md
+
 pool:
   vmImage: 'windows-latest'
 
@@ -24,20 +35,10 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: 2
-
-- name: 'minor'
-  value: 0
-
-- name: 'patch'
-  value: 0
+- group: 'MyTrout.Pipelines.Steps.Core.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
-
-- name: 'suffix'
-  value: ''
 
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
@@ -48,7 +49,7 @@ variables:
 - name: 'sonarCloudProjectName'
   value: 'Pipelines.Steps.Core'
 
-- name: 'primarySourceBranch'
+- name: 'sonarCloudSourceBranch'
   value: 'refs/heads/master'
   
 steps:
