@@ -261,12 +261,21 @@ namespace MyTrout.Pipelines.Hosting
                         {
                             // At pipelilne build-time, the pipeline needs an IDictionary<string, <type>>
                             // with all of the instances populated.
-                            dynamic serviceDictionary = Activator.CreateInstance(implementationType);
+                            dynamic? serviceDictionary = Activator.CreateInstance(implementationType);
 
+                            /*
+                             * serviceDictionary cannot be null because base type is Dictionary<,>
+                             * implementationType cannot be null because dependencyType is not null.
+                             * dependencyType cannot be null because it is checked for null before usage.
+                             * Disable CS8602 because serviceDictionary.Add cannot be null.
+                             */
+
+#pragma warning disable CS8602
                             foreach (string key in sourceDictionary[dependencyType].Keys)
                             {
                                 serviceDictionary.Add(key, sourceDictionary[dependencyType][key].Invoke(provider));
                             }
+#pragma warning restore CS8602
 
                             return serviceDictionary;
                         });
