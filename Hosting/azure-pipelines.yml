@@ -53,4 +53,4 @@ variables:
   value: 'refs/heads/master'
   
 steps:
-  - template: ../../nuget-build-template.yml
+  - template: ../nuget-build-template.yml
