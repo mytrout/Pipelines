@@ -40,7 +40,7 @@ namespace MyTrout.Pipelines.Hosting
         /// <summary>
         /// Gets a key to use with <see cref="IHostBuilder.Properties"/>.
         /// </summary>
-        public const string STEP_CONFIG_CONTEXT = "StepConfigContext";
+        public const string STEP_CONFIG_CONTEXT = "StepConfigContext-";
 
         /// <summary>
         /// Add step dependency without context.
@@ -233,12 +233,7 @@ namespace MyTrout.Pipelines.Hosting
                 {
                     dynamic sourceDictionary = source.Properties[key];
 
-                    Type? dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
-
-                    if (dependencyType == null)
-                    {
-                        throw new InvalidOperationException(Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, key));
-                    }
+                    Type dependencyType = source.RetrieveValidStepContextType(key);
 
                     var contextBaseTypes = new Type[]
                         {
@@ -261,12 +256,21 @@ namespace MyTrout.Pipelines.Hosting
                         {
                             // At pipelilne build-time, the pipeline needs an IDictionary<string, <type>>
                             // with all of the instances populated.
-                            dynamic serviceDictionary = Activator.CreateInstance(implementationType);
+                            dynamic? serviceDictionary = Activator.CreateInstance(implementationType);
 
+                            /*
+                             * serviceDictionary cannot be null because base type is Dictionary<,>
+                             * implementationType cannot be null because dependencyType is not null.
+                             * dependencyType cannot be null because it is checked for null before usage.
+                             * Disable CS8602 because serviceDictionary.Add cannot be null.
+                             */
+
+#pragma warning disable CS8602
                             foreach (string key in sourceDictionary[dependencyType].Keys)
                             {
                                 serviceDictionary.Add(key, sourceDictionary[dependencyType][key].Invoke(provider));
                             }
+#pragma warning restore CS8602
 
                             return serviceDictionary;
                         });
@@ -322,7 +326,7 @@ namespace MyTrout.Pipelines.Hosting
         {
             source.AssertParameterIsNotNull(nameof(source));
 
-            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(TOptions).FullName}";
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}{typeof(TOptions).FullName}";
             var results = new Dictionary<Type, Dictionary<string, Func<IServiceProvider, TOptions>>>
             {
                 { typeof(TOptions), new Dictionary<string, Func<IServiceProvider, TOptions>>() }

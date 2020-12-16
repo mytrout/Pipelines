@@ -1,5 +1,15 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 2.0.0
+ - Upgrade to .NET 5.0
+ - Change the project and repository urls from dev.azure.com/mytrout to github.com.
+ - Move versioning out of the azure-pipelines.yml and into Azure DevOps.
+ - Remove deprecated Microsoft.CodeAnalysis.NetAnalyzers library.
+ - Remove deprecated Microsoft.CodeAnalysis.FxCopAnalyzers library.
+ - Use primarySourceBranch variable for builds to allow SonarQube analysis to be performed on feature branches.
+ - Add HostBuilderExtensions to verify the sourceDictionary to ensure mucking around with Host.Properties doesn't break the system.
+ - Alter AddStepDependecyExtensions to allow better and easier testing.
+
 ## 1.2.1
 - Limit MyTrout.Pipelines versions to >= 1.1 and < 2.0 in the nuget package.
 

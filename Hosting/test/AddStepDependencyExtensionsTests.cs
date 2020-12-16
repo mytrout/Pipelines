@@ -418,7 +418,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
             // arrange
             var hostBuilder = Host.CreateDefaultBuilder();
 
-            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(TestingOptions).FullName}";
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}{typeof(TestingOptions).FullName}";
             hostBuilder.Properties[keyName] = new object();
 
             string expectedMessage = Resources.CONTEXT_WRONG_TYPE(CultureInfo.CurrentCulture, typeof(TestingOptions).FullName);
@@ -438,7 +438,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
             // arrange
             var hostBuilder = Host.CreateDefaultBuilder();
 
-            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(TestingOptions).FullName}";
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}{typeof(TestingOptions).FullName}";
             var dictionary = new Dictionary<string, Dictionary<string, Func<IServiceProvider, TestingOptions>>>()
                                 {
                                     { string.Empty, new Dictionary<string, Func<IServiceProvider, TestingOptions>>() }
@@ -446,7 +446,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
 
             hostBuilder.Properties[keyName] = dictionary;
 
-            string expectedMessage = Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, keyName);
+            string expectedMessage = Resources.CONTEXT_WRONG_TYPE(CultureInfo.CurrentCulture, typeof(TestingOptions).FullName);
 
             // act
             var result = Assert.ThrowsException<InvalidOperationException>(() =>
