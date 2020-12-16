@@ -138,12 +138,10 @@ namespace MyTrout.Pipelines.Hosting
 
                 this.Logger.LogInformation(Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture));
             }
-#pragma warning disable CA1031 // Prevent any Exception-derived Exception from causing the application to crash.
             catch (Exception exc)
             {
                 this.Context.Errors.Add(exc);
             }
-#pragma warning restore CA1031 // Do not catch general exception types
             finally
             {
                 foreach (var error in this.Context.Errors)
