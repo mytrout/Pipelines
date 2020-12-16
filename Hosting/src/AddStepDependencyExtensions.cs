@@ -260,19 +260,19 @@ namespace MyTrout.Pipelines.Hosting
 
                             /*
                              * serviceDictionary cannot be null because base type is Dictionary<,>
-                             * implementationType cannot be null because dependencyType is not null.
-                             * dependencyType cannot be null because it is checked for null before usage.
-                             * Disable CS8602 because serviceDictionary.Add cannot be null.
+                             * implementationType used to create serviceDictionary cannot be null because dependencyType is not null.
+                             * dependencyType cannot be null because it is checked for null before usage by RetrieveValidStepContextType().
+                             * Disable CS8602 and CS8603 because serviceDictionary cannot be null.
                              */
 
-#pragma warning disable CS8602
+#pragma warning disable CS8602,CS8603
                             foreach (string key in sourceDictionary[dependencyType].Keys)
                             {
                                 serviceDictionary.Add(key, sourceDictionary[dependencyType][key].Invoke(provider));
                             }
-#pragma warning restore CS8602
 
                             return serviceDictionary;
+#pragma warning restore CS8602, CS8603
                         });
                     });
                 }
