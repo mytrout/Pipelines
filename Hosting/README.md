@@ -2,6 +2,12 @@
 
 MyTrout.Pipelines.Hosting provides helper classes to run a pipeline using Microsoft's Generic Host.
 
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Hosting?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=15&branchName=master)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.HOsting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
 MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
