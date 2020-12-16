@@ -54,18 +54,3 @@ variables:
   
 steps:
   - template: ../nuget-build-template.yml
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(major).$(minor).$(patch)$(suffix).nupkg;'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '$(publishVstsFeed)'
-    allowPackageConflicts: true
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displayName: 'Publish the nuget package to ADO artifacts.'
-
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '300'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['sonarCloudEnabled'], 'YES'))
-  displayName: 'Publish SonarCloud results to ADO pipeline results.'
