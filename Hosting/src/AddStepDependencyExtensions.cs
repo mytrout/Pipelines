@@ -40,7 +40,7 @@ namespace MyTrout.Pipelines.Hosting
         /// <summary>
         /// Gets a key to use with <see cref="IHostBuilder.Properties"/>.
         /// </summary>
-        public const string STEP_CONFIG_CONTEXT = "StepConfigContext";
+        public const string STEP_CONFIG_CONTEXT = "StepConfigContext-";
 
         /// <summary>
         /// Add step dependency without context.
@@ -233,12 +233,7 @@ namespace MyTrout.Pipelines.Hosting
                 {
                     dynamic sourceDictionary = source.Properties[key];
 
-                    Type? dependencyType = (sourceDictionary.Keys as IEnumerable<object>).First() as Type;
-
-                    if (dependencyType == null)
-                    {
-                        throw new InvalidOperationException(Resources.CONTEXT_IS_NOT_CORRECT(CultureInfo.CurrentCulture, key));
-                    }
+                    Type dependencyType = source.RetrieveValidStepContextType(key);
 
                     var contextBaseTypes = new Type[]
                         {
@@ -331,7 +326,7 @@ namespace MyTrout.Pipelines.Hosting
         {
             source.AssertParameterIsNotNull(nameof(source));
 
-            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}-{typeof(TOptions).FullName}";
+            string keyName = $"{AddStepDependencyExtensions.STEP_CONFIG_CONTEXT}{typeof(TOptions).FullName}";
             var results = new Dictionary<Type, Dictionary<string, Func<IServiceProvider, TOptions>>>
             {
                 { typeof(TOptions), new Dictionary<string, Func<IServiceProvider, TOptions>>() }
