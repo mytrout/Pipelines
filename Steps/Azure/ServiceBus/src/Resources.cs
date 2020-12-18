@@ -101,6 +101,30 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 		}
 
 		/// <summary>
+		/// Looks up a localized string like "The Azure Service Bus Entity Path is null, empty, whitespace, or contains more than one forward slash character.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string ENTITY_PATH_INVALID()
+		{
+			return Resources.ENTITY_PATH_INVALID(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "The Azure Service Bus Entity Path is null, empty, whitespace, or contains more than one forward slash character.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string ENTITY_PATH_INVALID(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("ENTITY_PATH_INVALID", culture);
+		}
+		
+		/// <summary>
 		/// Looks up a localized string like "Hooking up the messaging processing handler and exception handler.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
@@ -122,6 +146,78 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 		public static string HOOKING_UP_HANDLER(CultureInfo culture)
 		{
 			return Resources.ResourceManager.GetString("HOOKING_UP_HANDLER", culture);
+		}
+		
+		/// <summary>
+		/// Looks up a localized string like "'{0}' value is null.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_IS_NULL()
+		{
+			return Resources.PROPERTY_IS_NULL(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' value is null.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_IS_NULL(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PROPERTY_IS_NULL", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' value is null.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_IS_NULL(params object[] args)
+		{
+			return Resources.PROPERTY_IS_NULL(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "'{0}' value is null.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_IS_NULL(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("PROPERTY_IS_NULL", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "propertyName must be supplied in AssertPropertyIsNotNull.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_NAME_MUST_BE_SUPPLIED()
+		{
+			return Resources.PROPERTY_NAME_MUST_BE_SUPPLIED(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "propertyName must be supplied in AssertPropertyIsNotNull.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PROPERTY_NAME_MUST_BE_SUPPLIED(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PROPERTY_NAME_MUST_BE_SUPPLIED", culture);
 		}
 		
 		/// <summary>

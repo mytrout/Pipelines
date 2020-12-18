@@ -1,4 +1,4 @@
-﻿// <copyright file="WriteMessageToAzureTopicOptions.cs" company="Chris Trout">
+﻿// <copyright file="MessagingConstants.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,27 +24,14 @@
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
-    using System.Collections.Generic;
-
     /// <summary>
-    /// Provides user-configurable options for the <see cref="WriteMessageToAzureTopicStep" /> step.
+    /// Constants defined for Correlation information across Messaging Steps.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class WriteMessageToAzureTopicOptions
+    public static class MessagingConstants
     {
         /// <summary>
-        /// Gets or sets the connection string for Azure Service Bus.
+        /// Gets the name of the Correlation ID of the message.
         /// </summary>
-        public string AzureServiceBusConnectionString { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the Topic Name to which the message will be written.
-        /// </summary>
-        public string TopicName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets UserProperty names that will be added to the Message from <see cref="MyTrout.Pipelines.Core.PipelineContext" />, if they are available.
-        /// </summary>
-        public IEnumerable<string> UserProperties { get; set; } = new List<string>();
+        public const string CORRELATION_ID = "CorrelationId";
     }
 }

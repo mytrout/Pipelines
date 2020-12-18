@@ -24,7 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 {
-    using Microsoft.Azure.ServiceBus;
+    using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -93,7 +93,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             {
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 TopicName = Tests.TestConstants.WriteToTopicName,
-                UserProperties = new List<string>()
+                ApplicationProperties = new List<string>()
                                         {
                                             "IsActive",
                                             "ID"
@@ -136,7 +136,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
                 };
 
                 subscriptionClient.RegisterMessageHandler(
-                            async (Message message, CancellationToken token) =>
+                            async (ServiceBusMessage message, CancellationToken token) =>
                             {
                                 Assert.AreEqual(isActive, message.UserProperties["IsActive"]);
                                 Assert.AreEqual(correlationId, message.UserProperties[WriteMessageToAzureTopicStep.CORRELATION_ID]);
@@ -210,7 +210,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
                 };
 
                 subscriptionClient.RegisterMessageHandler(
-                            async (Message message, CancellationToken token) =>
+                            async (ServiceBusMessage message, CancellationToken token) =>
                             {
                                 await subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
                             },

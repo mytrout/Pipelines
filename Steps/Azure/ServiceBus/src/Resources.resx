@@ -120,8 +120,17 @@
   <data name="CANCELLATION_REQUESTED" xml:space="preserve">
     <value>Cancellation requested while executing '{0}'.</value>
   </data>
+  <data name="ENTITY_PATH_INVALID" xml:space="preserve">
+    <value>The Azure Service Bus Entity Path is null, empty, whitespace, or contains more than one forward slash character.</value>
+  </data>
   <data name="HOOKING_UP_HANDLER" xml:space="preserve">
     <value>Hooking up the messaging processing handler and exception handler.</value>
+  </data>
+  <data name="PROPERTY_IS_NULL" xml:space="preserve">
+    <value>'{0}' value is null.</value>
+  </data>
+  <data name="PROPERTY_NAME_MUST_BE_SUPPLIED" xml:space="preserve">
+    <value>propertyName must be supplied in AssertPropertyIsNotNull.</value>
   </data>
   <data name="USER_PROPERTY_MISSING" xml:space="preserve">
     <value>IPipelineContext: '{0}' did not contain the user property: '{1}'</value>

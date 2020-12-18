@@ -82,7 +82,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         /// <summary>
         /// Reads the ASB_CONNECTION_STRING User Environment variable (can be set through launchsettings.json) to feed the connection string.
         /// </summary>
-        public static readonly string AzureServiceBusConnectionString = Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING", EnvironmentVariableTarget.Machine);
+        public static readonly string AzureServiceBusConnectionString = Environment.GetEnvironmentVariable("TEST_PIPELINE_AZURE_SERVICE_BUS_CONNECTION_STRING", EnvironmentVariableTarget.Machine);
 
         /// <summary>
         /// An Azure Service Bus ConnectionString that will cause an exception to be thrown by <see cref="TopicClient"/> and <see cref="SubscriptionClient"/>, if used.

@@ -1,4 +1,4 @@
-﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+﻿// <copyright file="ServiceBusReadEntityKind.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -22,5 +22,26 @@
 // SOFTWARE.
 // </copyright>
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This method is a delegate definition.  All parameters are required.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests.ReadMessageFromAzureSubscriptionStepTests.AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This method is a delegate definition.  All parameters are required.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests.ReadMessageFromAzureSubscriptionStepTests.TestHandlerWithContextAsync(Microsoft.Extensions.Logging.ILogger{MyTrout.Pipelines.Steps.Azure.ServiceBus.ReadMessageFromAzureSubscriptionStep},Microsoft.Azure.ServiceBus.ISubscriptionClient,MyTrout.Pipelines.PipelineContext,Microsoft.Azure.ServiceBus.Message,System.Threading.CancellationToken[])~System.Threading.Tasks.Task{System.Boolean}")]
+namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
+{
+    /// <summary>
+    /// Represents the kind of entity from which to read messages from Azure Service Bus.
+    /// </summary>
+    public enum ServiceBusReadEntityKind
+    {
+        /// <summary>
+        /// Represents an unknown kind of read entity.
+        /// </summary>
+        Unknown = 0,
+
+        /// <summary>
+        /// Represents an Azure Service Bus Queue.
+        /// </summary>
+        Queue = 1,
+
+        /// <summary>
+        ///  Represents an Azure Service Bus Subscription.
+        /// </summary>
+        Subscription = 2
+    }
+}
