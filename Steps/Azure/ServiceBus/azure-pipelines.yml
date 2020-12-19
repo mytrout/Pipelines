@@ -116,7 +116,7 @@ steps:
         throw [System.IO.Exception] "Connection String not found."
       } else {
         Write-Host $connectionString
-        [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING', "$connectionString",[System.EnvironmentVariableTarget]::Machine)  
+        [System.Environment]::SetEnvironmentVariable('TEST_PIPELINE_AZURE_SERVICE_BUS_CONNECTION_STRING', "$connectionString",[System.EnvironmentVariableTarget]::Machine)  
       }
     failOnStderr: true
   displayName: 'Add the Azure Service Bus Connection String to the build server.'
