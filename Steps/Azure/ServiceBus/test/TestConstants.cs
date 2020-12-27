@@ -51,10 +51,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
         public const string DeadMessageTopicName = "test-write-to-topic-dead-message";
 
-        public const string PreviousMessageTopicName = "test-read-from-topic-previous-message";
-
-        public const string InputStreamTopicName = "test-read-from-topic-input-stream";
-
         /// <summary>
         /// A topic that has not been provisioned within this Service Bus.
         /// </summary>
