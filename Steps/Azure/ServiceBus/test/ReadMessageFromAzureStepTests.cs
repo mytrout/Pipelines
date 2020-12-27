@@ -30,146 +30,20 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     using Moq;
     using MyTrout.Pipelines;
     using MyTrout.Pipelines.Core;
+    using MyTrout.Pipelines.Steps.Azure.ServiceBus;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class ReadMessageFromAzureStepTests
     {
-        [TestMethod]
-        public async Task Abandons_Message_Lock_From_InvokeAsync_When_Exception_Is_Added_To_Pipeline_Context()
-        {
-            // arrange
-            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
-
-            PipelineContext context = new PipelineContext();
-
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
-                                        .Callback(() => context.Errors.Add(new InvalidTimeZoneException()))
-                                        .Returns(Task.CompletedTask);
-            IPipelineRequest next = mockPipelineRequest.Object;
-
-            var options = new ReadMessageFromAzureOptions()
-            {
-                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                BatchSize = 1,
-                EntityPath = $"{Tests.TestConstants.AbandonMessageTopicName}/{Tests.TestConstants.SubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3)
-            };
-
-            // sending message to be read.
-            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
-            var sender = client.CreateSender(options.ReadEntity.TopicName);
-
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
-
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
-
-            await sender.SendMessageAsync(message).ConfigureAwait(false);
-            await sender.CloseAsync().ConfigureAwait(false);
-
-            var source = new ReadMessageFromAzureStep(logger, options, next);
-
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            Assert.AreEqual(1, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidTimeZoneException));
-
-            // cleanup
-            await source.DisposeAsync();
-
-            ServiceBusReceiver receiver = client.CreateReceiver(options.ReadEntity.TopicName, options.ReadEntity.SubscriptionName);
-
-            try
-            {
-                var receivedMessage = await receiver.ReceiveMessageAsync().ConfigureAwait(false);
-                await receiver.CompleteMessageAsync(receivedMessage);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                await receiver.DisposeAsync().ConfigureAwait(false);
-                await client.DisposeAsync().ConfigureAwait(false);
-            }
-        }
-
-        [TestMethod]
-        public async Task Abandons_Message_Lock_From_InvokeAsync_When_Exception_Is_Thrown_By_InvokeAsync()
-        {
-            // arrange
-            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
-
-            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes("Previous Message"));
-
-            PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
-
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Throws((new InvalidTimeZoneException()));
-            IPipelineRequest next = mockPipelineRequest.Object;
-
-            var options = new ReadMessageFromAzureOptions()
-            {
-                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                EntityPath = $"{Tests.TestConstants.AbandonMessageThrownTopicName}/{Tests.TestConstants.SubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3),
-            };
-
-            // sending message to be read.
-            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
-            var sender = client.CreateSender(options.ReadEntity.TopicName);
-
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
-
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
-
-            await sender.SendMessageAsync(message).ConfigureAwait(false);
-            await client.DisposeAsync().ConfigureAwait(false);
-
-            var source = new ReadMessageFromAzureStep(logger, options, next);
-
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            Assert.AreEqual(1, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidTimeZoneException));
-            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
-            Assert.AreEqual(stream, context.Items[PipelineContextConstants.INPUT_STREAM]);
-
-            // cleanup
-            await source.DisposeAsync();
-
-            var receiver = client.CreateReceiver(options.ReadEntity.TopicName, options.ReadEntity.SubscriptionName);
-
-            try
-            {
-                var receivedMessage = await receiver.ReceiveMessageAsync();
-                await receiver.CompleteMessageAsync(receivedMessage);    
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                await receiver.CloseAsync();
-                await client.DisposeAsync();
-            }
-        }
-
         [TestMethod]
         public async Task Constructs_ReadMessageFromAzureStep_Successfully()
         {
@@ -195,31 +69,43 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public async Task Returns_Pipeline_Error_From_InvokeAsync_When_Exception_Is_Thrown_While_Message_Lock_Expires_With_A_Cancelled_Token()
+        public async Task Returns_PipelineContext_Error_And_Abandoned_Message_From_InvokeAsync()
         {
             // arrange
-            bool isAsyncTestingCompleted = false;
-
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
             PipelineContext context = new PipelineContext();
 
+            string messageValue = "Are you there?";
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() =>
+                                {
+                                    context.Errors.Add(new InvalidDataException());
+                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    tokenSource.Cancel();
+                                    context.CancellationToken = tokenSource.Token;
+
+                                })
+                                .Returns(Task.CompletedTask);
+
             IPipelineRequest next = mockPipelineRequest.Object;
 
             var options = new ReadMessageFromAzureOptions()
             {
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                EntityPath = "${Tests.TestConstants.FastReadLockExpiryTopicName}/{Tests.TestConstants.SubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3),
+                DeliveryAttemptsBeforeDeadLetter = 2,
+                EntityPath = $"{Tests.TestConstants.AbandonMessageTopicName}/{Tests.TestConstants.SubscriptionName}",
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 100),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
             };
+
 
             // sending message to be read.
             var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
             var sender = client.CreateSender(options.ReadEntity.TopicName);
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
             ServiceBusMessage message = new ServiceBusMessage(messageBody);
 
@@ -230,104 +116,250 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             // act
             await source.InvokeAsync(context);
-            
-            // delay while async processing runs.
-            while (!isAsyncTestingCompleted)
-            {
-                await Task.Delay(1000);
-            }
 
             // assert
-            Assert.AreEqual(1, context.Errors.Count);
+            Assert.IsTrue(context.Errors.Any());
+            Assert.AreEqual(typeof(InvalidDataException), context.Errors[0].GetType());
+
+            // cleanup
+            var receiver = client.CreateReceiver(Tests.TestConstants.AbandonMessageTopicName, $"{Tests.TestConstants.SubscriptionName}/ /$DeadLetterQueue");
+            var receivedMessages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
+            await Task.WhenAll(receivedMessages.Select(x => receiver.CompleteMessageAsync(x)));
+
+            await receiver.CloseAsync();
+            await source.DisposeAsync();
+            await client.DisposeAsync();
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_Error_And_Deadletter_Message_From_InvokeAsync_When_Single_Delivery_Attempt_Is_Requested()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+
+            PipelineContext context = new PipelineContext();
+
+            string messageValue = "Are you there?";
+            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() =>
+                                {
+                                    context.Errors.Add(new InvalidDataException());
+
+                                })
+                                .Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockPipelineRequest.Object;
+
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                DeliveryAttemptsBeforeDeadLetter = 1,
+                EntityPath = $"{Tests.TestConstants.DeadMessageTopicName}/{Tests.TestConstants.SubscriptionName}",
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 0, 10, 0)
+            };
+
+
+            // sending message to be read.
+            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
+            var sender = client.CreateSender(options.ReadEntity.TopicName);
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
+
+            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.CloseAsync().ConfigureAwait(false);
+
+            var source = new ReadMessageFromAzureStep(logger, options, next);
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            Assert.IsTrue(context.Errors.Any());
+            Assert.AreEqual(typeof(InvalidDataException), context.Errors[0].GetType());
+
+            // cleanup
+            var receiver = client.CreateReceiver(Tests.TestConstants.CancellationTokenTopicName, $"{Tests.TestConstants.SubscriptionName}/ /$DeadLetterQueue");
+            var receivedMessages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
+            await Task.WhenAll(receivedMessages.Select(x => receiver.CompleteMessageAsync(x)));
+
+            await receiver.CloseAsync();
+            await source.DisposeAsync();
+            await client.DisposeAsync();
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Cancellation_Token_Is_Set()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+
+            PipelineContext context = new PipelineContext();
+
+            string messageValue = "Are you there?";
+            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() =>
+                                {
+                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    tokenSource.Cancel();
+                                    context.CancellationToken = tokenSource.Token;
+                                })
+                                .Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockPipelineRequest.Object;
+
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                EntityPath = Tests.TestConstants.QueueName,
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 100),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
+            };
+
+            // sending message to be read.
+            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
+            var sender = client.CreateSender(options.ReadEntity.QueueName);
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
+
+            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.CloseAsync().ConfigureAwait(false);
+
+            var source = new ReadMessageFromAzureStep(logger, options, next);
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            Assert.IsTrue(context.CancellationToken.IsCancellationRequested);
+
+            // cleanup
+            var receiver = client.CreateReceiver(options.ReadEntity.QueueName);
+            var receivedMessages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
+            await Task.WhenAll(receivedMessages.Select(x => receiver.CompleteMessageAsync(x)));
+
+            await source.DisposeAsync();
+            await receiver.CloseAsync();
+            await client.DisposeAsync();
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Exception_Is_Thrown_During_Cancellation_Token_Evaluation()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+
+            PipelineContext context = new PipelineContext();
+
+            string messageValue = "Are you there?";
+            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() =>
+                                {
+                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    tokenSource.Cancel();
+                                    context.CancellationToken = tokenSource.Token;
+                                })
+                                .Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockPipelineRequest.Object;
+
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                EntityPath = Tests.TestConstants.QueueName,
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 100),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
+            };
+
+            // sending message to be read.
+            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
+            var sender = client.CreateSender(options.ReadEntity.QueueName);
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
+
+            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.CloseAsync().ConfigureAwait(false);
+
+            var source = new TestOverrideEvaluateCancellationTokenStep(logger, options, next);
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            Assert.IsTrue(context.CancellationToken.IsCancellationRequested);
+            Assert.IsTrue(context.Errors.Count > 1);
             Assert.IsInstanceOfType(context.Errors[0], typeof(ServiceBusException));
 
             // cleanup
+            var receiver = client.CreateReceiver(options.ReadEntity.QueueName);
+            var receivedMessages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
+            await Task.WhenAll(receivedMessages.Select(x => receiver.CompleteMessageAsync(x)));
+
             await source.DisposeAsync();
-        }
-
-        [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Exception_Is_Thrown()
-        {
-            // arrange
-            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
-
-            PipelineContext context = new PipelineContext();
-
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
-            IPipelineRequest next = mockPipelineRequest.Object;
-
-            var options = new ReadMessageFromAzureOptions()
-            {
-                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                EntityPath = $"{Tests.TestConstants.DeadMessageTopicName}/{Tests.TestConstants.MissingSubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3)
-            };
-
-            // sending message to be read.
-            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
-            var sender = client.CreateSender(options.ReadEntity.TopicName);
-
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
-
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
-
-            await sender.SendMessageAsync(message).ConfigureAwait(false);
-            await sender.CloseAsync().ConfigureAwait(false);
-
-            var source = new ReadMessageFromAzureStep(logger, options, next);
-
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            Assert.IsTrue(context.Errors.Count > 0, $"context.Errors.Count must be greater than zero: Actual Value {context.Errors.Count}.");
-            Assert.IsInstanceOfType(context.Errors[0], typeof(ServiceBusException));
-
-            // cleanup
-            await source.DisposeAsync();
+            await receiver.CloseAsync();
             await client.DisposeAsync();
         }
-
         [TestMethod]
-        public async Task Returns_PipelineContext_InputStream_From_InvokeAsync_When_Message_Is_Received()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Queue()
         {
             // arrange
-            const int errorCount = 0;
-
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
-            context.Items.Add("TESTING_ERROR_COUNT", errorCount);
+            int keyId = 1;
+            string name = "Name";
 
+            var previousStream = new MemoryStream();
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
+
+            string messageValue = "Are you there?";
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Callback(() => ReadMessageFromAzureStepTests.VerifyValues(context)).Returns(Task.CompletedTask);
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() =>
+                                {
+                                    // assert
+                                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
+                                    {
+                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
+                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(messageValue, reader.ReadToEnd());
+                                    }
+
+                                })
+                                .Returns(Task.CompletedTask);
+
             IPipelineRequest next = mockPipelineRequest.Object;
 
             var options = new ReadMessageFromAzureOptions()
             {
+                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                EntityPath= $"{Tests.TestConstants.ReadFromTopicName}/{Tests.TestConstants.SubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3),
-                ApplicationProperties = new List<string>()
-                                        {
-                                            "IsActive",
-                                            "Name"
-                                        }
+                EntityPath = Tests.TestConstants.QueueName,
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
             };
+
 
             // sending message to be read.
             var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
-            var sender = client.CreateSender(options.ReadEntity.TopicName);
+            var sender = client.CreateSender(options.ReadEntity.QueueName);
 
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
-            context.Items.Add("TESTING_MESSAGE_BODY", messageBody);
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
             ServiceBusMessage message = new ServiceBusMessage(messageBody);
-            message.ApplicationProperties.Add("IsActive", false);
-            message.ApplicationProperties.Add("Name", "My-Mom");
+            message.ApplicationProperties.Add("KeyId", keyId);
+            message.ApplicationProperties.Add("Name", name);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.CloseAsync().ConfigureAwait(false);
@@ -338,60 +370,67 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             await source.InvokeAsync(context);
 
             // assert
-            if (context.Errors.Count > 0)
+            if (context.Errors.Any())
             {
                 throw context.Errors[0];
             }
-            Assert.IsTrue(context.Items.TryGetValue("TESTING_VERIFY_VALUES_CALLED", out object result));
-            Assert.IsTrue((bool)result);
-            Assert.AreEqual(errorCount, context.Errors.Count);
-
-            // Additional asserts were handled in the InvokeAsync method.
 
             // cleanup
             await source.DisposeAsync();
             await client.DisposeAsync();
+            previousStream.Close();
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_InputStream_From_InvokeAsync_When_PreviousMessage_Was_Received()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Subscription()
         {
             // arrange
-            const int errorCount = 0;
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes("Previous Message"));
+            int keyId = 1;
+            string name = "Name";
 
+            var previousStream = new MemoryStream();
             PipelineContext context = new PipelineContext();
-            context.Items.Add("TESTING_ERROR_COUNT", errorCount);
-            context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
+            context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
 
+            string messageValue = "Are you there?";
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Callback(() => ReadMessageFromAzureStepTests.VerifyValues(context)).Returns(Task.CompletedTask);
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Callback(() => 
+                                {
+                                    // assert
+                                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
+                                    {
+                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
+                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(messageValue, reader.ReadToEnd());
+                                    }
+                                    
+                                })
+                                .Returns(Task.CompletedTask);
+
             IPipelineRequest next = mockPipelineRequest.Object;
 
             var options = new ReadMessageFromAzureOptions()
             {
+                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                EntityPath = $"{Tests.TestConstants.PreviousMessageTopicName}/{Tests.TestConstants.SubscriptionName}",
-                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 3),
-                TimeToWaitForNewMessage = new TimeSpan(0, 0, 3),
-                ApplicationProperties = new List<string>()
-                                        {
-                                            "IsActive",
-                                            "Name"
-                                        }
+                EntityPath = $"{Tests.TestConstants.ReadFromTopicName}/{Tests.TestConstants.SubscriptionName}",
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
             };
 
+           
             // sending message to be read.
             var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
             var sender = client.CreateSender(options.ReadEntity.TopicName);
-            byte[] messageBody = Encoding.UTF8.GetBytes("Are you there?");
-            context.Items.Add("TESTING_MESSAGE_BODY", messageBody);
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
             ServiceBusMessage message = new ServiceBusMessage(messageBody);
-            message.ApplicationProperties.Add("IsActive", false);
-            message.ApplicationProperties.Add("Name", "My-Mom");
+            message.ApplicationProperties.Add("KeyId", keyId);
+            message.ApplicationProperties.Add("Name", name);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.CloseAsync().ConfigureAwait(false);
@@ -401,19 +440,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // act
             await source.InvokeAsync(context);
 
-
             // assert
-            if (context.Errors.Count > 0)
+            if (context.Errors.Any())
             {
                 throw context.Errors[0];
             }
-            Assert.IsTrue(context.Items.TryGetValue("TESTING_VERIFY_VALUES_CALLED", out object result));
-            Assert.IsTrue((bool)result);
-            Assert.AreEqual(context.Items[PipelineContextConstants.INPUT_STREAM], stream);
 
             // cleanup
             await source.DisposeAsync();
             await client.DisposeAsync();
+            previousStream.Close();
         }
 
         [TestMethod]
@@ -483,23 +519,33 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             Assert.AreEqual(paramName, result.ParamName);
         }
 
-        private static void VerifyValues(PipelineContext context)
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_Constructor_When_ServiceBusReadEntityKind_Is_Unknown()
         {
-            context.Items.Add("TESTING_VERIFY_VALUES_CALLED", true);
-            byte[] messageBody = context.Items["TESTING_MESSAGE_BODY"] as byte[];
-            int errorCount = (int)context.Items["TESTING_ERROR_COUNT"];
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            Assert.IsTrue(context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out object result));
+            PipelineContext context = new PipelineContext();
 
-            byte[] messageBody2 = (result as MemoryStream).ToArray();
-            string messageBodyExpected = Encoding.UTF8.GetString(messageBody);
-            string messageBodyActual = Encoding.UTF8.GetString(messageBody2);
+            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context))
+                                .Returns(Task.CompletedTask);
 
-            Assert.AreEqual(messageBodyExpected, messageBodyActual);
-            Assert.AreEqual(errorCount, context.Errors.Count);
-            Assert.AreEqual(false, context.Items["IsActive"]);
-            Assert.AreEqual("My-Mom", context.Items["Name"]);
+            IPipelineRequest next = mockPipelineRequest.Object;
+
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                EntityPath = "Topic/Queue/SubQueue"
+            };
+
+            string message = ServiceBus.Resources.ENTITY_PATH_INVALID(CultureInfo.CurrentCulture);
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => new ReadMessageFromAzureStep(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(message, result.Message);
         }
-
     }
 }

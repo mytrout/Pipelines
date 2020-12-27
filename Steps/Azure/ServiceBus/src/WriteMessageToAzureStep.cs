@@ -52,9 +52,12 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <summary>
         /// Gets the subscription client for Azure Service Bus.
         /// </summary>
-        private ServiceBusClient ServiceBusClient { get; init; }
+        public ServiceBusClient ServiceBusClient { get; init; }
 
-        private ServiceBusSender ServiceBusSender { get; init; }
+        /// <summary>
+        /// Gets the service bus sender for Azure Service Bus.
+        /// </summary>
+        public ServiceBusSender ServiceBusSender { get; init; }
 
         /// <summary>
         /// Dispose of any unmanaged resources.
@@ -84,6 +87,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         {
             context.AssertParameterIsNotNull(nameof(context));
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
@@ -92,7 +100,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.QueueOrTopicName}'.");
 
-            await this.ServiceBusSender.SendMessageAsync(message).ConfigureAwait(false);
+            await this.ServiceBusSender.SendMessageAsync(message, cancellationToken: context.CancellationToken).ConfigureAwait(false);
 
             this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.QueueOrTopicName}'.");
         }

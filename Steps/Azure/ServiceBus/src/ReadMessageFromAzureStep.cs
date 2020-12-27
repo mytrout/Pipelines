@@ -73,14 +73,14 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         }
 
         /// <summary>
-        /// Gets or sets the Azure Service Bus client.
+        /// Gets the Azure Service Bus client.
         /// </summary>
-        protected ServiceBusClient ServiceBusClient { get; set; }
+        public ServiceBusClient ServiceBusClient { get; init; }
 
         /// <summary>
         /// Gets or sets the Azure Service Bus message receiver.
         /// </summary>
-        protected ServiceBusReceiver ServiceBusReceiver { get; set; }
+        public ServiceBusReceiver ServiceBusReceiver { get; protected set; }
 
         /// <summary>
         /// Dispose of any unmanaged resources.
@@ -102,7 +102,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         }
 
         /// <summary>
-        /// Reads a single message from an Azure Service Bus subscription.
+        /// Reads a batch of messages from an Azure Service Bus subscription and processes them one at time.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
@@ -125,22 +125,18 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
                 while (DateTimeOffset.UtcNow.Subtract(lastMessageProcessedAt) <= this.Options.TimeToWaitForNewMessage)
                 {
-                    var messages = await this.ServiceBusReceiver.ReceiveMessagesAsync(this.Options.BatchSize).ConfigureAwait(false);
+                    var messages = await this.ServiceBusReceiver.ReceiveMessagesAsync(this.Options.BatchSize, maxWaitTime: this.Options.TimeToWaitForNewMessage, cancellationToken: context.CancellationToken).ConfigureAwait(false);
 
-                    if (messages.Any())
+                    foreach (var message in messages)
                     {
-                        while (messages.Any())
-                        {
-                            foreach (var message in messages)
-                            {
-                                await this.ProcessMessageAsync(context, message, context.CancellationToken).ConfigureAwait(false);
-                                lastMessageProcessedAt = DateTimeOffset.UtcNow;
-                            }
-                        }
+                        await this.ProcessMessageAsync(context, message, context.CancellationToken).ConfigureAwait(false);
+                        lastMessageProcessedAt = DateTimeOffset.UtcNow;
                     }
-                    else
+
+                    if (context.CancellationToken.IsCancellationRequested)
                     {
-                        await Task.Delay(this.Options.TimeToWaitForNewMessage, context.CancellationToken).ConfigureAwait(false);
+                        // Forces to a UTC version of MinValue.
+                        lastMessageProcessedAt = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
                     }
                 }
             }
@@ -149,11 +145,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 // Restore the previousInputStream if prior steps created it.
                 if (previousInputStream != null)
                 {
-                    if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
-                    {
-                        context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-                    }
-
                     context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousInputStream);
                 }
             }
@@ -166,7 +157,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="message">The <see cref="ServiceBusMessage"/> to be cancelled.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
         /// <returns><see langword="true"/> if the message was cancelled; otherwise <see langword="false"/>.</returns>
-        private async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  params CancellationToken[] tokens)
+        protected virtual async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  params CancellationToken[] tokens)
         {
             message.AssertParameterIsNotNull(nameof(message));
             context.AssertParameterIsNotNull(nameof(context));
@@ -190,9 +181,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             return await Task.FromResult(result).ConfigureAwait(false);
         }
 
-        private async Task ProcessMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message, CancellationToken token)
+        /// <summary>
+        /// Process the message into the <paramref name="context"/> after it is read.
+        /// </summary>
+        /// <param name="context">The context f0r the currently executing pipeline.</param>
+        /// <param name="message">The <see cref="ServiceBusMessage"/> to be cancelled.</param>
+        /// <param name="token">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
+        /// <returns>A completed <see cref="Task"/>.</returns>
+        protected virtual async Task ProcessMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message, CancellationToken token)
         {
-            if (await this.EvaluateCancellationOfMessageAsync(context, message, token).ConfigureAwait(false))
+            if (await this.EvaluateCancellationOfMessageAsync(context, message, token, context.CancellationToken).ConfigureAwait(false))
             {
                 return;
             }
@@ -210,7 +208,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             try
             {
-                // Add the values in UserProperties to the context.
+                // Add the values in ApplicationProperties to the context.
                 foreach (var key in this.Options.ApplicationProperties)
                 {
                     if (message.ApplicationProperties.ContainsKey(key))
@@ -231,7 +229,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             {
                 context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
 
-                // Remove the values in UserProperties from the context.
+                // Remove the values in ApplicationProperties from the context.
                 foreach (var key in this.Options.ApplicationProperties)
                 {
                     if (message.ApplicationProperties.ContainsKey(key))
@@ -242,8 +240,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
                 if (context.Errors.Count > errorCount)
                 {
-                    // Abandon the message because it did not process correctly.
-                    await this.ServiceBusReceiver.AbandonMessageAsync(message, cancellationToken: token).ConfigureAwait(false);
+                    if (message.DeliveryCount >= this.Options.DeliveryAttemptsBeforeDeadLetter)
+                    {
+                        // Deadletter the message because it has been attempted too may times.
+                        await this.ServiceBusReceiver.DeadLetterMessageAsync(message, cancellationToken: context.CancellationToken);
+                    }
+                    else
+                    {
+                        // Abandon the message because it did not process correctly.
+                        await this.ServiceBusReceiver.AbandonMessageAsync(message, cancellationToken: token).ConfigureAwait(false);
+                    }
                 }
                 else
                 {

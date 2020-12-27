@@ -56,6 +56,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public int BatchSize { get; set; } = 10;
 
         /// <summary>
+        /// Gets or sets the number of times a message will be delivered before being dead-lettered.
+        /// </summary>
+        public int DeliveryAttemptsBeforeDeadLetter { get; set; } = 5;
+
+        /// <summary>
         /// Gets or sets the entity path from which messages will be read.
         /// </summary>
         /// <remarks>Queues should be just the name of the queue. Subscriptions should be in the '{topic}/{subscription}' format using a forward slash between the topic name and the subscription name.</remarks>
