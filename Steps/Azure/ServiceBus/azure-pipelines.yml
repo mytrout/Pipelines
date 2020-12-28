@@ -44,7 +44,7 @@ variables:
 - group: 'SonarQube Analysis'
 
 - name: "artifactPublishEnabled"
-  value: "NO"
+  value: "YES"
 
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.Azure.ServiceBus'
