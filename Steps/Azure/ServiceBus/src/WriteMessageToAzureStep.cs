@@ -1,4 +1,4 @@
-﻿// <copyright file="WriteMessageToAzureTopicStep.cs" company="Chris Trout">
+﻿// <copyright file="WriteMessageToAzureStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -21,47 +21,60 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
+
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
-    using Microsoft.Azure.ServiceBus;
+    using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Writes a single message to an Azure Service Bus topic.
+    /// Writes a single message to an Azure Service Bus queue or topic.
     /// </summary>
-    public class WriteMessageToAzureTopicStep : AbstractPipelineStep<WriteMessageToAzureTopicStep, WriteMessageToAzureTopicOptions>
+    public class WriteMessageToAzureStep : AbstractPipelineStep<WriteMessageToAzureStep, WriteMessageToAzureOptions>
     {
         /// <summary>
-        /// Gets the Correlation ID of the message.
-        /// </summary>
-        public const string CORRELATION_ID = "CorrelationId";
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WriteMessageToAzureTopicStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="WriteMessageToAzureStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public WriteMessageToAzureTopicStep(ILogger<WriteMessageToAzureTopicStep> logger, WriteMessageToAzureTopicOptions options, IPipelineRequest next)
+        public WriteMessageToAzureStep(ILogger<WriteMessageToAzureStep> logger, WriteMessageToAzureOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            this.Logger.LogDebug($"Building connection to Azure Service Bus topic '{this.Options.TopicName}'.");
-
-            this.TopicClient = new TopicClient(this.Options.AzureServiceBusConnectionString, this.Options.TopicName, RetryPolicy.Default);
+            this.ServiceBusClient = new ServiceBusClient(options.RetrieveConnectionString.Invoke());
+            this.ServiceBusSender = this.ServiceBusClient.CreateSender(options.QueueOrTopicName);
         }
 
-        private ITopicClient TopicClient { get;  }
+        /// <summary>
+        /// Gets the subscription client for Azure Service Bus.
+        /// </summary>
+        public ServiceBusClient ServiceBusClient { get; init; }
 
         /// <summary>
-        /// Dispose of the <see cref="TopicClient"/>.
+        /// Gets the service bus sender for Azure Service Bus.
+        /// </summary>
+        public ServiceBusSender ServiceBusSender { get; init; }
+
+        /// <summary>
+        /// Dispose of any unmanaged resources.
         /// </summary>
         /// <returns>A completed <see cref="ValueTask"/>.</returns>
-        public override async ValueTask DisposeAsync()
+        public async override ValueTask DisposeAsync()
         {
-            await this.TopicClient.CloseAsync().ConfigureAwait(false);
+            if (this.ServiceBusSender != null)
+            {
+                await this.ServiceBusSender.CloseAsync().ConfigureAwait(false);
+            }
+
+            if (this.ServiceBusClient != null)
+            {
+                await this.ServiceBusClient.DisposeAsync().ConfigureAwait(false);
+            }
+
             await base.DisposeAsync().ConfigureAwait(false);
         }
 
@@ -74,35 +87,46 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         {
             context.AssertParameterIsNotNull(nameof(context));
 
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-            Message message = await this.ConstructMessageAsync(context).ConfigureAwait(false);
+            ServiceBusMessage message = await this.ConstructMessageAsync(context).ConfigureAwait(false);
 
-            this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
+            this.Logger.LogDebug($"Sending message '{message.MessageId}' to Azure Service Bus topic '{this.Options.QueueOrTopicName}'.");
 
-            await this.TopicClient.SendAsync(message).ConfigureAwait(false);
+            await this.ServiceBusSender.SendMessageAsync(message, cancellationToken: context.CancellationToken).ConfigureAwait(false);
 
-            this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.TopicName}'.");
+            this.Logger.LogDebug($"Sent message successfully '{message.MessageId}' to Azure Service Bus topic '{this.Options.QueueOrTopicName}'.");
         }
 
         /// <summary>
         /// Constructs an Azure Message with the values from the <paramref name="context"/> based on the user-configured options.
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext" /> for the currently executing pipeline.</param>
-        /// <returns>An Azure <see cref="Message" />.</returns>
-        private async Task<Message> ConstructMessageAsync(IPipelineContext context)
+        /// <returns>An Azure <see cref="ServiceBusMessage" />.</returns>
+        private async Task<ServiceBusMessage> ConstructMessageAsync(IPipelineContext context)
         {
-            var inputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-            byte[] messageBody = await inputStream.ConvertStreamToByteArrayAsync().ConfigureAwait(false);
+            var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 
-            Message result = new Message(messageBody);
+#pragma warning disable CS8604 // context.AssertValueIsValue(OUTPUT_STREAM) ensures that outputStream is not null when converted to a Stream.
 
-            if (context.Items.ContainsKey(WriteMessageToAzureTopicStep.CORRELATION_ID))
+            var messageBody = await BinaryData.FromStreamAsync(outputStream);
+
+#pragma warning restore CS8604
+
+            ServiceBusMessage result = new ServiceBusMessage(messageBody);
+
+            if (context.Items.ContainsKey(MessagingConstants.CORRELATION_ID))
             {
-                result.CorrelationId = context.Items[WriteMessageToAzureTopicStep.CORRELATION_ID].ToString();
+                result.CorrelationId = context.Items[MessagingConstants.CORRELATION_ID].ToString();
             }
             else
             {
@@ -110,11 +134,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
 
             // Sets UserProperties aka Filter Values on the Message, if they are available in the context.
-            foreach (var userProperty in this.Options.UserProperties)
+            foreach (var userProperty in this.Options.ApplicationProperties)
             {
                 if (context.Items.ContainsKey(userProperty))
                 {
-                    result.UserProperties.Add(userProperty, context.Items[userProperty]);
+                    result.ApplicationProperties.Add(userProperty, context.Items[userProperty]);
                 }
                 else
                 {

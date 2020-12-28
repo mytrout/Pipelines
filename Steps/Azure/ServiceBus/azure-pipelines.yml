@@ -26,13 +26,13 @@ variables:
   value: 'Release'
 
 - name: 'major'
-  value: 1 
+  value: '2'
 
 - name: 'minor'
-  value: 0
+  value: '0'
 
 - name: 'patch'
-  value: 0
+  value: '0'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
@@ -42,6 +42,9 @@ variables:
 
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
+
+- name: "artifactPublishEnabled"
+  value: "YES"
 
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.Azure.ServiceBus'

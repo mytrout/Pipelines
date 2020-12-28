@@ -1,8 +1,9 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus
 
-MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to encrypt, hash, and decrypt streams.
+## Introduction
+MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and send messages using Azure ServiceBus.
 
-MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
@@ -10,20 +11,24 @@ For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/REA
 
 For a list of available steps, see [Available Steps](../README.md)
 
-# Installing via NuGet
+## Installing via NuGet
 
     Install-Package MyTrout.Pipelines.Steps.Azure.ServiceBus
 
-# Software dependencies
+## Software dependencies
 
-    1. Microsoft.Azure.ServiceBus v4.1.3
-    2. MyTrout.Pipelines.Steps >= v1.0.0 and < 2.0.0
+    1. Azure.Messaging.ServiceBus 7.0.0
+    2. MyTrout.Pipelines.Steps 2.0.6 minimum, 2.*.* is acceptable.
     
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-# How do I use the steps in this library ([ReadMessageFromAzureSubscriptionStep](/src/ReadMessageFromAzureSubscriptionStep.cs)) ?
 
-## sample C# code
+## BREAKING CHANGES FROM v1.x to V2.0
+
+
+## How do I use the steps in this library ([ReadMessageFromAzureStep](./src/ReadMessageFromAzureStep.cs)) ?
+
+### sample C# code
 
 ```csharp
 
@@ -42,13 +47,13 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
             {
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<ReadMessageFromAzureSubscriptionOptions>()
+                                    .AddStepDependency<ReadMessageFromAzureOptions>()
                                     .UsePipeline(builder => 
                                     {
                                         builder
-                                            // NOTE: ReadMessageFromAzureSubscriptionStep will continue to read (and process) messages 
+                                            // NOTE: ReadMessageFromAzureStep will continue to read (and process) messages 
                                             //       one at a time until there are no more messages on the subscription.
-                                            .AddStep<ReadMessageFromAzureSubscriptionStep>()
+                                            .AddStep<ReadMessageFromAzureStep>()
                                             .AddStep<UserDefinedStepThatProcessesMessageBodyIntoPipelineContext>()
                                             .AddStep<UserDefinedStepThatDoesSomethingWithPipelineContext>();
                                     })
@@ -75,30 +80,42 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 }
 
 ```
-## sample appsettings.json file
+### sample appsettings.json file
 
-UserProperties are values that should be copied from the UserProperties collection of the message to the PipelineContext.
+ApplicationrProperties are values that should be copied from the ApplicationProperties collection of the message to the PipelineContext.
 
 ```json
 {
     "AzureServiceBusConnectionString": "user supplied ASB ConnectionString",
-    "TopicName": "user supplied topic",
-    "SubscriptionName": "user supplied subscriptionName",
-    "UserProperties": [ "Year", "Month", "Id" ]
+    "EntityName": "topic/subscription"
+    "ApplicationProperties": [ "Year", "Month", "Id" ]
 }
 ```
 
+## How do I configure TimeSpan via the .NET ConfigurationManager.
 
-# Build the software locally.
+The appropriate format for configuring a timespan using the .NET Configuration abstraction is ````D.HH.mm.nn````.
+
+For example, the default timespan configurations for ReadMessageFromAzureOptions would be:
+
+```json
+{
+    "TimeToWaitForNewMessage": "0.00:01:00",
+    "TimeToWaitBetweenMessageChecks": "0.00:00:02"
+}
+```
+
+## Build the software locally.
     1. Clone the software from the Pipelines repository.
     2. Build the software in Visual Studio 2019 to pull down all of the dependencies from nuget.org.
-    3. Deploy the Azure Resource Template located at <insert document location here> to initialize the Azure Service Bus connectivity.
+    3. Deploy the Azure ResourceGroup Template located at [azure-arm-resourcegroup.json](./azure-arm-resourcegroup.json))  to create the Resource Group.
+    3. Deploy the Azure ServiceBus Template located at [azure-arm-servicebus.json](./azure-arm-servicebus.json))  to initialize the Azure Service Bus connectivity.
     4. Get the Primary Connection String for the Azure Service Bus Instance.
-    5. Create a new machine-level environment variable named 'PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING' and set the value to the Azure Service Bus Connection string.
+    5. Create a new machine-level environment variable named 'TEST_PIPELINE_AZURE_SERVICE_BUS_CONNECTION_STRING' and set the value to the Azure Service Bus Connection string.
     6. In Visual Studio, run all tests.  All of the should pass.
     7. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
 
-# Build the software in Azure DevOps.
+## Build the software in Azure DevOps.
     1. In Organization Settings, select Extensions option.
     2. Install the SonarCloud Extension.
     3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
@@ -122,25 +139,23 @@ UserProperties are values that should be copied from the UserProperties collecti
         a. Add a variable named 'publishVstsFeed' with the value of the feed to which output should be published.
     15. Run the newly created pipeline.
 
-# Contribute
-No contributions are being accepted at this time.
 
-# Testing
+## Testing
 These tests are a mixture of unit and integration tests necessary to read an Azure Service Bus Message into the pipeline and write an Azure Service Bus Message from the pipeline.
 
-# API references
+## API references
 
-ReadMessageFromAzureSubscriptionStep
-* Reads a single message from an Azure Service subscription.
-* Copies any User Properties from the Message into the PipelineContext based on the Options.UserProperties configured.
-* Creates a PipelineContext entry named INPUT_STREAM containing a MemoryStream that is wrapping the Message.Body byte array.
+ReadMessageFromAzureStep
+* Reads a multiple messages from an Azure Service queue or subscription and sends them to the request pipeline one message at a time.
+* Copies any Application Properties from the Message into the PipelineContext based on the Options.ApplicationProperties configured.
+* Creates a PipelineContext entry named INPUT_STREAM containing a MemoryStream that is wrapping the ServiceBusMessage.Body stream.
 
-WriteMessageToAzureSubscriptionOptions
-* Writes a single message from an Azure Service subscription.
-* Copies any User Properties from the PipelineContext into the Message based on the Options.UserProperties configured.
+WriteMessageToAzureStep
+* Writes a single message to an Azure Service queue or topic.
+* Copies any Application Properties from the PipelineContext into the ServiceBusMessage based on the Options.ApplicationProperties configured.
 * UTF8 encodes the Stream contained in OUTPUT_STREAM and writes it to the Message.Body.
 
 
 TO DEVELOPERS:
-All of the tests with a ReadMessageFromAzureSubscriptionOptions class are written to use the options defined in this class for all subsequent Topic or Subscription calls.
+All of the tests with a ReadMessageFromAzureOptions class are written to use the options defined in TODO: ?? this class ?? for all subsequent Topic or Subscription calls.
 All Pull Requests should follow this pattern to enable a "one location" alteration within each test to be used throughout the rest of the test.

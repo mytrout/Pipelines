@@ -30,6 +30,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     [ExcludeFromCodeCoverage]
     public static class TestConstants
     {
+        public const string QueueName = "test-read-from-queue";
+
         /// <summary>
         /// A subscription name that is used for all topics that deliver messages.
         /// </summary>
@@ -43,23 +45,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         /// </remarks>
         public const string MissingSubscriptionName = "missing-subscription";
 
-        public const string AbandonMessageThrownTopicName = "test-read-from-topic-abandon-message-thrown";
-
         public const string AbandonMessageTopicName = "test-read-from-topic-abandon-message";
 
         public const string CancellationTokenTopicName = "test-read-from-topic-cancellation-token";
-        
-        public const string CancellationDuringEvaluateTopicName = "test-read-from-topic-cancel-evaluate";
 
         public const string DeadMessageTopicName = "test-write-to-topic-dead-message";
-
-        public const string EvaluateTokenTopicName = "test-read-from-topic-evalute-token";
-
-        public const string FastReadLockExpiryTopicName = "test-read-from-topic-fast-read-lock-expiry";
-
-        public const string PreviousMessageTopicName = "test-read-from-topic-previous-message";
-
-        public const string InputStreamTopicName = "test-read-from-topic-input-stream";
 
         /// <summary>
         /// A topic that has not been provisioned within this Service Bus.

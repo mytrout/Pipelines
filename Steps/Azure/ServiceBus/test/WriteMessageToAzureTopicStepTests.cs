@@ -1,4 +1,4 @@
-// <copyright file="WriteMessageToAzureServiceTopicStepTests.cs" company="Chris Trout">
+// <copyright file="WriteMessageToAzureStepTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2019-2020 Chris Trout
@@ -24,7 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 {
-    using Microsoft.Azure.ServiceBus;
+    using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -41,28 +41,22 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
     [ExcludeFromCodeCoverage]
     [TestClass]
-    public class WriteMessageToAzureTopicStepTests
+    public class WriteMessageToAzureStepTests
     {
-        private static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs, PipelineContext context)
-        {
-            context.Errors.Add(exceptionReceivedEventArgs.Exception);
-            return Task.CompletedTask;
-        }
-
         [TestMethod]
-        public void Constructs_WriteMessageToAzureServiceTopicStep_Successfully()
+        public void Constructs_WriteMessageToAzureStep_Successfully()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-            var options = new WriteMessageToAzureTopicOptions()
+            var options = new WriteMessageToAzureOptions()
             {
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                TopicName = Tests.TestConstants.WriteToTopicName
+                QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
 
             // act
-            var result = new WriteMessageToAzureTopicStep(logger, options, next);
+            var result = new WriteMessageToAzureStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -71,204 +65,237 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Needs_To_Be_Sent()
+        public async Task Returns_PipelineContext_From_InvokeAsync_Using_FileStream()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
 
-            Stream inputStream = new MemoryStream(Encoding.UTF8.GetBytes("Hello Woeld."));
-            Guid correlationId = Guid.NewGuid();
+            Stream inputStream = new FileStream($"{ AppDomain.CurrentDomain.BaseDirectory}text.json", FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            int id = 1;
+            string name = "name";
             bool isActive = true;
 
             var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, inputStream);
-            context.Items.Add(WriteMessageToAzureTopicStep.CORRELATION_ID, correlationId.ToString());
-            context.Items.Add("IsActive", isActive);
+            context.Items.Add(MessagingConstants.CORRELATION_ID, Guid.NewGuid());
+            context.Items.Add("id", id);
+            context.Items.Add("name", name);
+            context.Items.Add("isActive", isActive);
 
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockPipelineRequest.Object;
 
-            var options = new WriteMessageToAzureTopicOptions()
+            var options = new WriteMessageToAzureOptions()
             {
+                ApplicationProperties = new List<string>() { "id", "name", "isActive" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                TopicName = Tests.TestConstants.WriteToTopicName,
-                UserProperties = new List<string>()
-                                        {
-                                            "IsActive",
-                                            "ID"
-                                        }
+                QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
 
             string subscriptionName = Tests.TestConstants.SubscriptionName;
 
             const int errorCount = 0;
 
-            var source = new WriteMessageToAzureTopicStep(logger, options, next);
+            var source = new WriteMessageToAzureStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context);
-
-            await source.DisposeAsync();
 
             // assert
             Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
             Assert.AreEqual(errorCount, context.Errors.Count);
 
             // cleanup
+            ServiceBusReceiver receiver = source.ServiceBusClient.CreateReceiver(options.QueueOrTopicName, subscriptionName);
             try
             {
-                var subscriptionClient = new SubscriptionClient(
-                                            options.AzureServiceBusConnectionString,
-                                            options.TopicName,
-                                            subscriptionName,
-                                            ReceiveMode.PeekLock,
-                                            RetryPolicy.Default);
+                var messages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
 
-                // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
-                var messageHandlerOptions = new MessageHandlerOptions((ExceptionReceivedEventArgs args) =>
-                                                    WriteMessageToAzureTopicStepTests.ExceptionReceivedHandler(args, context))
+                foreach (var message in messages)
                 {
-                    // Allow 1 concurrent call to simplify pipeline processing.
-                    MaxConcurrentCalls = 1,
-                    // Handle the message completion manually within the ProcessMessageAsync() call.
-                    AutoComplete = false
-                };
-
-                subscriptionClient.RegisterMessageHandler(
-                            async (Message message, CancellationToken token) =>
-                            {
-                                Assert.AreEqual(isActive, message.UserProperties["IsActive"]);
-                                Assert.AreEqual(correlationId, message.UserProperties[WriteMessageToAzureTopicStep.CORRELATION_ID]);
-                                await subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
-                            },
-                            messageHandlerOptions);
-
-                // Allow the message to be read from the subscription prior to ending the execution of this method.
-                await Task.Delay(500);
+                    Assert.AreEqual(id, message.ApplicationProperties["id"]);
+                    Assert.AreEqual(name, message.ApplicationProperties["name"]);
+                    Assert.AreEqual(isActive, message.ApplicationProperties["isActive"]);
+                    await receiver.CompleteMessageAsync(message);
+                }
             }
             catch (Exception)
             {
                 throw;
             }
+            finally
+            {
+                await source.DisposeAsync();
+            }
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_Using_FileStream()
+        public async Task Returns_PipelineContext_From_InvokeAsync_With_Correlation_From_Options()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
 
             Stream inputStream = new FileStream($"{ AppDomain.CurrentDomain.BaseDirectory}text.json", FileMode.Open, FileAccess.Read, FileShare.Read);
 
+            int id = 1;
+            string name = "name";
+            bool isActive = true;
+
             var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, inputStream);
+            context.Items.Add("id", id);
+            context.Items.Add("name", name);
+            context.Items.Add("isActive", isActive);
 
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockPipelineRequest.Object;
 
-            var options = new WriteMessageToAzureTopicOptions()
+            var options = new WriteMessageToAzureOptions()
             {
+                ApplicationProperties = new List<string>() { "description" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                TopicName = Tests.TestConstants.WriteToTopicName
+                QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
 
             string subscriptionName = Tests.TestConstants.SubscriptionName;
 
             const int errorCount = 0;
 
-            var source = new WriteMessageToAzureTopicStep(logger, options, next);
+            var source = new WriteMessageToAzureStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context);
-
-            await source.DisposeAsync();
 
             // assert
             Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
             Assert.AreEqual(errorCount, context.Errors.Count);
 
             // cleanup
+            ServiceBusReceiver receiver = source.ServiceBusClient.CreateReceiver(options.QueueOrTopicName, subscriptionName);
             try
             {
-                var subscriptionClient = new SubscriptionClient(
-                                            options.AzureServiceBusConnectionString,
-                                            options.TopicName,
-                                            subscriptionName,
-                                            ReceiveMode.PeekLock,
-                                            RetryPolicy.Default);
+                var messages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
 
-                // The lambda allows the Pipeline context to be passed in while preserving the standard method signature.
-                var messageHandlerOptions = new MessageHandlerOptions((ExceptionReceivedEventArgs args) =>
-                                                    WriteMessageToAzureTopicStepTests.ExceptionReceivedHandler(args, context))
+                foreach (var message in messages)
                 {
-                    // Allow 1 concurrent call to simplify pipeline processing.
-                    MaxConcurrentCalls = 1,
-                    // Handle the message completion manually within the ProcessMessageAsync() call.
-                    AutoComplete = false
-                };
-
-                subscriptionClient.RegisterMessageHandler(
-                            async (Message message, CancellationToken token) =>
-                            {
-                                await subscriptionClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
-                            },
-                            messageHandlerOptions);
-
-                // Allow the message to be read from the subscription prior to ending the execution of this method.
-                await Task.Delay(500);
+                    await receiver.CompleteMessageAsync(message);
+                }
             }
             catch (Exception)
             {
                 throw;
             }
+            finally
+            {
+                await source.DisposeAsync();
+            }
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_No_SendMessage_Is_Supplied_In_PipelineContext()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_CancellationToken_Is_Cancelled()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
+
+            Stream inputStream = new FileStream($"{ AppDomain.CurrentDomain.BaseDirectory}text.json", FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            var tokenSource = new CancellationTokenSource();
+            tokenSource.Cancel();
 
             var context = new PipelineContext();
+            context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, inputStream);
+            context.CancellationToken = tokenSource.Token;
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
-            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
-            IPipelineRequest next = mockPipelineRequest.Object;
+            var next = new Mock<IPipelineRequest>().Object;
 
-            var options = new WriteMessageToAzureTopicOptions()
+            var options = new WriteMessageToAzureOptions()
             {
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
-                TopicName = Tests.TestConstants.WriteToTopicName
+                QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
 
-            const int errorCount = 1;
+            string subscriptionName = Tests.TestConstants.SubscriptionName;
 
-            var source = new WriteMessageToAzureTopicStep(logger, options, next);
+            const int errorCount = 0;
 
-            string expectedMessage = MyTrout.Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+            var source = new WriteMessageToAzureStep(logger, options, next);
+
             // act
             await source.InvokeAsync(context);
 
             // assert
-            Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
+            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
             Assert.AreEqual(errorCount, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+
+            // cleanup
+            ServiceBusReceiver receiver = source.ServiceBusClient.CreateReceiver(options.QueueOrTopicName, subscriptionName);
+            try
+            {
+                var messages = await receiver.ReceiveMessagesAsync(1000).ConfigureAwait(false);
+
+                foreach (var message in messages)
+                {
+                    await receiver.CompleteMessageAsync(message);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await source.DisposeAsync();
+            }
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Logger_Is_Null()
+        {
+            // arrange
+            ILogger<WriteMessageToAzureStep> logger = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            WriteMessageToAzureOptions options = new WriteMessageToAzureOptions();
+            const string paramName = nameof(logger);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteMessageToAzureStep(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(paramName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Next_Is_Null()
+        {
+            // arrange
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
+            IPipelineRequest next = null;
+            WriteMessageToAzureOptions options = new WriteMessageToAzureOptions();
+            const string paramName = nameof(next);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteMessageToAzureStep(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(paramName, result.ParamName);
         }
 
         [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Options_Is_Null()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-            WriteMessageToAzureTopicOptions options = null;
+            WriteMessageToAzureOptions options = null;
             const string paramName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteMessageToAzureTopicStep(logger, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteMessageToAzureStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -279,23 +306,23 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         public void Throws_ArgumentException_From_Constructor_When_TopicClient_Creation_Throws_Exception()
         {
             // arrange
-            ILogger<WriteMessageToAzureTopicStep> logger = new Mock<ILogger<WriteMessageToAzureTopicStep>>().Object;
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
             
-            var options = new WriteMessageToAzureTopicOptions()
+            var options = new WriteMessageToAzureOptions()
             {
                 AzureServiceBusConnectionString = "something that isn't a connection string",
-                TopicName = Tests.TestConstants.MissingTopicName
+                QueueOrTopicName = Tests.TestConstants.MissingTopicName
             };
             
-            const string paramName = "connectionString";
+            const string message = "The connection string could not be parsed; either it was malformed or contains no well-known tokens.";
 
             // act
-            var result = Assert.ThrowsException<ArgumentException>(() => new WriteMessageToAzureTopicStep(logger, options, next));
+            var result = Assert.ThrowsException<FormatException>(() => new WriteMessageToAzureStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(paramName, result.ParamName);
+            Assert.AreEqual(message, result.Message);
         }
     }
 }

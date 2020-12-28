@@ -1,5 +1,14 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
+## 2.0.0
+ - Upgrade from .NET Standard 2.1 to .NET 5.0
+ - Upgrade to MyTrout.Pipelines.Steps 2.0.6
+ - Change from Microsoft.Azure.ServiceBus 4.1.3 to Azure.Messaging.ServiceBus 7.0.0
+ - Move the CORRELATION_ID constant from the WriteMessageToAzureTopicStep to a MessagingConstants file.
+ - Change ReadMessage~Step name to reflect new capability of using either Subscriptions or Queues.
+ - Change WriteMessage~Step name to reflect new capability of using either Topics or Queues.
+ - Reordering all constructor parameters to be consistent with parameter ordering in AbstractPipelineStep<TStep, TOptions>
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.
@@ -37,5 +46,5 @@
 ## 0.1.0-beta
 - Add name element to the azure-pipelines.yml file.
 - Set Environment Variable in azure-pipelines.yml to support test configuration of the Azure Service Bus ConnectionString.
-- Initial commit of ReadMessageFromAzureSubscriptionStep and WriteMessageToAzureTopicStep.
+- Initial commit of ReadMessageFromAzureStep and WriteMessageToAzureTopicStep.
 
