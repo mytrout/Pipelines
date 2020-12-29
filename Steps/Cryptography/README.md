@@ -2,27 +2,33 @@
 
 MyTrout.Pipelines.Steps.Cryptography provides Pipeline steps to encrypt, hash, and decrypt streams.
 
-MyTrout.Pipelines.Steps.Cryptography targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Cryptography?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=16&branchName=master)
+[![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Cryptography?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Cryptography/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+MyTrout.Pipelines.Steps.Cryptography targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
 For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
 
-For a list of available steps, see [Available Steps](../README.md)
+For a list of available steps, see [Available Steps](../)
 
-# Installing via NuGet
+## Installing via NuGet
 
     Install-Package MyTrout.Pipelines.Steps.Cryptography
 
-# Software dependencies
+## Software dependencies
 
-    1. MyTrout.Pipelines.Steps 1.0.*
+    1. MyTrout.Pipelines.Steps 2.0.*
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-# How do I use the steps in this library ([DecryptStreamWithAes256Step](/src/DecryptStreamWithAes256Step.cs)) ?
+## How do I use the steps in this library ([DecryptStreamWithAes256Step](./src/DecryptStreamWithAes256Step.cs)) ?
 
-## sample C# code
+### sample C# code
 
 ```csharp
 
@@ -72,7 +78,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 }
 
 ```
-## sample appsettings.json file
+### sample appsettings.json file
 
 ```json
 {
@@ -81,10 +87,9 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 }
 ```
 
+## How do I use Pipelines.Hosting with different configurations for different instances of the same step.
 
-# How do I use Pipelines.Hosting with different configurations for different instances of the same step.
-
-If Step1 prints the Step1Options value with a trailing space to the Console when each step is called, then the following code will generate "Moe, Larry & Curly ".
+Each decrypt step would use a different configuration to 
 
 ```csharp
 
@@ -141,7 +146,7 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
 }
 ```
 
-## sample appsettings.json file
+### sample appsettings.json file
 
 ```json
 {
@@ -156,32 +161,13 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
 }
 ```
 
-# Build the software locally.
-    1. Clone the software from the Pipelines repository.
-    2. Build the software in Visual Studio 2019 to pull down all of the dependencies from nuget.org.
-    3. In Visual Studio, run all tests.  All of the should pass.
-    4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+## How do I provide secrets such as DecryptionInitializationVector and DecryptionKey to the ~Options classes.
 
-# Build the software in Azure DevOps.
-    1. In Organization Settings, select Extensions option.
-    2. Install the SonarCloud Extension.
-    3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
-    4. In Project Settings, select Service Connections option.
-    5. Add a Service Connection for SonarQube and enter the token.
-    6. Make sure you check the 'Grant access permission to all pipelines' checkbox or configure appropriate security to this connection.
-    7. In Artifacts, add a new Feed named mytrout.
-    8. On the mytrout Artifacts feed, select the gear icon to configure the feed.
-    9. Select the Permissions tab, and click the ...
-    10. Click on Allow builds and Releases (which will add Project Collection Build Services as a Contributor).
-    11. Click on Allow project-scoped builds (which will add Pipeline Build Service as a Contributor)
-    12. Create a New Pipeline and reference the azure-pipelines.yml file in the /Steps/Cryptography directory.
-    13. In Pipelines....Library, set up a Variable group named 'SonarQube Analysis'
-        a. Add a variable named 'sonarCloudConnectionName' with the name of the SonarQube Service Connection created in Step 5.
-        b. Add a variable named 'sonarCloudEnabled' with the value of 'YES'.
-        c. Add a variable named 'sonarCloudOrganization' with the value of your SonarCloud organization.
-    14. In Pipelines....Library, set up a Variable Group named 'Pipelines Artifacts Feed'.
-        a. Add a variable named 'publishVstsFeed' with the value of the feed to which output should be published.
-    13. Run the newly created pipeline.
+All of the ~Options classes now use the Retrieve~ methods for secrets to allow callers to reconfigure how secrets are stored.
 
-# Contribute
-No contributions are being accepted at this time.
+1. For simple non-secure implementations, a configuration value named the same as the ~Options property can be defined in any IConfigurationProvider and the default Retrieve~ method will be used.
+2. For a more secure implementation, encrypt the configuration value and override the Retrieve~ method with your implementation for decrypting the value; add your new ~Options class to your DI Injection using the base ~Options class type.
+3. For a more secure implementation, override the Retrieve~ methods and retrieve your secrets from a location such as Azure Key Vault, Hashicorp Vault, or AWS Secrets Manager; and add your new ~Options class to your DI injection using the base ~Options class type.
+4. For a more secure implementation, create an factory method used by the DI framework that only loads the secrets values when the ~Options class is needed; add this factory method under the base ~Options class type
+
+DISCLAIMER: ALL SECURITY SUGGESTIONS IN THIS SECTIONS ARE COVERED UNDER THE SAME 'USE AT YOUR OWN RISK' LICENSE AS THE SOFTWARE.

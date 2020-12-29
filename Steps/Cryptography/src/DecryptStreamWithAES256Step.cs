@@ -1,4 +1,4 @@
-﻿// <copyright file="DecryptStreamWithAES256Step.cs" company="Chris Trout">
+﻿// <copyright file="DecryptStreamWithAes256Step.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -27,7 +27,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     using Microsoft.Extensions.Logging;
     using System.IO;
     using System.Security.Cryptography;
-    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -57,16 +56,18 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         {
             context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
-#pragma warning disable CS8600 // AssertValueIsValid<Stream> guarantees a non-null value here.
+#pragma warning disable CS8600, CS8604 // context.AssertValueIsValid() guarantees a non-null value.
+
             Stream encryptedStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
-#pragma warning restore CS8600
+
+            context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
 
             var cryptoProvider = new AesCryptoServiceProvider();
 
             try
             {
-                byte[] key = this.Options.DecryptionEncoding.GetBytes(this.Options.DecryptionKey);
-                byte[] initializationVector = this.Options.DecryptionEncoding.GetBytes(this.Options.DecryptionInitializationVector);
+                byte[] key = this.Options.DecryptionEncoding.GetBytes(this.Options.RetrieveDecryptionKey());
+                byte[] initializationVector = this.Options.DecryptionEncoding.GetBytes(this.Options.RetrieveDecryptionInitializationVector());
 
                 ICryptoTransform decryptor = cryptoProvider.CreateDecryptor(key, initializationVector);
 
@@ -78,7 +79,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                         using (var outputStream = new MemoryStream(output))
                         {
-                            context.Items[PipelineContextConstants.INPUT_STREAM] = outputStream;
+                            context.Items.Add(PipelineContextConstants.INPUT_STREAM, outputStream);
 
                             await this.Next.InvokeAsync(context).ConfigureAwait(false);
                         }
@@ -94,9 +95,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                     context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
 
-#pragma warning disable CS8604 // AssertValueIsValid<Stream> guarantees a non-null value here.
                 context.Items.Add(PipelineContextConstants.INPUT_STREAM, encryptedStream);
-#pragma warning restore CS8604
+
+#pragma warning restore CS8600, CS8604 // context.AssertValueIsValid() guarantees a non-null value.
             }
         }
     }

@@ -1,3 +1,15 @@
+# MyTrout.Pipelines.Steps.Cryptography Change Log
+
+## 2.0.0
+ - Upgrade from .NET Standard 2.1 to .NET 5.0
+ - Upgrade to MyTrout.Pipelines.Steps 2.0.6
+ - Remove older analyzers in favor of .NET 5.0 analyzers.
+ - Add header to change log.
+ - Remove Major, Minor, and Iteration values into Azure DevOps variable group.
+ - Remove restrictions on contributors from README.md.
+ - Add instructions about how to provide secure implementations for secrets in ~Options classes.
+ - Add build, nuget, and github badges to the README.md.
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.

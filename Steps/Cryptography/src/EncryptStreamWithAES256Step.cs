@@ -1,4 +1,4 @@
-﻿// <copyright file="EncryptStreamWithAES256Step.cs" company="Chris Trout">
+﻿// <copyright file="EncryptStreamWithAes256Step.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020 Chris Trout
@@ -62,8 +62,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             {
                 using (var unencryptedStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
                 {
-                    byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionKey);
-                    byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.EncryptionInitializationVector);
+                    byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.RetrieveEncryptionKey());
+                    byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.RetrieveEncryptionInitializationVector());
 
                     ICryptoTransform encryptor = cryptoProvider.CreateEncryptor(key, initializationVector);
 
@@ -71,11 +71,11 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                     using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
                     {
+#pragma warning disable CS8604 // Possible null reference argument.
                         using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
+#pragma warning restore CS8604 // Possible null reference argument.
                         {
-#pragma warning disable CS8604 // AssertValueIsValid<Stream> guarantees a non-null value.
                             byte[] workingArray = await StreamExtensions.ConvertStreamToByteArrayAsync(unencryptedStream).ConfigureAwait(false);
-#pragma warning restore CS8604
                             await cryptoStream.WriteAsync(workingArray).ConfigureAwait(false);
                         }
                     }
