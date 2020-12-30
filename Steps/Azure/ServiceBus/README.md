@@ -3,6 +3,13 @@
 ## Introduction
 MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and send messages using Azure ServiceBus.
 
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Azure.ServiceBus?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=16&branchName=master)
+[![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps..Azure.ServiceBus?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps..Azure.ServiceBus/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+
 MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
