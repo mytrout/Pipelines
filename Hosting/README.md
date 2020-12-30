@@ -1,12 +1,19 @@
 # MyTrout.Pipelines.Hosting
 
-MyTrout.Pipelines.Hosting provides helper classes to run a pipeline using Microsoft's Generic Host.
-
 [![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Hosting?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=15&branchName=master)
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.HOsting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
+
+## Introduction 
+MyTrout.Pipelines.Hosting provides helper classes to run a pipeline using Microsoft's Generic Host.
 
 MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
@@ -14,18 +21,18 @@ For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
 
 For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/README.md)
 
-# Installing via NuGet
+## Installing via NuGet
 
     Install-Package MyTrout.Pipelines.Hosting
 
-# Software dependencies
+## Software dependencies
     1. Microsoft.Hosting 5.0.0
     2. Microsoft.Hosting.Abstractions 5.0.0
     3. MyTrout.Pipelines 2.0.7 minimum, 2.*.* is acceptable.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-# How do I use Pipelines.Hosting?
+## How do I use Pipelines.Hosting?
 
 ```csharp
 
@@ -73,7 +80,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
 ```
 
-# How do I use Pipelines.Hosting with different configurations for different instances of the same step.
+## How do I use Pipelines.Hosting with different configurations for different instances of the same step.
 
 If Step1 prints the Step1Options value with a trailing space to the Console when each step is called, then the following code will generate "Moe, Larry & Curly ".
 
