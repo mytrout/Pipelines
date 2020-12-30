@@ -6,7 +6,7 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 
 ## Available Azure Steps
 
-For more details on Pipelines.Steps.Azure.Blobs, see [Pipelines.Steps.Azure.ServiceBus](../Steps/Azure/Blobs/README.md)
+For more details on Pipelines.Steps.Azure.Blobs, see [Pipelines.Steps.Azure.Blobs](../Steps/Azure/Blobs/README.md)
 
 For more details on Pipelines.Steps.Azure.ServiceBus, see [Pipelines.Steps.Azure.ServiceBus](../Steps/Azure/ServiceBus/README.md)
 
@@ -30,7 +30,7 @@ For more details on Pipelines.Steps.Cryptography, see [Pipelines.Steps.Cryptogra
 
 ## Available File Manipulation Steps
 
-For more details on Pipelines.Steps.Azure.Blobs, see [Pipelines.Steps.Azure.ServiceBus](../Steps/Azure/Blobs/README.md)
+For more details on Pipelines.Steps.Azure.Blobs, see [Pipelines.Steps.Azure.Blobs](../Steps/Azure/Blobs/README.md)
 
 For more details on Pipelines.IO.FileSystem, see [Pipelines.Steps.IO.Files](../Steps/IO/Files/README.md) 
 
