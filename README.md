@@ -5,6 +5,7 @@ Provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
 
 MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
