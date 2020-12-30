@@ -1,4 +1,18 @@
-# MyTrout.Pipelines
+# Pipelines
+
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=13&branchName=master)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
+
+## Introduction
 
 MyTrout.Pipelines provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
@@ -14,20 +28,20 @@ For more details on implementing Pipelines.Steps, see [Pipelines.Steps.Core](../
 
 For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../Hosting/README.md)
 
-# Installing via NuGet
+## Installing via NuGet
 
     Install-Package MyTrout.Pipelines
 
-# Software dependencies
+## Software dependencies
     1. Microsoft.CSharp 4.7.0 (required because of dynamic keyword usage for multi-context steps)
     2. Microsoft.Extensions.Configuration.Abstractions 5.0.0
     3. Microsoft.Extensions.Logging.Abstractions 5.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-# How do I use Pipelines?
+## How do I use Pipelines?
 
-## PLEASE NOTE: 
+### PLEASE NOTE: 
 * This example does not use ASP.NET Hosting or Generic Hosting to implement a pipeline.
 * For Console Applications, please use [Pipelines.Hosting](../Hosting/README.md)
 * For Pipeline Processes running within ASP.NET Core websites, there is no current recommendation.
@@ -153,27 +167,12 @@ The previous code would execute per the text below:
 
 The result of the execution as defined above is a string named "Message" in PipelineContext.Items with the value "I AM HERE!";
 
-# How do I write Steps?
+## How do I write Steps?
 Please refer to the [Pipeline.Steps.Core](../Steps/Core/README.md) for more details on how to write steps.
 
-# Build the software locally.
+## Build the software locally.
     1. Clone the software from the Pipelines repository.
     2. Build the software in Visual Studio 2019 v16.8 or higher to pull down all of the dependencies from nuget.org.
     3. In Visual Studio, run all tests.  All of the should pass.
     4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
-
-# Build the software in Azure DevOps.
-    1. In Organization Settings, select Extensions option.
-    2. Install the SonarCloud Extension.
-    3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
-    4. In Project Settings, select Service Connections option.
-    5. Add a Service Connection for SonarQube and enter the token.
-    6. Make sure you check the 'Grant access permission to all pipelines' checkbox or configure appropriate security to this connection.
-    7. In Artifacts, add a new Feed named mytrout.
-    8. On the mytrout Artifacts feed, select the gear icon to configure the feed.
-    9. Select the Permissions tab, and click the ...
-    10. Click on Allow builds and Releases (which will add Project Collection Build Services as a Contributor).
-    11. Click on Allow project-scoped builds (which will add Pipeline Build Service as a Contributor)
-    12. Create a New Pipeline and reference the azure-pipelines.yml file in the /Core directory.
-    13. Run the newly created pipeline.
 
