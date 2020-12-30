@@ -1,22 +1,25 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus
 
-## Introduction
-MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and send messages using Azure ServiceBus.
-
 [![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Azure.ServiceBus?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=16&branchName=master)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Azure.ServiceBus?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Azure.ServiceBus/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.ServiceBus&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.ServiceBus)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.ServiceBus&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.ServiceBus)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.ServiceBus&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.ServiceBus)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.ServiceBus&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.ServiceBus)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.ServiceBus&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.ServiceBus)
+
+## Introduction
+MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and send messages using Azure ServiceBus.
 
 MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
+[Pipelines.Hosting](../../Hosting/README.md) runs the Pipeline in a Console Application using Generic Host.
 
-For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
-
-For a list of available steps, see [Available Steps](../README.md)
+[List of Available Steps](../README.md) 
 
 ## Installing via NuGet
 
@@ -31,7 +34,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
 
 ## BREAKING CHANGES FROM v1.x to V2.0
-
+- Update from .NET Standard 2.1 to .NET 5.0
 
 ## How do I use the steps in this library ([ReadMessageFromAzureStep](./src/ReadMessageFromAzureStep.cs)) ?
 
