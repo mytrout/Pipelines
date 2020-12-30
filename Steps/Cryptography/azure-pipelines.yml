@@ -11,6 +11,17 @@ trigger:
     - README.md
     - License.md
 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/Cryptography/*
+    exclude:
+    - README.md
+    - License.md
+    
 pool:
   vmImage: 'windows-latest'
  
