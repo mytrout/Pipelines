@@ -28,7 +28,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
-    using System;
     using System.Globalization;
     using System.IO;
     using System.Linq;

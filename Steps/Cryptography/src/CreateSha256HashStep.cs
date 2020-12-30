@@ -69,19 +69,18 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                 context.Items.Remove(CryptographyConstants.HASH_STRING);
             }
 
-#pragma warning disable CS8600 // AssertValueIsValid<Stream> guarantees that this value is not null.
-            Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
-#pragma warning restore CS8600
+#pragma warning disable CS8600, CS8602 // context.AssertValueIsValid<Stream> guarantees a non-null value.
 
-#pragma warning disable CS8602 // AssertValueIsValid<Stream> guarantees that this value is not null.
+            Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
+
             inputStream.Position = 0;
-#pragma warning restore CS8602
+
+#pragma warning restore CS8600, CS8602
 
             using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
             {
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
-#pragma warning disable S4790 // SonarQube -> False Positive because it doesn't recognize SHA256CryptoServiceProvider as SHA256.
                 using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
                 {
                     byte[] workingHash = hashProvider.ComputeHash(workingResult);
@@ -91,7 +90,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                     context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
                 }
-#pragma warning restore S4790
             }
         }
     }

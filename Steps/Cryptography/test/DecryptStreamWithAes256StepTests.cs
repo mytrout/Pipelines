@@ -109,7 +109,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
                 var nextMock = new Mock<IPipelineRequest>();
                 nextMock.Setup(x => x.InvokeAsync(context))
-                                        .Callback(() => this.AssertDecryptedValue(context))
+                                        .Callback(() => DecryptStreamWithAes256StepTests.AssertDecryptedValue(context))
                                         .Returns(Task.CompletedTask);
                 var next = nextMock.Object;
 
@@ -154,7 +154,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             }
         }
 
-        private void AssertDecryptedValue(PipelineContext context)
+        private static void AssertDecryptedValue(PipelineContext context)
         {
             var stream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
 

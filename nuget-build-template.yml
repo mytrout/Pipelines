@@ -52,7 +52,7 @@ steps:
     nuGetFeedType: 'internal'
     publishVstsFeed: '$(publishVstsFeed)'
     allowPackageConflicts: false
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['artifactPublishEnabled'], 'YES')
   displayName: 'Publish the nuget package to ADO artifacts.'
 
 - task: SonarCloudPublish@1

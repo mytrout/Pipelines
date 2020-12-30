@@ -24,19 +24,23 @@
 
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
+    using System;
     using System.Text;
-
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-#pragma warning disable CS8618 // These properties must be initialized by configuration.
 
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="EncryptStreamWithAes256Step"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class EncryptStreamWithAes256Options
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EncryptStreamWithAes256Options"/> class.
+        /// </summary>
+        public EncryptStreamWithAes256Options()
+        {
+            this.RetrieveEncryptionInitializationVector = this.RetrieveEncryptionInitializationVectorCore;
+            this.RetrieveEncryptionKey = this.RetrieveEncryptionKeyCore;
+        }
+
         /// <summary>
         /// Gets or sets the <see cref="Encoding"/> used to encrypt this value.
         /// </summary>
@@ -45,12 +49,41 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <summary>
         /// Gets or sets the initialization vector used to encrypt the value.
         /// </summary>
-        public string EncryptionInitializationVector { get; set; }
+        public string EncryptionInitializationVector { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the key used to encrypt the value.
         /// </summary>
-        public string EncryptionKey { get; set; }
+        public string EncryptionKey { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a user-defined function to retrieve the encryption initialization vector.
+        /// </summary>
+        /// <returns>A string representing a valid encryption initialization vector.</returns>
+        public Func<string> RetrieveEncryptionInitializationVector { get; set; }
+
+        /// <summary>
+        /// Gets or sets a user-defined function to retrieve the encryption key.
+        /// </summary>
+        /// <returns>A string representing a valid encryption key.</returns>
+        public Func<string> RetrieveEncryptionKey { get; set; }
+
+        /// <summary>
+        /// Provides any special handling of the <see cref="EncryptionInitializationVector"/> before the <see cref="EncryptStreamWithAes256Step"/> uses the value.
+        /// </summary>
+        /// <returns>a string representing a valid encryption initialization vector.</returns>
+        protected virtual string RetrieveEncryptionInitializationVectorCore()
+        {
+            return this.EncryptionInitializationVector;
+        }
+
+        /// <summary>
+        /// Provides any special handling of the <see cref="EncryptionKey"/> before the <see cref="EncryptStreamWithAes256Step"/> uses the value.
+        /// </summary>
+        /// <returns>a string representing a valid encryption key.</returns>
+        protected virtual string RetrieveEncryptionKeyCore()
+        {
+            return this.EncryptionKey;
+        }
     }
-#pragma warning restore CS8618 // These properties must be initialized by configuration.
 }
