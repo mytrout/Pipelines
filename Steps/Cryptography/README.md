@@ -1,12 +1,20 @@
 # MyTrout.Pipelines.Steps.Cryptography
 
-MyTrout.Pipelines.Steps.Cryptography provides Pipeline steps to encrypt, hash, and decrypt streams.
-
 [![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Cryptography?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=17&branchName=master)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Cryptography?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Cryptography/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Cryptography&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Cryptography)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Cryptography&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Cryptography)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Cryptography&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Cryptography)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Cryptography&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Cryptography)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Cryptography&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Cryptography)
+
+## Introduction
+
+MyTrout.Pipelines.Steps.Cryptography provides Pipeline steps to encrypt, hash, and decrypt streams.
 
 MyTrout.Pipelines.Steps.Cryptography targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
@@ -26,7 +34,7 @@ For a list of available steps, see [Available Steps](../)
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-## How do I use the steps in this library [DecryptStreamWithAes256Step](./src/DecryptStreamWithAes256Step.cs) ?
+## How do I use [DecryptStreamWithAes256Step](./src/DecryptStreamWithAes256Step.cs) in this library?
 
 ### sample C# code
 
