@@ -37,14 +37,7 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: '2'
-
-- name: 'minor'
-  value: '0'
-
-- name: 'patch'
-  value: '0'
+- group: 'MyTrout.Pipelines.Steps.Azure.ServiceBus.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
