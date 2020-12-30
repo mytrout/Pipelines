@@ -2,7 +2,7 @@
 
 MyTrout.Pipelines.Steps.Cryptography provides Pipeline steps to encrypt, hash, and decrypt streams.
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Cryptography?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=16&branchName=master)
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Cryptography?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=17&branchName=master)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Cryptography?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Cryptography/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -26,7 +26,7 @@ For a list of available steps, see [Available Steps](../)
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-## How do I use the steps in this library ([DecryptStreamWithAes256Step](./src/DecryptStreamWithAes256Step.cs)) ?
+## How do I use the steps in this library [DecryptStreamWithAes256Step](./src/DecryptStreamWithAes256Step.cs) ?
 
 ### sample C# code
 
