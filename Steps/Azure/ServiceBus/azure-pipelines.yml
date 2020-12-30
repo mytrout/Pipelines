@@ -11,6 +11,18 @@ trigger:
     - changelog.md
     - README.md
     - License.md
+    
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/Azure/ServiceBus/*
+    exclude:
+    - changelog.md
+    - README.md
+    - License.md
 
 pool:
   vmImage: 'windows-latest'
