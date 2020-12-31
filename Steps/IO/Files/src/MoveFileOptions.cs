@@ -37,11 +37,11 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <summary>
         /// Gets or sets a base directory for the source file name.
         /// </summary>
-        public string MoveSourceFileBaseDirectory { get; set; }
+        public string MoveSourceFileBaseDirectory { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a base directory for the target file name.
         /// </summary>
-        public string MoveTargetFileBaseDirectory { get; set; }
+        public string MoveTargetFileBaseDirectory { get; set; } = string.Empty;
     }
 }

@@ -37,6 +37,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <summary>
         /// Gets or sets the base directory to which the application should write the file.
         /// </summary>
-        public string WriteFileBaseDirectory { get; set; }
+        public string WriteFileBaseDirectory { get; set; } = string.Empty;
     }
 }

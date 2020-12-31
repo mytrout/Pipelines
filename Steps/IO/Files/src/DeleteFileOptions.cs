@@ -37,6 +37,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <summary>
         /// Gets or sets a base directory for the source file name.
         /// </summary>
-        public string DeleteFileBaseDirectory { get; set; }
+        public string DeleteFileBaseDirectory { get; set; } = string.Empty;
     }
 }

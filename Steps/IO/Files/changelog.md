@@ -1,5 +1,12 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 2.0.0
+- Upgrade to .NET 5.0
+- Add nuget, build, and sonarqube badges to README.md.
+- Add nullable requirements and C# Language Version 9.0 to the project.
+- Update azure-pipelines.xml to add artifactPublishEnabled property.
+- Correct broken internal documentation links 
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.
