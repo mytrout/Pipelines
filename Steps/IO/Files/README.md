@@ -158,12 +158,12 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
 ```json
 {
     "context-A": {
-        "MoveSourceFileBaseDirectory": "C:\source\",
-        "MoveTargetFileBaseDirectory: "D:\source\"
+        "MoveSourceFileBaseDirectory": "C:\\source\\",
+        "MoveTargetFileBaseDirectory: "D:\\source\\"
     },
     "context-B": {
-        "MoveSourceFileBaseDirectory": "D:\source\",
-        "MoveTargetFileBaseDirectory: "E:\source\"
+        "MoveSourceFileBaseDirectory": "D:\\source\\",
+        "MoveTargetFileBaseDirectory: "E:\\source\\"
     }
 }
 ```
