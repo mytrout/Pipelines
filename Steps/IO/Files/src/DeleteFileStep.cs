@@ -57,9 +57,13 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.DeleteFileBaseDirectory);
 
+#pragma warning disable CS8600, CS8604 // targetFile is checked as part of AssertFileNameParameterIsValid.
+
             string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
 
             targetFile = targetFile.GetFullyQualifiedPath(this.Options.DeleteFileBaseDirectory);
+
+#pragma warning restore CS8600, CS8604
 
             File.Delete(targetFile);
         }
