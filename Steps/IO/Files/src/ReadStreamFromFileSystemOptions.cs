@@ -37,6 +37,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <summary>
         /// Gets or sets the base directory from where files are read.
         /// </summary>
-        public string ReadFileBaseDirectory { get; set; }
+        public string ReadFileBaseDirectory { get; set; } = string.Empty;
     }
 }
