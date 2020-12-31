@@ -18,9 +18,9 @@ MyTrout.Pipelines.Steps.IO.Files provides Pipeline steps to read, write, delete,
 
 MyTrout.Pipelines.Steps.IO.Files targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-[Pipelines.Hosting](../../Hosting/README.md) runs the Pipeline in a Console Application using Generic Host.
+[Pipelines.Hosting](../../../Hosting/README.md) runs the Pipeline in a Console Application using Generic Host.
 
-[List of Available Steps](../README.md) 
+[List of Available Steps](../../../Steps/README.md) 
 
 ## Installing via NuGet
 
