@@ -44,6 +44,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             source.AssertParameterIsNotNull(nameof(source));
             source.AssertStringIsNotWhiteSpace(parameterName);
 
+#pragma warning disable CS8600, CS8604 // Assert~ methods guarantee non-null values for workingFile.
+
             string workingFile = source.Items[parameterName] as string;
 
             if (!Path.IsPathFullyQualified(workingFile))
@@ -57,6 +59,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             {
                 throw new InvalidOperationException(Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, baseDirectory, workingFile));
             }
+#pragma warning restore CS8600, CS8604
         }
     }
 }

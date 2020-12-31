@@ -60,6 +60,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.WriteFileBaseDirectory);
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
+#pragma warning disable CS8600, CS8602, CS8604 // Assert~ methods guarantee that workingFile and workStream are not null.
+
             string workingFile = context.Items[FileConstants.TARGET_FILE] as string;
 
             workingFile = workingFile.GetFullyQualifiedPath(this.Options.WriteFileBaseDirectory);
@@ -75,6 +77,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             {
                 await workingStream.CopyToAsync(outputStream).ConfigureAwait(false);
             }
+#pragma warning restore CS8600, CS8602, CS8604
         }
     }
 }

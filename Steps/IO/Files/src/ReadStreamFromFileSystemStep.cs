@@ -57,7 +57,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         {
             context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.ReadFileBaseDirectory);
 
+#pragma warning disable CS8600, CS8604 // AssertFileNameParameterIsValid guarantees that workingFile value is not null.
+
             string workingFile = context.Items[FileConstants.SOURCE_FILE] as string;
+
             workingFile = workingFile.GetFullyQualifiedPath(this.Options.ReadFileBaseDirectory);
 
             if (!File.Exists(workingFile))
@@ -94,5 +97,6 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 }
             }
         }
+#pragma warning restore CS8600, CS8604
     }
 }
