@@ -11,6 +11,17 @@ trigger:
     - README.md
     - License.md
 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/IO/Compression/*
+    exclude:
+    - README.md
+    - License.md
+
 pool:
   vmImage: 'windows-latest'
  
@@ -24,23 +35,16 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: 1 
-
-- name: 'minor'
-  value: 0
-
-- name: 'patch'
-  value: 0
+- group: 'MyTrout.Pipelines.Steps.IO.Compression.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
 
-- name: 'suffix'
-  value: ''
-
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
+
+- name: 'artifactPublishEnabled'
+  value: 'YES'
 
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.IO.Compression'

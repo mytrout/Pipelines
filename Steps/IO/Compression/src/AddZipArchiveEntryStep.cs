@@ -1,7 +1,7 @@
 ﻿// <copyright file="AddZipArchiveEntryStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,13 +65,10 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
             var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
             var zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
 
-#pragma warning disable CS8600 // AssertStringIsNotWhiteSpace guarantees that this value is not null.
+#pragma warning disable CS8600, CS8602, CS8604 // AssertStringIsNotWhiteSpace guarantees that this value is not null.
             string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
-#pragma warning restore CS8600
 
-#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
             if (zipArchive.Mode == ZipArchiveMode.Read)
-#pragma warning restore CS8602
             {
                 throw new InvalidOperationException(Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture));
             }
@@ -82,13 +79,10 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogInformation(Resources.ZIP_ARCHIVE_ENTRY_CREATED(CultureInfo.CurrentCulture, zipEntryFileName));
 
-#pragma warning disable S5042 // This is a brand-new archive entry. Caller should not provide zip-bombed content.
             using (var entryStream = archiveEntry.Open())
-#pragma warning restore S5042
             {
-#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 await outputStream.CopyToAsync(entryStream).ConfigureAwait(false);
-#pragma warning restore CS8602
+#pragma warning restore CS8600, CS8602, CS8604
             }
         }
     }

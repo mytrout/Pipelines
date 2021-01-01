@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadZipArchiveEntriesFromZipArchiveStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,9 +57,8 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
-#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
+#pragma warning disable CS8600, CS8602 // AssertValueIsValid guarantees that this value is not null.
             ZipArchive zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
-#pragma warning restore CS8600
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
@@ -70,13 +69,10 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             try
             {
-#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
                 foreach (var archiveEntry in zipArchive.Entries)
-#pragma warning restore CS8602
+#pragma warning restore CS8600, CS8602
                 {
-#pragma warning disable S5042 // The receiver of this stream must determine how much data is acceptable and where it can be written.
                     using (var outputStream = archiveEntry.Open())
-#pragma warning restore S5042
                     {
                         context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, archiveEntry.Name);
                         context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);

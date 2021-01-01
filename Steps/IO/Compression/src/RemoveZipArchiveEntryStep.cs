@@ -1,7 +1,7 @@
 ﻿// <copyright file="RemoveZipArchiveEntryStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -59,21 +59,19 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(RemoveZipArchiveEntryStep)));
 
+#pragma warning disable CS8600, CS8602, CS8604 // AssertValueIsValid guarantees that this value is not null.
             var zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
 
-#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
             string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
-#pragma warning restore CS8600
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(RemoveZipArchiveEntryStep), zipEntryFileName));
 
-#pragma warning disable CS8602 // AssertValueIsValid guarantees that this value is not null.
             var archiveEntry = zipArchive.GetEntry(zipEntryFileName);
-#pragma warning restore CS8602
 
             this.Logger.LogInformation(Resources.ZIP_ARCHIVE_ENTRY_REMOVED(CultureInfo.CurrentCulture, zipEntryFileName));
 
             archiveEntry.Delete();
+#pragma warning restore CS8600, CS8602, CS8604
         }
     }
 }
