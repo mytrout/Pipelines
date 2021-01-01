@@ -54,10 +54,10 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
 #pragma warning disable CS8600, CS8604 // AssertValueIsValid guarantees that this value is not null.
-            Stream archiveStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+            Stream archiveStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
 
             try
             {
