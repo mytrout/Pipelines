@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
+## 2.0.1
+- Limit MyTrout.Pipelines.Steps.Core to a maximum of 3.x rather than 32.x.
+
 ## 2.0.0
  - Upgrade from .NET Standard 2.1 to .NET 5.0
  - Upgrade to MyTrout.Pipelines.Steps 2.0.6
