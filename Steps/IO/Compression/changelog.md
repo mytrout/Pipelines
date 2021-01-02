@@ -1,3 +1,14 @@
+# MyTrout.Pipelines.Steps.IO.Compression
+
+## 2.0.0
+- Upgrade to .NET 5.0
+- Add nuget, build, and sonarqube badges to README.md.
+- Change C# Language Version from 8.0 to 9.0
+- Change copyright from 2020 to 2020-2021.
+- Update azure-pipelines.xml to add pr element to enable CI/CD builds in Github.
+- Move the version data to an Azure DevOps Variable group.
+- Update azure-pipelines.xml to add artifactPublishEnabled property.
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.

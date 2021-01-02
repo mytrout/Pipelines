@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Chris Trout</Authors>
-    <Copyright>Copyright 2020 Chris Trout. All Rights Reserved.</Copyright>
+    <Copyright>Copyright 2020-2021 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>0.1.0-beta</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://dev.azure.com/mytrout/Pipelines</PackageProjectUrl>
     <RepositoryUrl>https://dev.azure.com/mytrout/Pipelines</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

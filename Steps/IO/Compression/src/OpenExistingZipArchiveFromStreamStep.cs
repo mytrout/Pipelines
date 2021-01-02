@@ -1,7 +1,7 @@
 ﻿// <copyright file="OpenExistingZipArchiveFromStreamStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,9 +56,8 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
 
-#pragma warning disable CS8600 // AssertValueIsValid guarantees that this value is not null.
+#pragma warning disable CS8600, CS8604 // AssertValueIsValid guarantees that this value is not null.
             Stream archiveStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
-#pragma warning restore CS8600
 
             try
             {
@@ -86,7 +85,6 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
                     context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
                 }
 
-#pragma warning disable CS8604 // AssertValueIsValid guarantees that this value is not null.
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, archiveStream);
 #pragma warning restore CS8604
             }
