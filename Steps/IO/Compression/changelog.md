@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
+## 2.0.1
+- Upgrade MyTrout.Pipelines.Steps.Core from 1.x to 2.0.6.
+
 ## 2.0.0
 - Upgrade to .NET 5.0
 - Add nuget, build, and sonarqube badges to README.md.
