@@ -1,7 +1,7 @@
 // <copyright file="DeleteBlobStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var options = new DeleteBlobOptions();
 
             // act
-            var result = new DeleteBlobStep(logger, next, options);
+            var result = new DeleteBlobStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -100,7 +100,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var next = mockNext.Object;
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -156,7 +156,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var next = mockNext.Object;
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -186,7 +186,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new DeleteBlobOptions();
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
@@ -219,7 +219,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new DeleteBlobOptions();
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
@@ -250,7 +250,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new DeleteBlobOptions();
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
@@ -284,7 +284,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new DeleteBlobOptions();
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
@@ -325,7 +325,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -354,7 +354,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -372,7 +372,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -390,7 +390,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new DeleteBlobStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -405,7 +405,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = new Mock<IPipelineRequest>().Object;
             var options = new DeleteBlobOptions();
 
-            var source = new DeleteBlobStep(logger, next, options);
+            var source = new DeleteBlobStep(logger, options, next);
 
             IPipelineContext context = null;
 

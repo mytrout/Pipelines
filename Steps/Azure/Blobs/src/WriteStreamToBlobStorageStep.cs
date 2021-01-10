@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToBlobStorageStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,9 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// Initializes a new instance of the <see cref="WriteStreamToBlobStorageStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public WriteStreamToBlobStorageStep(ILogger<WriteStreamToBlobStorageStep> logger, IPipelineRequest next, WriteStreamToBlobStorageOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public WriteStreamToBlobStorageStep(ILogger<WriteStreamToBlobStorageStep> logger, WriteStreamToBlobStorageOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -62,8 +62,13 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
             context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_BLOB);
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
+#pragma warning disable CS8600 // Assert~ methods guarantees non-null values.
+
             string targetContainer = context.Items[BlobConstants.TARGET_CONTAINER_NAME] as string;
+
             string targetBlob = context.Items[BlobConstants.TARGET_BLOB] as string;
+
+#pragma warning restore CS8600
 
             string connectionString = await this.Options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 

@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadStreamFromBlobStorageStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,9 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// Initializes a new instance of the <see cref="ReadStreamFromBlobStorageStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public ReadStreamFromBlobStorageStep(ILogger<ReadStreamFromBlobStorageStep> logger, IPipelineRequest next, ReadStreamFromBlobStorageOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public ReadStreamFromBlobStorageStep(ILogger<ReadStreamFromBlobStorageStep> logger, ReadStreamFromBlobStorageOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -61,8 +61,13 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
 
             string connectionString = await this.Options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 
+#pragma warning disable CS8600 // Assert~ methods guarantee non-null values.
+
             string sourceContainer = context.Items[BlobConstants.SOURCE_CONTAINER_NAME] as string;
+
             string sourceBlob = context.Items[BlobConstants.SOURCE_BLOB] as string;
+
+#pragma warning restore CS8600
 
             var client = new BlobContainerClient(connectionString, sourceContainer);
 
