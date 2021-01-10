@@ -1,7 +1,7 @@
 // <copyright file="SaveContextToDatabaseStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
 
     [TestClass]
@@ -70,8 +68,17 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var providerFactory = SqlClientFactory.Instance;
             var options = new SaveContextToDatabaseOptions()
             {
-                CommandType = System.Data.CommandType.StoredProcedure,
-                SqlStatement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > 1;",
+                SqlStatements = new List<SqlStatement>()
+                {
+                    new SqlStatement()
+                    {
+                        CommandType = System.Data.CommandType.StoredProcedure,
+                        Name = "StatementName",
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > 1;",
+                    }
+                },
+                
+                
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
@@ -120,9 +127,16 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var providerFactory = SqlClientFactory.Instance;
             var options = new SaveContextToDatabaseOptions()
             {
-                CommandType = System.Data.CommandType.Text,
-                ParameterNames = new List<string>() { "CartoonId" },
-                SqlStatement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
+                SqlStatements = new List<SqlStatement>()
+                {
+                    new SqlStatement()
+                    {
+                        CommandType = System.Data.CommandType.Text,
+                        Name = "StatementName",
+                        ParameterNames = new List<string>() { "CartoonId" },
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
+                    }
+                },
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
@@ -135,6 +149,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             var context = new PipelineContext();
             context.Items.Add("CartoonId", 1);
+            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 

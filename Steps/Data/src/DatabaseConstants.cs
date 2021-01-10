@@ -1,7 +1,7 @@
 ﻿// <copyright file="DatabaseConstants.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Data
 {
+#pragma warning disable CA1710, SA1310
     /// <summary>
     /// Provides constants for the Database steps.
     /// </summary>
@@ -33,5 +34,11 @@ namespace MyTrout.Pipelines.Steps.Data
         /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the number of database rows affected.
         /// </summary>
         public const string DATABASE_ROWS_AFFECTED = "DATABASE_ROWS_AFFECTED";
+
+        /// <summary>
+        /// Provides the name of the database statement that needs to be run.
+        /// </summary>
+        public const string DATABASE_STATEMENT_NAME = "DATABASE_STATEMENT_NAME";
     }
+#pragma warning restore CA1710, SA1310
 }

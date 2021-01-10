@@ -1,7 +1,7 @@
 ﻿// <copyright file="SupplementContextWithDatabaseRecordOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,10 +29,6 @@ namespace MyTrout.Pipelines.Steps.Data
     using System.Data;
     using System.Threading.Tasks;
 
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-
     /// <summary>
     /// Provides user-configurable options for the <see cref="SaveContextToDatabaseStep" /> step.
     /// </summary>
@@ -40,9 +36,12 @@ namespace MyTrout.Pipelines.Steps.Data
     public class SupplementContextWithDatabaseRecordOptions
     {
         /// <summary>
-        /// Gets or sets the SQL Statement that should be executed by this step.
+        /// Initializes a new instance of the <see cref="SupplementContextWithDatabaseRecordOptions"/> class.
         /// </summary>
-        public string SqlStatement { get; set; }
+        public SupplementContextWithDatabaseRecordOptions()
+        {
+            this.RetrieveConnectionStringAsync = this.RetrieveConnectionStringCoreAsync;
+        }
 
         /// <summary>
         /// Gets or sets the Command Type of the <see cref="SqlStatement"/>.
@@ -50,13 +49,32 @@ namespace MyTrout.Pipelines.Steps.Data
         public CommandType CommandType { get; set; } = CommandType.StoredProcedure;
 
         /// <summary>
+        /// Gets or sets the connection string used to connect to the database.
+        /// </summary>
+        public string DatabaseConnectionString { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets that parameter names required by <see cref="SqlStatement"/>.
         /// </summary>
         public IEnumerable<string> ParameterNames { get; set; } = new List<string>();
 
         /// <summary>
+        /// Gets or sets the SQL Statement that should be executed by this step.
+        /// </summary>
+        public string SqlStatement { get; set; }
+
+        /// <summary>
         /// Gets or sets a user-defined function to retrieve the Connection String.
         /// </summary>
-        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; } = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_DATABASE_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); };
+        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; }
+
+        /// <summary>
+        /// Returns a connection string loaded into the <see cref="DatabaseConnectionString"/> property.
+        /// </summary>
+        /// <returns>A connection string.</returns>
+        protected Task<string> RetrieveConnectionStringCoreAsync()
+        {
+            return Task.FromResult(this.DatabaseConnectionString);
+        }
     }
 }

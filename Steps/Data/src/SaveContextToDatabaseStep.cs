@@ -1,7 +1,7 @@
 ﻿// <copyright file="SaveContextToDatabaseStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,9 +62,15 @@ namespace MyTrout.Pipelines.Steps.Data
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
+            context.AssertStringIsNotWhiteSpace(DatabaseConstants.DATABASE_STATEMENT_NAME);
+            context.AssertValueIsValid<SqlStatement>(DatabaseConstants.DATABASE_STATEMENT_NAME);
+
+            var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
+            var sql = context.Items[sqlName] as SqlStatement;
+
             DynamicParameters parameters = new DynamicParameters();
 
-            foreach (var parameterName in this.Options.ParameterNames)
+            foreach (var parameterName in sql.ParameterNames)
             {
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
@@ -75,7 +81,7 @@ namespace MyTrout.Pipelines.Steps.Data
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                int result = await connection.ExecuteAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false);
+                int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
 
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
             }
