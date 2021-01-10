@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteBlobOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,24 +27,41 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
     using System;
     using System.Threading.Tasks;
 
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="DeleteBlobStep"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class DeleteBlobOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeleteBlobOptions"/> class.
+        /// </summary>
+        public DeleteBlobOptions()
+        {
+            this.RetrieveConnectionStringAsync = this.RetrieveConnectionStringCoreAsync;
+        }
+
+        /// <summary>
+        /// Gets or sets a value used to connect to Azure Blob Storage.
+        /// </summary>
+        public string DeleteBlobConnectionString { get; set; } = string.Empty;
+
         /// <summary>
         /// Gets or sets a value indicating when the blob deletion should be invoked.
         /// </summary>
         public DeleteBlobTimings ExecutionTiming { get; set; } = DeleteBlobTimings.After;
 
         /// <summary>
-        /// Gets or sets a user-defined function to retrieve the Connection String.
+        /// Gets or sets a caller-defined function to retrieve the Connection String.
         /// </summary>
-        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; } = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); };
+        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; }
+
+        /// <summary>
+        /// Retrieves a connection string using a caller-defined methodology.
+        /// </summary>
+        /// <returns>A Connection String or <see cref="string.Empty"/>.</returns>
+        protected Task<string> RetrieveConnectionStringCoreAsync()
+        {
+            return Task.FromResult(this.DeleteBlobConnectionString);
+        }
     }
 }

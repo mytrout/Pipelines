@@ -1,7 +1,7 @@
 // <copyright file="WriteStreamToBlobStorageStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var options = new WriteStreamToBlobStorageOptions();
 
             // act
-            var result = new WriteStreamToBlobStorageStep(logger, next, options);
+            var result = new WriteStreamToBlobStorageStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -75,7 +75,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new WriteStreamToBlobStorageOptions();
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
@@ -125,7 +125,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             int expectedErrorCount = 1;
             string expectedMessage = Resources.BLOB_ALREADY_EXISTS(CultureInfo.CurrentCulture, blobName, blobContainerName);
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
             {
@@ -161,7 +161,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new WriteStreamToBlobStorageOptions();
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
@@ -192,7 +192,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new WriteStreamToBlobStorageOptions();
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
@@ -226,7 +226,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new WriteStreamToBlobStorageOptions();
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
@@ -253,7 +253,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -271,7 +271,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -289,7 +289,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new WriteStreamToBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -304,7 +304,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = new Mock<IPipelineRequest>().Object;
             var options = new WriteStreamToBlobStorageOptions();
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             IPipelineContext context = null;
 
@@ -345,7 +345,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
-            var source = new WriteStreamToBlobStorageStep(logger, next, options);
+            var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
             {

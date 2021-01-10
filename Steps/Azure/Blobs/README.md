@@ -1,28 +1,43 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs
 
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Azure.Blobs?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=21&branchName=master)
+[![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Azure.Blobs?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Azure.Blobs/)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.Blobs&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.Blobs)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.Blobs&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.Blobs)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.Blobs&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.Blobs)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.Blobs&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.Blobs)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.Azure.Blobs&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.Azure.Blobs)
+
+
+## Introduction
 MyTrout.Pipelines.Steps.Azure.Blobs provides Pipeline steps to read, write, and delete blobs on the Azure Storage.
 
-MyTrout.Pipelines.Steps.Azure.Blobs targets [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support)
+MyTrout.Pipelines.Steps.Azure.Blobs targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
+For more details on Pipelines, see [Pipelines.Core](../../../Core/README.md)
 
-For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
+For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../../Hosting/README.md)
 
-For a list of available steps, see [Available Steps](../README.md)
+For a list of available steps, see [Available Steps](../../README.md)
 
-# Installing via NuGet
+## Installing via NuGet
 
     Install-Package MyTrout.Pipelines.Steps.Azure.Blobs
 
-# Software dependencies
+## Software dependencies
 
-    1. MyTrout.Pipelines.Steps 1.0.*
+    1. Azure.Storage.Blobs 12.7.0
+    2. MyTrout.Pipelines.Steps 2.0.6 minimum, 2.*.* is acceptable.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-# How do I use the steps in this library?
+## How do I use the steps in this library?
 
-## sample C# code
+### sample C# code
 
 ```csharp
 
@@ -73,7 +88,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
 ```
 
-# How do I use Pipelines.Hosting with different configurations for different instances of the same step.
+## How do I use Pipelines.Hosting with different configurations for different instances of the same step.
 
 If Step1 prints the Step1Options value with a trailing space to the Console when each step is called, then the following code will generate "Moe, Larry & Curly ".
 
@@ -132,13 +147,13 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
 }
 ```
 
-# Build the software locally.
+## Build the software locally.
     1. Clone the software from the Pipelines repository.
     2. Build the software in Visual Studio 2019 to pull down all of the dependencies from nuget.org.
     3. In Visual Studio, run all tests.  All of the should pass.
     4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
 
-# Build the software in Azure DevOps.
+## Build the software in Azure DevOps.
     1. In Organization Settings, select Extensions option.
     2. Install the SonarCloud Extension.
     3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
@@ -159,5 +174,6 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
         a. Add a variable named 'publishVstsFeed' with the value of the feed to which output should be published.
     13. Run the newly created pipeline.
 
-# Contribute
-No contributions are being accepted at this time.
+## Testing
+These tests are a mixture of unit and integration tests necessary to perform blob storage tasks.
+To ensure all tests run correctly, an environment variable named "PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING" must be created with full rights on an existing blob container location in Azure.

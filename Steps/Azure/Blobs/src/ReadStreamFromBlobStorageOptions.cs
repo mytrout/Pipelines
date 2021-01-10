@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadStreamFromBlobStorageOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,19 +27,36 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
     using System;
     using System.Threading.Tasks;
 
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-
-    /// <summary>
+        /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="ReadStreamFromBlobStorageStep"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ReadStreamFromBlobStorageOptions
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ReadStreamFromBlobStorageOptions"/> class.
+        /// </summary>
+        public ReadStreamFromBlobStorageOptions()
+        {
+            this.RetrieveConnectionStringAsync = this.RetrieveConnectionStringCoreAsync;
+        }
+
+        /// <summary>
+        /// Gets or sets a value used to connect to Azure Blob Storage.
+        /// </summary>
+        public string ReadBlobStorageConnectionString { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets a user-defined function to retrieve the Connection String.
         /// </summary>
-        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; } = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); };
+        public Func<Task<string>> RetrieveConnectionStringAsync { get; set; }
+
+        /// <summary>
+        /// Retrieves a connection string using a caller-defined methodology.
+        /// </summary>
+        /// <returns>A Connection String or <see cref="string.Empty"/>.</returns>
+        protected Task<string> RetrieveConnectionStringCoreAsync()
+        {
+            return Task.FromResult(this.ReadBlobStorageConnectionString);
+        }
     }
 }

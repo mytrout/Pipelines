@@ -12,6 +12,18 @@ trigger:
     - README.md
     - License.md
 
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - Steps/Azure/Blobs/*
+    exclude:
+    - changelog.md
+    - README.md
+    - License.md
+
 pool:
   vmImage: 'windows-latest'
 
@@ -25,23 +37,16 @@ variables:
 - name: 'buildConfiguration'
   value: 'Release'
 
-- name: 'major'
-  value: 0
-
-- name: 'minor'
-  value: 1
-
-- name: 'patch'
-  value: 1
+- group: 'MyTrout.Pipelines.Steps.Azure.Blobs.Version'
 
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
 
-- name: 'suffix'
-  value: '-beta'
-
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
+
+- name: "artifactPublishEnabled"
+  value: "YES"
 
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.Azure.Blobs'

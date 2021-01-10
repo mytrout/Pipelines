@@ -1,7 +1,7 @@
 // <copyright file="ReadStreamFromBlobStorageStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var options = new ReadStreamFromBlobStorageOptions();
 
             // act
-            var result = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var result = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -77,7 +77,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new ReadStreamFromBlobStorageOptions();
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.SOURCE_BLOB);
@@ -110,7 +110,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = mockNext.Object;
             var options = new ReadStreamFromBlobStorageOptions();
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Pipelines.Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.SOURCE_BLOB);
@@ -141,7 +141,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new ReadStreamFromBlobStorageOptions();
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.SOURCE_CONTAINER_NAME);
@@ -189,7 +189,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
             await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
@@ -234,7 +234,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
             await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
@@ -276,7 +276,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             int expectedErrorsCount = 1;
             string expectedMessage = Resources.CONTAINER_DOES_NOT_EXIST(CultureInfo.CurrentCulture, blobContainerName);
@@ -310,7 +310,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             var options = new ReadStreamFromBlobStorageOptions();
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
             var expectedMessage = Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.SOURCE_CONTAINER_NAME);
@@ -337,7 +337,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -355,7 +355,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -373,7 +373,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, next, options));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new ReadStreamFromBlobStorageStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -388,7 +388,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var next = new Mock<IPipelineRequest>().Object;
             var options = new ReadStreamFromBlobStorageOptions();
 
-            var source = new ReadStreamFromBlobStorageStep(logger, next, options);
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
 
             IPipelineContext context = null;
 

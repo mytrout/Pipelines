@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteBlobStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,9 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// Initializes a new instance of the <see cref="DeleteBlobStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public DeleteBlobStep(ILogger<DeleteBlobStep> logger, IPipelineRequest next, DeleteBlobOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public DeleteBlobStep(ILogger<DeleteBlobStep> logger, DeleteBlobOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -74,8 +74,13 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
 
             string connectionString = await options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 
+#pragma warning disable CS8600 // Assert~ methods guarantee non-null values.
+
             string targetContainer = context.Items[BlobConstants.TARGET_CONTAINER_NAME] as string;
+
             string targetBlob = context.Items[BlobConstants.TARGET_BLOB] as string;
+
+#pragma warning restore CS8600
 
             BlobContainerClient client = new BlobContainerClient(connectionString, targetContainer);
 
