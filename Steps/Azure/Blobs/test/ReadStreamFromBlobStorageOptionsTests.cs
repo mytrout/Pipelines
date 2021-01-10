@@ -43,7 +43,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             // act
             var result = new ReadStreamFromBlobStorageOptions
             {
-
                 ReadBlobStorageConnectionString = readBlobStorageConnectionString
             };
 
