@@ -56,6 +56,38 @@ namespace MyTrout.Pipelines.Steps.Data
 		public static global::System.Resources.ResourceManager ResourceManager { get; private set; }
 
 		/// <summary>
+		/// Looks up a localized string like "DbProviderFactory return null for Connection '{0}'.".
+		/// </summary>
+		public static string CONNECTION_IS_NULL()
+		{
+			return Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "DbProviderFactory return null for Connection '{0}'.".
+		/// </summary>
+		public static string CONNECTION_IS_NULL(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("CONNECTION_IS_NULL", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "DbProviderFactory return null for Connection '{0}'.".
+		/// </summary>
+		public static string CONNECTION_IS_NULL(params object[] args)
+		{
+			return Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "DbProviderFactory return null for Connection '{0}'.".
+		/// </summary>
+		public static string CONNECTION_IS_NULL(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("CONNECTION_IS_NULL", culture), args);
+		}
+
+		/// <summary>
 		/// Looks up a localized string like "No records were returned from the database during the execution of '{0}'.".
 		/// </summary>
 		public static string NO_DATA_FOUND()
@@ -85,6 +117,38 @@ namespace MyTrout.Pipelines.Steps.Data
 		public static string NO_DATA_FOUND(CultureInfo culture, params object[] args)
 		{
 			return string.Format(culture, Resources.ResourceManager.GetString("NO_DATA_FOUND", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "SqlStatement '{0}' was not configured.".
+		/// </summary>
+		public static string SQL_STATEMENT_NOT_FOUND()
+		{
+			return Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "SqlStatement '{0}' was not configured.".
+		/// </summary>
+		public static string SQL_STATEMENT_NOT_FOUND(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("SQL_STATEMENT_NOT_FOUND", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "SqlStatement '{0}' was not configured.".
+		/// </summary>
+		public static string SQL_STATEMENT_NOT_FOUND(params object[] args)
+		{
+			return Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "SqlStatement '{0}' was not configured.".
+		/// </summary>
+		public static string SQL_STATEMENT_NOT_FOUND(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("SQL_STATEMENT_NOT_FOUND", culture), args);
 		}
 
 		/// <summary>

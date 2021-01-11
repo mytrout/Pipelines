@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CONNECTION_IS_NULL" xml:space="preserve">
+    <value>DbProviderFactory return null for Connection '{0}'.</value>
+  </data>
   <data name="NO_DATA_FOUND" xml:space="preserve">
     <value>No records were returned from the database during the execution of '{0}'.</value>
+  </data>
+  <data name="SQL_STATEMENT_NOT_FOUND" xml:space="preserve">
+    <value>SqlStatement '{0}' was not configured.</value>
   </data>
   <data name="_SMOKE_TEST" xml:space="preserve">
     <value>Smoke Test (en-US)</value>

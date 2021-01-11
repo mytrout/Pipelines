@@ -32,7 +32,6 @@ namespace MyTrout.Pipelines.Steps.Data
     /// <summary>
     /// Provides user-configurable options for the <see cref="SaveContextToDatabaseStep" /> step.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SupplementContextWithDatabaseRecordOptions
     {
         /// <summary>
@@ -44,24 +43,14 @@ namespace MyTrout.Pipelines.Steps.Data
         }
 
         /// <summary>
-        /// Gets or sets the Command Type of the <see cref="SqlStatement"/>.
-        /// </summary>
-        public CommandType CommandType { get; set; } = CommandType.StoredProcedure;
-
-        /// <summary>
         /// Gets or sets the connection string used to connect to the database.
         /// </summary>
         public string DatabaseConnectionString { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets that parameter names required by <see cref="SqlStatement"/>.
-        /// </summary>
-        public IEnumerable<string> ParameterNames { get; set; } = new List<string>();
-
-        /// <summary>
         /// Gets or sets the SQL Statement that should be executed by this step.
         /// </summary>
-        public string SqlStatement { get; set; }
+        public SqlStatement SqlStatement { get; set; } = new SqlStatement();
 
         /// <summary>
         /// Gets or sets a user-defined function to retrieve the Connection String.

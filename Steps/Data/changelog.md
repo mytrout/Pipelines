@@ -10,6 +10,7 @@
 - Update Resources.tt to reflect the new copyright 2020-2021.
 - Change copyright from 2020 to 2020-2021.
 - Update README.md to provide actual documentation and bring it up-to-date.
+- Update the Project and Repository urls to GitHub from Azure DevOps.
 
  IMPORTANT NOTE: The MyTrout.Pipelines.Steps.Data.Database project was not upgraded to .NET 5.0 because I could not find a targeting pack for .NET 5.0.  It remains at .NET 4.8 as of this version.
 

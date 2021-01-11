@@ -64,7 +64,7 @@ namespace MyTrout.Pipelines.Steps.Data
         {
             DynamicParameters parameters = new DynamicParameters();
 
-            foreach (var parameterName in this.Options.ParameterNames)
+            foreach (var parameterName in this.Options.SqlStatement.ParameterNames)
             {
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
@@ -76,11 +76,15 @@ namespace MyTrout.Pipelines.Steps.Data
 
             using (var connection = this.ProviderFactory.CreateConnection())
             {
+                connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+
+#pragma warning disable CS8602 // AssertValueIsNotNull guarantees a non-null value here.
+
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false))
+                using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement.Statement, param: parameters, commandType: this.Options.SqlStatement.CommandType).ConfigureAwait(false))
                 {
                     if (await reader.ReadAsync().ConfigureAwait(false))
                     {
@@ -107,6 +111,9 @@ namespace MyTrout.Pipelines.Steps.Data
                         context.Errors.Add(new InvalidOperationException(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep))));
                     }
                 }
+
+#pragma warning restore CS8602 // AssertValueIsNotNull guarantees a non-null value here.
+
             } // Closed the connection to prevent any resource leakage into later steps.
 
             if (hasProcessedOneRecord)

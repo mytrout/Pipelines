@@ -26,13 +26,11 @@ namespace MyTrout.Pipelines.Steps.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Provides user-configurable options for the <see cref="SaveContextToDatabaseStep" /> step.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SaveContextToDatabaseOptions
     {
         /// <summary>

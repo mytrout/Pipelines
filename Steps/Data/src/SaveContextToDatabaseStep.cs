@@ -28,6 +28,8 @@ namespace MyTrout.Pipelines.Steps.Data
     using Microsoft.Extensions.Logging;
     using System;
     using System.Data.Common;
+    using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -63,10 +65,13 @@ namespace MyTrout.Pipelines.Steps.Data
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             context.AssertStringIsNotWhiteSpace(DatabaseConstants.DATABASE_STATEMENT_NAME);
-            context.AssertValueIsValid<SqlStatement>(DatabaseConstants.DATABASE_STATEMENT_NAME);
 
             var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
-            var sql = context.Items[sqlName] as SqlStatement;
+            var sql = this.Options.SqlStatements.FirstOrDefault(x => x.Name == sqlName);
+
+            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+
+#pragma warning disable CS8602 // AssertValueIsNotNull guarantees a non-null value here.
 
             DynamicParameters parameters = new DynamicParameters();
 
@@ -77,11 +82,15 @@ namespace MyTrout.Pipelines.Steps.Data
 
             using (var connection = this.ProviderFactory.CreateConnection())
             {
+                connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
                 int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
+
+#pragma warning restore CS8602
 
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
             }
