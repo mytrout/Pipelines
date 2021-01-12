@@ -44,7 +44,7 @@
           "name": "[parameters('databaseName')]",
           "properties": {
             "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": 34359738368,
+            "maxSizeBytes": 2147483648,
             "zoneRedundant": false,
             "licenseType": "",
             "readScale": "Disabled",
