@@ -53,8 +53,8 @@
             "autoPauseDelay": ""
           },
           "sku": {
-            "name": "GP_S_Gen5_1",
-            "tier": "GeneralPurpose"
+            "name": "Basic",
+            "tier": "Basic"
           },
           "type": "databases"
         },
