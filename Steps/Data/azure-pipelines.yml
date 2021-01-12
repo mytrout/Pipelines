@@ -118,6 +118,15 @@ steps:
     deploymentOutputs: 'DatabaseCreatedOutput'
   displayName: 'Create temporary SQL Server Database in temporary Resource Group.'
 
+- task: MSBuild@1
+  inputs:
+    solution: '**/*.sln'
+    msbuildArchitecture: x64
+    platform: $(buildPlatform)
+    configuration: $(buildConfiguration)
+    msbuildArguments: '--force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)' 
+  displayName: 'Build the DACPAC.'
+
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
@@ -134,15 +143,6 @@ steps:
       }
     failOnStderr: true
   displayName: 'Add the Azure SQL Server Connection String to the build server.'
-
-- task: MSBuild@1
-  inputs:
-    solution: '**/*.sqlproj'
-    msbuildArchitecture: 'x64'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    arguments: '--force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)'
-  displayName: 'Build the DACPAC.'
 
 - task: SqlAzureDacpacDeployment@1
   inputs:
