@@ -124,7 +124,7 @@ steps:
     msbuildArchitecture: x64
     platform: $(buildPlatform)
     configuration: $(buildConfiguration)
-    msbuildArguments: '--force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)' 
+    arguments: '--force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)' 
   displayName: 'Build the DACPAC.'
 
 - task: PowerShell@2
