@@ -42,11 +42,14 @@ variables:
 - name: 'buildId'
   value: $[counter(variables['patch'], 0)]
 
-- group: 'Pipelines Artifacts Feed'
-- group: 'SonarQube Analysis'
+- name: 'publishVstsFeed'
+  value: 'Pipelines/mytrout'
 
-- name: "artifactPublishEnabled"
-  value: "YES"
+- name: 'sonarCloudConnectionName'
+  value: 'SonarCloud.io - Pipelines'
+
+- name: 'sonarCloudOrganization'
+  value: 'mytrout'
 
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.Data'
@@ -54,9 +57,12 @@ variables:
 - name: 'sonarCloudProjectName'
   value: 'Pipelines.Steps.Data'
 
+- name: 'sonarCloudEnabled'
+  value: 'YES'
+
 - name: 'primarySourceBranch'
   value: 'refs/heads/master'
-    
+
 - name: 'resourceGroupName'
   value: 'mytrout-sqlserver-$(Build.Reason)-$(major).$(minor).$(patch).$(buildId)$(suffix)-rg'
 
@@ -67,7 +73,7 @@ variables:
   value: 'Cartoon'
 
 - name: 'databaseServerName'
-  value: 'mytrout-sqlserver-$(major)-$(minor)-$(patch)-$(buildId)-svr' 
+  value: 'mytrout-sqlserver-$(major)-$(minor)-$(patch)-$(buildId)-svr'
 
 steps:
   # This PowerShell step provides more visibility into the non-master branch builds at the pipeline level
