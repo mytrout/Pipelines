@@ -120,11 +120,11 @@ steps:
 
 - task: MSBuild@1
   inputs:
-    solution: '**/*.sln'
+    solution: '**/*.sqlproj'
     msbuildArchitecture: x64
     platform: $(buildPlatform)
     configuration: $(buildConfiguration)
-    arguments: '--force -p:Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)' 
+    msBuildArguments: '/p:TargetFramework=v4.8;Version=$(major).$(minor).$(patch)$(suffix);AssemblyVersion=$(major).$(minor).$(patch).$(buildId);FileVersion=$(major).$(minor).$(patch).$(buildId)' 
   displayName: 'Build the DACPAC.'
 
 - task: PowerShell@2
