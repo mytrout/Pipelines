@@ -1,7 +1,7 @@
 ﻿// <copyright file="SaveContextToDatabaseStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,8 @@ namespace MyTrout.Pipelines.Steps.Data
     using Microsoft.Extensions.Logging;
     using System;
     using System.Data.Common;
+    using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -62,20 +64,33 @@ namespace MyTrout.Pipelines.Steps.Data
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
+            context.AssertStringIsNotWhiteSpace(DatabaseConstants.DATABASE_STATEMENT_NAME);
+
+            var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
+            var sql = this.Options.SqlStatements.FirstOrDefault(x => x.Name == sqlName);
+
+            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+
+#pragma warning disable CS8602 // AssertValueIsNotNull guarantees a non-null value here.
+
             DynamicParameters parameters = new DynamicParameters();
 
-            foreach (var parameterName in this.Options.ParameterNames)
+            foreach (var parameterName in sql.ParameterNames)
             {
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
             using (var connection = this.ProviderFactory.CreateConnection())
             {
+                connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                int result = await connection.ExecuteAsync(this.Options.SqlStatement, param: parameters, commandType: this.Options.CommandType).ConfigureAwait(false);
+                int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
+
+#pragma warning restore CS8602
 
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
             }

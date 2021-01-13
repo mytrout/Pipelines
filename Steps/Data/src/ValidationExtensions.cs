@@ -1,4 +1,4 @@
-﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+﻿// <copyright file="ValidationExtensions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020-2021 Chris Trout
@@ -22,6 +22,32 @@
 // SOFTWARE.
 // </copyright>
 
-using System.Diagnostics.CodeAnalysis;
+namespace MyTrout.Pipelines.Steps.Data
+{
+    using System;
 
-[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the validation of the parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Data.SupplementContextWithDatabaseRecordStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+    /// <summary>
+    /// Provides validation extensions to lower cognitive complexity.
+    /// </summary>
+    public static class ValidationExtensions
+    {
+        /// <summary>
+        /// Asserts that a given value is not null.
+        /// </summary>
+        /// <typeparam name="TItem">The type of the value being tested.</typeparam>
+        /// <param name="source">The instance of the value.</param>
+        /// <param name="exceptionMessage">A function returning the error message.</param>
+        public static void AssertValueIsNotNull<TItem>(this TItem source, Func<string> exceptionMessage)
+        {
+            if (exceptionMessage == null)
+            {
+                throw new ArgumentNullException(nameof(exceptionMessage));
+            }
+
+            if (source == null)
+            {
+                throw new InvalidOperationException(exceptionMessage.Invoke());
+            }
+        }
+    }
+}

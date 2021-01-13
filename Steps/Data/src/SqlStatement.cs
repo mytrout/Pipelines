@@ -1,4 +1,4 @@
-﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
+﻿// <copyright file="SqlStatement.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020-2021 Chris Trout
@@ -22,6 +22,34 @@
 // SOFTWARE.
 // </copyright>
 
-using System.Diagnostics.CodeAnalysis;
+namespace MyTrout.Pipelines.Steps.Data
+{
+    using System.Collections.Generic;
+    using System.Data;
 
-[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "base class handles the validation of the parameter.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Data.SupplementContextWithDatabaseRecordStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
+    /// <summary>
+    /// Gets the SQL statement and all of the parameters to execute a specific operation.
+    /// </summary>
+    public class SqlStatement
+    {
+        /// <summary>
+        /// Gets or sets the Command Type of the <see cref="SqlStatement"/>.
+        /// </summary>
+        public CommandType CommandType { get; set; } = CommandType.StoredProcedure;
+
+        /// <summary>
+        /// Gets or sets the name of the statement.
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets that parameter names required by <see cref="SqlStatement"/>.
+        /// </summary>
+        public IEnumerable<string> ParameterNames { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Gets or sets the SQL Statement that should be executed by this step.
+        /// </summary>
+        public string Statement { get; set; } = string.Empty;
+    }
+}

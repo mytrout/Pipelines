@@ -1,7 +1,7 @@
 // <copyright file="SupplementContextWithDatabaseRecordStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,47 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_Returns_Null()
+        {
+            // arrange
+            var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
+            
+            var providerFactoryMock = new Mock<DbProviderFactory>();
+            providerFactoryMock.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
+            var providerFactory = providerFactoryMock.Object;
+
+            var options = new SupplementContextWithDatabaseRecordOptions()
+            {
+                SqlStatement = new SqlStatement()
+                {
+                    CommandType = System.Data.CommandType.StoredProcedure,
+                    ParameterNames = new List<string>() { "CartoonId" },
+                    Statement = "dbo.CartoonSelect"
+                },
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+            };
+
+            int expectedId = -1;
+
+            var context = new PipelineContext();
+            context.Items.Add("CartoonId", expectedId);
+
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            SupplementContextWithDatabaseRecordStep sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+
+            int expectedErrorCount = 1;
+            string expectedMessage = Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture, providerFactory.GetType().Name);
+
+            // act
+            await sut.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(expectedErrorCount, context.Errors.Count);
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Record_Is_Not_Returned()
         {
             // arrange
@@ -69,9 +110,12 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var providerFactory = SqlClientFactory.Instance;
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
-                CommandType = System.Data.CommandType.StoredProcedure,
-                SqlStatement = "dbo.CartoonSelect",
-                ParameterNames = new List<string>() { "CartoonId" },
+                SqlStatement = new SqlStatement()
+                {
+                    CommandType = System.Data.CommandType.StoredProcedure,
+                    ParameterNames = new List<string>() { "CartoonId" },
+                    Statement = "dbo.CartoonSelect"
+                },
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
@@ -110,9 +154,12 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var providerFactory = SqlClientFactory.Instance;
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
-                CommandType = System.Data.CommandType.StoredProcedure,
-                SqlStatement = "dbo.CartoonSelect",
-                ParameterNames = new List<string>() { "CartoonId" },
+                SqlStatement = new SqlStatement()
+                {
+                    CommandType = System.Data.CommandType.StoredProcedure,
+                    ParameterNames = new List<string>() { "CartoonId" },
+                    Statement = "dbo.CartoonSelect"
+                },
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
             };
 
