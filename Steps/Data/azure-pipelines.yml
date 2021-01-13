@@ -60,6 +60,9 @@ variables:
 - name: 'sonarCloudEnabled'
   value: 'YES'
 
+- name: 'artifactPublishEnabled'
+  value: 'YES'
+  
 - name: 'primarySourceBranch'
   value: 'refs/heads/master'
 
