@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Files
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Files?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=18&branchName=master)
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Files?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=19&branchName=master)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Files?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Files/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
