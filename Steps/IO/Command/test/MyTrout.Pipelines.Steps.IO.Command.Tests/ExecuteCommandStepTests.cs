@@ -84,10 +84,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
-            var options = new WindowsDefenderAntivirusOptions()
-            {
-                ExpectedResult = "Failed with hr = 0x80004005"
-            };
+            var options = new WindowsDefenderAntivirusOptions();
 
             PipelineContext context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExecuteCommandStepTests.cs");

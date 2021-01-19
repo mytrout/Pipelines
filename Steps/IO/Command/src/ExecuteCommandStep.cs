@@ -1,4 +1,4 @@
-﻿// <copyright file="ExecuteFileCommandStep.cs" company="Chris Trout">
+﻿// <copyright file="ExecuteCommandStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2021 Chris Trout
