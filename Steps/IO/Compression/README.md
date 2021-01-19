@@ -1,16 +1,16 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Files?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=20&branchName=master)
-[![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Files?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Files/)
+[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Compression?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=20&branchName=master)
+[![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Compression?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Compression/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
 [![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Files&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Files)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Files&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Files)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Files&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Files)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Files&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Files)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Files&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Files)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Compression&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Compression)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Compression&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Compression)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Compression&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Compression)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Compression&metric=security_rating)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Compression)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Steps.IO.Compression&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Pipelines.Steps.IO.Compression)
 
 ## Introduction
 
