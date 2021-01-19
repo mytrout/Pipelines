@@ -36,8 +36,8 @@ namespace MyTrout.Pipelines.Steps.IO.Command
             : base()
         {
             this.Arguments = "-Scan -ScanType 3 -File \"{0}\"";
-            this.CommandString  = "C:\\Program Files\\Windows Defender\\MpCmdRun.exe"; 
-            this.ExpectedResult = "Failed with hr = 0x80004005";
+            this.CommandString = "C:\\Program Files\\Windows Defender\\MpCmdRun.exe";
+            this.ExpectedResult = " found no threats.";
             this.IncludeFileNameTransformInArguments = true;
         }
     }
