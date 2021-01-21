@@ -14,11 +14,17 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 
 [Pipelines.Steps.Cryptography](../Steps/Cryptography/README.md) 
 
+[Pipelines.Steps.IO.Command](../Steps/IO/Command/README.md) 
+
 [Pipelines.Steps.IO.Compression](../Steps/IO/Compression/README.md) 
 
 [Pipelines.Steps.IO.Files](../Steps/IO/Files/README.md) 
 
 # Steps By Function
+
+## Available Command Line Steps
+
+[Pipelines.Steps.IO.Command](../Steps/IO/Command/README.md) 
 
 ## Available Compression Steps
 
