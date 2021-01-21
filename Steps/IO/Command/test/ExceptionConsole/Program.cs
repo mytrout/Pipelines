@@ -4,7 +4,7 @@ namespace ExceptionConsole
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
