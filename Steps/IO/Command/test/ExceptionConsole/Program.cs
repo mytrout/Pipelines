@@ -1,12 +1,30 @@
-﻿using System;
-
+﻿
 namespace ExceptionConsole
 {
+    using System;
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
-            throw new InvalidOperationException("Hello World!");
+            if (args == null || args.Length == 0)
+            {
+                args = new string[1] { "--exception" };
+            }
+
+            switch (args[0])
+            {
+                case "--exception":
+                    {
+                        throw new InvalidOperationException("Hello World!");
+                    }
+                default:
+                    {
+                        Console.WriteLine(args[0]);
+                        break;
+                    }
+            }
         }
     }
 }

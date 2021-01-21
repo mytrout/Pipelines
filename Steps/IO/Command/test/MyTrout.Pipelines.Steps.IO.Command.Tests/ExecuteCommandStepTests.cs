@@ -49,7 +49,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             var options = new ExecuteCommandOptions()
             {
-                Arguments = string.Empty,
+                Arguments = "--exception",
                 CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
@@ -65,7 +65,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             var exceptionCount = 1;
             var exceptionType = typeof(InvalidOperationException);
-            var expectedMessage = "Cannot use file stream for [";
+            var expectedMessage = "Unhandled exception. System.InvalidOperationException: Hello World!";
             
 
             // act
@@ -84,10 +84,17 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
-            var options = new WindowsDefenderAntivirusOptions();
+            // This test also includes the Arguments replacement for File Systems.
+            var options = new ExecuteCommandOptions()
+            {
+                Arguments = "{0}",
+                CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
+                ExpectedResult = "Nothing",
+                IncludeFileNameTransformInArguments = true
+            };
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExecuteCommandStepTests.cs");
+            context.Items.Add(FileConstants.SOURCE_FILE, options.ExpectedResult);
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
@@ -112,9 +119,12 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
-            var options = new WindowsDefenderAntivirusOptions()
+            var options = new ExecuteCommandOptions()
             {
-                ExpectedResult = "I watched TV while writing this test."
+                Arguments = "Something",
+                CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
+                ExpectedResult = "Nothing",
+                IncludeFileNameTransformInArguments = false
             };
 
             PipelineContext context = new PipelineContext();
