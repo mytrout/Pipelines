@@ -81,9 +81,13 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
         public async Task Returns_Successful_Status_From_InvokeCoreAsync_When_ExpectedResult_Matches()
         {
             // arrange
-            var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
-            var logger = mockLogger.Object;
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            });
 
+            var logger = loggerFactory.CreateLogger<ExecuteCommandStep>();
+            
             // This test also includes the Arguments replacement for File Systems.
             var options = new ExecuteCommandOptions()
             {
