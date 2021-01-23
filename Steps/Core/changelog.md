@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Core Change Log
 
+## 2.0.7
+- Add ExtensionTimings to allow steps to configure when the step will be executed.
+
 ## 2.0.6
  - Upgrade to .NET 5.0
  - Change the project and repository urls from dev.azure.com/mytrout to github.com.
