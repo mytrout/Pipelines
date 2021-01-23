@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.IO.Command
 
+## 0.2.0-beta
+- CHanging from SOURCE_FILE to TARGET_FILE as the input for the command.
+
 ## 0.1.1-beta
 - Change Program to a static class and make it the Project Startup class.
 

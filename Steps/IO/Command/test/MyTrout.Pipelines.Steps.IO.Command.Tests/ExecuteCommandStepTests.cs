@@ -98,7 +98,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             };
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, options.ExpectedResult);
+            context.Items.Add(FileConstants.TARGET_FILE, options.ExpectedResult);
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
