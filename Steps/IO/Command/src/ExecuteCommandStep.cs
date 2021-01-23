@@ -61,9 +61,9 @@ namespace MyTrout.Pipelines.Steps.IO.Command
 
             if (this.Options.IncludeFileNameTransformInArguments)
             {
-                context.AssertStringIsNotWhiteSpace(FileConstants.SOURCE_FILE);
+                context.AssertStringIsNotWhiteSpace(FileConstants.TARGET_FILE);
 
-                var fileName = context.Items[FileConstants.SOURCE_FILE] as string;
+                var fileName = context.Items[FileConstants.TARGET_FILE] as string;
                 arguments = string.Format(CultureInfo.CurrentCulture, this.Options.Arguments, fileName);
             }
 
