@@ -43,6 +43,9 @@ variables:
 - group: 'Pipelines Artifacts Feed'
 - group: 'SonarQube Analysis'
 
+- name: 'artifactPublishEnabled'
+  value: 'YES'
+
 - name: 'sonarCloudProjectKey'
   value: 'Pipelines.Steps.Core'
 
@@ -51,6 +54,6 @@ variables:
 
 - name: 'sonarCloudSourceBranch'
   value: 'refs/heads/master'
-  
+
 steps:
   - template: ../../nuget-build-template.yml
