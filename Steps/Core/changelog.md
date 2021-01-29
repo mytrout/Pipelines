@@ -2,6 +2,7 @@
 
 ## 2.0.7
 - Add ExtensionTimings to allow steps to configure when the step will be executed.
+- Add artifactPublishEnabled = 'YES' to the azure-pipelines.yml
 
 ## 2.0.6
  - Upgrade to .NET 5.0
