@@ -54,7 +54,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             if (!basePath.EndsWith(Path.DirectorySeparatorChar))
             {
-                basePath = basePath + Path.DirectorySeparatorChar;
+                basePath += Path.DirectorySeparatorChar;
             }
 
             if (!Path.IsPathFullyQualified(result))

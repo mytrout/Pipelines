@@ -146,7 +146,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Callback(() => {
+                                    .Callback(() =>
+                                    {
                                         Assert.IsFalse(File.Exists(fullSourcePathAndFileName));
                                         Assert.IsTrue(File.Exists(fullTargetPathAndFileName));
                                         Assert.AreEqual(contents, File.ReadAllText(fullTargetPathAndFileName));
