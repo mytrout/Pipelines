@@ -35,6 +35,11 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     public class DeleteFileOptions
     {
         /// <summary>
+        /// Gets or sets the timing of when the <see cref="DeleteFileStep"/> will be executed.
+        /// </summary>
+        public ExecutionTimings ExecutionTimings { get; set; } = ExecutionTimings.After;
+
+        /// <summary>
         /// Gets or sets a base directory for the source file name.
         /// </summary>
         public string DeleteFileBaseDirectory { get; set; } = string.Empty;

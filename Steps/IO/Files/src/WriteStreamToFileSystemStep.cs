@@ -55,16 +55,29 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.Before))
+            {
+                await WriteStreamToFileSystemStep.WriteStreamToFileSystemAsync(context, this.Options);
+            }
+
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.WriteFileBaseDirectory);
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.After))
+            {
+                await WriteStreamToFileSystemStep.WriteStreamToFileSystemAsync(context, this.Options);
+            }
+        }
+
+        private static async Task WriteStreamToFileSystemAsync(IPipelineContext context, WriteStreamToFileSystemOptions options)
+        {
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.WriteFileBaseDirectory);
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
 #pragma warning disable CS8600, CS8602, CS8604 // Assert~ methods guarantee that workingFile and workStream are not null.
 
             string workingFile = context.Items[FileConstants.TARGET_FILE] as string;
 
-            workingFile = workingFile.GetFullyQualifiedPath(this.Options.WriteFileBaseDirectory);
+            workingFile = workingFile.GetFullyQualifiedPath(options.WriteFileBaseDirectory);
 
             if (File.Exists(workingFile))
             {

@@ -87,6 +87,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() => Assert.IsTrue(File.Exists(fullTargetPathAndFileName), "File does not exist during the InvokeAsync callback and should."))
                                     .Returns(Task.CompletedTask);
 
             var next = mockNext.Object;
@@ -94,6 +95,55 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             DeleteFileOptions options = new DeleteFileOptions()
             {
                 DeleteFileBaseDirectory = targetFilePath
+            };
+
+            var source = new DeleteFileStep(logger, next, options);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            Assert.IsFalse(File.Exists(fullTargetPathAndFileName));
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+            File.Delete(fullTargetPathAndFileName);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_ExecutionTimings_Before_Is_Configured_And_File_Is_Deleted_Successfully()
+        {
+            // arrange
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            string contents = "Et tu, Brute?";
+            File.WriteAllText(fullTargetPathAndFileName, contents);
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(FileConstants.TARGET_FILE, fileName);
+
+            var logger = new Mock<ILogger<DeleteFileStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() => Assert.IsFalse(File.Exists(fullTargetPathAndFileName), "File exists during the InvokeAsync callback and should not."))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            DeleteFileOptions options = new DeleteFileOptions()
+            {
+                DeleteFileBaseDirectory = targetFilePath,
+                ExecutionTimings = ExecutionTimings.Before
             };
 
             var source = new DeleteFileStep(logger, next, options);

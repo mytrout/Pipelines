@@ -35,6 +35,11 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     public class MoveFileOptions
     {
         /// <summary>
+        /// Gets or sets the timing of when the <see cref="MoveFileStep"/> will be executed.
+        /// </summary>
+        public ExecutionTimings ExecutionTimings { get; set; } = ExecutionTimings.After;
+
+        /// <summary>
         /// Gets or sets a base directory for the source file name.
         /// </summary>
         public string MoveSourceFileBaseDirectory { get; set; } = string.Empty;
