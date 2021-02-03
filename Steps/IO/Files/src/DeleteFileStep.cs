@@ -53,19 +53,34 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.Before))
+            {
+                await DeleteFileStep.DeleteFileAsync(context, this.Options).ConfigureAwait(false);
+            }
+
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.DeleteFileBaseDirectory);
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.After))
+            {
+                await DeleteFileStep.DeleteFileAsync(context, this.Options).ConfigureAwait(false);
+            }
+        }
+
+        private static Task DeleteFileAsync(IPipelineContext context, DeleteFileOptions options)
+        {
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.DeleteFileBaseDirectory);
 
 #pragma warning disable CS8600, CS8604 // targetFile is checked as part of AssertFileNameParameterIsValid.
 
             string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
 
-            targetFile = targetFile.GetFullyQualifiedPath(this.Options.DeleteFileBaseDirectory);
+            targetFile = targetFile.GetFullyQualifiedPath(options.DeleteFileBaseDirectory);
 
 #pragma warning restore CS8600, CS8604
 
             File.Delete(targetFile);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -124,6 +124,67 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_ExecutionTimings_Before_Is_Configured_And_File_Is_Moved_Successfully()
+        {
+            // arrange
+            string sourceFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullSourcePathAndFileName = sourceFilePath + fileName;
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            string contents = "Et tu, Brute?";
+            File.WriteAllText(fullSourcePathAndFileName, contents);
+
+            PipelineContext context = new PipelineContext();
+            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
+            context.Items.Add(FileConstants.TARGET_FILE, fileName);
+
+            var logger = new Mock<ILogger<MoveFileStep>>().Object;
+
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() =>
+                                    {
+                                        Assert.IsFalse(File.Exists(fullSourcePathAndFileName));
+                                        Assert.IsTrue(File.Exists(fullTargetPathAndFileName));
+                                        Assert.AreEqual(contents, File.ReadAllText(fullTargetPathAndFileName));
+                                    })
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            MoveFileOptions options = new MoveFileOptions()
+            {
+                ExecutionTimings = ExecutionTimings.Before,
+                MoveSourceFileBaseDirectory = sourceFilePath,
+                MoveTargetFileBaseDirectory = targetFilePath
+            };
+
+            var source = new MoveFileStep(logger, next, options);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            Assert.IsFalse(File.Exists(fullSourcePathAndFileName));
+            Assert.IsTrue(File.Exists(fullTargetPathAndFileName));
+            Assert.AreEqual(contents, File.ReadAllText(fullTargetPathAndFileName));
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+            File.Delete(fullTargetPathAndFileName);
+            Directory.Delete(targetFilePath);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Source_File_Does_Not_Exists()
         {
             // arrange

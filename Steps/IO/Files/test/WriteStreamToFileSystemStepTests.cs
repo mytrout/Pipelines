@@ -66,6 +66,59 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         }
 
         [TestMethod]
+        public async Task Writes_File_From_InvokeAsync_When_ExecutionTimings_Before_Is_Configured()
+        {
+            // arrange
+            string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string contents = "What is the text here?";
+            byte[] body = Encoding.UTF8.GetBytes(contents);
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullPathAndFileName = outputFilePath + fileName;
+
+            using (var stream = new MemoryStream(body))
+            {
+                PipelineContext context = new PipelineContext();
+                context.Items.Add(FileConstants.TARGET_FILE, fileName);
+                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
+
+                var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
+
+                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                        .Callback(() =>
+                        {
+                            Assert.IsTrue(File.Exists(fullPathAndFileName));
+                            Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "The stream should be open.");
+                            Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
+                        })
+                        .Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                {
+                    ExecutionTimings = ExecutionTimings.Before,
+                    WriteFileBaseDirectory = outputFilePath
+                };
+
+                var source = new WriteStreamToFileSystemStep(logger, next, options);
+
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                Assert.IsTrue(File.Exists(fullPathAndFileName));
+                Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "The stream should be open.");
+                Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
+
+                // cleanup
+                await source.DisposeAsync().ConfigureAwait(false);
+                File.Delete(fullPathAndFileName);
+            }
+        }
+
+        [TestMethod]
         public async Task Writes_File_From_InvokeAsync()
         {
             // arrange

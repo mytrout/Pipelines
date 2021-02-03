@@ -28,7 +28,7 @@ MyTrout.Pipelines.Steps.IO.Files targets [.NET 5.0](https://dotnet.microsoft.com
 
 ## Software dependencies
 
-    1. MyTrout.Pipelines.Steps 1.0.*
+    1. MyTrout.Pipelines.Steps 2.0.7 minimum, 2.*.* is acceptable.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

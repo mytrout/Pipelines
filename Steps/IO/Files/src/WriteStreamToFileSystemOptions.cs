@@ -35,6 +35,11 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     public class WriteStreamToFileSystemOptions
     {
         /// <summary>
+        /// Gets or sets the timing of when the <see cref="WriteStreamToFileSystemStep"/> will be executed.
+        /// </summary>
+        public ExecutionTimings ExecutionTimings { get; set; } = ExecutionTimings.After;
+
+        /// <summary>
         /// Gets or sets the base directory to which the application should write the file.
         /// </summary>
         public string WriteFileBaseDirectory { get; set; } = string.Empty;

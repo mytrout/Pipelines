@@ -55,16 +55,29 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.Before))
+            {
+                await MoveFileStep.MoveFileAsync(context, this.Options);
+            }
+
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.MoveSourceFileBaseDirectory);
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, this.Options.MoveTargetFileBaseDirectory);
+            if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.After))
+            {
+                await MoveFileStep.MoveFileAsync(context, this.Options);
+            }
+        }
+
+        private static Task MoveFileAsync(IPipelineContext context, MoveFileOptions options)
+        {
+            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, options.MoveSourceFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.MoveTargetFileBaseDirectory);
 
 #pragma warning disable CS8600, CS8604 // AssertFileNameParameterIsValid guarantees that SOURCE_FILE and TARGET_FILE is not null.
 
             string sourceFile = context.Items[FileConstants.SOURCE_FILE] as string;
 
-            sourceFile = sourceFile.GetFullyQualifiedPath(this.Options.MoveSourceFileBaseDirectory);
+            sourceFile = sourceFile.GetFullyQualifiedPath(options.MoveSourceFileBaseDirectory);
 
             if (!File.Exists(sourceFile))
             {
@@ -72,7 +85,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             }
 
             string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
-            targetFile = targetFile.GetFullyQualifiedPath(this.Options.MoveTargetFileBaseDirectory);
+            targetFile = targetFile.GetFullyQualifiedPath(options.MoveTargetFileBaseDirectory);
 
             if (File.Exists(targetFile))
             {
@@ -89,6 +102,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             File.Move(sourceFile, targetFile);
 
 #pragma warning restore CS8600, CS8604
+
+            return Task.CompletedTask;
         }
     }
 }

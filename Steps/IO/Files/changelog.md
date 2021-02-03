@@ -1,7 +1,15 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 2.1.0
+- Upgrade to MyTrout.Pipelines.Steps v2.0.7
+- Upgrade all analyzers and remove deprecated analyzers.
+- Add the ExecutionTimings to DeleteFileOptions, MoveFileOptions, and WriteStreamToFileSystemOptions.
+- Add the ability to execute on the request or response side for DeleteFileStep, MoveFileStep, and WriteStreamToFileSystemStep.
+- Correct analyzer warnings.
+
 ## 2.0.0
 - Upgrade to .NET 5.0
+- Upgrade to MyTrout.Pipelines.Steps v2.0.0.
 - Add nuget, build, and sonarqube badges to README.md.
 - Add nullable requirements and C# Language Version 9.0 to the project.
 - Update azure-pipelines.xml to add artifactPublishEnabled property.
