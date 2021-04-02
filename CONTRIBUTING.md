@@ -33,23 +33,25 @@ We will provide multiple linked lists at the ./Steps/README.md to ensure that th
     ./Steps/Google/CloudStorage
 
 
-<MODIFIERS> represents systems and descriptors for your library mentioned above.
+
 
 ### How do I structure a new project?
-  ./Steps/<MODIFIERS>/src  
-  ./Steps/<MODIFIERS>/src/GlobalSuppressions.cs  
-  ./Steps/<MODIFIERS>/src/<root namespace of project>.csproj  
-  ./Steps/<MODIFIERS>/src/Resources.cs  
-  ./Steps/<MODIFIERS>/src/Resources.resx  
-  ./Steps/<MODIFIERS>/src/Resources.tt  
-  ./Steps/<MODIFIERS>/test  
-  ./Steps/<MODIFIERS>/test/<root namespace of project>.Tests.csproj  
-  ./Steps/<MODIFIERS>/azure-pipelines.yml - builds the new library  
-  ./Steps/<MODIFIERS>/CHANGELOG.md - Change Log for the new library.  
-  ./Steps/<MODIFIERS>/LICENSE - MIT License documentation with your name and year delivered.  
-  ./Steps/<MODIFIERS>/README.md - Read Me documentation describing how to use your Step.  
-  ./Steps/<MODIFIERS>/stylecop.json - stylecop file with   
-  ./Steps/<MODIFIERS>/<root namespace of project>.sln  
+{MODIFIERS} represents systems and descriptors for your library mentioned above.  
+  
+  ./Steps/{MODIFIERS}/src  
+  ./Steps/{MODIFIERS}/src/GlobalSuppressions.cs  
+  ./Steps/{MODIFIERS}/src/<root namespace of project>.csproj  
+  ./Steps/{MODIFIERS}/src/Resources.cs  
+  ./Steps/{MODIFIERS}/src/Resources.resx  
+  ./Steps/{MODIFIERS}/src/Resources.tt  
+  ./Steps/{MODIFIERS}/test  
+  ./Steps/{MODIFIERS}/test/<root namespace of project>.Tests.csproj  
+  ./Steps/{MODIFIERS}/azure-pipelines.yml - builds the new library  
+  ./Steps/{MODIFIERS}/CHANGELOG.md - Change Log for the new library.  
+  ./Steps/{MODIFIERS}/LICENSE - MIT License documentation with your name and year delivered.  
+  ./Steps/{MODIFIERS}/README.md - Read Me documentation describing how to use your Step.  
+  ./Steps/{MODIFIERS}/stylecop.json - stylecop file with   
+  ./Steps/{MODIFIERS}/<root namespace of project>.sln  
 
 
 ### Details for New Projects..
@@ -83,18 +85,17 @@ The following rules apply to implementation projects:
 1. Constants should be all upper case with underscores between words.  
   a. SA1310 should be suppressed in a Global Suppressions file with the following explanation "Constant names should contain underscores."
 
-2. Use the following analyzers to ensure a consistent code base.
-  a. Enable .NET Analyzers in the csproj file for .NET 5.0 projects.
-  b. SonarQube - used to catch some additional issues that other analyzers may miss.
-  c. StyleCop - used to ensure that code look-and-feel remains consistent across all projects.
-  d. Microsoft.VisualStudio.Threading.Analyzers - used to ensure that static Threading issues are caught during development.
+2. Use the following analyzers to ensure a consistent code base.  
+  a. Enable .NET Analyzers in the csproj file for .NET 5.0 projects.  
+  b. SonarQube - used to catch some additional issues that other analyzers may miss.  
+  c. StyleCop - used to ensure that code look-and-feel remains consistent across all projects.  
+  d. Microsoft.VisualStudio.Threading.Analyzers - used to ensure that static Threading issues are caught during development.  
 
-3. These rules can be suppressed permanently in the csproj file
-  a. SA1413 - UseTrailingCommasInMultiLineInitializers 
-     RATIONALE: The confusion about whether or not something has been deleted (and subsequent research) outweighs the ability to reorder items and changes on unrelated lines rationale provided by the implementors.
-
+3. These rules can be suppressed permanently in the csproj file.   
+  a. SA1413 - UseTrailingCommasInMultiLineInitializers  
+              RATIONALE: The confusion about whether or not something has been deleted (and subsequent research) outweighs the ability to reorder items and changes on unrelated lines rationale provided by the implementors.  
   b. IDE0063 - Use simple 'using' statement.  
-     RATIONALE: Having deterministic boundaries for using statements ensures that the developer knows when a variable is going out-of-scope instead of non-deterministic behavior that could change from version to version of the compiler.
+               RATIONALE: Having deterministic boundaries for using statements ensures that the developer knows when a variable is going out-of-scope instead of non-deterministic behavior that could change from version to version of the compiler.
 
 4. All new or updated reference and value types must have 100% Code Coverage by unit and integration tests that assert correct execution within the type.
 
