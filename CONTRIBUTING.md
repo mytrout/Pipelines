@@ -37,21 +37,22 @@ We will provide multiple linked lists at the ./Steps/README.md to ensure that th
 
 ### How do I structure a new project?
 {MODIFIERS} represents systems and descriptors for your library mentioned above.  
-  
+{root namespace of the project} is self-explanatory.  
+
   ./Steps/{MODIFIERS}/src  
   ./Steps/{MODIFIERS}/src/GlobalSuppressions.cs  
-  ./Steps/{MODIFIERS}/src/<root namespace of project>.csproj  
+  ./Steps/{MODIFIERS}/src/{root namespace of project}.csproj  
   ./Steps/{MODIFIERS}/src/Resources.cs  
   ./Steps/{MODIFIERS}/src/Resources.resx  
   ./Steps/{MODIFIERS}/src/Resources.tt  
   ./Steps/{MODIFIERS}/test  
-  ./Steps/{MODIFIERS}/test/<root namespace of project>.Tests.csproj  
+  ./Steps/{MODIFIERS}/test/{root namespace of project}.Tests.csproj  
   ./Steps/{MODIFIERS}/azure-pipelines.yml - builds the new library  
   ./Steps/{MODIFIERS}/CHANGELOG.md - Change Log for the new library.  
   ./Steps/{MODIFIERS}/LICENSE - MIT License documentation with your name and year delivered.  
   ./Steps/{MODIFIERS}/README.md - Read Me documentation describing how to use your Step.  
   ./Steps/{MODIFIERS}/stylecop.json - stylecop file with   
-  ./Steps/{MODIFIERS}/<root namespace of project>.sln  
+  ./Steps/{MODIFIERS}/{root namespace of project}.sln  
 
 
 ### Details for New Projects..
