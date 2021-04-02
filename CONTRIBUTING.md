@@ -36,20 +36,20 @@ We will provide multiple linked lists at the ./Steps/README.md to ensure that th
 <MODIFIERS> represents systems and descriptors for your library mentioned above.
 
 ### How do I structure a new project?
-  ./Steps/<MODIFIERS>/src
-  ./Steps/<MODIFIERS>/src/GlobalSuppressions.cs
-  ./Steps/<MODIFIERS>/src/<root namespace of project>.csproj
-  ./Steps/<MODIFIERS>/src/Resources.cs
-  ./Steps/<MODIFIERS>/src/Resources.resx
-  ./Steps/<MODIFIERS>/src/Resources.tt
-  ./Steps/<MODIFIERS>/test
-  ./Steps/<MODIFIERS>/test/<root namespace of project>.Tests.csproj
-  ./Steps/<MODIFIERS>/azure-pipelines.yml - builds the new library
-  ./Steps/<MODIFIERS>/CHANGELOG.md - Change Log for the new library.
-  ./Steps/<MODIFIERS>/LICENSE - MIT License documentation with your name and year delivered.
-  ./Steps/<MODIFIERS>/README.md - Read Me documentation describing how to use your Step.
-  ./Steps/<MODIFIERS>/stylecop.json - stylecop file with 
-  ./Steps/<MODIFIERS>/<root namespace of project>.sln
+  ./Steps/<MODIFIERS>/src  
+  ./Steps/<MODIFIERS>/src/GlobalSuppressions.cs  
+  ./Steps/<MODIFIERS>/src/<root namespace of project>.csproj  
+  ./Steps/<MODIFIERS>/src/Resources.cs  
+  ./Steps/<MODIFIERS>/src/Resources.resx  
+  ./Steps/<MODIFIERS>/src/Resources.tt  
+  ./Steps/<MODIFIERS>/test  
+  ./Steps/<MODIFIERS>/test/<root namespace of project>.Tests.csproj  
+  ./Steps/<MODIFIERS>/azure-pipelines.yml - builds the new library  
+  ./Steps/<MODIFIERS>/CHANGELOG.md - Change Log for the new library.  
+  ./Steps/<MODIFIERS>/LICENSE - MIT License documentation with your name and year delivered.  
+  ./Steps/<MODIFIERS>/README.md - Read Me documentation describing how to use your Step.  
+  ./Steps/<MODIFIERS>/stylecop.json - stylecop file with   
+  ./Steps/<MODIFIERS>/<root namespace of project>.sln  
 
 
 ### Details for New Projects..
@@ -69,7 +69,7 @@ We will provide multiple linked lists at the ./Steps/README.md to ensure that th
     }
   }
 }
-```json
+```
 2. Change the <INSERT YOUR NAME HERE> to your name.
 3. Change the <YEAR DELIVERED> to the current year.
 4. If the new project is a newly implemented Step, it should be under the Steps directory.
