@@ -22,16 +22,21 @@ jobs:
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
+
       - name: Setup .NET Core SDK 5.0.x
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: '5.0.x'
+
       - name: Install dependencies
         run: dotnet restore
+
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
       - name: Test
         run: dotnet test --logger trx --results-directory "TestResults" --no-restore --verbosity normal
+
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
@@ -39,9 +44,12 @@ jobs:
           path: TestResults
           # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
-      
-      # The Create Package step is unnecessary because the dotnet build step already builds it.
+
+      - name: Publish the package to nuget.org
+        run: dotnet nuget push "./src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+        if: ${{ github.ref == 'refs/heads/master' }}
 
       - name: Publish the package to GitHub.
         run: dotnet nuget push "./src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
         if: ${{ github.ref == 'refs/heads/master' }}
+        
