@@ -1,7 +1,8 @@
-﻿// <copyright file="StepWithContextTests.cs" company="Chris Trout">
+﻿#pragma warning disable SA1515,SA1633,SA1636
+// <copyright file="StepAddedEventArgsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +22,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-
+#pragma warning restore SA1515,SA1633,SA1636
 namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using MyTrout.Pipelines.Core;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class StepWithContextTests
+    public class StepAddedEventArgsTests
     {
         [TestMethod]
-        public void Constructs_StepWithContext_Successfully()
+        public void Constructs_StepAddedEventArgs_Successfully()
         {
             // arrange
             Type expectedStepType = typeof(NoOpStep);
             string expectedStepContext = "context";
+            var expectedStepWithContext = new StepWithContext(expectedStepType, expectedStepContext);
 
             // act
-            var result = new StepWithContext(expectedStepType, expectedStepContext);
+            var result = new StepAddedEventArgs(expectedStepWithContext);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(expectedStepType, result.StepType);
-            Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.AreEqual(expectedStepWithContext, result.CurrentStep);
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_StepType_Is_Null()
+        public void Throws_ArgumentNullException_From_Constructor_When_StepWithContext_Is_Null()
         {
             // arrange
-            Type expectedStepType = null;
-            string expectedStepContext = "context";
+            StepWithContext stepWithContext = null;
 
-            string expectedParamName = "stepType";
+            string expectedParamName = "stepWithContext";
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepWithContext(expectedStepType, expectedStepContext));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepAddedEventArgs(stepWithContext));
 
             // assert
             Assert.IsNotNull(result);
