@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**/Pipelines/Core/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  pull_request:
+    paths:
+      - '**/Pipelines/Core/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
 jobs:
   build:
 
