@@ -54,6 +54,7 @@ jobs:
         with:
           sonarProjectKey: Pipelines.Core
           sonarProjectName:  Pipelines.Core
+        if: ${{ github.ref == 'refs/heads/master' }}
 
 
       - name: Publish the package to nuget.org
