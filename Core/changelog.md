@@ -1,5 +1,17 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 2.1.0
+- Remove capability to build and publish library on Azure DevOps.
+- Add capability to build and publish library on Github.
+- Eliminate all code rules suppressions in GlobalSuppressions.cs as they are no longer required.
+- Change all copyright headers to copyright year range ending on 2021 for every file in src/Core directory.
+- Add new stylecop.json file with copyright year range ending on 2021.
+- Change version in project to 2.1.0.
+- New files have code suppressions to allow the copyright year only on 2021.
+- Remove Microsoft.CSharp 4.7.0 Dependency as it is no longer required.
+- Add StepAddedEventArgs to allow StepBuilding event to be invoked.
+- Add StepAddedEventHandler event to PipelineBuilder to allow other activities occur when steps are added.
+
 ## 2.0.7
  - Remove the Pipelines.Steps.Core project from building and analyzing during the Azure DevOps Pipelines.Core project build.
  

@@ -4,12 +4,12 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Chris Trout</Authors>
-    <Copyright>Copyright 2019-2020 Chris Trout. All Rights Reserved.</Copyright>
+    <Copyright>Copyright 2019-2021 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.5.0-beta</Version>
+    <Version>2.1.0</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
-    <FileVersion>0.5.0.0</FileVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
     <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
@@ -29,9 +29,14 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Core\stylecop.json" />
+  </ItemGroup>
   
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="Core\stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +48,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.3.1">

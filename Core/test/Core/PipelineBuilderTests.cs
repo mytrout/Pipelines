@@ -1,7 +1,7 @@
 // <copyright file="PipelineBuilderTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,172 @@ namespace MyTrout.Pipelines.Core.Tests
     [TestClass]
     public class PipelineBuilderTests
     {
+        [TestMethod]
+        public void Does_Not_Fire_StepAdded_Event_From_AddStep_When_GenericTypeParam_Is_Supplied_And_FireStepAddedEvent_Is_False()
+        {
+            // arrange
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+            {
+                Assert.Fail("StepAdded event was fired during execution.");
+            };
+
+            // act
+            builder.AddStep<SampleStep1>(false);
+
+            // assert
+            // Nothing to assert because if Assert.Fail() is not called, the test run was successful.
+        }
+
+        [TestMethod]
+        public void Does_Not_Fire_StepAdded_Event_From_AddStep_When_StepType_Is_Supplied_And_FireStepAddedEvent_Is_False()
+        {
+            // arrange
+            var expectedStepType = typeof(SampleStep2);
+
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+            {
+                Assert.Fail("StepAdded event was fired during execution.");
+            };
+
+            try
+            {
+                // act
+                builder.AddStep(expectedStepType, false);
+            }
+            catch (Exception exc)
+            {
+                // assert
+                Assert.Fail(exc.ToString());
+            }
+        }
+
+        [TestMethod]
+        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_GenericTypeParam_Are_Supplied_And_FireStepAddedEvent_Is_True_And_There_Are_No_StepAdded_Event_Listeners()
+        {
+            // arrange
+            var stepContext = "context-55";
+
+            var builder = new PipelineBuilder();
+
+            try
+            {
+                // act
+                builder.AddStep<SampleStep2>(stepContext, true);
+            }
+            catch (Exception exc)
+            {
+                // assert
+                Assert.Fail(exc.ToString());
+            }
+        }
+
+        [TestMethod]
+        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_StepType_Are_Supplied_And_FireStepAddedEvent_Is_True_And_There_Are_No_StepAdded_Event_Listeners()
+        {
+            // arrange
+            var stepContext = "context-56";
+            var expectedStepType = typeof(SampleStep2);
+
+            var builder = new PipelineBuilder();
+
+            try
+            {
+                // act
+                builder.AddStep(expectedStepType, stepContext, true);
+            }
+            catch (Exception exc)
+            {
+                // assert
+                Assert.Fail(exc.ToString());
+            }
+        }
+
+        [TestMethod]
+        public void Fires_StepAdded_Event_From_AddStep_When_GenericTypeParam_Is_Supplied()
+        {
+            // arrange
+            var expectedType = typeof(SampleStep1);
+
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+                {
+                    // Note: This section is executed after the // act while still in-operation.
+                    // assert
+                        Assert.AreEqual(builder, sender);
+                        Assert.AreEqual(e.CurrentStep.StepType, expectedType);
+                        Assert.IsNull(e.CurrentStep.StepContext);
+                };
+
+            // act
+            builder.AddStep<SampleStep1>();
+        }
+
+        // NOTE TO FUTURE DEVELOPERS: This test overlaps functionality with the next test, but ensures that this overload works as expected when
+        //                              true is passed in the fireStepAddedEvent parameter.
+        [TestMethod]
+        public void Fires_StepAdded_Event_From_AddStep_When_StepContext_And_GenericTypeParam_Are_Supplied_And_FireStepAddedEvent_Is_True()
+        {
+            // arrange
+            var expectedType = typeof(SampleStep2);
+            var expectedContext = "context-2";
+
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+            {
+                // Note: This section is executed after the // act while still in-operation.
+                // assert
+                Assert.AreEqual(builder, sender);
+                Assert.AreEqual(e.CurrentStep.StepType, expectedType);
+                Assert.AreEqual(e.CurrentStep.StepContext, expectedContext);
+            };
+
+            // act
+            builder.AddStep<SampleStep2>(expectedContext, true);
+        }
+
+        [TestMethod]
+        public void Fires_StepAdded_Event_From_AddStep_When_StepContext_And_StepType_Are_Supplied_And_FireStepAddedEvent_Is_True()
+        {
+            // arrange
+            var expectedType = typeof(SampleStep3);
+            var expectedContext = "context-3";
+
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+            {
+                // Note: This section is executed after the // act while still in-operation.
+                // assert
+                Assert.AreEqual(builder, sender);
+                Assert.AreEqual(e.CurrentStep.StepType, expectedType);
+                Assert.AreEqual(e.CurrentStep.StepContext, expectedContext);
+            };
+
+            // act
+            builder.AddStep(expectedType, expectedContext, true);
+        }
+
+        [TestMethod]
+        public void Fires_StepAdded_Event_From_AddStep_When_StepType_Is_Supplied()
+        {
+            // arrange
+            var expectedType = typeof(SampleStep2);
+
+            var builder = new PipelineBuilder();
+            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
+            {
+                // Note: This section is executed after the // act while still in-operation.
+                // assert
+                Assert.AreEqual(builder, sender);
+                Assert.AreEqual(e.CurrentStep.StepType, expectedType);
+                Assert.IsNull(e.CurrentStep.StepContext);
+            };
+
+            // act
+            builder.AddStep(expectedType);
+        }
+
         [TestMethod]
         public void Returns_Correct_PipelineRequest_Delegate_From_Build_Method()
         {
