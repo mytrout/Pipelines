@@ -15,6 +15,9 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
+defaults:
+  run:
+    working-directory: ./Pipelines/Core
 jobs:
   build:
 
