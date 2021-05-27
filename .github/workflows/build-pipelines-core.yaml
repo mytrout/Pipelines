@@ -36,7 +36,7 @@ jobs:
       # dotnet restore is run implicitly by dotnet build.
       
       - name: Build
-        run: dotnet build ./Pipelines/Core/*.sln --configuration Release --no-restore
+        run: dotnet build ./Pipelines/Core/*.sln --configuration Release
 
       - name: Test
         run: dotnet test ./Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
