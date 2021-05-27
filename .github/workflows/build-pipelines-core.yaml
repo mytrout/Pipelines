@@ -56,7 +56,7 @@ jobs:
           sonarProjectKey: Pipelines.Core
           sonarProjectName:  Pipelines.Core
           sonarOrganization: mytrout
-          dotnetBuildArguments: ../Pipelines/Core/*.sln --configuration Release
+          dotnetBuildArguments: ../Pipelines/Core/*.sln --configuration Debug
           dotnetTestArguments: ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
         if: ${{ github.ref == 'refs/heads/master' }}
 
