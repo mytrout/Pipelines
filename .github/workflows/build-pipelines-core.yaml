@@ -33,10 +33,11 @@ jobs:
         with:
           dotnet-version: '5.0.x'
       
-      # dotnet restore is run implicitly by dotnet build.
+      - name: Install dependencies
+        run: dotnet restore ../Pipelines/Core/**/*.csproj
       
       - name: Build
-        run: dotnet build ../Pipelines/Core/*.sln --configuration Release
+        run: dotnet build ../Pipelines/Core/*.sln --configuration Release --no-restore
 
       - name: Test
         run: dotnet test ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
