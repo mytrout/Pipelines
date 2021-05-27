@@ -15,9 +15,6 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-defaults:
-  run:
-    working-directory: ./Pipelines/Core
 jobs:
   build:
 
@@ -37,19 +34,19 @@ jobs:
           dotnet-version: '5.0.x'
 
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore ./Pipelines/Core
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ./Pipelines/Core/*.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --logger trx --results-directory "TestResults" --no-restore --verbosity normal
+        run: dotnet test ./Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
 
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
           name: test-results
-          path: TestResults
+          path: ./Pipelines/Core/TestResults
           # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
 
@@ -62,10 +59,10 @@ jobs:
 
 
       - name: Publish the package to nuget.org
-        run: dotnet nuget push "./src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+        run: dotnet nuget push "./Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
         if: ${{ github.ref == 'refs/heads/master' }}
 
       - name: Publish the package to GitHub.
-        run: dotnet nuget push "./src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
+        run: dotnet nuget push "./Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
         if: ${{ github.ref == 'refs/heads/master' }}
  
