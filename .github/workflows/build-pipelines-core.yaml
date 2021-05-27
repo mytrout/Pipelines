@@ -59,7 +59,7 @@ jobs:
 
 
       - name: Publish the package to nuget.org
-        run: dotnet nuget push "./Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+        run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
         if: ${{ github.ref == 'refs/heads/master' }}
 
       #- name: Publish the package to GitHub.
