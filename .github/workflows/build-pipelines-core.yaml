@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
