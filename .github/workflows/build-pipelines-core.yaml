@@ -50,17 +50,18 @@ jobs:
           # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
 
-      #- name: SonarScanner for .NET 5.0
-      #  uses: highbyte/sonarscan-dotnet@2.0
-      #  with:
-      #    sonarProjectKey: Pipelines.Core
-      #    sonarProjectName:  Pipelines.Core
-      #  if: ${{ github.ref == 'refs/heads/master' }}
-
-
-      - name: Publish the package to nuget.org
-        run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+      - name: SonarScanner for .NET 5.0
+        uses: highbyte/sonarscan-dotnet@2.0
+        with:
+          sonarProjectKey: Pipelines.Core
+          sonarProjectName:  Pipelines.Core
+          sonarOrganization: mytrout
         if: ${{ github.ref == 'refs/heads/master' }}
+
+
+      #- name: Publish the package to nuget.org
+      #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+      #  if: ${{ github.ref == 'refs/heads/master' }}
 
       #- name: Publish the package to GitHub.
       #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
