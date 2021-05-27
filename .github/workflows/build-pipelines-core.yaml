@@ -33,11 +33,11 @@ jobs:
         with:
           dotnet-version: '5.0.x'
       
-      - name: Install dependencies
-        run: dotnet restore ../Pipelines/Core/**/*.csproj
+      # dotnet restore can only restore one project file when a ROOT is specified.
+      # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
       
       - name: Build
-        run: dotnet build ../Pipelines/Core/*.sln --configuration Release --no-restore
+        run: dotnet build ../Pipelines/Core/*.sln --configuration Release 
 
       - name: Test
         run: dotnet test ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
