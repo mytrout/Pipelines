@@ -50,15 +50,15 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_StepWithContext_Is_Null()
+        public void Throws_ArgumentNullException_From_Constructor_When_CurrentStep_Is_Null()
         {
             // arrange
-            StepWithContext stepWithContext = null;
+            StepWithContext currentStep = null;
 
-            string expectedParamName = "stepWithContext";
+            string expectedParamName = nameof(currentStep);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepAddedEventArgs(stepWithContext));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepAddedEventArgs(currentStep));
 
             // assert
             Assert.IsNotNull(result);
