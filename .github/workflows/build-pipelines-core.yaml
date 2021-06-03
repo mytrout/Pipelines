@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+        SONAR_HOST_URL: 'https://sonarcloud.io/'
         SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -33,14 +34,23 @@ jobs:
         with:
           dotnet-version: '5.0.x'
       
+      # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
+      - name: Install Sonar global tool
+        run: dotnet tool install --global dotnet-sonarscanner
+        
+      - name: Begin Sonar scan
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
+        
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
-      
       - name: Build
         run: dotnet build ../Pipelines/Core/*.sln --configuration Release 
 
       - name: Test
         run: dotnet test ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
+
+      - name: End Sonar scan
+        run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}      
 
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
@@ -49,49 +59,7 @@ jobs:
           path: TestResults
           # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
-
-      - name: Official SonarQube Scan
-        # You may pin to the exact commit or the version.
-        # uses: SonarSource/sonarqube-scan-action@069e3332cbefb8659c02d77b21a04719d3ef7c9b
-        uses: SonarSource/sonarqube-scan-action@v1.0.0
-        with:
-          # Additional arguments to the sonar-scanner
-          args: # optional
-          # Set the sonar.projectBaseDir analysis property
-          projectBaseDir: ../Pipelines/Core/
-          
-      #- name: sonarscanner-dotnet
-      #  # You may pin to the exact commit or the version.
-      #  # uses: np-13/sonarscan-dotnet@0bb992a7b24d4780dc1516e4a2ad4ef9785e4a65
-      #  uses: np-13/sonarscan-dotnet@v0.1.0
-      #  with:
-      #    # The key of the SonarQube project
-      #    sonarProjectKey: Pipelines.Core
-      #    # The name of the SonarQube project
-      #    sonarProjectName:  Pipelines.Core
-      #    # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
-      #    sonarOrganization: mytrout
-      #    # .NET SDK version to be used with the project
-      #    dotnetVersion: # optional, default is 5.0
-      #    # Optional command arguments to 'dotnet build'
-      #    dotnetBuildArguments: dotnet build ../Pipelines/Core/*.sln --configuration Debug
-      #    # Optional command arguments to 'dotnet test'
-      #    dotnetTestArguments: dotnet test ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
-      #    # Optional. Set to 1 or true to not run 'dotnet test' command
-      #
-      # failed with unrecognized input.dotnetversion exception.
-
-      #- name: SonarScanner for .NET 5.0
-      #  uses: highbyte/sonarscan-dotnet@2.0
-      #  with:
-      #    sonarProjectKey: Pipelines.Core
-      #    sonarProjectName:  Pipelines.Core
-      #    sonarOrganization: mytrout
-      #    dotnetBuildArguments: ../**/Pipelines/Core/*.sln --configuration Debug
-      #    dotnetTestArguments: ../**/Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal
-      #  if: ${{ github.ref == 'refs/heads/master' }}
-
-
+        
       #- name: Publish the package to nuget.org
       #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
       #  if: ${{ github.ref == 'refs/heads/master' }}
