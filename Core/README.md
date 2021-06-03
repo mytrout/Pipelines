@@ -1,10 +1,10 @@
 # Pipelines
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=13&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build.yaml/badge.svg)](https://github.com/mytrout/Pipelines)
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
-[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
-[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/blob/master/LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Core&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Core)
@@ -33,9 +33,8 @@ For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../H
     Install-Package MyTrout.Pipelines
 
 ## Software dependencies
-    1. Microsoft.CSharp 4.7.0 (required because of dynamic keyword usage for multi-context steps)
-    2. Microsoft.Extensions.Configuration.Abstractions 5.0.0
-    3. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    1. Microsoft.Extensions.Configuration.Abstractions 5.0.0
+    2. Microsoft.Extensions.Logging.Abstractions 5.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
