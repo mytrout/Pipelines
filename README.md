@@ -1,6 +1,6 @@
 # Pipelines
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=13&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-core.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-core.yaml)
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/stefanprodan/AspNetCoreRateLimit/network)
