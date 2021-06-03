@@ -1,6 +1,6 @@
 # Pipelines
 
-[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build.yaml/badge.svg)](https://github.com/mytrout/Pipelines)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-core.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-core.yaml)
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.svg)](https://www.nuget.org/packages/MyTrout.Pipelines/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
