@@ -1,4 +1,15 @@
 # MyTrout.Pipelines.Core Change Log
+## 2.1.1
+- Remove extra stylecop.json file as it isn't being respected by Github Actions dotnet build step.
+- Change copyright headers in PipelineContext and StepActivator back to 2019-2020 year range.
+- Change copyright headers for PipelineBuilder to 2019-2021 range.
+- Add StyleCop and warning suppressions to PipelineBuilder.cs for the 2019-2021 range.
+- Remove ExcludeFromCodeCoverage attribute on the PipelineBuilder constructor.
+- Add virtual keyword to PipelineBuilder.Build() method.
+- Remove Microsoft.CSharp 4.7.0 from the Software Dependencies section of README.md.
+- Correct stars badge link to point to mytrout/Pipelines on github.
+- Correct forks badge link to point to mytrout/Pipelines on github.
+- Change Build Status to point to Github Actions.
 
 ## 2.1.0
 - Remove capability to build and publish library on Azure DevOps.
