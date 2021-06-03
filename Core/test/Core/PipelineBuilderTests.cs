@@ -40,48 +40,7 @@ namespace MyTrout.Pipelines.Core.Tests
     public class PipelineBuilderTests
     {
         [TestMethod]
-        public void Does_Not_Fire_StepAdded_Event_From_AddStep_When_GenericTypeParam_Is_Supplied_And_FireStepAddedEvent_Is_False()
-        {
-            // arrange
-            var builder = new PipelineBuilder();
-            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
-            {
-                Assert.Fail("StepAdded event was fired during execution.");
-            };
-
-            // act
-            builder.AddStep<SampleStep1>(false);
-
-            // assert
-            // Nothing to assert because if Assert.Fail() is not called, the test run was successful.
-        }
-
-        [TestMethod]
-        public void Does_Not_Fire_StepAdded_Event_From_AddStep_When_StepType_Is_Supplied_And_FireStepAddedEvent_Is_False()
-        {
-            // arrange
-            var expectedStepType = typeof(SampleStep2);
-
-            var builder = new PipelineBuilder();
-            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
-            {
-                Assert.Fail("StepAdded event was fired during execution.");
-            };
-
-            try
-            {
-                // act
-                builder.AddStep(expectedStepType, false);
-            }
-            catch (Exception exc)
-            {
-                // assert
-                Assert.Fail(exc.ToString());
-            }
-        }
-
-        [TestMethod]
-        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_GenericTypeParam_Are_Supplied_And_FireStepAddedEvent_Is_True_And_There_Are_No_StepAdded_Event_Listeners()
+        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_GenericTypeParam_Are_Supplied_And_And_There_Are_No_StepAdded_Event_Listeners()
         {
             // arrange
             var stepContext = "context-55";
@@ -91,7 +50,7 @@ namespace MyTrout.Pipelines.Core.Tests
             try
             {
                 // act
-                builder.AddStep<SampleStep2>(stepContext, true);
+                builder.AddStep<SampleStep2>(stepContext);
             }
             catch (Exception exc)
             {
@@ -101,7 +60,7 @@ namespace MyTrout.Pipelines.Core.Tests
         }
 
         [TestMethod]
-        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_StepType_Are_Supplied_And_FireStepAddedEvent_Is_True_And_There_Are_No_StepAdded_Event_Listeners()
+        public void Does_Not_Throw_NullReferenceException_From_AddStep_When_StepContext_And_StepType_Are_Supplied_And_There_Are_No_StepAdded_Event_Listeners()
         {
             // arrange
             var stepContext = "context-56";
@@ -112,7 +71,7 @@ namespace MyTrout.Pipelines.Core.Tests
             try
             {
                 // act
-                builder.AddStep(expectedStepType, stepContext, true);
+                builder.AddStep(expectedStepType, stepContext);
             }
             catch (Exception exc)
             {
@@ -141,14 +100,12 @@ namespace MyTrout.Pipelines.Core.Tests
             builder.AddStep<SampleStep1>();
         }
 
-        // NOTE TO FUTURE DEVELOPERS: This test overlaps functionality with the next test, but ensures that this overload works as expected when
-        //                              true is passed in the fireStepAddedEvent parameter.
         [TestMethod]
-        public void Fires_StepAdded_Event_From_AddStep_When_StepContext_And_GenericTypeParam_Are_Supplied_And_FireStepAddedEvent_Is_True()
+        public void Fires_StepAdded_Event_From_AddStep_When_StepType_And_StepContext_Are_Supplied()
         {
             // arrange
-            var expectedType = typeof(SampleStep2);
-            var expectedContext = "context-2";
+            var expectedStepContext = "context-482983";
+            var expectedStepType = typeof(SampleStep2);
 
             var builder = new PipelineBuilder();
             builder.StepAdded += (object sender, StepAddedEventArgs e) =>
@@ -156,33 +113,12 @@ namespace MyTrout.Pipelines.Core.Tests
                 // Note: This section is executed after the // act while still in-operation.
                 // assert
                 Assert.AreEqual(builder, sender);
-                Assert.AreEqual(e.CurrentStep.StepType, expectedType);
-                Assert.AreEqual(e.CurrentStep.StepContext, expectedContext);
+                Assert.AreEqual(e.CurrentStep.StepType, expectedStepType);
+                Assert.AreEqual(e.CurrentStep.StepContext, expectedStepContext);
             };
 
             // act
-            builder.AddStep<SampleStep2>(expectedContext, true);
-        }
-
-        [TestMethod]
-        public void Fires_StepAdded_Event_From_AddStep_When_StepContext_And_StepType_Are_Supplied_And_FireStepAddedEvent_Is_True()
-        {
-            // arrange
-            var expectedType = typeof(SampleStep3);
-            var expectedContext = "context-3";
-
-            var builder = new PipelineBuilder();
-            builder.StepAdded += (object sender, StepAddedEventArgs e) =>
-            {
-                // Note: This section is executed after the // act while still in-operation.
-                // assert
-                Assert.AreEqual(builder, sender);
-                Assert.AreEqual(e.CurrentStep.StepType, expectedType);
-                Assert.AreEqual(e.CurrentStep.StepContext, expectedContext);
-            };
-
-            // act
-            builder.AddStep(expectedType, expectedContext, true);
+            builder.AddStep(expectedStepType, expectedStepContext);
         }
 
         [TestMethod]
