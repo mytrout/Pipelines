@@ -47,7 +47,7 @@ jobs:
         run: dotnet build ../Pipelines/Core/*.sln --configuration Release 
 
       - name: Test
-        run: dotnet test ../Pipelines/Core/test/*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "Code Coverage"
+        run: dotnet test ../Pipelines/Core/test/*.csproj --no-restore --verbosity normal --collect "XPlat Code Coverage"
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
