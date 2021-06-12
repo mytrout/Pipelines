@@ -59,11 +59,13 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Test
-        run: dotnet test --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "Code Coverage"
+        run: dotnet test --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "DotnetCodeCoverage"
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
-        run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
+        run: |
+          dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
+          CodeCoverage.exe /analyze /output: "${{ env.WORKING_DIRECTORY}}\TestResults\dotnetcoverage.coveragexml" "${{ env.WORKING_DIRECTORY }}\TestResults\**\*.coverage"
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Upload dotnet test results
