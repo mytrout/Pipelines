@@ -37,33 +37,33 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_Task_From_DisposeAsync()
         {
             // arrange
-            var source = new NoOpStep();
+            using (var source = new NoOpStep())
+            {
+                // act
+                await source.DisposeAsync();
 
-            // act
-            await source.DisposeAsync();
+                // assert
+                Assert.IsTrue(true);
 
-            // assert
-            Assert.IsTrue(true);
-
-            // No exceptions mean this worked appropriately.
+                // No exceptions mean this worked appropriately.
+            }
         }
 
-#pragma warning disable VSTHRD200 // Suppressed because the member name is the suffix of the test method name.
         [TestMethod]
         public void Returns_Task_From_InvokeAsync()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
-            var step = new NoOpStep();
+            using (var step = new NoOpStep())
+            {
+                // act
+                var result = step.InvokeAsync(context);
 
-            // act
-            var result = step.InvokeAsync(context);
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(Task.CompletedTask, result);
+                // assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(Task.CompletedTask, result);
+            }
         }
     }
 }

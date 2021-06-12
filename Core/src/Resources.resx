@@ -132,6 +132,9 @@
   <data name="CONTEXT_VALUE_NOT_EXPECTED_TYPE" xml:space="preserve">
     <value>'{0}' is not a type of '{1}'.</value>
   </data>
+  <data name="MISSING_CONFIGKEY" xml:space="preserve">
+    <value>ConfigKey '{0}' was not found when loading {1} for {2} for context '{3}'.</value>
+  </data>
   <data name="NO_KEY_IN_CONTEXT" xml:space="preserve">
     <value>'{0}' does not exist in the Pipeline context.</value>
   </data>

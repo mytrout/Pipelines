@@ -1,7 +1,7 @@
 ﻿// <copyright file="PipelineContextTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace MyTrout.Pipelines.Core.Tests
             const int expectedItemCount = 0;
             const int expectedExceptionCount = 0;
             Guid invalidCorrelationId = Guid.Empty;
-            using (CancellationTokenSource expectedCancellationSource = new CancellationTokenSource())
+            using (CancellationTokenSource expectedCancellationSource = new ())
             {
                 // act
                 var result = new PipelineContext()
@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Core.Tests
         public void Returns_True_From_IsConfigurationAvailable_When_Configuration_Property_Is_Not_Null()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            PipelineContext context = new ();
             IConfiguration expectedConfiguration = new Mock<IConfiguration>().Object;
 
             // act

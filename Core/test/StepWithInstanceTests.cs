@@ -1,4 +1,4 @@
-﻿// <copyright file="StepAddedEventArgsTests.cs" company="Chris Trout">
+﻿// <copyright file="StepWithInstanceTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright © 2021 Chris Trout
@@ -22,42 +22,50 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Steps.Tests
+namespace MyTrout.Pipelines.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using MyTrout.Pipelines.Core;
+    using MyTrout.Pipelines.Samples.Tests;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class StepAddedEventArgsTests
+    public class StepWithInstanceTests
     {
         [TestMethod]
-        public void Constructs_StepAddedEventArgs_Successfully()
+        public void Constructs_StepWithInstance_Successfully()
         {
             // arrange
-            Type expectedStepType = typeof(NoOpStep);
+            var expectedStepType = typeof(SampleStep1);
+            var expectedDependencyType = typeof(SampleOptions);
             string expectedStepContext = "context";
-            var expectedStepWithContext = new StepWithContext(expectedStepType, expectedStepContext);
+            var expectedInstance = new SampleOptions("connectionString");
 
             // act
-            var result = new StepAddedEventArgs(expectedStepWithContext);
+            var result = new StepWithInstance<SampleStep1, SampleOptions>(expectedStepContext, expectedInstance);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(expectedStepWithContext, result.CurrentStep);
+            Assert.AreEqual(expectedStepType, result.StepType);
+            Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.AreEqual(expectedDependencyType, result.StepDependencyType);
+            Assert.AreEqual(expectedInstance, result.Instance);
+            Assert.IsNull(result.ConfigKeys);
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_CurrentStep_Is_Null()
+        public void Throws_ArgumentNullException_From_Constructor_When_Instance_Is_Null()
         {
             // arrange
-            StepWithContext currentStep = null;
+            string expectedStepContext = "context";
 
-            string expectedParamName = nameof(currentStep);
+            SampleOptions expectedInstance = null;
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepAddedEventArgs(currentStep));
+            string expectedParamName = "instance";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepWithInstance<SampleStep1, SampleOptions>(expectedStepContext, expectedInstance));
 
             // assert
             Assert.IsNotNull(result);

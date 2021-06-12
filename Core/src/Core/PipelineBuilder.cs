@@ -1,5 +1,4 @@
-﻿#pragma warning disable SA1515, SA1633, SA1636 // Copyright header is 2019-2021 only.
-// <copyright file="PipelineBuilder.cs" company="Chris Trout">
+﻿// <copyright file="PipelineBuilder.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright © 2019-2021 Chris Trout
@@ -22,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // </copyright>
-#pragma warning restore SA1515, SA1633, SA1636
+
 namespace MyTrout.Pipelines.Core
 {
     using MyTrout.Pipelines.Steps;
@@ -34,10 +33,6 @@ namespace MyTrout.Pipelines.Core
     /// <summary>
     /// Builds the Pipeline by adding different step implenentations.
     /// </summary>
-    /// <remarks>
-    /// <para>Steps that require a step context <b>will not fire</b> the <see cref="StepAdded"/> event, by default.</para>
-    /// <para>Steps that lack a step context <b>will fire</b> the <see cref="StepAdded"/> event, by default.</para>
-    /// </remarks>
     public class PipelineBuilder
     {
         /// <summary>
@@ -51,7 +46,7 @@ namespace MyTrout.Pipelines.Core
         /// <summary>
         /// Event triggered during when a new Step is added to the <see cref="PipelineBuilder"/>.
         /// </summary>
-        public event EventHandler<StepAddedEventArgs>? StepAdded;
+        private event EventHandler<StepAddedEventArgs>? StepAdded;
 
         /// <summary>
         /// Gets the types registered as Step for the Pipeline.
@@ -59,67 +54,13 @@ namespace MyTrout.Pipelines.Core
         private Stack<StepWithContext> StepTypes { get; } = new Stack<StepWithContext>();
 
         /// <summary>
-        /// Adds step to this pipeline.
+        /// Adds a <paramref name="stepAddedEventHandler"/> to <see cref="StepAdded"/> and maintains builder semantics.
         /// </summary>
-        /// <typeparam name="T">The generic type to add to the pipeline.</typeparam>
-        /// <returns>Returns a <see cref="PipelineBuilder" /> with the Step type added.</returns>
-        /// <remarks>This method does not contain a stepContext and therefore <b>will</b> fire the <see cref="StepAdded"/> event, by default.</remarks>
-        public PipelineBuilder AddStep<T>()
-            where T : class, IPipelineRequest
+        /// <param name="stepAddedEventHandler">An <see cref="EventHandler{StepAddedEventArgs}"/> to run when the <see cref="PipelineBuilder"/> is being built.</param>
+        /// <returns>Returns a <see cref="PipelineBuilder" /> with the handler added.</returns>
+        public PipelineBuilder AddStepAddedEventHandler(EventHandler<StepAddedEventArgs> stepAddedEventHandler)
         {
-            // NOTE TO FUTURE DEVELOPERS: This method handles pushing onto the Stack because the highest overload
-            //                              requires a non-null stepContext value which this method cannot provide.
-            var currentStep = new StepWithContext(typeof(T), null);
-
-            this.StepTypes.Push(currentStep);
-
-            this.StepAdded?.Invoke(this, new StepAddedEventArgs(currentStep));
-
-            return this;
-        }
-
-        /// <summary>
-        /// Adds step to this pipeline.
-        /// </summary>
-        /// <typeparam name="T">The generic type to add to the pipeline.</typeparam>
-        /// <param name="stepContext">The context used if multiple steps of the same type are specified; stepContext is ignored if the value is <see langword="null"/>.</param>
-        /// <returns>Returns a <see cref="PipelineBuilder" /> with the Step type added.</returns>
-        /// <remarks>This method contains a <paramref name="stepContext"/> and therefore <b>will not</b> fire the <see cref="StepAdded"/> event, by default.</remarks>
-        public PipelineBuilder AddStep<T>(string stepContext)
-            where T : class, IPipelineRequest
-        {
-            return this.AddStep(typeof(T), stepContext);
-        }
-
-        /// <summary>
-        /// Adds Step to this pipeline.
-        /// </summary>
-        /// <param name="stepType">The <see cref="Type" /> to add to the pipeline.</param>
-        /// <returns>Returns a <see cref="PipelineBuilder" /> with the step type added.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepType"/> is <see langword="null" />.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
-        /// <remarks>This method does not contain a stepContext and therefore <b>will</b> fire the <see cref="StepAdded"/> event, by default.</remarks>
-        public PipelineBuilder AddStep(Type stepType)
-        {
-            // NOTE TO FUTURE DEVELOPERS: This method handles pushing onto the Stack because the highest overload
-            //                              requires a non-null stepContext value which this method cannot provide.
-            stepType.AssertParameterIsNotNull(nameof(stepType));
-
-            if (stepType.IsValueType)
-            {
-                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType)));
-            }
-
-            if (!typeof(IPipelineRequest).IsAssignableFrom(stepType))
-            {
-                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType)));
-            }
-
-            var currentStep = new StepWithContext(stepType, null);
-
-            this.StepTypes.Push(currentStep);
-
-            this.StepAdded?.Invoke(this, new StepAddedEventArgs(currentStep));
+            this.StepAdded += stepAddedEventHandler;
 
             return this;
         }
@@ -127,31 +68,27 @@ namespace MyTrout.Pipelines.Core
         /// <summary>
         /// Adds Step to this pipeline.
         /// </summary>
-        /// <param name="stepType">The <see cref="Type" /> to add to the pipeline.</param>
-        /// <param name="stepContext">The context used if multiple steps of the same type are specified; stepCntext is ignored if the value is <see langword="null"/>.</param>
+        /// <param name="stepWithContext">The step configuration to add to the pipeline.</param>
         /// <returns>Returns a <see cref="PipelineBuilder" /> with the step type added.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepType"/> is <see langword="null" />.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepType"/> is a value type or does not have the appropriate.</exception>
-        /// <remarks>This method contains a <paramref name="stepContext"/> and therefore <b>will not</b> fire the <see cref="StepAdded"/> event, by default.</remarks>
-        public PipelineBuilder AddStep(Type stepType, string stepContext)
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stepWithContext"/> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when <paramref name="stepWithContext"/> is a value type or does not have the appropriate.</exception>
+        public PipelineBuilder AddStep(StepWithContext stepWithContext)
         {
-            stepType.AssertParameterIsNotNull(nameof(stepType));
+            stepWithContext.AssertParameterIsNotNull(nameof(stepWithContext));
 
-            if (stepType.IsValueType)
+            if (stepWithContext.StepType.IsValueType)
             {
-                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepType)));
+                throw new InvalidOperationException(Resources.TYPE_MUST_BE_REFERENCE(CultureInfo.CurrentCulture, nameof(stepWithContext.StepType)));
             }
 
-            if (!typeof(IPipelineRequest).IsAssignableFrom(stepType))
+            if (!typeof(IPipelineRequest).IsAssignableFrom(stepWithContext.StepType))
             {
-                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepType)));
+                throw new InvalidOperationException(Resources.TYPE_MUST_IMPLEMENT_IPIPELINEREQUEST(CultureInfo.CurrentCulture, nameof(stepWithContext.StepType)));
             }
 
-            var currentStep = new StepWithContext(stepType, stepContext);
+            this.StepTypes.Push(stepWithContext);
 
-            this.StepTypes.Push(currentStep);
-
-            this.StepAdded?.Invoke(this, new StepAddedEventArgs(currentStep));
+            this.StepAdded?.Invoke(this, new StepAddedEventArgs(stepWithContext));
 
             return this;
         }
@@ -161,7 +98,7 @@ namespace MyTrout.Pipelines.Core
         /// </summary>
         /// <param name="stepActivator">The service used to initialize instances of step.</param>
         /// <returns>A pipeline to execute.</returns>
-        public virtual IPipelineRequest Build(IStepActivator stepActivator)
+        public IPipelineRequest Build(IStepActivator stepActivator)
         {
             stepActivator.AssertParameterIsNotNull(nameof(stepActivator));
 

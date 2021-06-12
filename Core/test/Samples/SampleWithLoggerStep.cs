@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Samples.Tests
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -40,14 +41,30 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         private IPipelineRequest Next { get; }
 
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         public ValueTask DisposeAsync()
         {
+            this.Dispose(false);
             return default;
         }
 
         public Task InvokeAsync(IPipelineContext context)
         {
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <param name="disposing">Determines if this method needs to dispose unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // no op
         }
     }
 }

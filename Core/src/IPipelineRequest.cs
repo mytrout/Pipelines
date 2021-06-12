@@ -30,7 +30,7 @@ namespace MyTrout.Pipelines
     /// <summary>
     /// Provides a standard pipeline request with asynchronous disposal.
     /// </summary>
-    public interface IPipelineRequest : IAsyncDisposable
+    public interface IPipelineRequest : IAsyncDisposable, IDisposable
     {
         /// <summary>
         /// Invokes the pipeline.

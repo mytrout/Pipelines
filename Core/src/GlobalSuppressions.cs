@@ -1,7 +1,7 @@
 ﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,4 +22,12 @@
 // SOFTWARE.
 // </copyright>
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller to PipelineBuilder.Build() should dispose of this instance.", Scope = "member", Target = "~M:MyTrout.Pipelines.Core.PipelineBuilder.Build(MyTrout.Pipelines.IStepActivator)~MyTrout.Pipelines.PipelineRequestDelegate")]
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constants are upper case separated by underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.INPUT_STREAM")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Constants are upper case separated by underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.OUTPUT_STREAM")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constants are upper case separated by underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.INPUT_STREAM")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constants are upper case separated by underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.OUTPUT_STREAM")]
+[assembly: SuppressMessage("Major Code Smell", "S3971:\"GC.SuppressFinalize\" should not be called", Justification = "This call is required for DisposeAsync implementation.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.AbstractPipelineStep`1.DisposeAsync~System.Threading.Tasks.ValueTask")]
+[assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "ValueTask cannot be awaited in this method.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.AbstractPipelineStep`1.DisposeAsync~System.Threading.Tasks.ValueTask")]
+[assembly: SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1636:File header copyright text should match", Justification = "Copyrights are varied including 2019-2021 & 2021 alone plus an alteration from (C) to copyright symbol.", Scope = "namespace", Target = "~N:MyTrout.Pipelines.Core")]

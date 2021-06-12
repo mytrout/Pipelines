@@ -1,4 +1,4 @@
-﻿// <copyright file="StepAddedEventArgs.cs" company="Chris Trout">
+﻿// <copyright file="IStepWithInstance.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright © 2021 Chris Trout
@@ -22,27 +22,16 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Core
+namespace MyTrout.Pipelines
 {
-    using System;
-
     /// <summary>
-    /// Provides EventArgs after a <see cref="StepWithContext"/> has been added to the <see cref="PipelineBuilder"/>.
+    /// Provides the ability to retrieve the step dependency instance from a <see cref="StepWithInstance{TStep, TOptions}"/> instance.
     /// </summary>
-    public class StepAddedEventArgs
+    public interface IStepWithInstance
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StepAddedEventArgs" /> class with the requested parameters.
+        /// Gets the requested step dependency instance from a <see cref="StepWithInstance{TStep, TOptions}"/> instance.
         /// </summary>
-        /// <param name="currentStep">The <see cref="StepWithContext"/> added to the <see cref="PipelineBuilder"/>.</param>
-        public StepAddedEventArgs(StepWithContext currentStep)
-        {
-            this.CurrentStep = currentStep ?? throw new ArgumentNullException(nameof(currentStep));
-        }
-
-        /// <summary>
-        /// Gets the <see cref="StepWithContext"/> added to the <see cref="PipelineBuilder"/>.
-        /// </summary>
-        public StepWithContext CurrentStep { get; init; }
+        public object Instance { get; }
     }
 }

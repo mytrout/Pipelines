@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7C30B959-8AB9-4868-8A71-6BD4C026A38F}"
 	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build-pipelines-core.yaml = ..\.github\workflows\build-pipelines-core.yaml
+		breaking-changes-3-0-0.md = breaking-changes-3-0-0.md
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -23,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4C99
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{16AD139A-F8C2-4682-BA64-59D9971579C0}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yaml = .github\workflows\build.yaml
+		..\.github\workflows\build-pipelines-core.yaml = ..\.github\workflows\build-pipelines-core.yaml
 	EndProjectSection
 EndProject
 Global

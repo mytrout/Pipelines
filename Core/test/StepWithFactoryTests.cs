@@ -1,4 +1,4 @@
-﻿// <copyright file="StepAddedEventArgsTests.cs" company="Chris Trout">
+﻿// <copyright file="StepWithFactoryTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright © 2021 Chris Trout
@@ -22,42 +22,55 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Steps.Tests
+namespace MyTrout.Pipelines.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using MyTrout.Pipelines.Core;
+    using MyTrout.Pipelines.Samples.Tests;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class StepAddedEventArgsTests
+    public class StepWithFactoryTests
     {
         [TestMethod]
-        public void Constructs_StepAddedEventArgs_Successfully()
+        public void Constructs_StepWithFactory_Successfully()
         {
             // arrange
-            Type expectedStepType = typeof(NoOpStep);
+            var expectedStepType = typeof(SampleStep1);
+            var expectedDependencyType = typeof(SampleOptions);
             string expectedStepContext = "context";
-            var expectedStepWithContext = new StepWithContext(expectedStepType, expectedStepContext);
+
+            Func<IServiceProvider, SampleOptions> expectedImplementationFactory =
+                (IServiceProvider services) =>
+                {
+                    return new SampleOptions("string");
+                };
 
             // act
-            var result = new StepAddedEventArgs(expectedStepWithContext);
+            var result = new StepWithFactory<SampleStep1, SampleOptions>(expectedStepContext, expectedImplementationFactory);
 
             // assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(expectedStepWithContext, result.CurrentStep);
+            Assert.AreEqual(expectedStepType, result.StepType);
+            Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.AreEqual(expectedDependencyType, result.StepDependencyType);
+            Assert.IsNull(result.ConfigKeys);
+            Assert.AreEqual(expectedImplementationFactory, result.ImplementationFactory);
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_CurrentStep_Is_Null()
+        public void Throws_ArgumentNullException_From_Constructor_When_ImplementationFactory_Is_Null()
         {
             // arrange
-            StepWithContext currentStep = null;
+            string expectedStepContext = "context";
 
-            string expectedParamName = nameof(currentStep);
+            Func<IServiceProvider, SampleOptions> expectedImplementationFactory = null;
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepAddedEventArgs(currentStep));
+            string expectedParamName = "implementationFactory";
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new StepWithFactory<SampleStep1, SampleOptions>(expectedStepContext, expectedImplementationFactory));
 
             // assert
             Assert.IsNotNull(result);

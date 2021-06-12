@@ -1,7 +1,7 @@
 ﻿// <copyright file="NoOpStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,16 +32,18 @@ namespace MyTrout.Pipelines.Steps
     /// </summary>
     public sealed class NoOpStep : IPipelineRequest
     {
-        // NOTE TO DEVELOPERS: THIS CONSTRUCTOR DOES NOT HAVE ANY CODE.
-        //                     IF THAT CHANGES, UNIT TESTS WILL NEED TO BE WRITTEN.
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NoOpStep" /> class.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public NoOpStep()
         {
             // no op
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -50,6 +52,8 @@ namespace MyTrout.Pipelines.Steps
         /// <returns>A completed <see cref="ValueTask" />.</returns>
         public ValueTask DisposeAsync()
         {
+            this.Dispose();
+
             return new ValueTask(Task.CompletedTask);
         }
 

@@ -1,7 +1,7 @@
 ﻿// <copyright file="SampleOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,11 @@ namespace MyTrout.Pipelines.Samples.Tests
         public SampleOptions(string connectionString)
         {
             this.ConnectionString = connectionString;
+        }
+
+        private SampleOptions()
+        {
+            // no op
         }
 
         public string ConnectionString { get; set; }
