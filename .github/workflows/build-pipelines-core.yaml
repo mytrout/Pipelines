@@ -52,7 +52,7 @@ jobs:
         run: dotnet build *.sln --configuration Release 
 
       - name: Test
-        run: dotnet test *.csproj --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+        run: dotnet test ./test/*.csproj --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
