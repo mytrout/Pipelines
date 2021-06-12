@@ -15,7 +15,11 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-         
+
+defaults:
+  run:
+    working-directory: D:\a\Pipelines\Pipelines\Core    
+    
 jobs:
   build:
 
@@ -48,10 +52,10 @@ jobs:
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
       - name: Build
-        run: dotnet build D:\a\Pipelines\Pipelines\Core\*.sln --verbosity diagnostic --configuration Release
+        run: dotnet build --verbosity diagnostic --configuration Release
 
       - name: Test
-        run: dotnet test D:\a\Pipelines\Pipelines\Core\test\*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "Code Coverage"
+        run: dotnet test .\test\*.csproj --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "Code Coverage"
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
