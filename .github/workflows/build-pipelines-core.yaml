@@ -15,10 +15,7 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-defaults:
-  run:
-    working-directory: ${{ github.workspace }}\Core
-    
+      
 jobs:
   build:
 
@@ -53,6 +50,7 @@ jobs:
         
       - name: Begin Sonar scan
         run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.cs.vscoveragexml.reportsPaths="${{ env.WORKING_DIRECTORY }}\TestResults" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
@@ -66,6 +64,7 @@ jobs:
         
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
