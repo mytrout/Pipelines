@@ -1,4 +1,18 @@
 # MyTrout.Pipelines.Core Change Log
+
+## 3.0.0 - BREAKING CHANGES
+- Move separate ~Steps library into the Pipelines.Core.
+- Refactor StepActivator to inject Step dependencies into PipelineBuilder.
+- Add StepDependencyType to the StepWithContext class.
+- Add ConfigKeys to the StepWithContext class.
+- Add StepWithFactory{TStep,TOptions} class to handle factory method instantiation of the TOptions class.
+- Add StepWitnInstance{TStep,TOptions} class to handle a pre-built instance of the TOptions class.
+- Add IStepWithFactory interface to enable 100% code coverage during the usage of StepWithFactory{TStep,TOptions} instance in the StepActivator implementation.
+- Add IStepWithInstance interface to enable 100% code coverage during the usage of StepWithInstance{TStep,TOptions} intance in the StepActivator implementation.
+- The project has been compiled and tested against .NET 6.0 Preview 4 to ensure future compatibility.
+- Move all helper method AddStep implementations from PipelineBuilder to PipelineBuilderExtensions.
+- Add additional PipelineBuilder.AddStep extension methods to simplify the usage of adding dependencies.
+
 ## 2.1.1
 - Remove extra stylecop.json file as it isn't being respected by Github Actions dotnet build step.
 - Change copyright headers in PipelineContext and StepActivator back to 2019-2020 year range.

@@ -34,9 +34,15 @@ For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../H
 
 ## Software dependencies
     1. Microsoft.Extensions.Configuration.Abstractions 5.0.0
-    2. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    2. Microsoft.Extensions.Configuration.Binder 5.0.0
+    3. Microsoft.Extensions.DependencyInjection.Abstractions 5.0.0
+    4. Microsoft.Extensions.Logging.Abstractions 5.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
+
+## BREAKING CHANGES INTRODUCED WITH 3.0.0
+
+See [Breaking Changes for 3.0.0](./breaking-changes-3-0-0.md)
 
 ## How do I use Pipelines?
 
@@ -49,6 +55,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
 namespace MyTrout.Pipelines.Samples.Simple
 {
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
@@ -57,26 +64,26 @@ namespace MyTrout.Pipelines.Samples.Simple
     using System.Threading.Tasks;
     using System.Linq;
 
-    public class SimplePipeline
+    public class Program
     {
-        public static async Task ConfigureAndRunPipeline()
+        static async Task Main()
         {
+            // For this simple example, nothing needs to be configured, but the IConfiguration root is required.
+            var config = new ConfigurationBuilder()
+                            .Build();
+            
+            var serviceProvider = new ServiceCollection()
+                                            .AddLogging();
+                                            .AddTransient<IStepActivator, StepActivator>();
+                                            .AddScoped<IConfiguration>(_ => config) 
+                                            .Build();
+
             // Steps are added in the order they are executed on the request side
             // and will be executed in reverse on the response side.
             var builder = new PipelineBuilder()
                             .AddStep<M1>()
                             .AddStep<M2>()
                             .AddStep<M3>();
-
-            // While using dependency injection is overkill for the simple example, 
-            // real-world scenarios will likely benefit from DI for non-trivial implementations.
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging();
-            serviceCollection.AddTransient<IStepActivator, StepActivator>();
-    
-            // TODO: add any constructor parameter dependencies required by steps here.
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
     
             // Build the pipeline and instantiate all steps.
             var stepActivator = serviceProvider.GetService<IStepActivator>();

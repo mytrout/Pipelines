@@ -1,7 +1,7 @@
 ﻿// <copyright file="SampleWithInvokeAsyncMethodStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Samples.Tests
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -40,14 +41,32 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         private IPipelineRequest Next { get; }
 
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+
+            GC.SuppressFinalize(this);
+        }
+
         public ValueTask DisposeAsync()
         {
+            this.Dispose(false);
+
             return new ValueTask(Task.CompletedTask);
         }
 
         public Task InvokeAsync(IPipelineContext context)
         {
             return this.Next.InvokeAsync(context);
+        }
+
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <param name="disposing">Determines if this method needs to dispose unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // no op
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿// <copyright file="SampleStep1.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,17 @@ namespace MyTrout.Pipelines.Samples.Tests
 
         protected virtual string Key => "Sponge";
 
+        public void Dispose()
+        {
+            this.Dispose(disposing: true);
+
+            GC.SuppressFinalize(this);
+        }
+
         public ValueTask DisposeAsync()
         {
+            this.Dispose(false);
+
             return new ValueTask(Task.CompletedTask);
         }
 
@@ -58,6 +67,15 @@ namespace MyTrout.Pipelines.Samples.Tests
             }
 
             return this.next.InvokeAsync(context);
+        }
+
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <param name="disposing">Determines if this method needs to dispose unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // no op
         }
     }
 }

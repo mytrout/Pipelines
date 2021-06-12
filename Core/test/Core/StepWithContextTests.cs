@@ -1,7 +1,7 @@
 ﻿// <copyright file="StepWithContextTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using MyTrout.Pipelines.Samples.Tests;
     using System;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -37,6 +38,45 @@ namespace MyTrout.Pipelines.Steps.Tests
             // arrange
             Type expectedStepType = typeof(NoOpStep);
             string expectedStepContext = "context";
+            Type expectedDependencyType = typeof(SampleOptions);
+            string[] expectedConfigKeys = new string[1] { "hello.from.the.other.side" };
+
+            // act
+            var result = new StepWithContext(expectedStepType, expectedDependencyType, stepContext: expectedStepContext, expectedConfigKeys);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedStepType, result.StepType);
+            Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.AreEqual(expectedDependencyType, result.StepDependencyType);
+            Assert.AreEqual(expectedConfigKeys, result.ConfigKeys);
+        }
+
+        [TestMethod]
+        public void Constructs_StepWithContext_Successfully_Without_ConfigKeys()
+        {
+            // arrange
+            Type expectedStepType = typeof(NoOpStep);
+            string expectedStepContext = "context";
+            Type expectedDependencyType = typeof(SampleOptions);
+
+            // act
+            var result = new StepWithContext(expectedStepType, expectedDependencyType, expectedStepContext);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedStepType, result.StepType);
+            Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.AreEqual(expectedDependencyType, result.StepDependencyType);
+            Assert.IsNull(result.ConfigKeys);
+        }
+
+        [TestMethod]
+        public void Constructs_StepWithContext_Successfully_Without_StepDependencyType()
+        {
+            // arrange
+            Type expectedStepType = typeof(NoOpStep);
+            string expectedStepContext = "context";
 
             // act
             var result = new StepWithContext(expectedStepType, expectedStepContext);
@@ -45,6 +85,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedStepType, result.StepType);
             Assert.AreEqual(expectedStepContext, result.StepContext);
+            Assert.IsNull(result.StepDependencyType);
         }
 
         [TestMethod]

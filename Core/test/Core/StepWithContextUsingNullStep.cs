@@ -1,7 +1,7 @@
-﻿// <copyright file="StepAddedEventArgs.cs" company="Chris Trout">
+﻿// <copyright file="StepWithContextUsingNullStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright © 2021 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,17 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Core
+namespace MyTrout.Pipelines.Core.Tests
 {
-    using System;
+    using MyTrout.Pipelines.Samples.Tests;
 
-    /// <summary>
-    /// Provides EventArgs after a <see cref="StepWithContext"/> has been added to the <see cref="PipelineBuilder"/>.
-    /// </summary>
-    public class StepAddedEventArgs
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public record StepWithContextUsingNullStep : StepWithContext
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StepAddedEventArgs" /> class with the requested parameters.
-        /// </summary>
-        /// <param name="currentStep">The <see cref="StepWithContext"/> added to the <see cref="PipelineBuilder"/>.</param>
-        public StepAddedEventArgs(StepWithContext currentStep)
+        public StepWithContextUsingNullStep()
+            : base(typeof(SampleStep1), "context")
         {
-            this.CurrentStep = currentStep ?? throw new ArgumentNullException(nameof(currentStep));
+            this.StepType = null;
         }
-
-        /// <summary>
-        /// Gets the <see cref="StepWithContext"/> added to the <see cref="PipelineBuilder"/>.
-        /// </summary>
-        public StepWithContext CurrentStep { get; init; }
     }
 }

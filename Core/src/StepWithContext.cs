@@ -1,7 +1,7 @@
 ﻿// <copyright file="StepWithContext.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,42 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="stepType">The type to be constructed.</param>
         /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
-        public StepWithContext(Type stepType, string? stepContext)
+        public StepWithContext(Type stepType, string? stepContext = null)
+            : this(stepType, null, stepContext)
+        {
+            // no op
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
+        /// </summary>
+        /// <param name="stepType">The type to be constructed.</param>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
+        /// <param name="stepDependencyType">The type to be used as the step's dependency.</param>
+        public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null)
         {
             this.StepType = stepType ?? throw new ArgumentNullException(nameof(stepType));
+            this.StepDependencyType = stepDependencyType;
             this.StepContext = stepContext;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
+        /// </summary>
+        /// <param name="stepType">The type to be constructed.</param>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
+        /// <param name="stepDependencyType">The type to be used as the step's dependency.</param>
+        /// <param name="configKeys">Additional configuration keys that can be used to bind step dependency information from <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.</param>
+        public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null, params string[] configKeys)
+            : this(stepType, stepDependencyType, stepContext)
+        {
+            this.ConfigKeys = configKeys;
+        }
+
+        /// <summary>
+        /// Gets the additional configuration keys that will be used to load the <see cref="StepDependencyType"/>.
+        /// </summary>
+        public string[]? ConfigKeys { get; init; } = null;
 
         /// <summary>
         /// Gets the step to be configured multiple times.
@@ -51,5 +82,10 @@ namespace MyTrout.Pipelines
         /// Gets the context to be used to configure this instance of the step.
         /// </summary>
         public string? StepContext { get; init; }
+
+        /// <summary>
+        /// Gets the type used to configure options for this step.
+        /// </summary>
+        public Type? StepDependencyType { get; init; }
     }
 }

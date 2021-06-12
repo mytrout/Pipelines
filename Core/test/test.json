@@ -1,0 +1,14 @@
+{
+  "json-context": {
+    "ConnectionString": "json-connection-string"
+  },
+  "leading-context": {
+    "ConnectionString": "leading-connection-string"
+  },
+  "trailing-context": {
+    "ConnectionString": "trailing-connection-string"
+  },
+  "last-context": {
+    "ConnectionString": "last-connection-string"
+  }
+}

@@ -24,6 +24,8 @@
 
 namespace MyTrout.Pipelines.Core
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -80,13 +82,9 @@ namespace MyTrout.Pipelines.Core
                         nextRequestParameterFound = true;
                         oneConstructorContainsNextRequestParameter = true;
                     }
-                    else if (pipelineStep.StepContext == null)
-                    {
-                        parametersForConstructor.Add(this.ServiceProvider.GetService(parameter.ParameterType));
-                    }
                     else
                     {
-                        parametersForConstructor.Add(this.RetrieveMultiContextParameter(pipelineStep, parameter));
+                        parametersForConstructor.Add(this.RetrieveParameter(this.ServiceProvider, pipelineStep, parameter));
                     }
                 }
 
@@ -101,7 +99,6 @@ namespace MyTrout.Pipelines.Core
                     result = constructor.Invoke(parametersForConstructor.ToArray());
                     break;
                 }
-#pragma warning disable CA1031  // because exceptions can be swallowed here, disable this warning.
                 catch (Exception exc)
                 {
                     // returns string.Empty if there are no parameters.
@@ -113,7 +110,6 @@ namespace MyTrout.Pipelines.Core
 
                     // try other constructors rather than rethrowing the exception.
                 }
-#pragma warning restore CA1031
             }
 
             if (!oneConstructorContainsNextRequestParameter)
@@ -124,32 +120,85 @@ namespace MyTrout.Pipelines.Core
             return result;
         }
 
-        private object RetrieveMultiContextParameter(StepWithContext pipelineStep, ParameterInfo parameter)
+        /// <summary>
+        /// Retrieve a parameter using different methodologies provided by <see cref="StepWithContext"/>, <see cref="StepWithInstance{TStep, TOptions}"/> and <see cref="StepWithFactory{TStep, TOptions}"/>.
+        /// </summary>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        protected virtual object? RetrieveParameter(IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
-            var contextBase = typeof(IDictionary<,>);
-            var contextBaseTypes = new Type[]
+            if (pipelineStep.StepDependencyType != null)
             {
-                            typeof(string),
-                            parameter.ParameterType
-            };
-            var contextType = contextBase.MakeGenericType(contextBaseTypes);
+                if (pipelineStep is IStepWithFactory factoryStep)
+                {
+                    return factoryStep.Invoke(services);
+                }
 
-            dynamic? potentialValues = this.ServiceProvider.GetService(contextType);
-
-            if (potentialValues == null)
-            {
-                throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
+                if (pipelineStep is IStepWithInstance instanceStep)
+                {
+                    return instanceStep.Instance;
+                }
             }
 
-            // potentialValues should be IDictionary<string, parameter.ParameterType> here.
-            if (potentialValues.ContainsKey(pipelineStep.StepContext))
+            var results = services.GetService(parameter.ParameterType);
+
+            // If the results aren't defined in IServiceProvider, load them from IConfiguration.
+            if (results == null && !parameter.ParameterType.IsInterface)
             {
-                return potentialValues[pipelineStep.StepContext];
+                results = Activator.CreateInstance(parameter.ParameterType, nonPublic: true);
+
+                IConfiguration config = services.GetRequiredService<IConfiguration>();
+
+                // Bind to root configuration from IConfiguration.
+                config.Bind(results);
+
+                // Bind to type name keys from IConfiguration.
+                var paramTypeConfig = config.GetSection(parameter.ParameterType.Name);
+                if (paramTypeConfig.Exists())
+                {
+                    paramTypeConfig.Bind(results);
+                }
+
+                if (pipelineStep.StepContext != null)
+                {
+                    var contextConfig = config.GetSection(pipelineStep.StepContext);
+
+                    if (!contextConfig.Exists())
+                    {
+                        throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
+                    }
+
+                    // Bind to StepContext if it is not null.
+                    config.GetSection(pipelineStep.StepContext).Bind(results);
+                }
+
+                // Bind additional configuration keys, if available.
+                if (pipelineStep.ConfigKeys != null)
+                {
+                    // ConfigKeys are consumed in the order in which they are entered in the list.
+                    // The last key is the final key to be configured on the result.
+                    foreach (string key in pipelineStep.ConfigKeys)
+                    {
+                        if (!string.IsNullOrWhiteSpace(key))
+                        {
+                            var keyConfig = config.GetSection(key);
+
+                            if (!keyConfig.Exists())
+                            {
+                                this.Logger.LogWarning(Resources.MISSING_CONFIGKEY(CultureInfo.CurrentCulture, key, parameter.ParameterType.Name, pipelineStep.StepType.Name, pipelineStep.StepContext));
+                            }
+                            else
+                            {
+                                keyConfig.Bind(results);
+                            }
+                        }
+                    }
+                }
             }
-            else
-            {
-                throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
-            }
+
+            return results;
         }
     }
 }
