@@ -28,7 +28,7 @@ See [Breaking Changes for 3.0.0](./Core/breaking-changes-3-0-0.md)
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
 ## How do I use Pipelines?
-Please refer to the [Pipelines.Core[(./Core/README.md) for details on the basics of how to use Pipelines.
+Please refer to the [Pipelines.Core](./Core/README.md) for details on the basics of how to use Pipelines.
 
 ## How do I write Steps?
 Please refer to the [Pipeline.Steps.Core](./Steps/Core/README.md) for more details on how to write steps.
