@@ -15,7 +15,10 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-
+defaults:
+  run:
+    working-directory: ${{ github.workspace }}\Core
+    
 jobs:
   build:
 
