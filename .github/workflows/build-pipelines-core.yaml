@@ -26,7 +26,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NUGET_VERSION: '3.0.0'
-        WORKING_DIRECTORY: ${{ env.GITHUB_WORKSPACE }}\Core
+        WORKING_DIRECTORY: ${{ github.workspace }}\Core
         
     steps:
       - name: Checkout the Source
