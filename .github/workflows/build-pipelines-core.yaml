@@ -47,7 +47,7 @@ jobs:
         run: dotnet build ../Pipelines/Core/*.sln --configuration Release 
 
       - name: Test
-        run: dotnet test ../Pipelines/Core/test/*.csproj --no-restore --verbosity normal --collect "XPlat Code Coverage"
+        run: dotnet test ../Pipelines/Core/test/*.csproj --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
