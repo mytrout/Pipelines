@@ -52,7 +52,7 @@ jobs:
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
       - name: Build
-        run: dotnet build --verbosity diagnostic --configuration Release
+        run: dotnet build --configuration Release
 
       - name: Test
         run: dotnet test --logger trx --results-directory "TestResults" --no-restore --verbosity normal --collect "Code Coverage"
