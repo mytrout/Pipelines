@@ -29,6 +29,7 @@ jobs:
         SONAR_HOST_URL: 'https://sonarcloud.io/'
         SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGET_VERSION: '3.0.0'
 
     steps:
       - name: Checkout the Source
@@ -44,12 +45,12 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
         
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
       - name: Build
-        run: dotnet build *.sln --configuration Release 
+        run: dotnet build *.sln --configuration Release -p:Version=${{ env.NUGET_VERSION }};AssemblyVersion=${{ env.NUGET_VERSION }}.${{ github.run_id }};FileVersion=${{ env.NUGET_VERSION }}.${{ github.run_id }}
 
       - name: Test
         run: dotnet test ./test/*.csproj --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
