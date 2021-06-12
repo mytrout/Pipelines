@@ -49,7 +49,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
         
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.cs.vscoveragexml.reportsPaths="${{ env.WORKING_DIRECTORY }}\TestResults" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.cs.vscoveragexml.reportsPaths="${{ env.WORKING_DIRECTORY }}\TestResults\**\*.*" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       # dotnet restore can only restore one project file when a ROOT is specified.
