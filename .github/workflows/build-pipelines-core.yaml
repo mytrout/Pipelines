@@ -42,12 +42,17 @@ jobs:
         with:
           dotnet-version: '5.0.x'
       
+      # "dotnet sonarscanner end" now requires Java 11 to be installed.
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
         
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.cs.vscoveragexml.reportsPaths="TestResults/*.trx" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         
       # dotnet restore can only restore one project file when a ROOT is specified.
       # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
