@@ -63,7 +63,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Test with code coverage
-        run: coverlet ./test/**/*.dll --target "dotnet" --targetargs "test --no-build"
+        run: dotnet test --no-restore --no-build --verbosity normal --collect "XPlat Code Coverage"
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
