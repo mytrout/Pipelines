@@ -47,7 +47,11 @@ jobs:
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
-        
+      
+      # https://www.hanselman.com/blog/net-core-code-coverage-as-a-global-tool-with-coverlet
+      - name: Install Coverlet global tool
+        run: dotnet tool install --global coverlet.console
+  
       - name: Begin Sonar scan
         run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -58,8 +62,8 @@ jobs:
         run: dotnet build --configuration Release
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
-      - name: Test
-        run: dotnet test --results-directory "TestResults" --no-build --no-restore --verbosity normal --collect "XPlat Code Coverage"
+      - name: Test with code coverage
+        run: coverlet ./test/**/*.dll --target "dotnet" --targetargs "test --no-build"
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
