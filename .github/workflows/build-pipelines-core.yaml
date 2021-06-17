@@ -59,7 +59,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Test with code coverage
-        run: dotnet test --no-restore --no-build --verbosity normal --collect "XPlat Code Coverage"
+        run: dotnet test --no-restore --no-build --verbosity diagnostic --collect "XPlat Code Coverage"
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
