@@ -49,7 +49,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
        
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.flex.cobertura.reportPaths="${{ env.WORKING_DIRECTORY }}/**/cobertura-coverage.xml" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" -d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/**/*.trx" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       # dotnet restore can only restore one project file when a ROOT is specified.
@@ -59,7 +59,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Test with code coverage
-        run: dotnet test --no-restore --verbosity diagnostic --collect "XPlat Code Coverage"
+        run: dotnet test --no-restore --verbosity diagnostic --collect "XPlat Code Coverage" --settings coverlet.runsettings --logger trx
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
