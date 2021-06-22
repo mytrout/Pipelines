@@ -59,7 +59,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Test with code coverage
-        run: dotnet test --no-restore --verbosity diagnostic --collect "XPlat Code Coverage" --settings coverlet.runsettings --logger trx
+        run: dotnet test --collect "CodeCoverage" --DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.SplitCoverage="True" --verbosity debugging --logger trx
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: End Sonar scan
