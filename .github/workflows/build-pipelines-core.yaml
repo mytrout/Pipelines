@@ -50,14 +50,14 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
        
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Build and Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           dotnet build ${{ env.SOLUTION_NAME }} --configuration Release
-          dotnet test  --configuration Release --no-build --no-restore --verbosity diagnostic -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+          dotnet test  --configuration Release --no-build --no-restore --verbosity diagnostic --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
