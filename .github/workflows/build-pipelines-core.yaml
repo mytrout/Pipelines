@@ -27,6 +27,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NUGET_VERSION: '3.0.0'
         WORKING_DIRECTORY: ${{ github.workspace }}/Core
+        SOLUTION_NAME: 'MyTrout.Pipelines.Core.sln'
         
     steps:
       - name: Checkout the Source
@@ -55,7 +56,7 @@ jobs:
       - name: Build and Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          dotnet build "*.sln" --configuration Release
+          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release
           dotnet test --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
         
       - name: End Sonar scan
