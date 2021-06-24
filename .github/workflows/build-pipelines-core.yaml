@@ -57,7 +57,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           dotnet build ${{ env.SOLUTION_NAME }} --configuration Release
-          dotnet test  --configuration Release --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+          dotnet test  --configuration Release --no-build --no-restore --verbosity diagnostic -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
         
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
