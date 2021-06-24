@@ -19,14 +19,14 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     env:
         SONAR_HOST_URL: 'https://sonarcloud.io/'
         SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NUGET_VERSION: '3.0.0'
-        WORKING_DIRECTORY: ${{ github.workspace }}\Core
+        WORKING_DIRECTORY: ${{ github.workspace }}/Core
         
     steps:
       - name: Checkout the Source
@@ -49,30 +49,24 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
        
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" -d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/**/*.trx" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
+        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
-      # dotnet restore can only restore one project file when a ROOT is specified.
-      # removed --no-restore from dotnet build as it will implicitly restore all contained projects' dependencies.
-      - name: Build
-        run: dotnet build --configuration Release
+      - name: Build and Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        
-      - name: Test with code coverage
-        run: dotnet test --collect "CodeCoverage" --verbosity detailed --logger trx
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          dotnet build "*.sln" --configuration Release
+          dotnet test --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
         
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
         working-directory: ${{ env.WORKING_DIRECTORY }}
-
-      - name: Upload dotnet test results
+      
+      - name: Upload nupkg
         uses: actions/upload-artifact@v2
         with:
-          name: test-results
-          path: ${{ env.WORKING_DIRECTORY }}\TestResults\*.trx
-          # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+          name: nupkg
+          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
         
       #- name: Publish the package to nuget.org
       #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
