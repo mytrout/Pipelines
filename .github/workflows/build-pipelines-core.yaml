@@ -22,12 +22,19 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-        SONAR_HOST_URL: 'https://sonarcloud.io/'
-        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NUGET_VERSION: '3.0.0'
+        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
+        SONAR_HOST_URL: 'https://sonarcloud.io/'
+        
+        # These values should be changed for each individual solution.
+        SONAR_PROJECT_NAME: 'Pipelines.Core'
         WORKING_DIRECTORY: ${{ github.workspace }}/Core
         SOLUTION_NAME: 'MyTrout.Pipelines.Core.sln'
+        
+        # This value should change on each deployable version of this solution.
+        PROJECT_VERSION: '3.0.0'
+        
+        PROJECT_FULL_VERSION: ${{env.PROJECT_VERSION}}.${{ github.run_number }}
         
     steps:
       - name: Checkout the Source
@@ -50,13 +57,13 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
        
       - name: Begin Sonar scan
-        run: dotnet sonarscanner begin /k:"Pipelines.Core" /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.NUGET_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+        run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Build and Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release
+          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }}
           dotnet test  --configuration Release --no-build --no-restore --verbosity diagnostic --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
       - name: End Sonar scan
