@@ -34,8 +34,6 @@ jobs:
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: '3.0.0'
         
-        PROJECT_FULL_VERSION: ${{env.PROJECT_VERSION}}.${{ github.run_number }}
-        
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
@@ -61,6 +59,8 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         
       - name: Build and Test
+        env:
+          PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }}
