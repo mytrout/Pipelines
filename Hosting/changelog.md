@@ -7,6 +7,7 @@
  - Alter samples to ensure compliance with new MyTrout.Pipelines 3.x changes.
  - Remove AddStepDependencyExtensions and all usages because they are no longer used.
  - Correct the IDisposable implementations in TestSteps to comply with MyTrout.Pipelines 3.x changes.
+ - Update Resources.tt to reflect .NET 5.0 instead of .NET Standard 2.1
 
 ## 2.0.0
  - Upgrade to .NET 5.0
