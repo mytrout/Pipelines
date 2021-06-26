@@ -1,5 +1,13 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 3.0.0
+ - Use refactored MyTrout.Pipelines 3.x.
+ - Remove azure-pipelines.yml due to GitHub Actions conversion.
+ - Add build-pipelines-hosting.yml due to GitHub Actions conversion.
+ - Alter samples to ensure compliance with new MyTrout.Pipelines 3.x changes.
+ - Remove AddStepDependencyExtensions and all usages because they are no longer used.
+ - Correct the IDisposable implementations in TestSteps to comply with MyTrout.Pipelines 3.x changes.
+
 ## 2.0.0
  - Upgrade to .NET 5.0
  - Change the project and repository urls from dev.azure.com/mytrout to github.com.
