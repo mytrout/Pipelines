@@ -1,0 +1,86 @@
+name: MyTrout.Pipelines.Hosting
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/build-pipelines-hosting.yaml'
+      - '**/Pipelines/Hosting/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  pull_request:
+    paths:
+      - '.github/workflows/build-pipelines-hosting.yaml'
+      - '**/Pipelines/Hosting/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+      
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
+        SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
+        
+        # These values should be changed for each individual solution. Don't forget to change the name element and paths elements.
+        SONAR_PROJECT_NAME: 'Pipelines.Hosting'
+        WORKING_DIRECTORY: ${{ github.workspace }}/Hosting
+        SOLUTION_NAME: 'MyTrout.Pipelines.Hosting.sln'
+        
+        # This value should change on each deployable version of this solution.
+        PROJECT_VERSION: '3.0.0'
+        
+    steps:
+      - name: Checkout the Source
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET Core SDK 5.0.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: '5.0.x'
+      
+      # "dotnet sonarscanner end" now requires Java 11 to be installed.
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          
+      # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
+      - name: Install Sonar global tool
+        run: dotnet tool install --global dotnet-sonarscanner
+       
+      - name: Begin Sonar scan
+        run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        
+      - name: Build and Test
+        env:
+          PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }}
+          dotnet test  --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        
+      - name: End Sonar scan
+        run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+      
+      - name: Upload nupkg
+        uses: actions/upload-artifact@v2
+        with:
+          name: nupkg
+          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
+        
+      - name: Publish the package to nuget.org.
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+        if: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Publish the package to GitHub.
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
+        if: ${{ github.ref == 'refs/heads/master' }}
+ 
