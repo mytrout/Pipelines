@@ -258,3 +258,24 @@ to reduce the configuration lines to the following:
 }
 
 ```
+
+## Finer-grained control of how parameters are created.
+
+The original code allow developers to override the entire parameter creation process, but required the developer to re-implement everything.
+
+StepActivator.ParameterCreators properties provides a list of handlers that can be re-ordered, removed, added, or any other combination developers would like to perform.
+
+The base implementation is designed to allow a developer to build parameters in the following hierarchy:
+1. IPipelineRequest will always be injected in the 0 slot during construction.  If used, all further handlers will be skipped.
+2. If the current step is a StepWithFactory, that context will be used to construct this parameter. If used, all further handlers will be skipped.
+3. If the current step is a StepWithInstance, that context will be used to construct this parameter. If used, all further handlers will be skipped.
+4. If there is an instance configured via IServicePrvider, that instance will be used for this parameter.  If used, all further handlers will be skipped.
+5. Multiple bindings will be attempted against IConfiguration in the following order:
+	a. Root level configuration 
+	b. Type Name configuration
+        c. StepContext, if not null.
+        d. ConfigKeys if available in the StepContext and in the order they were added to the list (first item will be configured first, last item last).
+
+<b>IMPORTANT NOTE: Configuration Handler will ALWAYS return true.  Nothing should be configured AFTER the StepActivator.CreateParameterFromConfiguration method.</b>
+
+

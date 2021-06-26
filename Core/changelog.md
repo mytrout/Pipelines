@@ -12,6 +12,16 @@
 - The project has been compiled and tested against .NET 6.0 Preview 4 to ensure future compatibility.
 - Move all helper method AddStep implementations from PipelineBuilder to PipelineBuilderExtensions.
 - Add additional PipelineBuilder.AddStep extension methods to simplify the usage of adding dependencies.
+- Refactor the StepActivator.RetrieveParameter() method to reduce Cognitive Complexity from 29 to 15 or below.
+- Upgrade the StyleCop Analyzer to 1.2.0-beta.261 to alleviate the following exception when building with GitHub Actions:
+	CSC : warning AD0001: Analyzer 'StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName' threw an exception of type 'System.ArgumentException' with message 'Unhandled declaration kind: RecordDeclaration'. [/home/runner/work/Pipelines/Pipelines/Core/test/MyTrout.Pipelines.Tests.csproj]
+- Alter build-pipelines-core.yaml to publish code coverage statistics to SonarCloud.io from GitHub Actions.
+- Document process of all GitHub actions corrections named github-actions-and-net-5.0.md in the root folder for the repository.
+- Disable stylecop check on copyright headers due to lack of ability to have multiple year ranges in the same project.
+- Remove GlobalSuppressions.cs because all of the rules are either deprecated or suppressed elsewhere.
+- Delete PipelineRequestDelegate as it is no longer used.
+- Add ParameterCreationDelegate, ParameterCreationResult and StepActivator.ParameterCreators to allow parameter creation behavior in StepActivator to be changed.
+- Due to the change in parameter creation behavior, the virtual StepActivator.RetrieveParameter method is no longer required.  Finer-grained control is available via StepActivator.ParameterCreators.
 
 ## 2.1.1
 - Remove extra stylecop.json file as it isn't being respected by Github Actions dotnet build step.

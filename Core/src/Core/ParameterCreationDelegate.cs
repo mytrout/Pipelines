@@ -1,7 +1,7 @@
-﻿// <copyright file="PipelineRequestDelegate.cs" company="Chris Trout">
+﻿// <copyright file="ParameterCreationDelegate.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,19 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Core
 {
-    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using System;
+    using System.Reflection;
 
     /// <summary>
-    /// Provides the delegate used for building a Pipeline.
+    /// Retrieve a parameter to be used by <see cref="StepActivator"/> in the construction of Pipeline steps and their dependencies.
     /// </summary>
-    /// <param name="context">The context passed during pipeline execution.</param>
-    /// <returns>A <see cref="Task" />.</returns>
-    public delegate Task PipelineRequestDelegate(IPipelineContext context);
+    /// <param name="logger">A logger for debug logging.</param>
+    /// <param name="services">An injected dependency service that provides some parameters.</param>
+    /// <param name="pipelineStep">The step being configured.</param>
+    /// <param name="parameter">The constructor parameter being built.</param>
+    /// <returns>A <see cref="ParameterCreationResult"/> indicating whether this delegate suggests further processing is required and the instance on which processing should be or has been done.</returns>
+    public delegate ParameterCreationResult ParameterCreationDelegate(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter);
 }
