@@ -1,7 +1,7 @@
 ﻿// <copyright file="UsePipelineExtensions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,8 +71,7 @@ namespace MyTrout.Pipelines.Hosting
             source.AssertParameterIsNotNull(nameof(source));
             source.AssertParameterIsNotNull(nameof(builder));
 
-            var result = AddStepDependencyExtensions.BuildStepContext(source)
-                            .ConfigureServices((hostContext, services) =>
+            var result = source.ConfigureServices((hostContext, services) =>
                             {
                                 services.AddLogging();
                                 services.AddSingleton(builder);
