@@ -28,7 +28,7 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 ## Software dependencies
     1. Microsoft.Hosting 5.0.0
     2. Microsoft.Hosting.Abstractions 5.0.0
-    3. MyTrout.Pipelines 2.0.7 minimum, 2.*.* is acceptable.
+    3. MyTrout.Pipelines 3.x
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -103,16 +103,12 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 //
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency("context-1", new Step1Options("Moe,"))
-                                    .AddStepDependency("context-2", new Step1Options("Larry"))
-                                    .AddStepDependency("context-3", new Step1Options("&"))
-                                    .AddStepDependency("context-4", new Step1Options("Curly"))
                                     .UsePipeline(builder => 
                                     {
-                                        builder.AddStep<Step1>("context-1")
-                                            .AddStep<Step1>("context-2")
-                                            .AddStep<Step1>("context-3")
-                                            .AddStep<Step1>("context-4")
+                                        builder.AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-1", new Step1Options("Moe,"))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-2", new Step1Options("Larry")))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-3", new Step1Options("&"))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-4", new Step1Options("Curly"))
                                     })
                                     .Build();
                 
