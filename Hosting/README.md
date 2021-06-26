@@ -1,10 +1,10 @@
 # MyTrout.Pipelines.Hosting
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Hosting?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=15&branchName=master)
-[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.HOsting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-hosting.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-hosting.yaml)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.Hosting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
-[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/blob/master/LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
@@ -28,7 +28,7 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 ## Software dependencies
     1. Microsoft.Hosting 5.0.0
     2. Microsoft.Hosting.Abstractions 5.0.0
-    3. MyTrout.Pipelines 2.0.7 minimum, 2.*.* is acceptable.
+    3. MyTrout.Pipelines 3.x
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -72,6 +72,8 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
 
+                await host.StopAsync().ConfigureAwait(false);
+
                 return 0;
             }
         }
@@ -103,16 +105,12 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 //
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency("context-1", new Step1Options("Moe,"))
-                                    .AddStepDependency("context-2", new Step1Options("Larry"))
-                                    .AddStepDependency("context-3", new Step1Options("&"))
-                                    .AddStepDependency("context-4", new Step1Options("Curly"))
                                     .UsePipeline(builder => 
                                     {
-                                        builder.AddStep<Step1>("context-1")
-                                            .AddStep<Step1>("context-2")
-                                            .AddStep<Step1>("context-3")
-                                            .AddStep<Step1>("context-4")
+                                        builder.AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-1", new Step1Options("Moe,"))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-2", new Step1Options("Larry")))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-3", new Step1Options("&"))
+                                            .AddStep(new StepWithInstance<TestingStep1, Step1Options>("context-4", new Step1Options("Curly"))
                                     })
                                     .Build();
                 
@@ -129,6 +127,8 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }

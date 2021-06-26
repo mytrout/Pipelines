@@ -7,8 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9316B38E-608
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{296C6CFC-008F-4634-B443-97339805781A}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
-		CHANGELOG.md = CHANGELOG.md
+		changelog.md = changelog.md
 		LICENSE = LICENSE
 		README.md = README.md
 		stylecop.json = stylecop.json
@@ -19,6 +18,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Hosting", "src\MyTrout.Pipelines.Hosting.csproj", "{90F3A074-8E4D-406F-9AA9-10BE7B5BED7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Hosting.Tests", "test\MyTrout.Pipelines.Hosting.Tests.csproj", "{64EE4D40-67E4-4F2D-9843-44B6A1E1116E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{20C1745B-F1C6-40CE-98B9-6DCAA5E638BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D381FAD4-F9E6-45C4-B70F-8178FAAE434F}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build-pipelines-hosting.yaml = ..\.github\workflows\build-pipelines-hosting.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{90F3A074-8E4D-406F-9AA9-10BE7B5BED7A} = {9316B38E-6081-418E-A45E-5D93F1FCF1B9}
 		{64EE4D40-67E4-4F2D-9843-44B6A1E1116E} = {D5A6B630-0A4E-4269-8D66-353C4A4CB1EA}
+		{D381FAD4-F9E6-45C4-B70F-8178FAAE434F} = {20C1745B-F1C6-40CE-98B9-6DCAA5E638BE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A635B7E1-B9D8-436E-85F4-C47F053975AC}

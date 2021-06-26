@@ -1,7 +1,7 @@
 ﻿// <copyright file="UsePipelineExtensions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Hosting
 {
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Hosting;
     using MyTrout.Pipelines.Core;
     using System;
@@ -71,12 +72,14 @@ namespace MyTrout.Pipelines.Hosting
             source.AssertParameterIsNotNull(nameof(source));
             source.AssertParameterIsNotNull(nameof(builder));
 
-            var result = AddStepDependencyExtensions.BuildStepContext(source)
-                            .ConfigureServices((hostContext, services) =>
+            // TO FUTURE DEVELOPERS:
+            // Using TryAdd for IStepActivator means that if a calling developer has already registered an IStepActivator,
+            // then this registration will not replace that registration.
+            var result = source.ConfigureServices((hostContext, services) =>
                             {
                                 services.AddLogging();
                                 services.AddSingleton(builder);
-                                services.AddTransient<IStepActivator, TStepActivator>();
+                                services.TryAdd(new ServiceDescriptor(typeof(IStepActivator), typeof(TStepActivator), ServiceLifetime.Transient));
                                 services.AddHostedService<PipelineHostedService>();
                                 services.AddSingleton(new PipelineContext());
                             })
