@@ -42,7 +42,7 @@ namespace MyTrout.Pipelines.Core.Tests
             const int expectedItemCount = 0;
             const int expectedExceptionCount = 0;
             Guid invalidCorrelationId = Guid.Empty;
-            using (CancellationTokenSource expectedCancellationSource = new ())
+            using (var expectedCancellationSource = new CancellationTokenSource())
             {
                 // act
                 var result = new PipelineContext()
@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Core.Tests
         public void Returns_True_From_IsConfigurationAvailable_When_Configuration_Property_Is_Not_Null()
         {
             // arrange
-            PipelineContext context = new ();
+            var context = new PipelineContext();
             IConfiguration expectedConfiguration = new Mock<IConfiguration>().Object;
 
             // act

@@ -1,7 +1,7 @@
 ﻿// <copyright file="StepActivator.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright © 2019-2020 Chris Trout
+// Copyright © 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,9 +53,187 @@ namespace MyTrout.Pipelines.Core
         public ILogger<StepActivator> Logger { get; }
 
         /// <summary>
+        /// Gets the functions that create a parameter used by the Step.
+        /// </summary>
+        public IList<ParameterCreationDelegate> ParameterCreators { get; }
+            = new List<ParameterCreationDelegate>()
+                {
+                    StepActivator.CreateParameterFromStepFactory,
+                    StepActivator.CreateParameterFromStepInstance,
+                    StepActivator.CreateParameterFromDependencyInjectionInstance,
+                    StepActivator.CreateParameterFromConfiguration
+                };
+
+        /// <summary>
         /// Gets the Dependency Injection-provided <see cref="IServiceProvider" />.
         /// </summary>
         public IServiceProvider ServiceProvider { get; }
+
+        /// <summary>
+        /// Retrieve a parameter from the <see cref="IConfiguration"/>.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
+        public static ParameterCreationResult CreateParameterFromConfiguration(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            services.AssertParameterIsNotNull(nameof(services));
+            parameter.AssertParameterIsNotNull(nameof(parameter));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            if (parameter.ParameterType.IsInterface)
+            {
+                return new ParameterCreationResult(null, false);
+            }
+
+            var results = Activator.CreateInstance(parameter.ParameterType, nonPublic: true);
+
+            IConfiguration config = services.GetRequiredService<IConfiguration>();
+
+            // Bind to root configuration from IConfiguration.
+            config.Bind(results);
+
+            // Bind to type name keys from IConfiguration.
+            var paramTypeConfig = config.GetSection(parameter.ParameterType.Name);
+            if (paramTypeConfig.Exists())
+            {
+                paramTypeConfig.Bind(results);
+            }
+
+            if (pipelineStep.StepContext != null)
+            {
+                var contextConfig = config.GetSection(pipelineStep.StepContext);
+
+                if (!contextConfig.Exists())
+                {
+                    throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
+                }
+
+                // Bind to StepContext if it is not null.
+                config.GetSection(pipelineStep.StepContext).Bind(results);
+            }
+
+            // Bind additional configuration keys, if available.
+            if (pipelineStep.ConfigKeys != null)
+            {
+                // ConfigKeys are consumed in the order in which they are entered in the list.
+                // The last key is the final key to be configured on the result.
+                foreach (string key in pipelineStep.ConfigKeys)
+                {
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        var keyConfig = config.GetSection(key);
+
+                        if (!keyConfig.Exists())
+                        {
+                            logger.LogWarning(Resources.MISSING_CONFIGKEY(CultureInfo.CurrentCulture, key, parameter.ParameterType.Name, pipelineStep.StepType.Name, pipelineStep.StepContext));
+                        }
+                        else
+                        {
+                            keyConfig.Bind(results);
+                        }
+                    }
+                }
+            }
+
+            return new ParameterCreationResult(results, true);
+        }
+
+        /// <summary>
+        /// Retrieve a parameter from the <see cref="IServiceProvider"/>.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        public static ParameterCreationResult CreateParameterFromDependencyInjectionInstance(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            services.AssertParameterIsNotNull(nameof(services));
+            parameter.AssertParameterIsNotNull(nameof(parameter));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            var instanceResult = services.GetService(parameter.ParameterType);
+
+            if (instanceResult != null)
+            {
+                return new ParameterCreationResult(instanceResult, true);
+            }
+
+            return new ParameterCreationResult(null, false);
+        }
+
+        /// <summary>
+        /// Retrieve a parameter from the <see cref="IConfiguration"/>.
+        /// </summary>
+        /// <param name="next">The next pipeline step instance.</param>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
+        public static ParameterCreationResult CreateParameterForNextPipelineRequest(IPipelineRequest next, ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            next.AssertParameterIsNotNull(nameof(next));
+            services.AssertParameterIsNotNull(nameof(services));
+            parameter.AssertParameterIsNotNull(nameof(parameter));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            if (parameter.ParameterType == typeof(IPipelineRequest))
+            {
+                return new ParameterCreationResult(next, true);
+            }
+
+            return new ParameterCreationResult(null, false);
+        }
+
+        /// <summary>
+        /// Retrieve a parameter from <see cref="StepWithFactory{TStep, TOptions}"/>.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        public static ParameterCreationResult CreateParameterFromStepFactory(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            services.AssertParameterIsNotNull(nameof(services));
+            parameter.AssertParameterIsNotNull(nameof(parameter));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            if (pipelineStep.StepDependencyType != null && pipelineStep is IStepWithFactory factoryStep)
+            {
+                return new ParameterCreationResult(factoryStep.Invoke(services), true);
+            }
+
+            return new ParameterCreationResult(null, false);
+        }
+
+        /// <summary>
+        /// Retrieve a parameter from <see cref="StepWithInstance{TStep, TOptions}" />.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        public static ParameterCreationResult CreateParameterFromStepInstance(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            services.AssertParameterIsNotNull(nameof(services));
+            parameter.AssertParameterIsNotNull(nameof(parameter));
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            if (pipelineStep.StepDependencyType != null && pipelineStep is IStepWithInstance factoryStep)
+            {
+                return new ParameterCreationResult(factoryStep.Instance, true);
+            }
+
+            return new ParameterCreationResult(null, false);
+        }
 
         /// <inheritdoc />
         public object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest)
@@ -71,27 +249,38 @@ namespace MyTrout.Pipelines.Core
             foreach (var constructor in pipelineStep.StepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
-                bool nextRequestParameterFound = false;
-
-                var parametersForConstructor = new List<object?>();
-                foreach (var parameter in constructor.GetParameters())
+                if (constructor.GetParameters().Any(x => x.ParameterType == typeof(IPipelineRequest)))
                 {
-                    if (parameter.ParameterType == typeof(IPipelineRequest))
-                    {
-                        parametersForConstructor.Add(nextRequest);
-                        nextRequestParameterFound = true;
-                        oneConstructorContainsNextRequestParameter = true;
-                    }
-                    else
-                    {
-                        parametersForConstructor.Add(this.RetrieveParameter(this.ServiceProvider, pipelineStep, parameter));
-                    }
+                    oneConstructorContainsNextRequestParameter = true;
                 }
-
-                if (!nextRequestParameterFound)
+                else
                 {
                     // Skip this constructor because no next PipelineRequest parameter was found.
                     continue;
+                }
+
+                var indexedParameterCreators = new List<ParameterCreationDelegate>(this.ParameterCreators);
+
+                // Inject the NextPipelineRequest into the ParameterCreators methods to allow every parameter to be treated exactly the same.
+                indexedParameterCreators.Insert(
+                            0,
+                            (ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+                                => StepActivator.CreateParameterForNextPipelineRequest(nextRequest, logger, services, pipelineStep, parameter));
+
+                var parametersForConstructor = new List<object?>();
+
+                // Cycle through each parameter on this constructor and get the expected parameter.
+                foreach (var parameter in constructor.GetParameters())
+                {
+                    foreach (var parameterCreator in indexedParameterCreators)
+                    {
+                        var creationResult = parameterCreator.Invoke(this.Logger, this.ServiceProvider, pipelineStep, parameter);
+                        if (creationResult.SkipRemainingCreators)
+                        {
+                            parametersForConstructor.Add(creationResult.Instance);
+                            break;
+                        }
+                    }
                 }
 
                 try
@@ -118,87 +307,6 @@ namespace MyTrout.Pipelines.Core
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Retrieve a parameter using different methodologies provided by <see cref="StepWithContext"/>, <see cref="StepWithInstance{TStep, TOptions}"/> and <see cref="StepWithFactory{TStep, TOptions}"/>.
-        /// </summary>
-        /// <param name="services">An injected dependency service that provides some parameters.</param>
-        /// <param name="pipelineStep">The step being configured.</param>
-        /// <param name="parameter">The constructor parameter being built.</param>
-        /// <returns>A fully-constructed parameter for the constructor.</returns>
-        protected virtual object? RetrieveParameter(IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
-        {
-            if (pipelineStep.StepDependencyType != null)
-            {
-                if (pipelineStep is IStepWithFactory factoryStep)
-                {
-                    return factoryStep.Invoke(services);
-                }
-
-                if (pipelineStep is IStepWithInstance instanceStep)
-                {
-                    return instanceStep.Instance;
-                }
-            }
-
-            var results = services.GetService(parameter.ParameterType);
-
-            // If the results aren't defined in IServiceProvider, load them from IConfiguration.
-            if (results == null && !parameter.ParameterType.IsInterface)
-            {
-                results = Activator.CreateInstance(parameter.ParameterType, nonPublic: true);
-
-                IConfiguration config = services.GetRequiredService<IConfiguration>();
-
-                // Bind to root configuration from IConfiguration.
-                config.Bind(results);
-
-                // Bind to type name keys from IConfiguration.
-                var paramTypeConfig = config.GetSection(parameter.ParameterType.Name);
-                if (paramTypeConfig.Exists())
-                {
-                    paramTypeConfig.Bind(results);
-                }
-
-                if (pipelineStep.StepContext != null)
-                {
-                    var contextConfig = config.GetSection(pipelineStep.StepContext);
-
-                    if (!contextConfig.Exists())
-                    {
-                        throw new InvalidOperationException(Resources.STEP_CONTEXT_NOT_FOUND(CultureInfo.CurrentCulture, parameter.ParameterType.Name, pipelineStep.StepType.Name));
-                    }
-
-                    // Bind to StepContext if it is not null.
-                    config.GetSection(pipelineStep.StepContext).Bind(results);
-                }
-
-                // Bind additional configuration keys, if available.
-                if (pipelineStep.ConfigKeys != null)
-                {
-                    // ConfigKeys are consumed in the order in which they are entered in the list.
-                    // The last key is the final key to be configured on the result.
-                    foreach (string key in pipelineStep.ConfigKeys)
-                    {
-                        if (!string.IsNullOrWhiteSpace(key))
-                        {
-                            var keyConfig = config.GetSection(key);
-
-                            if (!keyConfig.Exists())
-                            {
-                                this.Logger.LogWarning(Resources.MISSING_CONFIGKEY(CultureInfo.CurrentCulture, key, parameter.ParameterType.Name, pipelineStep.StepType.Name, pipelineStep.StepContext));
-                            }
-                            else
-                            {
-                                keyConfig.Bind(results);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return results;
         }
     }
 }

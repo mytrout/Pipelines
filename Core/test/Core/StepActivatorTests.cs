@@ -228,7 +228,7 @@ namespace MyTrout.Pipelines.Core.Tests
             ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
             ILogger<SampleWithOptionsStep> stepLogger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
 
-            Mock<IServiceProvider> mockServiceProvider = new ();
+            var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(x => x.GetService(typeof(ILogger<SampleWithOptionsStep>))).Returns(stepLogger);
             var serviceProvider = mockServiceProvider.Object;
 
