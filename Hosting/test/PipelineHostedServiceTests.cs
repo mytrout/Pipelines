@@ -1,7 +1,7 @@
 ﻿// <copyright file="PipelineHostedServiceTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@
 
 namespace MyTrout.Pipelines.Hosting.Tests
 {
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -74,11 +76,28 @@ namespace MyTrout.Pipelines.Hosting.Tests
                             .UsePipeline(pipelineBuilder)
                             .Build();
 
-            // act
-            await host.RunAsync().ConfigureAwait(false);
+            Type expectedFirstException = typeof(InvalidTimeZoneException);
+            Type expectedSecondException = typeof(InvalidOperationException);
+            string expectedMessage = "Try to destroy the service.";
 
-            // assert
-            // DEVELOPERS NOTE: If the test does not throw an Unhandled Exception, then it was successful.
+            try
+            {
+                // act
+                await host.StartAsync().ConfigureAwait(false);
+
+                // assert
+                var context = host.Services.GetService<PipelineContext>();
+
+                Assert.AreEqual(2, context.Errors.Count, "Exactly 2 exceptions should be provided by the PipelineContext for this test.");
+                Assert.IsInstanceOfType(context.Errors[0], expectedFirstException);
+                Assert.IsInstanceOfType(context.Errors[1], expectedSecondException);
+                Assert.AreEqual(expectedMessage, context.Errors[1].Message);
+            }
+            finally
+            {
+                // cleanup
+                await host.StopAsync().ConfigureAwait(false);
+            }
         }
 
   

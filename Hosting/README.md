@@ -72,6 +72,8 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
 
+                await host.StopAsync().ConfigureAwait(false);
+
                 return 0;
             }
         }
@@ -125,6 +127,8 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }

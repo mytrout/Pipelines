@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Hosting
 {
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Hosting;
     using MyTrout.Pipelines.Core;
     using System;
@@ -71,11 +72,14 @@ namespace MyTrout.Pipelines.Hosting
             source.AssertParameterIsNotNull(nameof(source));
             source.AssertParameterIsNotNull(nameof(builder));
 
+            // TO FUTURE DEVELOPERS:
+            // Using TryAdd for IStepActivator means that if a calling developer has already registered an IStepActivator,
+            // then this registration will not replace that registration.
             var result = source.ConfigureServices((hostContext, services) =>
                             {
                                 services.AddLogging();
                                 services.AddSingleton(builder);
-                                services.AddTransient<IStepActivator, TStepActivator>();
+                                services.TryAdd(new ServiceDescriptor(typeof(IStepActivator), typeof(TStepActivator), ServiceLifetime.Transient));
                                 services.AddHostedService<PipelineHostedService>();
                                 services.AddSingleton(new PipelineContext());
                             })
