@@ -30,7 +30,7 @@ namespace MyTrout.Pipelines.Hosting.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class TestingStep1 : IPipelineRequest
     {
-        public static string EXECUTION_COUNT = "ExecutionCount";
+        public const string EXECUTION_COUNT = "ExecutionCount";
 
         protected readonly IPipelineRequest next = null;
 
