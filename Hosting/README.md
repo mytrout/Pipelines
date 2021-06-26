@@ -1,10 +1,10 @@
 # MyTrout.Pipelines.Hosting
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Hosting?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=15&branchName=master)
-[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.HOsting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-hosting.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-hosting.yaml)
+[![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.Hosting.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Hosting/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
-[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://licenses.nuget.org/MIT)
+[![License: MIT](https://img.shields.io/github/license/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/blob/master/LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=alert_status)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Pipelines.Hosting&metric=coverage)](https://sonarcloud.io/dashboard?id=Pipelines.Hosting)
