@@ -262,7 +262,7 @@ namespace MyTrout.Pipelines.Core.Tests
             ILogger<SampleWithOptionsStep> stepLogger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
             int expectedLogMessages = 1;
             string expectedArgument0 = "Warning";
-            string expectedArgument2 = Resources.MISSING_CONFIGKEY(CultureInfo.CurrentCulture, missingContext, nameof(SampleOptions), nameof(SampleWithOptionsStep), stepContext);
+            string expectedArgument2 = MyTrout.Pipelines.Resources.MISSING_CONFIGKEY(CultureInfo.CurrentCulture, missingContext, nameof(SampleOptions), nameof(SampleWithOptionsStep), stepContext);
 
             var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(x => x.GetService(typeof(ILogger<SampleWithOptionsStep>))).Returns(stepLogger);
