@@ -3,6 +3,7 @@
 ## 3.0.1
 - Add the Steps library to the Pipelines.Core library.
 - Update the implemented Step Tests to use IDisposable and IAsyncDisposable.
+- Remove CS8604 from editorconfig.
 
 ## 3.0.0 - BREAKING CHANGES
 - Move separate ~Steps library into the Pipelines.Core.
