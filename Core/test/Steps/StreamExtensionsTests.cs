@@ -55,7 +55,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_ByteArray_From_ConvertStreamToByteArray_When_Source_Is_Not_A_MemoryStream()
         {
             // arrange
-            using (var stream = File.OpenRead(Directory.GetCurrentDirectory() + "\\test.txt"))
+            using (var stream = File.OpenRead(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "test.txt"))
             {
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
