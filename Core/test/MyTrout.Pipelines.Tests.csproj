@@ -12,17 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Steps\test.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Steps\test.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
