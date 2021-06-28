@@ -4,6 +4,7 @@
 - Add the Steps library to the Pipelines.Core library.
 - Update the implemented Step Tests to use IDisposable and IAsyncDisposable.
 - Remove CS8604 from editorconfig.
+- Change Tests/Steps/test.txt to Always Copy.
 
 ## 3.0.0 - BREAKING CHANGES
 - Move separate ~Steps library into the Pipelines.Core.
