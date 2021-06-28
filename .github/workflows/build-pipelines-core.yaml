@@ -1,5 +1,6 @@
 name: MyTrout.Pipelines
 
+# Force the rebuild of 3.0.1
 on:
   push:
     branches:
