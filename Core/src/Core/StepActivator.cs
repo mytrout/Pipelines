@@ -179,6 +179,7 @@ namespace MyTrout.Pipelines.Core
         public static ParameterCreationResult CreateParameterForNextPipelineRequest(IPipelineRequest next, ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             next.AssertParameterIsNotNull(nameof(next));
+            logger.AssertParameterIsNotNull(nameof(logger));
             services.AssertParameterIsNotNull(nameof(services));
             parameter.AssertParameterIsNotNull(nameof(parameter));
             pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
