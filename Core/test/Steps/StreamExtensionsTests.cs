@@ -40,7 +40,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             // arrange
             string contents = "Who's afraid of the Big Bad Wolf?";
             byte[] byteContents = Encoding.UTF8.GetBytes(contents);
-            using (MemoryStream stream = new MemoryStream(byteContents))
+            using (var stream = new MemoryStream(byteContents))
             {
                 // act
                 byte[] result = await stream.ConvertStreamToByteArrayAsync();
@@ -57,7 +57,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             // arrange
             using (var stream = File.OpenRead(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "test.txt"))
             {
-                using (MemoryStream memoryStream = new MemoryStream())
+                using (var memoryStream = new MemoryStream())
                 {
                     await stream.CopyToAsync(memoryStream);
                     string contents = Encoding.UTF8.GetString(memoryStream.ToArray());

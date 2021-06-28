@@ -97,7 +97,7 @@ namespace MyTrout.Pipelines.Core
             config.Bind(results);
 
             // Bind to type name keys from IConfiguration.
-            StepActivator.BindConfiguration(config, parameter.ParameterType.Name, results);
+            config.GetSection(parameter.ParameterType.Name)?.Bind(results);
 
             if (pipelineStep.StepContext != null)
             {
@@ -246,12 +246,10 @@ namespace MyTrout.Pipelines.Core
             foreach (var constructor in pipelineStep.StepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
-
                 if (!constructor.GetParameters().Any(x => x.ParameterType == typeof(IPipelineRequest)))
                 {
                     // Skip this constructor because no next PipelineRequest parameter was found.
                     continue;
-
                 }
 
                 oneConstructorContainsNextRequestParameter = true;
@@ -304,18 +302,6 @@ namespace MyTrout.Pipelines.Core
             }
 
             return result;
-        }
-
-        private static object? BindConfiguration(IConfiguration config, string key, object? instance)
-        {
-            // Bind to type name keys from IConfiguration.
-            var keyConfig = config.GetSection(key);
-            if (keyConfig.Exists())
-            {
-                config.Bind(instance);
-            }
-
-            return instance;
         }
     }
 }
