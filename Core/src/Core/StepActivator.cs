@@ -97,11 +97,7 @@ namespace MyTrout.Pipelines.Core
             config.Bind(results);
 
             // Bind to type name keys from IConfiguration.
-            var paramTypeConfig = config.GetSection(parameter.ParameterType.Name);
-            if (paramTypeConfig.Exists())
-            {
-                paramTypeConfig.Bind(results);
-            }
+            config.GetSection(parameter.ParameterType.Name)?.Bind(results);
 
             if (pipelineStep.StepContext != null)
             {
@@ -113,7 +109,7 @@ namespace MyTrout.Pipelines.Core
                 }
 
                 // Bind to StepContext if it is not null.
-                config.GetSection(pipelineStep.StepContext).Bind(results);
+                contextConfig.Bind(results);
             }
 
             // Bind additional configuration keys, if available.
@@ -250,15 +246,13 @@ namespace MyTrout.Pipelines.Core
             foreach (var constructor in pipelineStep.StepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
-                if (constructor.GetParameters().Any(x => x.ParameterType == typeof(IPipelineRequest)))
-                {
-                    oneConstructorContainsNextRequestParameter = true;
-                }
-                else
+                if (!constructor.GetParameters().Any(x => x.ParameterType == typeof(IPipelineRequest)))
                 {
                     // Skip this constructor because no next PipelineRequest parameter was found.
                     continue;
                 }
+
+                oneConstructorContainsNextRequestParameter = true;
 
                 var indexedParameterCreators = new List<ParameterCreationDelegate>(this.ParameterCreators);
 
