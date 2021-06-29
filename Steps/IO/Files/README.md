@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Files
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Files?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=19&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Files?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Files/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -28,7 +28,7 @@ MyTrout.Pipelines.Steps.IO.Files targets [.NET 5.0](https://dotnet.microsoft.com
 
 ## Software dependencies
 
-    1. MyTrout.Pipelines.Steps 2.0.7 minimum, 2.*.* is acceptable.
+    1. MyTrout.Pipelines 3.0.1 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -119,15 +119,13 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 //
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<MoveFileOptions>("context-A")
-                                    .AddStepDependency<MoveFileOptions("context-B")
                                     .UsePipeline(builder => 
                                     {
                                         builder
                                             .AddStep<LoadTheFirstMofeFileLocationsStep>()
-                                            .AddStep<MoveFileStep>("context-A")
+                                            .AddStep<MoveFileStep, MoveFileOptions>("context-A")
                                             .AddStep<LoadTheSecondMoveFileLocationStep>()
-                                            .AddStep<MoveFileStepStep>("context-B")
+                                            .AddStep<MoveFileStepStep, MoveFileOptions>("context-B")
                                             .AddStep<DoOtherActionsStep>()
                                     })
                                     .Build();

@@ -1,5 +1,13 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 3.0.0
+- Upgrade to MyTrout.Pipelines v3.0.1
+- Change Resources.tt from .NET Standard 2.1 to .NET 5.0 in the comments.
+- Add 2021 to the copyright year range in Resources.tt
+- Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
+- Change Build Status badge from Azure DevOps to GitHub Actions.
+- Convert Azure DevOps build to Github Actions build yaml.
+
 ## 2.1.0
 - Upgrade to MyTrout.Pipelines.Steps v2.0.7
 - Upgrade all analyzers and remove deprecated analyzers.
