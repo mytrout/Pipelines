@@ -27,7 +27,7 @@ jobs:
         SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
         
         # These values should be changed for each individual solution. Don't forget to change the name element and paths elements.
-        SONAR_PROJECT_NAME: 'Pipelines.Hosting'
+        SONAR_PROJECT_NAME: 'Pipelines.Steps.IO.Files'
         WORKING_DIRECTORY: ${{ github.workspace }}/Steps/IO/Files
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.IO.Files.sln'
         
