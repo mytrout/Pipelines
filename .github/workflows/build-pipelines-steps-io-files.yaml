@@ -6,7 +6,7 @@ on:
       - master
     paths:
       - '.github/workflows/build-pipelines-steps-io-files.yaml'
-      - '**/Pipelines/Hosting/**/*.*'
+      - '**/Pipelines/Steps/IO/Files/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
   pull_request:
