@@ -63,7 +63,7 @@ jobs:
           PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }};SourceRevisionId=${{ env.PROJECT_VERSION }}+{{ env.GITHUB_SHA }}
+          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }};SourceRevisionId=${{ env.PROJECT_VERSION }}+${{ env.GITHUB_SHA }}
           dotnet test  --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
       - name: End Sonar scan
