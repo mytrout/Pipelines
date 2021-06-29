@@ -1,7 +1,7 @@
 ﻿// <copyright file="FileUtilityTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,12 @@
 // </copyright>
 namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 {
-    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Runtime.InteropServices;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
@@ -42,10 +38,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         public void Returns_Fully_Qualified_Path_From_GetFullyQualifiedPath_When_Relative_FilePath_Is_Provided()
         {
             // arrange
-            string filePath = "location\\filename.txt";
+            string filePath = $"location{Path.DirectorySeparatorChar}filename.txt";
             string basePath = "C:\\FirstDirectory";
-
             string expectedFilePath = "C:\\FirstDirectory\\location\\filename.txt";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                basePath = "/home/runner/work/Pipelines/";
+                expectedFilePath = "/home/runner/work/Pipelines/location/filename.txt";
+            }
 
             // act
             var result = FileUtility.GetFullyQualifiedPath(filePath, basePath);
@@ -58,11 +60,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         [TestMethod]
         public void Returns_Fully_Qualified_Path_From_GetFullyQualifiedPath_When_BasePath_Includes_Ending_Directory_Separator_Character()
         {
-            // arrange
-            string filePath = "location\\filename.txt";
-            string basePath = "C:\\FirstDirectory\\";
-
+            string filePath = $"location{Path.DirectorySeparatorChar}filename.txt";
+            string basePath = "C:\\FirstDirectory";
             string expectedFilePath = "C:\\FirstDirectory\\location\\filename.txt";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                basePath = "home/runner/work/Pipelines/";
+                expectedFilePath = "home/runner/work/Pipelines/location/filename.txt";
+            }
 
             // act
             var result = FileUtility.GetFullyQualifiedPath(filePath, basePath);
@@ -77,9 +84,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         {
             // arrange
             string filePath = "C:\\FirstDirectory\\location\\filename.txt";
-            string basePath = "C:\\FirstDirectory\\";
-
+            string basePath = "C:\\FirstDirectory";
             string expectedFilePath = "C:\\FirstDirectory\\location\\filename.txt";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                filePath = "home/runner/work/Pipelines/location/filename.txt";
+                basePath = "home/runner/work/Pipelines/";
+                expectedFilePath = "home/runner/work/Pipelines/location/filename.txt";
+            }
 
             // act
             var result = FileUtility.GetFullyQualifiedPath(filePath, basePath);
@@ -145,7 +159,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         {
             // arrange
             string filePath = null;
-            string basePath = "C:\\Location";
+            string basePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
             string expectedParamName = nameof(filePath);
 
@@ -162,7 +176,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         {
             // arrange
             string filePath = string.Empty;
-            string basePath = "C:\\Location";
+            string basePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
             string expectedParamName = nameof(filePath);
 
@@ -179,7 +193,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         {
             // arrange
             string filePath = "   \r\n";
-            string basePath = "C:\\Location";
+            string basePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
             string expectedParamName = nameof(filePath);
 
