@@ -57,7 +57,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 basePath += Path.DirectorySeparatorChar;
             }
 
-            if (!Path.IsPathFullyQualified(result))
+            if (!Path.IsPathRooted(result))
             {
                 result = Path.Combine(basePath, result);
             }

@@ -29,13 +29,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
     public class ParameterValidationExtensionsTests
     {
+        // Removes ~/Pipelines/Steps/IO/Files/test/bin/Release/net5.0 from the path.
+        public static readonly string RootPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).Parent.Parent.Parent.Parent.Parent.Parent.Parent.FullName + Path.DirectorySeparatorChar;
+
         [TestMethod]
         public void Returns_From_AssertFileNameParameterIsValid_When_Absolute_File_Path_Is_Valid()
         {
@@ -49,7 +54,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                validPath = "/home/runner/work/Pipelines/";
+                validPath = ParameterValidationExtensionsTests.RootPath;
             }
 
             string validFileName = $"{validPath}{Guid.NewGuid()}.txt";
@@ -82,7 +87,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                validPath = "/home/runner/work/Pipelines/";
+                validPath = ParameterValidationExtensionsTests.RootPath;
             }
 
             source.Items.Add(FileConstants.SOURCE_FILE, validFileName);
@@ -114,7 +119,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             }
             else
             {
-                validPath = "/home/runner/work/Pipelines/";
+                validPath = ParameterValidationExtensionsTests.RootPath;
             }
 
             string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
@@ -142,7 +147,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             }
             else
             {
-                validPath = "/home/runner/work/Pipelines/";
+                validPath = ParameterValidationExtensionsTests.RootPath;
             }
 
             source.Items.Add(FileConstants.TARGET_FILE, invalidFileName);
@@ -168,7 +173,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                validPath = "/home/runner/work/Pipelines/";
+                validPath = ParameterValidationExtensionsTests.RootPath;
                 invalidFileName = $"/{Guid.NewGuid()}/{validFileName}";
             }
 

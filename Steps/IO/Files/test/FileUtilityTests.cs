@@ -34,6 +34,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     [TestClass]
     public class FileUtilityTests
     {
+        // Removes ~/Pipelines/Steps/IO/Files/test/bin/Release/net5.0 from the path.
+        public static readonly string RootPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).Parent.Parent.Parent.Parent.Parent.Parent.Parent.FullName;
+
         [TestMethod]
         public void Returns_Fully_Qualified_Path_From_GetFullyQualifiedPath_When_Relative_FilePath_Is_Provided()
         {
@@ -45,8 +48,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                basePath = "/home/runner/work/Pipelines/";
-                expectedFilePath = "/home/runner/work/Pipelines/location/filename.txt";
+                basePath = FileUtilityTests.RootPath;
+                expectedFilePath = $"{FileUtilityTests.RootPath}location/filename.txt";
             }
 
             // act
@@ -67,8 +70,8 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                basePath = "home/runner/work/Pipelines/";
-                expectedFilePath = "home/runner/work/Pipelines/location/filename.txt";
+                basePath = FileUtilityTests.RootPath + Path.DirectorySeparatorChar;
+                expectedFilePath = $"{FileUtilityTests.RootPath}location/filename.txt";
             }
 
             // act
@@ -90,9 +93,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                filePath = "home/runner/work/Pipelines/location/filename.txt";
-                basePath = "home/runner/work/Pipelines/";
-                expectedFilePath = "home/runner/work/Pipelines/location/filename.txt";
+                basePath = FileUtilityTests.RootPath + Path.DirectorySeparatorChar;
+                filePath = $"{FileUtilityTests.RootPath}location/filename.txt";
+                expectedFilePath = $"{FileUtilityTests.RootPath}location/filename.txt";
             }
 
             // act

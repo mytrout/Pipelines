@@ -41,6 +41,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     [TestClass]
     public class MoveFileStepTests
     {
+        // Removes ~/Pipelines/Steps/IO/Files/test/bin/Release/net5.0 from the path.
+        public static readonly string RootPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).Parent.Parent.Parent.Parent.Parent.Parent.Parent.FullName + Path.DirectorySeparatorChar;
+
         [TestMethod]
         public async Task Constructs_MoveFileTests_Successfully()
         {
@@ -301,7 +304,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                fullSourcePath = $"{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+                fullSourcePath = $"{MoveFileStepTests.RootPath}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
             }
 
             string fullSourcePathAndFileName = $"{fullSourcePath}{fileName}";
