@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7587A676-7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BA5AD7D-EF72-4358-A62D-170BF123696D}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -19,6 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Files.Tests", "test\MyTrout.Pipelines.Steps.IO.Files.Tests.csproj", "{CB79B21B-DC3C-48D5-BE26-9BDBB293C1BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{18DDC417-2E14-4690-85F9-E743D90F2673}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{CB549987-858C-4BE2-907C-34A5EACC4365}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps.io.files.yaml = ..\..\..\.github\workflows\build-pipelines-steps.io.files.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{AFD9C35C-D108-4670-AC8C-B6947FA95A5E} = {3C223D1D-5F75-4DA7-9E0A-A46BB0128447}
 		{CB79B21B-DC3C-48D5-BE26-9BDBB293C1BD} = {7587A676-7D4A-41DC-AFAA-35CD94AF4693}
+		{CB549987-858C-4BE2-907C-34A5EACC4365} = {18DDC417-2E14-4690-85F9-E743D90F2673}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BB0C0F6-A049-4CCF-9953-AB474031465F}
