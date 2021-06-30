@@ -1,7 +1,7 @@
 ﻿// <copyright file="EncryptStreamWithAes256StepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,13 +48,14 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            var result = new EncryptStreamWithAes256Step(logger, options, next);
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(options, result.Options);
-            Assert.AreEqual(next, result.Next);
+            using (var result = new EncryptStreamWithAes256Step(logger, options, next))
+            {
+                // assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(logger, result.Logger);
+                Assert.AreEqual(options, result.Options);
+                Assert.AreEqual(next, result.Next);
+            }
         }
 
         [TestMethod]
@@ -65,23 +66,24 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             var logger = new Mock<ILogger<EncryptStreamWithAes256Step>>().Object;
             var options = new EncryptStreamWithAes256Options();
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var nextMock = new Mock<IPipelineRequest>();
             nextMock.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
-            var source = new EncryptStreamWithAes256Step(logger, options, next);
+            using (var source = new EncryptStreamWithAes256Step(logger, options, next))
+            {
+                var expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
-            var expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+                // act
+                await source.InvokeAsync(context);
 
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            Assert.AreEqual(errorCount, context.Errors.Count);
-            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+            }
         }
 
         [TestMethod]
@@ -89,7 +91,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         {
             // arrange
             string contents = "Hey na, hey na, my boyfriend's back.";
-            MemoryStream outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+            var outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
 
             var logger = new Mock<ILogger<EncryptStreamWithAes256Step>>().Object;
             var options = new EncryptStreamWithAes256Options()
@@ -110,7 +112,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                 }
             }
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
 
             var nextMock = new Mock<IPipelineRequest>();
@@ -118,27 +120,28 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
-            var source = new EncryptStreamWithAes256Step(logger, options, next);
-
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            if (context.Errors.Any())
+            using (var source = new EncryptStreamWithAes256Step(logger, options, next))
             {
-                throw context.Errors[0];
-            }
+                // act
+                await source.InvokeAsync(context);
 
-            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
+                // assert
+                if (context.Errors.Any())
+                {
+                    throw context.Errors[0];
+                }
 
-            var resultStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+                Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
 
-            Assert.IsTrue(resultStream.CanRead, "This stream should still be open.");
+                var resultStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 
-            using (var reader = new StreamReader(resultStream))
-            {
-                string result = await reader.ReadToEndAsync().ConfigureAwait(false);
-                Assert.AreEqual(result, encryptedContents);
+                Assert.IsTrue(resultStream.CanRead, "This stream should still be open.");
+
+                using (var reader = new StreamReader(resultStream))
+                {
+                    string result = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    Assert.AreEqual(result, encryptedContents);
+                }
             }
         }
     }

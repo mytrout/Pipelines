@@ -1,5 +1,12 @@
 # MyTrout.Pipelines.Steps.Cryptography Change Log
 
+## 3.0.0
+- Upgrade to MyTrout.Pipelines v3.0.1
+- Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
+- Change Build Status badge from Azure DevOps to GitHub Actions.
+- Convert Azure DevOps build to Github Actions build yaml.
+- Correct SonarQube warnings and info.
+
 ## 2.0.0
  - Upgrade from .NET Standard 2.1 to .NET 5.0
  - Upgrade to MyTrout.Pipelines.Steps 2.0.6
