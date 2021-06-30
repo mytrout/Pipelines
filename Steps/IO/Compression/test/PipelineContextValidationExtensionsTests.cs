@@ -57,9 +57,9 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
                 zipStream.Position = 0;
 
-                using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true))
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    PipelineContext source = new PipelineContext();
+                    var source = new PipelineContext();
                     source.Items.Add(key, zipArchive);
 
                     // act
@@ -86,9 +86,9 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
                 zipStream.Position = 0;
 
-                using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update, leaveOpen: true))
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update, leaveOpen: true))
                 {
-                    PipelineContext source = new PipelineContext();
+                    var source = new PipelineContext();
                     source.Items.Add(key, zipArchive);
 
                     // act
@@ -119,7 +119,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public void Throws_ArgumentNullException_From_AssertZipArchiveIsReadable_When_Key_Is_Null()
         {
             // arrange
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             string key = null;
             string expectedParamName = nameof(key);
 
@@ -151,7 +151,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public void Throws_ArgumentNullException_From_AssertZipArchiveIsUpdatable_When_Key_Is_Null()
         {
             // arrange
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             string key = null;
             string expectedParamName = nameof(key);
 
@@ -170,7 +170,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             string key = CompressionConstants.ZIP_ARCHIVE;
             ZipArchive zipArchive = null;
 
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             source.Items.Add(key, zipArchive);
 
             string expectedErrorMessage = Pipelines.Resources.CONTEXT_VALUE_IS_NULL(CultureInfo.CurrentCulture, key);
@@ -190,7 +190,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             string key = CompressionConstants.ZIP_ARCHIVE;
             ZipArchive zipArchive = null;
 
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             source.Items.Add(key, zipArchive);
 
             string expectedErrorMessage = Pipelines.Resources.CONTEXT_VALUE_IS_NULL(CultureInfo.CurrentCulture, key);
@@ -208,13 +208,12 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             string key = CompressionConstants.ZIP_ARCHIVE;
-            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
             using (var zipStream = new MemoryStream())
             {
-                using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
                 {
-                    PipelineContext source = new PipelineContext();
+                    var source = new PipelineContext();
                     source.Items.Add(key, zipArchive);
 
                     string expectedErrorMessage = Resources.ZIP_ARCHIVE_IS_NOT_READABLE(CultureInfo.CurrentCulture);
@@ -238,9 +237,9 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
             using (var zipStream = File.OpenRead(zipFilePath))
             {
-                using (ZipArchive zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true))
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    PipelineContext source = new PipelineContext();
+                    var source = new PipelineContext();
                     source.Items.Add(key, zipArchive);
 
                     string expectedErrorMessage = Resources.ZIP_ARCHIVE_IS_READ_ONLY(CultureInfo.CurrentCulture);

@@ -64,7 +64,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Pipeline_Error_From_InvokeAsync_When_Context_Lacks_ZipArchive()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
             var next = new Mock<IPipelineRequest>().Object;
@@ -92,7 +92,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Pipeline_Error_From_InvokeAsync_When_Context_Lacks_ZipArchiveEntryName()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
             var next = new Mock<IPipelineRequest>().Object;
@@ -135,11 +135,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_ZipArchive_From_InvokeAsync_When_ZipArchiveEntry_Is_Removed()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
 
@@ -228,7 +228,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             var logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
             var next = new Mock<IPipelineRequest>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string entryName = "Disney.txt";
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";

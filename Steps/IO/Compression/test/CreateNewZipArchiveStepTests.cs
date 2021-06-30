@@ -32,12 +32,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
     using MyTrout.Pipelines.Steps.IO.Compression;
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
     using System.Threading.Tasks;
 
     [ExcludeFromCodeCoverage]
@@ -65,11 +63,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_OutputStream_From_InvokeAsync()
         {
             // arrange
-            ILogger<CreateNewZipArchiveStep> logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() =>
                                     {
@@ -82,7 +80,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
             int expectedEntryCount = 0;
 
-            await using (CreateNewZipArchiveStep source = new CreateNewZipArchiveStep(logger, next))
+            await using (var source = new CreateNewZipArchiveStep(logger, next))
             {
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -112,9 +110,9 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Previous_ZipArchive_From_InvokeAsync_When_Previous_ZipArchive_Is_Created()
         {
             // arrange
-            ILogger<CreateNewZipArchiveStep> logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
@@ -122,7 +120,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             {
                 using (var previousZipArchive = new ZipArchive(previousOutputStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                    var mockNext = new Mock<IPipelineRequest>();
                     mockNext.Setup(x => x.InvokeAsync(context))
                                             .Callback(() =>
                                             {
@@ -134,7 +132,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                                             .Returns(Task.CompletedTask);
                     var next = mockNext.Object;
 
-                    await using (CreateNewZipArchiveStep source = new CreateNewZipArchiveStep(logger, next))
+                    await using (var source = new CreateNewZipArchiveStep(logger, next))
                     {
                         context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, previousOutputStream);
                         context.Items.Add(CompressionConstants.ZIP_ARCHIVE, previousZipArchive);
@@ -179,7 +177,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public void Throws_ArgumentNullException_From_Constructor_When_Next_Is_Null()
         {
             // arrange
-            ILogger<CreateNewZipArchiveStep> logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);

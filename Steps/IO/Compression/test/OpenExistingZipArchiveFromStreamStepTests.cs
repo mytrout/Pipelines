@@ -48,7 +48,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<OpenExistingZipArchiveFromStreamStep> logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             // act
@@ -65,15 +65,15 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_OutputStream_From_InvokeAsync()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
 
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
             string entryName = "Disney.txt";
@@ -128,15 +128,15 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_OutputStream_From_InvokeAsync_When_Previous_OutputStream_Is_Disposed()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
 
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
@@ -178,15 +178,15 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Context_Lacks_InputStream()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
 
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
 
             int errorCount = 1;
             string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM);
@@ -208,7 +208,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<OpenExistingZipArchiveFromStreamStep> logger = null;
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
@@ -229,7 +229,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<OpenExistingZipArchiveFromStreamStep> logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
-            OpenExistingZipArchiveFromStreamOptions options = new OpenExistingZipArchiveFromStreamOptions();
+            var options = new OpenExistingZipArchiveFromStreamOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
