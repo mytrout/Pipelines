@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Command
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.IO.Command?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=24&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-command.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-command.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Command?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Command/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -30,7 +30,7 @@ For a list of available steps, see [Available Steps](../README.md)
 
 ## Software dependencies
 
-    1. MyTrout.Pipelines.Steps.IO.Files 2.0.1 minimum, 2.*.* is acceptable.
+    1. MyTrout.Pipelines.Steps.IO.Files 3.0.0 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -74,6 +74,8 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }

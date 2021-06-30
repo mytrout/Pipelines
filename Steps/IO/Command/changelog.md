@@ -1,5 +1,11 @@
 # MyTrout.Pipelines.Steps.IO.Command
 
+## 1.0.0
+- Upgrade to MyTrout.Pipelines.Steps.IO.Files v3.0.0
+- Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
+- Change Build Status badge from Azure DevOps to GitHub Actions.
+- Convert Azure DevOps build to Github Actions build yaml.
+
 ## 0.2.0-beta
 - CHanging from SOURCE_FILE to TARGET_FILE as the input for the command.
 

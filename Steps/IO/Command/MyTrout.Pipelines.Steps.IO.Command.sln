@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7DEC9FD-68A0-457C-8CD3-9837D279FFAA}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -20,7 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Command.Tests", "test\MyTrout.Pipelines.Steps.IO.Command.Tests\MyTrout.Pipelines.Steps.IO.Command.Tests.csproj", "{2B7D4378-A6FD-4629-A268-859F0CC304BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionConsole", "test\ExceptionConsole\ExceptionConsole.csproj", "{E6878E52-08A6-4A32-865B-B7127C7D2D47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionConsole", "test\ExceptionConsole\ExceptionConsole.csproj", "{E6878E52-08A6-4A32-865B-B7127C7D2D47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{18F19712-F9B4-4CAA-89AA-B92A67AF0BF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{853879CB-4F3D-49C5-BF9B-1ED6E5E51F2F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-io-command.yaml = ..\..\..\.github\workflows\build-pipelines-steps-io-command.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +54,7 @@ Global
 		{345F9A47-4F61-4319-B7CA-27A4E88E2A0A} = {328DDECD-F9B1-49B8-9741-C4B3E7779125}
 		{2B7D4378-A6FD-4629-A268-859F0CC304BF} = {9A1FD352-7C46-4BFF-9EE2-8D6D9BC21FE1}
 		{E6878E52-08A6-4A32-865B-B7127C7D2D47} = {9A1FD352-7C46-4BFF-9EE2-8D6D9BC21FE1}
+		{853879CB-4F3D-49C5-BF9B-1ED6E5E51F2F} = {18F19712-F9B4-4CAA-89AA-B92A67AF0BF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72B0EDFD-3CC1-450A-8900-DAE257E18C19}
