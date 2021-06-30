@@ -11,7 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Cry
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67F02512-AF55-41A7-B5D7-4F0C6872C8A5}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -19,6 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Cryptography.Tests", "test\MyTrout.Pipelines.Steps.Cryptography.Tests.csproj", "{E14F85F5-445D-423C-96B4-5DCB3537432E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{51EC1BD3-1F72-4773-A7BA-6CC52C7B9EA9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EB1ACB18-ADCC-4613-9649-E44966FDCF54}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\build-pipelines-steps-cryptography.yaml = ..\..\.github\workflows\build-pipelines-steps-cryptography.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CD152F5F-C02A-4B18-92E8-94DA77375999} = {65777C81-2314-460B-8FE4-1C1A92C029BB}
 		{E14F85F5-445D-423C-96B4-5DCB3537432E} = {6984334E-E7D0-433E-A460-822B8F6B50A8}
+		{EB1ACB18-ADCC-4613-9649-E44966FDCF54} = {51EC1BD3-1F72-4773-A7BA-6CC52C7B9EA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7985F33-E25E-4EB4-90B8-6CED3013024B}

@@ -1,7 +1,7 @@
 ﻿// <copyright file="CreateSha256HashStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,12 +48,13 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            var result = new CreateSha256HashStep(logger, options, next);
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(next, result.Next);
+            using (var result = new CreateSha256HashStep(logger, options, next))
+            {
+                // assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(logger, result.Logger);
+                Assert.AreEqual(next, result.Next);
+            }
         }
 
         [TestMethod]
@@ -64,23 +65,24 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
             var options = new CreateSha256HashOptions();
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var nextMock = new Mock<IPipelineRequest>();
             nextMock.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
-            var source = new CreateSha256HashStep(logger, options, next);
+            using (var source = new CreateSha256HashStep(logger, options, next))
+            {
+                var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
-            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+                // act
+                await source.InvokeAsync(context);
 
-            // act
-            await source.InvokeAsync(context);
-
-            // assert
-            Assert.AreEqual(errorCount, context.Errors.Count);
-            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+            }
         }
 
         [TestMethod]
@@ -96,7 +98,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                 using (var outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
                 {
                     outputStream.Position = 0;
-                    PipelineContext context = new PipelineContext();
+                    var context = new PipelineContext();
                     context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
                     context.Items.Add(CryptographyConstants.HASH_STREAM, previousHash);
                     context.Items.Add(CryptographyConstants.HASH_STRING, previousHashString);
@@ -110,31 +112,32 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                                             .Returns(Task.CompletedTask);
                     var next = nextMock.Object;
 
-                    var source = new CreateSha256HashStep(logger, options, next);
-
-                    // act
-                    await source.InvokeAsync(context);
-
-                    // assert
-                    if (context.Errors.Any())
+                    using (var source = new CreateSha256HashStep(logger, options, next))
                     {
-                        throw context.Errors[0];
-                    }
+                        // act
+                        await source.InvokeAsync(context);
 
-                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
-                    Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                    Assert.IsTrue(outputStream.CanRead, "Stream should not be closed.");
-
-                    using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
-                    {
-                        using (StreamReader reader = new StreamReader(hashStream, leaveOpen: true))
+                        // assert
+                        if (context.Errors.Any())
                         {
-                            var actualHash = await reader.ReadToEndAsync();
-                            Assert.AreEqual(expectedHash, actualHash);
+                            throw context.Errors[0];
                         }
-                    }
 
-                    Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
+                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
+                        Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
+                        Assert.IsTrue(outputStream.CanRead, "Stream should not be closed.");
+
+                        using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
+                        {
+                            using (var reader = new StreamReader(hashStream, leaveOpen: true))
+                            {
+                                var actualHash = await reader.ReadToEndAsync();
+                                Assert.AreEqual(expectedHash, actualHash);
+                            }
+                        }
+
+                        Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
+                    }
                 }
             }
         }
