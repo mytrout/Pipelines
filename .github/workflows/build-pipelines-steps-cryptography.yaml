@@ -1,4 +1,4 @@
-ame: MyTrout.Pipelines.Steps.Cryptography
+name: MyTrout.Pipelines.Steps.Cryptography
 
 on:
   push:
