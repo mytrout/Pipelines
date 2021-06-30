@@ -1,5 +1,6 @@
 name: MyTrout.Pipelines.Steps.IO.Command
 
+#trigger v1.0.0 build.
 on:
   push:
     branches:
