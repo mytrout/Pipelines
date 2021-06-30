@@ -7,10 +7,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Features>IOperation</Features>
-    <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;CA1707;CA2007;VSTHRD200</NoWarn>
+    <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;SA1636;CA1707;CA2007;VSTHRD200</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Features>IOperation</Features>
     <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;SA1636;CA1707;CA2007;VSTHRD200</NoWarn>
   </PropertyGroup>
 
