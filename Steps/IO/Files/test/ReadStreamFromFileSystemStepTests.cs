@@ -1,7 +1,7 @@
 // <copyright file="ReadStreamFromFileSystemStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -81,18 +81,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, fileName);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Throws(new InvalidTimeZoneException());
 
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = inputFilePath
             };
@@ -120,20 +120,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string inputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
-            string fileName = $"{Guid.NewGuid()}.txt";
-
-            string fullPathAndFileName = inputFilePath + fileName;
-
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = inputFilePath
             };
@@ -162,21 +158,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string inputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
-            string fileName = $"{Guid.NewGuid()}.txt";
-
-            string fullPathAndFileName = inputFilePath + fileName;
-
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, string.Empty);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = inputFilePath
             };
@@ -209,17 +201,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullPathAndFileName = inputFilePath + fileName;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, fullPathAndFileName);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = $"\\\\createyour.software\\invalid\\{Guid.NewGuid()})"
             };
@@ -252,17 +244,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullPathAndFileName = inputFilePath + fileName;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, fullPathAndFileName);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = inputFilePath
             };
@@ -297,19 +289,19 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, fileName);
             context.Items.Add("FILE_CONTENTS", contents);
 
             var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() => ReadStreamFromFileSystemStepTests.VerifyContext(context))
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            var options = new ReadStreamFromFileSystemOptions()
             {
                 ReadFileBaseDirectory = inputFilePath
             };
@@ -339,38 +331,39 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullPathAndFileName = inputFilePath + fileName;
 
-            MemoryStream previous = new MemoryStream();
-
-            await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
-
-            PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
-            context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
-
-            var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
-
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Returns(Task.CompletedTask);
-            var next = mockNext.Object;
-
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            using (var previous = new MemoryStream())
             {
-                ReadFileBaseDirectory = inputFilePath
-            };
+                await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
-            var source = new ReadStreamFromFileSystemStep(logger, next, options);
+                var context = new PipelineContext();
+                context.Items.Add(FileConstants.SOURCE_FILE, fileName);
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
 
-            // act
-            await source.InvokeAsync(context).ConfigureAwait(false);
+                var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            // assert
-            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
-            Assert.AreEqual(previous, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                                        .Returns(Task.CompletedTask);
+                var next = mockNext.Object;
 
-            // cleanup
-            await source.DisposeAsync().ConfigureAwait(false);
-            File.Delete(fullPathAndFileName);
+                var options = new ReadStreamFromFileSystemOptions()
+                {
+                    ReadFileBaseDirectory = inputFilePath
+                };
+
+                using (var source = new ReadStreamFromFileSystemStep(logger, next, options))
+                {
+                    // act
+                    await source.InvokeAsync(context).ConfigureAwait(false);
+
+                    // assert
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
+                    Assert.AreEqual(previous, context.Items[PipelineContextConstants.INPUT_STREAM]);
+
+                    // cleanup
+                    File.Delete(fullPathAndFileName);
+                }
+            }
         }
 
         [TestMethod]
@@ -379,40 +372,33 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // arrange
             string inputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
 
-            string fileName = $"{Guid.NewGuid()}.txt";
-
-            string fullPathAndFileName = inputFilePath + fileName;
-
-            MemoryStream stream = new MemoryStream();
-
-            PipelineContext context = new PipelineContext();
-            context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
-
-            var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
-
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Returns(Task.CompletedTask);
-            var next = mockNext.Object;
-
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            using (var stream = new MemoryStream())
             {
-                ReadFileBaseDirectory = inputFilePath
-            };
+                var context = new PipelineContext();
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
 
-            var source = new ReadStreamFromFileSystemStep(logger, next, options);
+                var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.SOURCE_FILE);
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                                        .Returns(Task.CompletedTask);
+                var next = mockNext.Object;
 
-            // act
-            await source.InvokeAsync(context).ConfigureAwait(false);
+                var options = new ReadStreamFromFileSystemOptions()
+                {
+                    ReadFileBaseDirectory = inputFilePath
+                };
 
-            // assert
-            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
-            Assert.AreEqual(stream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                using (var source = new ReadStreamFromFileSystemStep(logger, next, options))
+                {
+                    // act
+                    await source.InvokeAsync(context).ConfigureAwait(false);
 
-            // cleanup
-            await source.DisposeAsync().ConfigureAwait(false);
+                    // assert
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                }
+            }
         }
 
         [TestMethod]
@@ -427,38 +413,39 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullPathAndFileName = inputFilePath + fileName;
 
-            MemoryStream previous = new MemoryStream();
-
-            await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
-
-            PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, fileName);
-            context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
-
-            var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
-
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Throws(new InvalidTimeZoneException());
-            var next = mockNext.Object;
-
-            ReadStreamFromFileSystemOptions options = new ReadStreamFromFileSystemOptions()
+            using (var previous = new MemoryStream())
             {
-                ReadFileBaseDirectory = inputFilePath
-            };
+                await File.WriteAllBytesAsync(fullPathAndFileName, body).ConfigureAwait(false);
 
-            var source = new ReadStreamFromFileSystemStep(logger, next, options);
+                var context = new PipelineContext();
+                context.Items.Add(FileConstants.SOURCE_FILE, fileName);
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, previous);
 
-            // act
-            await source.InvokeAsync(context).ConfigureAwait(false);
+                var logger = new Mock<ILogger<ReadStreamFromFileSystemStep>>().Object;
 
-            // assert
-            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
-            Assert.AreEqual(previous, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                                        .Throws(new InvalidTimeZoneException());
+                var next = mockNext.Object;
 
-            // cleanup
-            await source.DisposeAsync().ConfigureAwait(false);
-            File.Delete(fullPathAndFileName);
+                var options = new ReadStreamFromFileSystemOptions()
+                {
+                    ReadFileBaseDirectory = inputFilePath
+                };
+
+                using (var source = new ReadStreamFromFileSystemStep(logger, next, options))
+                {
+                    // act
+                    await source.InvokeAsync(context).ConfigureAwait(false);
+
+                    // assert
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
+                    Assert.AreEqual(previous, context.Items[PipelineContextConstants.INPUT_STREAM]);
+
+                    // cleanup
+                    File.Delete(fullPathAndFileName);
+                }
+            }
         }
 
         private static void VerifyContext(PipelineContext context)
@@ -469,7 +456,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             Assert.IsNotNull(stream, "Stream is null.");
 
-            using (StreamReader reader = new StreamReader(stream, leaveOpen: true))
+            using (var reader = new StreamReader(stream, leaveOpen: true))
             {
                 string result = reader.ReadToEnd();
                 Assert.AreEqual(context.Items["FILE_CONTENTS"], result);

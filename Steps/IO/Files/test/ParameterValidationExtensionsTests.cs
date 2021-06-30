@@ -1,7 +1,7 @@
 // <copyright file="ParameterValidationExtensionsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,20 +29,34 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
 
     [ExcludeFromCodeCoverage]
     [TestClass]
     public class ParameterValidationExtensionsTests
     {
+        // Removes ~/Pipelines/Steps/IO/Files/test/bin/Release/net5.0 from the path.
+        public static readonly string RootPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).Parent.Parent.Parent.Parent.Parent.Parent.Parent.FullName + Path.DirectorySeparatorChar;
+
         [TestMethod]
         public void Returns_From_AssertFileNameParameterIsValid_When_Absolute_File_Path_Is_Valid()
         {
             // arrange
             int errorCount = 0;
 
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
+
             string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                validPath = ParameterValidationExtensionsTests.RootPath;
+            }
+
             string validFileName = $"{validPath}{Guid.NewGuid()}.txt";
 
             source.Items.Add(FileConstants.SOURCE_FILE, validFileName);
@@ -66,9 +80,15 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             // arrange
             int errorCount = 0;
 
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
             string validFileName = $"{Guid.NewGuid()}.txt";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                validPath = ParameterValidationExtensionsTests.RootPath;
+            }
 
             source.Items.Add(FileConstants.SOURCE_FILE, validFileName);
 
@@ -89,9 +109,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         public void Returns_Pipeline_Errors_From_AssertFileNameParameterIsValid_When_FileName_Is_Not_In_Context()
         {
             // arrange
-            PipelineContext source = new PipelineContext();
-            string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
-            string validFileName = $"{Guid.NewGuid()}.txt";
+            var source = new PipelineContext();
+            string validPath;
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
+            }
+            else
+            {
+                validPath = ParameterValidationExtensionsTests.RootPath;
+            }
 
             string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
 
@@ -107,10 +136,19 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         public void Returns_Pipeline_Errors_From_AssertFileNameParameterIsValid_When_FileName_Value_Is_WhiteSpace()
         {
             // arrange
-            PipelineContext source = new PipelineContext();
-            string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
-            string validFileName = $"{Guid.NewGuid()}.txt";
+            var source = new PipelineContext();
+            string validPath;
             string invalidFileName = "\r\n\t";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
+            }
+            else
+            {
+                validPath = ParameterValidationExtensionsTests.RootPath;
+            }
 
             source.Items.Add(FileConstants.TARGET_FILE, invalidFileName);
             string expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, FileConstants.TARGET_FILE);
@@ -127,10 +165,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         public void Returns_Pipeline_Errors_From_AssertFileNameParameterIsValid_When_Path_Traveral_Is_Discovered()
         {
             // arrange
-            PipelineContext source = new PipelineContext();
+            var source = new PipelineContext();
             string validPath = "C:\\Metallica\\Nothing\\Else\\Matters\\";
             string validFileName = $"{Guid.NewGuid()}.txt";
             string invalidFileName = $"D:\\{validFileName}";
+
+            // All other supported OSPlatforms are a flavor of Linux: FreeBSD, Linux, and OSX.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                validPath = ParameterValidationExtensionsTests.RootPath;
+                invalidFileName = $"/{Guid.NewGuid()}/{validFileName}";
+            }
 
             source.Items.Add(FileConstants.TARGET_FILE, invalidFileName);
             string expectedMessage = Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, validPath, invalidFileName);

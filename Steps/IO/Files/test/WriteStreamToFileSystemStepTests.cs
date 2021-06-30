@@ -1,7 +1,7 @@
 // <copyright file="WriteStreamToFileSystemStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -79,13 +79,13 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(FileConstants.TARGET_FILE, fileName);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context))
                         .Callback(() =>
                         {
@@ -96,7 +96,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                         .Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     ExecutionTimings = ExecutionTimings.Before,
                     WriteFileBaseDirectory = outputFilePath
@@ -132,17 +132,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(FileConstants.TARGET_FILE, fileName);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = outputFilePath
                 };
@@ -171,22 +171,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string contents = "What is the text here?";
             byte[] body = Encoding.UTF8.GetBytes(contents);
 
-            string fileName = $"{Guid.NewGuid()}.txt";
-
-            string fullPathAndFileName = outputFilePath + fileName;
-
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = outputFilePath
                 };
@@ -218,23 +214,19 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string contents = "What is the text here?";
             byte[] body = Encoding.UTF8.GetBytes(contents);
 
-            string fileName = $"{Guid.NewGuid()}.txt";
-
-            string fullPathAndFileName = outputFilePath + fileName;
-
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(FileConstants.TARGET_FILE, string.Empty);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = outputFilePath
                 };
@@ -272,17 +264,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(FileConstants.TARGET_FILE, fullPathAndFileName);
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = $"\\\\argonaut.com\\unavailable-file-share\\{Guid.NewGuid()}\\"
                 };
@@ -316,20 +308,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fileName = $"{Guid.NewGuid()}.txt";
 
-            string fullPathAndFileName = outputFilePath + fileName;
-
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(FileConstants.TARGET_FILE, fileName);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = outputFilePath
                 };
@@ -358,26 +348,22 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
         {
             // arrange
             string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
-            string contents = "What is the text here?";
-            byte[] body = Encoding.UTF8.GetBytes(contents);
 
             string fileName = $"{Guid.NewGuid()}.txt";
 
-            string fullPathAndFileName = outputFilePath + fileName;
-
             string stream = "Not an Actual Stream object.";
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, fileName);
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
 
             var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+            var options = new WriteStreamToFileSystemOptions()
             {
                 WriteFileBaseDirectory = outputFilePath
             };
@@ -415,17 +401,17 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             using (var stream = new MemoryStream(body))
             {
-                PipelineContext context = new PipelineContext();
+                var context = new PipelineContext();
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
                 context.Items.Add(FileConstants.TARGET_FILE, fullPathAndFileName);
 
                 var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
 
-                Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+                var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
-                WriteStreamToFileSystemOptions options = new WriteStreamToFileSystemOptions()
+                var options = new WriteStreamToFileSystemOptions()
                 {
                     WriteFileBaseDirectory = outputFilePath
                 };

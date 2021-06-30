@@ -7,6 +7,8 @@
 - Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
 - Change Build Status badge from Azure DevOps to GitHub Actions.
 - Convert Azure DevOps build to Github Actions build yaml.
+- Change GetFullyQualifiedPath to use IsPathRooted rather than GetFullyQualifiedPath; the latter works differently on Linux than on Windows.
+- Change tests to support differently rooted linux paths.
 
 ## 2.1.0
 - Upgrade to MyTrout.Pipelines.Steps v2.0.7

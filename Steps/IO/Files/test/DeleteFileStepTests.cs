@@ -1,7 +1,7 @@
 // <copyright file="DeleteFileStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     [ExcludeFromCodeCoverage]
@@ -80,19 +80,19 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string contents = "Et tu, Brute?";
             File.WriteAllText(fullTargetPathAndFileName, contents);
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, fileName);
 
             var logger = new Mock<ILogger<DeleteFileStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() => Assert.IsTrue(File.Exists(fullTargetPathAndFileName), "File does not exist during the InvokeAsync callback and should."))
                                     .Returns(Task.CompletedTask);
 
             var next = mockNext.Object;
 
-            DeleteFileOptions options = new DeleteFileOptions()
+            var options = new DeleteFileOptions()
             {
                 DeleteFileBaseDirectory = targetFilePath
             };
@@ -128,19 +128,19 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             string contents = "Et tu, Brute?";
             File.WriteAllText(fullTargetPathAndFileName, contents);
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, fileName);
 
             var logger = new Mock<ILogger<DeleteFileStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() => Assert.IsFalse(File.Exists(fullTargetPathAndFileName), "File exists during the InvokeAsync callback and should not."))
                                     .Returns(Task.CompletedTask);
 
             var next = mockNext.Object;
 
-            DeleteFileOptions options = new DeleteFileOptions()
+            var options = new DeleteFileOptions()
             {
                 DeleteFileBaseDirectory = targetFilePath,
                 ExecutionTimings = ExecutionTimings.Before
@@ -174,18 +174,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullTargetPathAndFileName = targetFilePath + fileName;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, fileName);
 
             var logger = new Mock<ILogger<DeleteFileStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
 
             var next = mockNext.Object;
 
-            DeleteFileOptions options = new DeleteFileOptions()
+            var options = new DeleteFileOptions()
             {
                 DeleteFileBaseDirectory = targetFilePath
             };
@@ -220,20 +220,28 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
 
             string fullTargetPathAndFileName = targetFilePath + fileName;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, fullTargetPathAndFileName);
 
             var logger = new Mock<ILogger<DeleteFileStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Returns(Task.CompletedTask);
 
             var next = mockNext.Object;
 
-            DeleteFileOptions options = new DeleteFileOptions()
+            // Default value is Windows.
+            string deleteFilePathTraversalDirectory = $"C:\\{Guid.NewGuid()}";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                DeleteFileBaseDirectory = $"C:\\{Guid.NewGuid()}"
+                deleteFilePathTraversalDirectory = $"{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+            }
+
+            var options = new DeleteFileOptions()
+            {
+                DeleteFileBaseDirectory = deleteFilePathTraversalDirectory
             };
 
             var source = new DeleteFileStep(logger, next, options);

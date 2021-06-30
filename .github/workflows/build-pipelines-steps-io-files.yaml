@@ -27,7 +27,7 @@ jobs:
         SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
         
         # These values should be changed for each individual solution. Don't forget to change the name element and paths elements.
-        SONAR_PROJECT_NAME: 'Pipelines.Hosting'
+        SONAR_PROJECT_NAME: 'Pipelines.Steps.IO.Files'
         WORKING_DIRECTORY: ${{ github.workspace }}/Steps/IO/Files
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.IO.Files.sln'
         
@@ -63,7 +63,7 @@ jobs:
           PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }}
+          dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }};SourceRevisionId=${{ env.PROJECT_VERSION }}+${{ env.GITHUB_SHA }}
           dotnet test  --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
       - name: End Sonar scan
@@ -76,10 +76,10 @@ jobs:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
         
-      #- name: Publish the package to nuget.org.
-      #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
-      #  if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Publish the package to nuget.org.
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+        if: ${{ github.ref == 'refs/heads/master' }}
 
-      #- name: Publish the package to GitHub.
-      #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
-      #  if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Publish the package to GitHub.
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
+        if: ${{ github.ref == 'refs/heads/master' }}
