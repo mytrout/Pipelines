@@ -72,8 +72,8 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "--exception",
-                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                Arguments = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.dll -- --exception",
+                CommandString = "dotnet",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
