@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Files
 
-[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files.yaml)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-files.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Files?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Files/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
