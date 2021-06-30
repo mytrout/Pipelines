@@ -1,5 +1,6 @@
 name: MyTrout.Pipelines.Steps.Cryptography
 
+#trigger build on cryptography.
 on:
   push:
     branches:
