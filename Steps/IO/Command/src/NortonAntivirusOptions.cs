@@ -27,7 +27,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command
     using System.Globalization;
 
     /// <summary>
-    /// Provides the options to run anti-virus using the Norton client.
+    /// Provides the options to run anti-virus using the Norton client on Windows.
     /// </summary>
     public class NortonAntivirusOptions : ExecuteCommandOptions
     {

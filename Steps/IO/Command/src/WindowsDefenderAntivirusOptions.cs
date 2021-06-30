@@ -25,7 +25,7 @@
 namespace MyTrout.Pipelines.Steps.IO.Command
 {
     /// <summary>
-    /// Provides the options to run anti-virus using the Windows Defender client.
+    /// Provides the options to run anti-virus using the Windows Defender client on Windows.
     /// </summary>
     public class WindowsDefenderAntivirusOptions : ExecuteCommandOptions
     {

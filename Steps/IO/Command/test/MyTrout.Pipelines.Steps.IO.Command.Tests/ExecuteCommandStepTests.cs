@@ -33,12 +33,15 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
     using System;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     [TestClass]
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ExecuteCommandStepTests
     {
+        public static readonly string RootPath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}";
+
         [TestMethod]
         public void Constructs_ExecuteCommandStep_Successfully()
         {
@@ -70,10 +73,19 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "--exception";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll --exception";
+                commandString = "dotnet";
+            }
             var options = new ExecuteCommandOptions()
             {
-                Arguments = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.dll --exception",
-                CommandString = "dotnet",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
@@ -110,12 +122,29 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             });
 
             var logger = loggerFactory.CreateLogger<ExecuteCommandStep>();
-            
+
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "{0}";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // IMPORTANT NOTE FOR DEVELOPERS:
+                // https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netcore-3.1#how-do-i-include-literal-braces--and--in-the-result-string.
+                // Due to odd behavior, Microsoft recommends that developers define constants
+                // for opening and closing curly braces with string interpolation.
+                const string openCurly = "{";
+                const string closeCurly = "}";
+
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll {openCurly}0{closeCurly}";
+                commandString = "dotnet";
+            }
+
             // This test also includes the Arguments replacement for File Systems.
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "{0}",
-                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = true
             };
@@ -149,13 +178,13 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var options = new ExecuteCommandOptions()
             {
                 Arguments = "Something",
-                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                CommandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExecuteCommandStepTests.cs");
+            context.Items.Add(FileConstants.SOURCE_FILE, $"{ExecuteCommandStepTests.RootPath}ExecuteCommandStepTests.cs");
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);

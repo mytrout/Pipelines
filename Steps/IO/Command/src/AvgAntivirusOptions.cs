@@ -25,7 +25,7 @@
 namespace MyTrout.Pipelines.Steps.IO.Command
 {
     /// <summary>
-    /// Provides the options to run anti-virus using the AVG client.
+    /// Provides the options to run anti-virus using the AVG client on Windows.
     /// </summary>
     public class AvgAntivirusOptions : ExecuteCommandOptions
     {
