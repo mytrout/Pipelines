@@ -49,7 +49,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 basePath = FileUtilityTests.RootPath;
-                expectedFilePath = $"{FileUtilityTests.RootPath}location/filename.txt";
+                expectedFilePath = $"{FileUtilityTests.RootPath}/location/filename.txt";
             }
 
             // act
@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 basePath = FileUtilityTests.RootPath + Path.DirectorySeparatorChar;
-                expectedFilePath = $"{FileUtilityTests.RootPath}location/filename.txt";
+                expectedFilePath = $"{FileUtilityTests.RootPath}/location/filename.txt";
             }
 
             // act
