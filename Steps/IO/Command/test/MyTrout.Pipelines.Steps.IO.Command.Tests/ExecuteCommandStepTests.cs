@@ -73,7 +73,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var options = new ExecuteCommandOptions()
             {
                 Arguments = "--exception",
-                CommandString = $"{Directory.GetParent(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
@@ -96,7 +96,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             // assert
             Assert.AreEqual(exceptionCount, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], exceptionType);
+            Assert.IsInstanceOfType(context.Errors[0], exceptionType, context.Errors[0].Message);
             StringAssert.StartsWith(context.Errors[0].Message, expectedMessage);
         }
 
@@ -115,7 +115,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var options = new ExecuteCommandOptions()
             {
                 Arguments = "{0}",
-                CommandString = $"{Directory.GetParent(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = true
             };
@@ -149,13 +149,13 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var options = new ExecuteCommandOptions()
             {
                 Arguments = "Something",
-                CommandString = $"{Directory.GetParent(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
+                CommandString = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExceptionConsole.exe",
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, $"{Directory.GetParent(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}ExecuteCommandStepTests.cs");
+            context.Items.Add(FileConstants.SOURCE_FILE, $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}ExecuteCommandStepTests.cs");
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
