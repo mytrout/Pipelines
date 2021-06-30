@@ -1,4 +1,27 @@
-﻿
+﻿// <copyright file="ExecuteCommandStepTests.cs" company="Chris Trout">
+// MIT License
+//
+// Copyright(c) 2021 Chris Trout
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// </copyright>
+
 namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 {
     using Microsoft.Extensions.Logging;
@@ -10,12 +33,15 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
     using System;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     [TestClass]
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ExecuteCommandStepTests
     {
+        public static readonly string RootPath = $"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}{Path.DirectorySeparatorChar}";
+
         [TestMethod]
         public void Constructs_ExecuteCommandStep_Successfully()
         {
@@ -47,10 +73,19 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "--exception";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll --exception";
+                commandString = "dotnet";
+            }
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "--exception",
-                CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
@@ -73,12 +108,12 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             // assert
             Assert.AreEqual(exceptionCount, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], exceptionType);
+            Assert.IsInstanceOfType(context.Errors[0], exceptionType, context.Errors[0].Message);
             StringAssert.StartsWith(context.Errors[0].Message, expectedMessage);
         }
 
         [TestMethod]
-        public async Task Returns_Successful_Status_From_InvokeCoreAsync_When_ExpectedResult_Matches()
+        public async Task Returns_Succeeded_Status_From_InvokeCoreAsync_When_ExpectedResult_Matches()
         {
             // arrange
             var loggerFactory = LoggerFactory.Create(builder =>
@@ -87,12 +122,29 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             });
 
             var logger = loggerFactory.CreateLogger<ExecuteCommandStep>();
-            
+
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "{0}";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // IMPORTANT NOTE FOR DEVELOPERS:
+                // https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netcore-3.1#how-do-i-include-literal-braces--and--in-the-result-string.
+                // Due to odd behavior, Microsoft recommends that developers define constants
+                // for opening and closing curly braces with string interpolation.
+                const string openCurly = "{";
+                const string closeCurly = "}";
+
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll {openCurly}0{closeCurly}";
+                commandString = "dotnet";
+            }
+
             // This test also includes the Arguments replacement for File Systems.
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "{0}",
-                CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = true
             };
@@ -123,16 +175,25 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "Something";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll Something";
+                commandString = "dotnet";
+            }
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "Something",
-                CommandString = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExceptionConsole.exe",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
 
             PipelineContext context = new PipelineContext();
-            context.Items.Add(FileConstants.SOURCE_FILE, Directory.GetParent(Assembly.GetExecutingAssembly().Location) + "\\ExecuteCommandStepTests.cs");
+            context.Items.Add(FileConstants.SOURCE_FILE, $"{ExecuteCommandStepTests.RootPath}ExecuteCommandStepTests.cs");
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);

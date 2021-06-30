@@ -38,7 +38,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command
         /// <summary>
         /// Indicates that the command line utility was successfully.
         /// </summary>
-        public const string COMMAND_LINE_SUCCESS = "Success";
+        public const string COMMAND_LINE_SUCCESS = "Succeeded";
 
         /// <summary>
         /// Indicates that the command line utility failed.

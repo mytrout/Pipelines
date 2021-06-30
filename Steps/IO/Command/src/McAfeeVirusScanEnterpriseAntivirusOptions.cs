@@ -25,7 +25,7 @@
 namespace MyTrout.Pipelines.Steps.IO.Command
 {
     /// <summary>
-    /// Provides the options to run anti-virus using the McAfee Virus Scan Enterprise client.
+    /// Provides the options to run anti-virus using the McAfee Virus Scan Enterprise client on Windows.
     /// </summary>
     public class McAfeeVirusScanEnterpriseAntivirusOptions : ExecuteCommandOptions
     {
