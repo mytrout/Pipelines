@@ -113,7 +113,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
         }
 
         [TestMethod]
-        public async Task Returns_Successful_Status_From_InvokeCoreAsync_When_ExpectedResult_Matches()
+        public async Task Returns_Succeeded_Status_From_InvokeCoreAsync_When_ExpectedResult_Matches()
         {
             // arrange
             var loggerFactory = LoggerFactory.Create(builder =>
@@ -175,10 +175,19 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
             var logger = mockLogger.Object;
 
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "Something";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll Something";
+                commandString = "dotnet";
+            }
             var options = new ExecuteCommandOptions()
             {
-                Arguments = "Something",
-                CommandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe",
+                Arguments = arguments,
+                CommandString = commandString,
                 ExpectedResult = "Nothing",
                 IncludeFileNameTransformInArguments = false
             };
