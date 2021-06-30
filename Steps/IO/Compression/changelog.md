@@ -1,5 +1,13 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
+## 3.0.0
+- Upgrade to MyTrout.Pipelines v3.0.1
+- Change Resources.tt from .NET Standard 2.1 to .NET 5.0 in the comments.
+- Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
+- Change Build Status badge from Azure DevOps to GitHub Actions.
+- Convert Azure DevOps build to Github Actions build yaml.
+- Update existing SonarQube Warnings and Issues.
+
 ## 2.0.1
 - Upgrade MyTrout.Pipelines.Steps.Core from 1.x to 2.0.6.
 

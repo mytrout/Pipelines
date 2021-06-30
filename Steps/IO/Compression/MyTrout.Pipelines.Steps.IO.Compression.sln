@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B024D252-C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6A823F8-0490-4D44-8289-CDC5DBE125CC}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -19,6 +18,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Compression", "src\MyTrout.Pipelines.Steps.IO.Compression.csproj", "{C8277F39-5A2F-43D3-8D00-784547B2D83A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.IO.Compression.Tests", "test\MyTrout.Pipelines.IO.Compression.Tests.csproj", "{9C1480B2-A079-4B58-866A-7CA4AB5FF22C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C0312E77-5FAC-411B-BDFC-F0FE168E6DDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{BC122E3D-64B8-4072-8DEB-CA1831D72911}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-io-compression.yaml = ..\..\..\.github\workflows\build-pipelines-steps-io-compression.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C8277F39-5A2F-43D3-8D00-784547B2D83A} = {8C137A9E-0C54-42E1-A5EE-DD71B48C6EFB}
 		{9C1480B2-A079-4B58-866A-7CA4AB5FF22C} = {B024D252-C911-4E6A-81C9-EC477C2CE745}
+		{BC122E3D-64B8-4072-8DEB-CA1831D72911} = {C0312E77-5FAC-411B-BDFC-F0FE168E6DDB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D169FC8-B9FE-43DF-AD2C-B80942A6827B}

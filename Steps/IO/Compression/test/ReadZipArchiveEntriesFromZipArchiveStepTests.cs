@@ -67,7 +67,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Pipeline_Error_From_InvokeAsync_When_Context_Lacks_ZipArchive()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
             var next = new Mock<IPipelineRequest>().Object;
@@ -91,11 +91,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Restores_Pipeline_Context_From_InvokeAsync_When_Exception_Is_Thrown_In_Next()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             ILogger<ReadZipArchiveEntriesFromZipArchiveStep> logger = new Mock<ILogger<ReadZipArchiveEntriesFromZipArchiveStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>()))
                                 .Throws(new ApplicationException());
             IPipelineRequest next = mockNext.Object;
@@ -133,26 +133,26 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Correct_ZipArchiveEntry_From_InvokeAsync()
         {
             // arrange
-            List<string> entryNames = new List<string>()
+            var entryNames = new List<string>()
             {
                 "MickeyMouse.txt",
                 "MinnieMouse.txt",
                 "SteamboatWillie.txt"
             };
 
-            List<string> entryValues = new List<string>()
+            var entryValues = new List<string>()
             {
                 "What is this Mickey Mouse bullcrap?",
                 "Minnie Mouse loves Mickey Mouse.",
                 "Who started it all?"
             };
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             ILogger<ReadZipArchiveEntriesFromZipArchiveStep> logger = new Mock<ILogger<ReadZipArchiveEntriesFromZipArchiveStep>>().Object;
             int entryCount = 0;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>()))
                                 .Callback(() =>
                                 {
@@ -204,11 +204,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         public async Task Returns_Previous_OutputStream_From_InvokeAsync_When_Previous_Output_Stream_Is_Provided()
         {
             // arrange
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             ILogger<ReadZipArchiveEntriesFromZipArchiveStep> logger = new Mock<ILogger<ReadZipArchiveEntriesFromZipArchiveStep>>().Object;
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
 
