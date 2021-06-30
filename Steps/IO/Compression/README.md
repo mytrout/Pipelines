@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
-[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-compression/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-compression.yaml)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-compression.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-compression.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.IO.Compression?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.IO.Compression/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
