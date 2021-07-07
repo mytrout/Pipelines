@@ -34,6 +34,9 @@ jobs:
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: '2.0.0'
         
+        # These values are used for creating an Azure SQL Server Database
+
+        
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
@@ -46,10 +49,54 @@ jobs:
           dotnet-version: '5.0.x'
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
-      - uses: actions/setup-java@v1
+      - name: Setup Java 11 for SonarQube
+        uses: actions/setup-java@v1
         with:
           java-version: '11'
-          
+      
+      #- name: Build the DACPAC separately
+      #  working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
+      #  run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
+      
+      #- name: Login to Azure.
+      #  uses: azure/login@v1
+      #  with:
+      #  creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+      #- name: Deploy Azure Resource Group
+      #  uses: Azure/arm-deploy@v1
+      #  env:
+      #    AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+      #  with:
+      #    scope: 'subscription'
+      #    region: 'Central US'
+      #    # Specify the path or URL to the Azure Resource Manager template.
+      #    template: '{{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json'
+      #    # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
+      #    deploymentMode: 'Incremental'
+      #    # Supply deployment parameter values.
+      #    parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
+    
+    #- name: Deploy Azure Resource Manager (ARM) Template
+    #  id: sqlserver
+    #  uses: Azure/arm-deploy@v1
+    #  env:
+    #    AZURE_RG_NAME: RG.${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+    #    AZURE_DB_NAME: DB_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+    #  with:
+    #    scope: 'resourcegroup'
+    #    resourceGroupName: ${{ env.AZ_RG_NAME }}
+    #    template: '{{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json'
+    #    deploymentMode: 'Incremental'
+    #    parameters: databaseName=Cartoon;databaseServerName=${{ env.DB
+
+      #- name: Apply DACPAC to Azure SQL Server
+      #  uses: azure/sql-action@v1
+      #  with:
+      #    server-name: PIPELINES_DATA_TESTING
+      #    connection-string: ${{ env.AZURE_SQL_CONNECTION_STRING }}
+      #    dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
+    
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
@@ -57,7 +104,7 @@ jobs:
       - name: Begin Sonar scan
         run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        
+    
       - name: Build and Test
         env:
           PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
