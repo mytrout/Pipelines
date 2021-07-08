@@ -70,7 +70,7 @@ jobs:
         with:
           scope: 'subscription'
           region: 'centralus'
-          template: '{{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json'
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
           deploymentMode: 'Incremental'
           parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
@@ -83,7 +83,7 @@ jobs:
         with:
           scope: 'resourcegroup'
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
-          template: '{{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json'
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
           deploymentMode: 'Incremental'
           parameters: databaseName=Cartoon;databaseServerName=${{ env.AZURE_DB_NAME }}
 
