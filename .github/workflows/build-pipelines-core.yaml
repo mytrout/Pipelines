@@ -50,17 +50,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
        
       - name: Begin Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         
       - name: Build and Test
         env:
@@ -73,7 +73,7 @@ jobs:
       - name: End Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         
       
       - name: Upload nupkg
@@ -85,9 +85,9 @@ jobs:
         
       - name: Publish the package to nuget.org
         run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
-        if: github.ref == 'refs/heads/master' && github.actor != 'dependabot[bot]'
+        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
 
       - name: Publish the package to GitHub.
         run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
-        if: github.ref == 'refs/heads/master' && github.actor != 'dependabot[bot]'
+        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
  
