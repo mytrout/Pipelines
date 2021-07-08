@@ -86,27 +86,27 @@ jobs:
           deploymentMode: 'Incremental'
           parameters: databaseName=Cartoon
 
-      #- name: Add the Azure SQL Server Connection String to the build server.
-      #  shell: pwsh
-      #  env:
-      #     AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.DatabaseCreatedOutput }}
-      #  run: |
-      #      Format-List -InputObject $($env:AZURE_DB_OUTPUT)
-      #      $outputs = ConvertFrom-Json $($env:AZURE_DB_OUTPUT)
-      #      $connectionString = $outputs.ConnectionString.value
-      #      
-      #      if($connectionString -eq $null) {
-      #        throw [System.IO.Exception] "Connection String not found."
-      #      } else {
-      #        [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$connectionString",[System.EnvironmentVariableTarget]::Machine)  
-      #      }
+      - name: Add the Azure SQL Server Connection String to the build server.
+        shell: pwsh
+        env:
+           AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.DatabaseCreatedOutput }}
+        run: |
+            Format-List -InputObject $($env:AZURE_DB_OUTPUT)
+            $outputs = ConvertFrom-Json $($env:AZURE_DB_OUTPUT)
+            $connectionString = $outputs.ConnectionString.value
+            
+            if($connectionString -eq $null) {
+              throw [System.IO.Exception] "Connection String not found."
+            } else {
+              [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$connectionString",[System.EnvironmentVariableTarget]::Machine)  
+            }
       
-      #- name: Apply DACPAC to Azure SQL Server
-      #  uses: azure/sql-action@v1
-      #  with:
-      #    server-name: PIPELINES_DATA_TESTING
-      #    connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
-      #    dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
+      - name: Apply DACPAC to Azure SQL Server
+        uses: azure/sql-action@v1
+        with:
+          server-name: PIPELINES_DATA_TESTING
+          connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
+          dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
     
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
