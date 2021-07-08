@@ -71,7 +71,6 @@ jobs:
           scope: 'subscription'
           region: 'centralus'
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
-          deploymentMode: 'Incremental'
           parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
       - name: Deploy Azure SQL Server
@@ -85,7 +84,7 @@ jobs:
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
           deploymentMode: 'Incremental'
-          parameters: databaseName=Cartoon;databaseServerName=${{ env.AZURE_DB_NAME }}
+          parameters: databaseName=Cartoon
 
       #- name: Add the Azure SQL Server Connection String to the build server.
       #  shell: pwsh
@@ -139,6 +138,7 @@ jobs:
         uses: Azure/CLI@v1
         env:
           AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        if: ${{ always() }}
         with:
           inlineScript: |
             #!/bin/bash
