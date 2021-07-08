@@ -75,7 +75,7 @@ jobs:
         uses: Azure/arm-deploy@v1
         env:
           AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
-          AZURE_SV_NAME: SV_${{ env.AZURE_SERVER_NAME }}_${{ github.run_number }}
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           scope: 'resourcegroup'
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
@@ -101,7 +101,7 @@ jobs:
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
         env:
-          AZURE_SV_NAME: SV_${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           server-name: ${{ env.AZURE_SV_NAME }}
           connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
