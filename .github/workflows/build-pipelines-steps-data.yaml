@@ -35,8 +35,8 @@ jobs:
         PROJECT_VERSION: '2.0.0'
         
         # These values are used for creating an Azure SQL Server Database
-        # Azure Servers cannot have periods in the name.
-        AZURE_SERVER_NAME: 'Pipelines_Steps_Data'
+        # Azure Servers cannot have periods, underscores, or upper case letters in the name.
+        AZURE_SERVER_NAME: 'pipelines-steps-data'
         
     steps:
       - name: Checkout the Source
@@ -81,7 +81,7 @@ jobs:
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
           deploymentMode: 'Incremental'
-          parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
+          parameters: databaseName=Cartoon databaseServerName='${{ env.AZURE_SV_NAME }}'
 
       - name: Add the Azure SQL Server Connection String to the build server.
         shell: pwsh
@@ -101,7 +101,7 @@ jobs:
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
         env:
-          AZURE_SV_NAME: SV_${{ env.AZURE_SERVER_NAME }}_${{ github.run_number }}
+          AZURE_SV_NAME: SV_${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           server-name: ${{ env.AZURE_SV_NAME }}
           connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
