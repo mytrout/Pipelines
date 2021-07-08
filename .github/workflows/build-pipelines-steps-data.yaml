@@ -81,7 +81,7 @@ jobs:
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
           deploymentMode: 'Incremental'
-          parameters: databaseName=Cartoon databaseServerName='${{ env.AZURE_SV_NAME }}'
+          parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
 
       - name: Add the Azure SQL Server Connection String to the build server.
         shell: pwsh
