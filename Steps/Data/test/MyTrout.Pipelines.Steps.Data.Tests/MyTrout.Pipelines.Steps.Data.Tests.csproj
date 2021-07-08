@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\src\MyTrout.Pipelines.Steps.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
 </Project>

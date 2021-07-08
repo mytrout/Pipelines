@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Data
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Data?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=23&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-data.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-data.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Data?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Data/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -18,7 +18,7 @@ MyTrout.Pipelines.Steps.Data provides Pipeline steps to persist data to a databa
 
 MyTrout.Pipelines.Steps.Data targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 
-For more details on Pipelines, see [Pipelines.ore](../Core/README.md)
+For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
 
 For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
 
@@ -31,7 +31,7 @@ For a list of available steps, see [Available Steps](../README.md)
 ## Software dependencies
 
     1. Dapper 
-    2. MyTrout.Pipelines.Steps 2.0.6 minimum, 2.*.* is acceptable.
+    2. MyTrout.Pipelines 3.0.1
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -79,6 +79,8 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }
@@ -139,6 +141,8 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }
