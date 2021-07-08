@@ -43,6 +43,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup .NET Framework SDK 4.8.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: '4.8.x'
+          
       - name: Setup .NET Core SDK 5.0.x
         uses: actions/setup-dotnet@v1.7.2
         with:
@@ -53,10 +58,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-      
-      #- name: Build the DACPAC separately
-      #  working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
-      #  run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
       
       - name: 'Login to Azure'
         uses: azure/login@v1
@@ -78,12 +79,13 @@ jobs:
         uses: Azure/arm-deploy@v1
         env:
           AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+          AZURE_SV_NAME: SV_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
         with:
           scope: 'resourcegroup'
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
           deploymentMode: 'Incremental'
-          parameters: databaseName=Cartoon
+          parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
 
       - name: Add the Azure SQL Server Connection String to the build server.
         shell: pwsh
@@ -96,9 +98,16 @@ jobs:
               [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$env:AZURE_DB_OUTPUT",[System.EnvironmentVariableTarget]::Machine)  
             }
       
+      - name: Build the DACPAC separately
+        working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
+      
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
+        env:
+          AZURE_SV_NAME: SV_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
         with:
+          server-name: ${{ env.AZURE_SV_NAME }}
           connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
           dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
     
