@@ -89,7 +89,7 @@ jobs:
       - name: Add the Azure SQL Server Connection String to the build server.
         shell: pwsh
         env:
-           AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.DatabaseCreatedOutput }}
+           AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.ConnectionString }}
         run: |
             Format-List -InputObject $env:AZURE_DB_OUTPUT
             $outputs = ConvertFrom-Json $env:AZURE_DB_OUTPUT
