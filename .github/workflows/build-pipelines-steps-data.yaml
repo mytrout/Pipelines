@@ -34,22 +34,79 @@ jobs:
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: '2.0.0'
         
+        # These values are used for creating an Azure SQL Server Database
+        # Azure Servers cannot have periods, underscores, or upper case letters in the name.
+        AZURE_SERVER_NAME: 'pipelines-steps-data'
+        
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+          
       - name: Setup .NET Core SDK 5.0.x
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: '5.0.x'
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
-      - uses: actions/setup-java@v1
+      - name: Setup Java 11 for SonarQube
+        uses: actions/setup-java@v1
         with:
           java-version: '11'
-          
+      
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
+        
+      - name: 'Deploy Azure Resource Group'
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        with:
+          scope: 'subscription'
+          region: 'centralus'
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
+          parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
+    
+      - name: Deploy Azure SQL Server
+        id: sqlserver
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+        with:
+          scope: 'resourcegroup'
+          resourceGroupName: ${{ env.AZURE_RG_NAME }}
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
+          deploymentMode: 'Incremental'
+          parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
+
+      - name: Add the Azure SQL Server Connection String to the build server.
+        shell: pwsh
+        env:
+           AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.ConnectionString }}
+        run: |
+            if($env:AZURE_DB_OUTPUT -eq $null) {
+              throw [System.IO.Exception] "Connection String not found."
+            } else {
+              [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$env:AZURE_DB_OUTPUT",[System.EnvironmentVariableTarget]::Machine)  
+            }
+      
+      - name: Build the DACPAC separately
+        working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
+      
+      - name: Apply DACPAC to Azure SQL Server
+        uses: azure/sql-action@v1
+        env:
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+        with:
+          server-name: ${{ env.AZURE_SV_NAME }}
+          connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
+          dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
+    
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
@@ -57,7 +114,7 @@ jobs:
       - name: Begin Sonar scan
         run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        
+    
       - name: Build and Test
         env:
           PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
@@ -75,7 +132,23 @@ jobs:
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-        
+      
+      - name: Delete resource group
+        uses: Azure/CLI@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        if: ${{ always() }}
+        with:
+          inlineScript: |
+            #!/bin/bash
+            if $(az group exists --name ${{ env.AZURE_RG_NAME }}) ; then
+              echo "Deleting Azure resource group..."
+              az group delete --name ${{ env.AZURE_RG_NAME }} -y
+              echo "Azure resource group deleted"
+            else            
+              echo "Azure resource group doesn't exist, skipping deletion"
+            fi
+          
       #- name: Publish the package to nuget.org.
       #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
       #  if: ${{ github.ref == 'refs/heads/master' }}
