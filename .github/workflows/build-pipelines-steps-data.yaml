@@ -58,43 +58,55 @@ jobs:
       #  working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
       #  run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
       
-      #- name: Login to Azure.
-      #  uses: azure/login@v1
-      #  with:
-      #  creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+        creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
         
-      #- name: Deploy Azure Resource Group
-      #  uses: Azure/arm-deploy@v1
-      #  env:
-      #    AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
-      #  with:
-      #    scope: 'subscription'
-      #    region: 'Central US'
-      #    # Specify the path or URL to the Azure Resource Manager template.
-      #    template: '{{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json'
-      #    # Incremental (only add resources to resource group) or Complete (remove extra resources from resource group) or Validate (only validates the template).
-      #    deploymentMode: 'Incremental'
-      #    # Supply deployment parameter values.
-      #    parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
+      - name: 'Deploy Azure Resource Group'
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        with:
+          scope: 'subscription'
+          region: 'centralus'
+          template: '{{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json'
+          deploymentMode: 'Incremental'
+          parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
-    #- name: Deploy Azure Resource Manager (ARM) Template
-    #  id: sqlserver
-    #  uses: Azure/arm-deploy@v1
-    #  env:
-    #    AZURE_RG_NAME: RG.${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
-    #    AZURE_DB_NAME: DB_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
-    #  with:
-    #    scope: 'resourcegroup'
-    #    resourceGroupName: ${{ env.AZ_RG_NAME }}
-    #    template: '{{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json'
-    #    deploymentMode: 'Incremental'
-    #    parameters: databaseName=Cartoon;databaseServerName=${{ env.DB
+      - name: Deploy Azure SQL Server
+        id: sqlserver
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+          AZURE_DB_NAME: DB_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        with:
+          scope: 'resourcegroup'
+          resourceGroupName: ${{ env.AZURE_RG_NAME }}
+          template: '{{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json'
+          deploymentMode: 'Incremental'
+          parameters: databaseName=Cartoon;databaseServerName=${{ env.AZURE_DB_NAME }}
 
+      #- name: Add the Azure SQL Server Connection String to the build server.
+      #  shell: pwsh
+      #  env:
+      #     AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.DatabaseCreatedOutput }}
+      #  run: |
+      #      Format-List -InputObject $($env:AZURE_DB_OUTPUT)
+      #      $outputs = ConvertFrom-Json $($env:AZURE_DB_OUTPUT)
+      #      $connectionString = $outputs.ConnectionString.value
+      #      
+      #      if($connectionString -eq $null) {
+      #        throw [System.IO.Exception] "Connection String not found."
+      #      } else {
+      #        [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$connectionString",[System.EnvironmentVariableTarget]::Machine)  
+      #      }
+      
       #- name: Apply DACPAC to Azure SQL Server
       #  uses: azure/sql-action@v1
       #  with:
       #    server-name: PIPELINES_DATA_TESTING
-      #    connection-string: ${{ env.AZURE_SQL_CONNECTION_STRING }}
+      #    connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
       #    dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
     
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
@@ -122,7 +134,22 @@ jobs:
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-        
+      
+      - name: Delete resource group
+        uses: Azure/CLI@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        with:
+          inlineScript: |
+            #!/bin/bash
+            if $(az group exists --name ${{ env.AZURE_RG_NAME }}) ; then
+              echo "Deleting Azure resource group..."
+              az group delete --name ${{ env.AZURE_RG_NAME }} -y
+              echo "Azure resource group deleted"
+            else            
+              echo "Azure resource group doesn't exist, skipping deletion"
+            fi
+          
       #- name: Publish the package to nuget.org.
       #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
       #  if: ${{ github.ref == 'refs/heads/master' }}
