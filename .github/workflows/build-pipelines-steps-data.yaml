@@ -49,6 +49,7 @@ jobs:
       - name: Setup Java 11 for SonarQube.
         uses: actions/setup-java@v2.1.0
         with:
+          distribution: 'adopt'
           java-version: '11'
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
