@@ -47,10 +47,10 @@ jobs:
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
       - name: Setup Java 11 for SonarQube.
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2.1.0
         with:
           java-version: '11'
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
@@ -80,12 +80,12 @@ jobs:
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
         
       - name: Publish the package to nuget.org.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to GitHub.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
