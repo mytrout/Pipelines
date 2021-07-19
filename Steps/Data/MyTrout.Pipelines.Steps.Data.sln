@@ -27,6 +27,13 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MyTrout.Pipelines.Steps.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Data.Tests", "test\MyTrout.Pipelines.Steps.Data.Tests\MyTrout.Pipelines.Steps.Data.Tests.csproj", "{09BB4D53-BC8F-4E14-83E8-BB424BE2AB7F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2510C2D3-B064-4065-B53E-5690FD21781A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{D2DB316B-3A1A-4B7D-992B-8A8A9A27E889}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\build-pipelines-steps-data.yaml = ..\..\.github\workflows\build-pipelines-steps-data.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +58,7 @@ Global
 		{A91C5669-55CC-4082-82C0-848C4F1D78DE} = {B44822F7-2AF2-4B66-9737-91EC80A1716B}
 		{3B306238-06C6-4ADC-BC12-C4ECDEE47A67} = {D12A5F72-4323-4FC8-96D6-78C1ACCA4967}
 		{09BB4D53-BC8F-4E14-83E8-BB424BE2AB7F} = {D12A5F72-4323-4FC8-96D6-78C1ACCA4967}
+		{D2DB316B-3A1A-4B7D-992B-8A8A9A27E889} = {2510C2D3-B064-4065-B53E-5690FD21781A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E31FF03-B117-4A6E-A0DB-FFF8A4FF4B82}

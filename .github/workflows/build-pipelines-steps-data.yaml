@@ -96,7 +96,7 @@ jobs:
       
       - name: Build the DACPAC separately
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
-        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48      
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release --framework net48      
       
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
@@ -105,7 +105,7 @@ jobs:
         with:
           server-name: ${{ env.AZURE_SV_NAME }}
           connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
-          dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/MyTrout.Pipelines.Steps.Data.Database.dacpac'
+          dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database.Ubuntu/bin/Release/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac'
     
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
