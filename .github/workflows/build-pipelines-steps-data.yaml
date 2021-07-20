@@ -84,17 +84,6 @@ jobs:
           deploymentMode: 'Incremental'
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
 
-      - name: Add the Azure SQL Server Connection String to the build server.
-        shell: pwsh
-        env:
-           AZURE_DB_OUTPUT: ${{ steps.sqlserver.outputs.ConnectionString }}
-        run: |
-            if($env:AZURE_DB_OUTPUT -eq $null) {
-              throw [System.IO.Exception] "Connection String not found."
-            } else {
-              [System.Environment]::SetEnvironmentVariable('PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING', "$env:AZURE_DB_OUTPUT",[System.EnvironmentVariableTarget]::Machine)  
-            }
-      
       - name: Build the DACPAC separately
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
         run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
@@ -106,7 +95,7 @@ jobs:
         with:
           server-name: ${{ env.AZURE_SV_NAME }}
           dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database.Ubuntu/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac'
-          connection-string: ${{ env.PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING }}
+          connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
