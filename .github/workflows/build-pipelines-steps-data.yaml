@@ -88,15 +88,25 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
         run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
       
-      - name: Apply DACPAC to Azure SQL Server
-        uses: azure/sql-action@v1
-        env:
-          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
-        with:
-          server-name: ${{ env.AZURE_SV_NAME }}
-          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
-          connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+      # https://github.com/rr-wfm/MSBuild.Sdk.SqlProj/blob/master/.github/workflows/main.yml
+      # Run sqlpackage
+      - name: Apply DACPAC to Azure SQL Server (Ubuntu)
+        run: >
+            ~/sqlpackage
+            /Action:Publish
+            /SourceFile:${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+            /Properties:IncludeCompositeObjects=True
+            /TargetConnectionbString:${{ steps.sqlserver.outputs.ConnectionString }}
+
+      #- name: Apply DACPAC to Azure SQL Server (Windows)
+      #  uses: azure/sql-action@v1
+      #  env:
+      #    AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+      #  with:
+      #    server-name: ${{ env.AZURE_SV_NAME }}
+      #    dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+      #    connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
+      #  if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
