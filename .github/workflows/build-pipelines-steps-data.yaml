@@ -94,7 +94,7 @@ jobs:
           AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           server-name: ${{ env.AZURE_SV_NAME }}
-          dacpac-package: '{{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac'
+          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
