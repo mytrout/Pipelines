@@ -137,6 +137,9 @@ jobs:
           deploymentMode: 'Incremental'
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
 
+      - name: Test
+        run: echo ${{ steps.sqlserver.outputs.ConnectionString }}
+        
       - name: Build the DACPAC separately
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
         run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
@@ -151,28 +154,28 @@ jobs:
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
-  azure-post-processing:
-    runs-on: ubuntu-latest
-    needs: build
-    if: ${{ always() }}
-    steps:
-      - name: 'Login to Azure'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
-
-      - name: Delete resource group
-        uses: Azure/CLI@v1
-        env:
-          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
-        if: ${{ always() }}
-        with:
-          inlineScript: |
-            #!/bin/bash
-            if $(az group exists --name ${{ env.AZURE_RG_NAME }}) ; then
-              echo "Deleting Azure resource group..."
-              az group delete --name ${{ env.AZURE_RG_NAME }} -y
-              echo "Azure resource group deleted"
-            else            
-              echo "Azure resource group doesn't exist, skipping deletion"
-            fi
+#  azure-post-processing:
+#    runs-on: ubuntu-latest
+#    needs: build
+#    if: ${{ always() }}
+#    steps:
+#      - name: 'Login to Azure'
+#        uses: azure/login@v1
+#        with:
+#          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
+#
+#      - name: Delete resource group
+#        uses: Azure/CLI@v1
+#        env:
+#          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+#        if: ${{ always() }}
+#        with:
+#          inlineScript: |
+#            #!/bin/bash
+#            if $(az group exists --name ${{ env.AZURE_RG_NAME }}) ; then
+#              echo "Deleting Azure resource group..."
+#              az group delete --name ${{ env.AZURE_RG_NAME }} -y
+#              echo "Azure resource group deleted"
+#            else            
+#              echo "Azure resource group doesn't exist, skipping deletion"
+#            fi
