@@ -139,7 +139,7 @@ jobs:
 
       - name: Build the DACPAC separately
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
-        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
       
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
