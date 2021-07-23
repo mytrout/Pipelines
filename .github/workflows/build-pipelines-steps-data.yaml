@@ -154,6 +154,7 @@ jobs:
   azure-post-processing:
     runs-on: windows-latest
     needs: build
+    if: ${{ always() }}
     steps:
       - name: 'Login to Azure'
         uses: azure/login@v1
@@ -175,5 +176,3 @@ jobs:
             else            
               echo "Azure resource group doesn't exist, skipping deletion"
             fi
-
-    if: ${{ always() }}
