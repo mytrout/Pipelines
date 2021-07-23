@@ -81,7 +81,7 @@
     },
     "SpecialText": {
       "type": "string",
-      "value": "parameters('administratorLoginPassword')"
+      "value": "[concat(parameters('administratorLoginPassword'))]"
     }
   }
 }
