@@ -138,7 +138,7 @@ jobs:
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
 
       - name: Test
-        run: echo ${{ steps.sqlserver.outputs.ConnectionString }}
+        run: echo 'START${{ steps.sqlserver.outputs.ConnectionString }}END'
         
       - name: Build the DACPAC separately
         working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
