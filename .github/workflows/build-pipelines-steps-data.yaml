@@ -152,7 +152,7 @@ jobs:
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
   azure-post-processing:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: build
     if: ${{ always() }}
     steps:
