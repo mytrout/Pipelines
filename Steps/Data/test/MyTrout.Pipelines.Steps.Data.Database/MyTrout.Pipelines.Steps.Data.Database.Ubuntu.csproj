@@ -1,7 +1,7 @@
 <Project Sdk="MSBuild.Sdk.SqlProj/1.16.2">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <SqlServerVersion>Sql130</SqlServerVersion>
+        <SqlServerVersion>SqlAzure</SqlServerVersion>
         <!-- For additional properties that can be set here, please refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#model-properties -->
     </PropertyGroup>
 
