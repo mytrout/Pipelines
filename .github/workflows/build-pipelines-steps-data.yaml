@@ -15,25 +15,30 @@ on:
       - '**/Pipelines/Steps/Data/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-      
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
+  SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
+        
+  # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
+  SONAR_PROJECT_NAME: 'Pipelines.Steps.Data'
+  WORKING_DIRECTORY: ${{ github.workspace }}/Steps/Data
+  SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Data.sln'
+        
+  # This value should change on each deployable version of this solution.
+  PROJECT_VERSION: '2.0.0'  
+
+  # These values are used for creating an Azure SQL Server Database
+  # Azure Servers cannot have periods, underscores, or upper case letters in the name.
+  AZURE_SERVER_NAME: 'pipelines-steps-data'
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+    needs: azure-pre-processing
     env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
-        SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
-        
-        # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
-        SONAR_PROJECT_NAME: 'Pipelines.Steps.Data'
-        WORKING_DIRECTORY: ${{ github.workspace }}/Steps/Data
-        SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Data.sln'
-        
-        # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '2.0.0'
-        
+        PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }}
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
@@ -93,3 +98,82 @@ jobs:
       #- name: Publish the package to GitHub.
       #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
       #  if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+   
+
+  azure-pre-processing:
+    runs-on: windows-latest
+    outputs:
+      connection-string: ${{ steps.sqlserver.outputs.ConnectionString }}
+
+    steps:
+      - name: Checkout the Source
+        uses: actions/checkout@v2
+
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
+        
+      - name: 'Deploy Azure Resource Group'
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        with:
+          scope: 'subscription'
+          region: 'centralus'
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
+          parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
+    
+      - name: Deploy Azure SQL Server
+        id: sqlserver
+        uses: Azure/arm-deploy@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+        with:
+          scope: 'resourcegroup'
+          resourceGroupName: ${{ env.AZURE_RG_NAME }}
+          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
+          deploymentMode: 'Incremental'
+          parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }}
+
+      - name: Build the DACPAC separately
+        working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.sqlproj --configuration Release --framework net48
+      
+      - name: Apply DACPAC to Azure SQL Server
+        uses: azure/sql-action@v1
+        env:
+          AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
+        with:
+          server-name: ${{ env.AZURE_SV_NAME }}
+          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+          connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+  
+  azure-post-processing:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
+
+      - name: Delete resource group
+        uses: Azure/CLI@v1
+        env:
+          AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
+        if: ${{ always() }}
+        with:
+          inlineScript: |
+            #!/bin/bash
+            if $(az group exists --name ${{ env.AZURE_RG_NAME }}) ; then
+              echo "Deleting Azure resource group..."
+              az group delete --name ${{ env.AZURE_RG_NAME }} -y
+              echo "Azure resource group deleted"
+            else            
+              echo "Azure resource group doesn't exist, skipping deletion"
+            fi
+
+    if: ${{ always() }}

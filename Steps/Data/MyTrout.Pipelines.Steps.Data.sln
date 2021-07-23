@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		azure-arm-resourcegroup.json = azure-arm-resourcegroup.json
 		azure-arm-sqlserver.json = azure-arm-sqlserver.json
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -26,6 +25,13 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MyTrout.Pipelines.Steps.Data.Database", "test\MyTrout.Pipelines.Steps.Data.Database\MyTrout.Pipelines.Steps.Data.Database.sqlproj", "{3B306238-06C6-4ADC-BC12-C4ECDEE47A67}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Data.Tests", "test\MyTrout.Pipelines.Steps.Data.Tests\MyTrout.Pipelines.Steps.Data.Tests.csproj", "{09BB4D53-BC8F-4E14-83E8-BB424BE2AB7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E5F8DEB-8BD5-46C8-84A4-F74999300A2B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8EB53DC7-276F-4A46-BC16-C04BEB2F1321}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\build-pipelines-steps-data.yaml = ..\..\.github\workflows\build-pipelines-steps-data.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,7 @@ Global
 		{A91C5669-55CC-4082-82C0-848C4F1D78DE} = {B44822F7-2AF2-4B66-9737-91EC80A1716B}
 		{3B306238-06C6-4ADC-BC12-C4ECDEE47A67} = {D12A5F72-4323-4FC8-96D6-78C1ACCA4967}
 		{09BB4D53-BC8F-4E14-83E8-BB424BE2AB7F} = {D12A5F72-4323-4FC8-96D6-78C1ACCA4967}
+		{8EB53DC7-276F-4A46-BC16-C04BEB2F1321} = {5E5F8DEB-8BD5-46C8-84A4-F74999300A2B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E31FF03-B117-4A6E-A0DB-FFF8A4FF4B82}
