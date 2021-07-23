@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: azure-pre-processing
     env:
-        PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }}
+        PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }};Password=${{ needs.azure-pre-processing.outputs.special-text }}
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
@@ -105,6 +105,7 @@ jobs:
     runs-on: windows-latest
     outputs:
       connection-string: ${{ steps.sqlserver.outputs.ConnectionString }}
+      special-text: ${{ steps.sqlserver.outputs.SpecialText }}
 
     steps:
       - name: Checkout the Source
@@ -149,7 +150,7 @@ jobs:
         with:
           server-name: ${{ env.AZURE_SV_NAME }}.database.windows.net
           dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
-          connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}
+          connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}Password=${{ steps.sqlserver.outputs.SpecialText }};
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
   azure-post-processing:
