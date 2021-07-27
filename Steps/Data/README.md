@@ -30,8 +30,8 @@ For a list of available steps, see [Available Steps](../README.md)
 
 ## Software dependencies
 
-    1. Dapper 
-    2. MyTrout.Pipelines 3.0.1
+    1. Dapper - 2.0.78 or higher, but lower than 3.0.0
+    2. MyTrout.Pipelines - 3.0.1 or higher, but lower than 3.1
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -56,7 +56,6 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
             {
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<DeleteBlobOptions>()
                                     .UsePipeline(builder => 
                                     {
                                         builder
@@ -115,8 +114,6 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 //
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<DeleteBlobOptions>("context-A")
-                                    .AddStepDependency<DeleteBlobOptions("context-B")
                                     .UsePipeline(builder => 
                                     {
                                         builder
