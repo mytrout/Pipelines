@@ -35,6 +35,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     [TestClass]
