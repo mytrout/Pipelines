@@ -35,6 +35,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     [TestClass]
@@ -70,7 +71,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var providerFactoryMock = new Mock<DbProviderFactory>();
             providerFactoryMock.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
             var providerFactory = providerFactoryMock.Object;
-
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
                 SqlStatement = new SqlStatement()
@@ -79,7 +81,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                     ParameterNames = new List<string>() { "CartoonId" },
                     Statement = "dbo.CartoonSelect"
                 },
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             int expectedId = -1;
@@ -108,6 +110,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             var providerFactory = SqlClientFactory.Instance;
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
                 SqlStatement = new SqlStatement()
@@ -116,7 +120,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                     ParameterNames = new List<string>() { "CartoonId" },
                     Statement = "dbo.CartoonSelect"
                 },
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             int expectedId = -1;
@@ -152,6 +156,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             var providerFactory = SqlClientFactory.Instance;
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
                 SqlStatement = new SqlStatement()
@@ -160,7 +166,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                     ParameterNames = new List<string>() { "CartoonId" },
                     Statement = "dbo.CartoonSelect"
                 },
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             int expectedId = 1;

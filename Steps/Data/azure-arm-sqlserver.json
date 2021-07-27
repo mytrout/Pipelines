@@ -66,7 +66,7 @@
           "location": "[parameters('location')]",
           "name": "AllowAllWindowsAzureIps",
           "properties": {
-            "endIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255",
             "startIpAddress": "0.0.0.0"
           },
           "type": "firewallrules"
@@ -78,10 +78,6 @@
     "ConnectionString": {
       "type": "string",
       "value": "[concat('Server=tcp:', reference(parameters('databaseServerName')).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';Persist Security Info=False;User ID=', parameters('administratorLogin'), '@', parameters('databaseServerName'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;')]"
-    },
-    "SpecialText": {
-      "type": "string",
-      "value": "parameters('administratorLoginPassword')"
     }
   }
 }
