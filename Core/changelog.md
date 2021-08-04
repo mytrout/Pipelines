@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 3.0.2
+- Correct DisposeAsync() method implementation.
+
 ## 3.0.1
 - Add the Steps library to the Pipelines.Core library.
 - Update the implemented Step Tests to use IDisposable and IAsyncDisposable.
