@@ -3,6 +3,12 @@
 ## 2.0.0
 - Convert from Azure DevOps to Github Actions.
 - Delete azure-pipelines.yml and remove from the solution.
+- Upgrade Azure.Azure.Blobs library from 12.7.x to 12.9.x.
+- Upgrade Microsoft.VisualStudio.Threading.Analyzers library from 16.8.x to 16.10.x.
+- Remove MyTrout.Pipelines.Steps library v2.0.6.
+- Add MyTrout.Pipelines library v3.0.1.
+- Upgrade SonarAnalyzer.CSharp library from 8.16 to 8.26.
+- Alter all Unit and Integration Tests to support Linux.
 
 ## 1.0.0
  - Upgrade from .NET Standard 2.1 to .NET 5.0

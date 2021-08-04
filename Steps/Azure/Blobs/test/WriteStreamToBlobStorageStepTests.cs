@@ -33,6 +33,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -78,7 +79,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Pipelines.Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
+            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -110,9 +111,10 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new WriteStreamToBlobStorageOptions()
             {
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
@@ -164,7 +166,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Pipelines.Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
+            var expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -195,7 +197,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
+            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -229,7 +231,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new WriteStreamToBlobStorageStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
+            var expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -340,9 +342,11 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
             var options = new WriteStreamToBlobStorageOptions()
             {
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             var source = new WriteStreamToBlobStorageStep(logger, options, next);
