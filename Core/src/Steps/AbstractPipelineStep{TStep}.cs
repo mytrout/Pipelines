@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Steps
         public async ValueTask DisposeAsync()
         {
             // Perform async cleanup.
-            await this.DisposeAsyncCore();
+            await this.DisposeCoreAsync();
 
             // Dispose of synchronous unmanaged resources.
             this.Dispose(false);
@@ -115,7 +115,8 @@ namespace MyTrout.Pipelines.Steps
         /// <summary>
         /// Disposes of any asynchronous disposable resources for this instance.
         /// </summary>
-        protected virtual async ValueTask DisposeAsyncCore()
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        protected virtual async ValueTask DisposeCoreAsync()
         {
             // no op
         }
