@@ -128,6 +128,7 @@ jobs:
       - name: 'Deploy Blob Storage'
         uses: azure/arm-deploy@v1
         env: 
+            AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
             AZURE_STORAGE_NAME: mytroutstorage${{ github.run_number }}
         id: azureblob
         with:
