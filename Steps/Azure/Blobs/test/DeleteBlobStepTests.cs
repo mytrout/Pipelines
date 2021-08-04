@@ -34,6 +34,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -66,10 +67,12 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Is_Deleted_Successfully_After_Next()
         {
             // arrange
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
                 ExecutionTiming = DeleteBlobTimings.After,
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             string blobContainerName = Guid.NewGuid().ToString("D");
@@ -122,10 +125,12 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Is_Deleted_Successfully_Before_Next()
         {
             // arrange
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
                 ExecutionTiming = DeleteBlobTimings.Before,
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             string blobContainerName = Guid.NewGuid().ToString("D");
@@ -189,7 +194,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Pipelines.Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
+            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -222,7 +227,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Pipelines.Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
+            var expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_BLOB);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -253,7 +258,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Steps.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
+            var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -287,7 +292,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var source = new DeleteBlobStep(logger, options, next);
 
             var expectedErrorsCount = 1;
-            var expectedMessage = Steps.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
+            var expectedMessage = Pipelines.Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, BlobConstants.TARGET_CONTAINER_NAME);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -304,9 +309,11 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Blob_Does_Not_Exist()
         {
             // arrange
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", EnvironmentVariableTarget.Machine)); }
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
             string blobContainerName = Guid.NewGuid().ToString("D");

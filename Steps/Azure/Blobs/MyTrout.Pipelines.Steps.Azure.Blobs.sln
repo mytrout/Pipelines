@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		azure-arm-blobs.json = azure-arm-blobs.json
 		azure-arm-resourcegroup.json = azure-arm-resourcegroup.json
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -21,6 +20,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.Blobs", "src\MyTrout.Pipelines.Steps.Azure.Blobs.csproj", "{82451764-0F4F-410F-84FE-4260D88528ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.Blobs.Tests", "test\MyTrout.Pipelines.Steps.Azure.Blobs.Tests.csproj", "{7E6268F5-4AA9-4977-8F59-C07818662EBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CAB25EDA-CBC6-45DE-8744-541713678945}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1CA9853B-1622-42DB-A8C1-FD575EA55E90}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-azure-blobs.yaml = ..\..\..\.github\workflows\build-pipelines-steps-azure-blobs.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +49,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{82451764-0F4F-410F-84FE-4260D88528ED} = {3C223D1D-5F75-4DA7-9E0A-A46BB0128447}
 		{7E6268F5-4AA9-4977-8F59-C07818662EBD} = {7587A676-7D4A-41DC-AFAA-35CD94AF4693}
+		{1CA9853B-1622-42DB-A8C1-FD575EA55E90} = {CAB25EDA-CBC6-45DE-8744-541713678945}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BB0C0F6-A049-4CCF-9953-AB474031465F}

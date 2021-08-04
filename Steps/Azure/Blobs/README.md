@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Azure.Blobs?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=21&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-azure-blobs.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-azure-blobs.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Azure.Blobs?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Azure.Blobs/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -30,8 +30,8 @@ For a list of available steps, see [Available Steps](../../README.md)
 
 ## Software dependencies
 
-    1. Azure.Storage.Blobs 12.7.0
-    2. MyTrout.Pipelines.Steps 2.0.6 minimum, 2.*.* is acceptable.
+    1. Azure.Storage.Blobs 12.9.0
+    2. MyTrout.Pipelines 3.0.1 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -56,7 +56,6 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
             {
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<DeleteBlobOptions>()
                                     .UsePipeline(builder => 
                                     {
                                         builder
@@ -79,6 +78,8 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                 {
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
+
+                await host.StopAsync().ConfigureAwait(false);
 
                 return 0;
             }
@@ -113,8 +114,6 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                 //
 
                 var host = Host.CreateDefaultBuilder(args)
-                                    .AddStepDependency<DeleteBlobOptions>("context-A")
-                                    .AddStepDependency<DeleteBlobOptions("context-B")
                                     .UsePipeline(builder => 
                                     {
                                         builder
@@ -140,6 +139,8 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
                     // TODO: Errors have already been logged, do any special error processing here.
                 }
 
+                await host.StopAsync().ConfigureAwait(false);
+
                 return 0;
             }
         }
@@ -150,29 +151,23 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
 ## Build the software locally.
     1. Clone the software from the Pipelines repository.
     2. Build the software in Visual Studio 2019 to pull down all of the dependencies from nuget.org.
-    3. In Visual Studio, run all tests.  All of the should pass.
-    4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+    3. Create an Azure Storage Account in the Azure Portal and capture the a Connection String to the storage account.
+    4a. On Windows, Create a Machine Environment Variable named "PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING" and put the Azure Blob Storage Connection String in it.
+    4b. On Linux, create an environment variable in the Test Project named "PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING" and put the Azure Blob Storage Connection String in it.
+    5. In Visual Studio, run all tests.  All of the should pass.
+    6. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+    
+    IMPORTANT NOTE: If you are running on Linux, do not check in the Process Level Environment variable used for tests.
 
-## Build the software in Azure DevOps.
-    1. In Organization Settings, select Extensions option.
-    2. Install the SonarCloud Extension.
-    3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
-    4. In Project Settings, select Service Connections option.
-    5. Add a Service Connection for SonarQube and enter the token.
-    6. Make sure you check the 'Grant access permission to all pipelines' checkbox or configure appropriate security to this connection.
-    7. In Artifacts, add a new Feed named mytrout.
-    8. On the mytrout Artifacts feed, select the gear icon to configure the feed.
-    9. Select the Permissions tab, and click the ...
-    10. Click on Allow builds and Releases (which will add Project Collection Build Services as a Contributor).
-    11. Click on Allow project-scoped builds (which will add Pipeline Build Service as a Contributor)
-    12. Create a New Pipeline and reference the azure-pipelines.yml file in the /Steps/Cryptography directory.
-    13. In Pipelines....Library, set up a Variable group named 'SonarQube Analysis'
-        a. Add a variable named 'sonarCloudConnectionName' with the name of the SonarQube Service Connection created in Step 5.
-        b. Add a variable named 'sonarCloudEnabled' with the value of 'YES'.
-        c. Add a variable named 'sonarCloudOrganization' with the value of your SonarCloud organization.
-    14. In Pipelines....Library, set up a Variable Group named 'Pipelines Artifacts Feed'.
-        a. Add a variable named 'publishVstsFeed' with the value of the feed to which output should be published.
-    13. Run the newly created pipeline.
+## Build the software in GitHub Actions
+    1. Navigate to Organization Secrets.
+    2. Add an Organization Secret named 'MYTROUT_AZURE_SUBSCRIPTION' that contains the GUID that identifies the Azure Subscription used for Integration Testing.
+    3. Add an Organization Secret named 'MYTROUT_AZURE_TOKEN' that contains the Azure Token used to access the Azure Subscription used for Integration Testing.
+    4. Add an Organization Secret named 'MYTROUT_NUGET_API_KEY' that contains the API Key used to publish to nuget.org.
+    5. Add an Organization Secret named 'MYTROUT_SONARQUBE_API_KEY' that contains the API Key used to publish results to the SonarCloud.io instance.
+    6. Add an Organization Secret named 'MYTROUT_SONARQUBE_HOST_URL' that contains the URL where SonarQube is hosted.
+    7. Add an Organization Secret named 'MYTROUT_SONARQUBE_ORGANIZATION' that contains the organization to which one is publishing in SonarCloud.io.
+    8. Run the build-pipelines-steps.azure.blobs.yaml pipeline.
 
 ## Testing
 These tests are a mixture of unit and integration tests necessary to perform blob storage tasks.
