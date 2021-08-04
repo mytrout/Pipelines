@@ -1,7 +1,7 @@
 ﻿// <copyright file="AbstractPipelineStep{TStep}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,11 +68,19 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <returns>A completed <see cref="ValueTask" />.</returns>
         /// <remarks>Developers who need to dispose of unmanaged resources should override this method.</remarks>
-        public virtual ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            this.Dispose();
+            // Perform async cleanup.
+            await this.DisposeAsyncCore();
+
+            // Dispose of synchronous unmanaged resources.
+            this.Dispose(false);
+
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
+
+            // Suppress finalization.
             GC.SuppressFinalize(this);
-            return new ValueTask(Task.CompletedTask);
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         }
 
         /// <summary>
@@ -100,6 +108,14 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="disposing">A flag indicating whether this instance is already being disposed.</param>
         protected virtual void Dispose(bool disposing)
+        {
+            // no op
+        }
+
+        /// <summary>
+        /// Disposes of any asynchronous disposable resources for this instance.
+        /// </summary>
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             // no op
         }
