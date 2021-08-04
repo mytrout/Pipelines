@@ -116,9 +116,9 @@ namespace MyTrout.Pipelines.Steps
         /// Disposes of any asynchronous disposable resources for this instance.
         /// </summary>
         /// <returns>A completed <see cref="ValueTask" />.</returns>
-        protected virtual async ValueTask DisposeCoreAsync()
+        protected virtual ValueTask DisposeCoreAsync()
         {
-            // no op
+            return default;
         }
 
         /// <summary>
