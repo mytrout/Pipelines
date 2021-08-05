@@ -27,7 +27,7 @@ env:
   SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Azure.ServiceBus.sln'
         
   # This value should change on each deployable version of this solution.
-  PROJECT_VERSION: '2.0.0'  
+  PROJECT_VERSION: '3.0.0'  
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
