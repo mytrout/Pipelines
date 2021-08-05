@@ -391,7 +391,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
-            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name));
+            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name);
 
             // act
             var result = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await sut.InvokeAsync(context));
