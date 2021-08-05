@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		azure-arm-resourcegroup.json = azure-arm-resourcegroup.json
 		azure-arm-servicebus.json = azure-arm-servicebus.json
-		azure-pipelines.yml = azure-pipelines.yml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -21,6 +20,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.ServiceBus", "src\MyTrout.Pipelines.Steps.Azure.ServiceBus.csproj", "{8D26FEC7-9B2E-47A5-863B-19292A0AC608}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests", "test\MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests.csproj", "{7883363A-52B4-43C2-8B29-99E75E7EF2DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CF2EE3BE-2103-407B-8E19-27CEEF2C870C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{78494C8E-1791-4B62-A2BD-18B986AF00C7}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-azure-servicebus.yaml = ..\..\..\.github\workflows\build-pipelines-steps-azure-servicebus.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +49,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8D26FEC7-9B2E-47A5-863B-19292A0AC608} = {D6F9BC76-E3CB-4263-B5FD-61E856A9FE4E}
 		{7883363A-52B4-43C2-8B29-99E75E7EF2DA} = {CF1D60C8-8A61-4C14-9511-5295A1EE1108}
+		{78494C8E-1791-4B62-A2BD-18B986AF00C7} = {CF2EE3BE-2103-407B-8E19-27CEEF2C870C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {729319FC-3710-4A04-BE1A-F2AD4993706C}
