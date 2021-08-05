@@ -361,7 +361,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             SaveContextToDatabaseOptions options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            IPipelineContext context = null;
+            IPipelineContext context = new PipelineContext();
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
@@ -384,10 +384,27 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             mockProviderFactory.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
             var providerFactory = mockProviderFactory.Object;
 
-            SaveContextToDatabaseOptions options = new SaveContextToDatabaseOptions();
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            var options = new SaveContextToDatabaseOptions()
+            {
+                SqlStatements = new List<SqlStatement>()
+                {
+                    new SqlStatement()
+                    {
+                        CommandType = System.Data.CommandType.Text,
+                        Name = "StatementName",
+                        ParameterNames = new List<string>() { "CartoonId" },
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
+                    }
+                },
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+            
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            IPipelineContext context = null;
+            IPipelineContext context = new PipelineContext();
+            context.Items.Add("CartoonId", 1);
+            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
