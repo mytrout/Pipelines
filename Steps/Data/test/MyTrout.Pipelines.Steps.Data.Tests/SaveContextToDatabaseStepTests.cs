@@ -361,7 +361,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             SaveContextToDatabaseOptions options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            IPipelineContext context = new PipelineContext();
+            IPipelineContext context = null;
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
