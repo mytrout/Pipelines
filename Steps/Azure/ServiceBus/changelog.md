@@ -1,5 +1,15 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
+##3.0.0
+- Convert from Azure DevOps to Github Actions.
+- Delete azure-pipelines.yml and remove from the solution.
+- Upgrade Azure.Azure.ServiceBus library from 7.0.x to 7.2.x.
+- Upgrade Microsoft.VisualStudio.Threading.Analyzers library from 16.8.x to 16.10.x.
+- Remove MyTrout.Pipelines.Steps library v2.0.6.
+- Add MyTrout.Pipelines library v3.0.1.
+- Upgrade SonarAnalyzer.CSharp library from 8.16 to 8.26.
+- Alter all Unit and Integration Tests to support Linux.
+
 ## 2.0.1
 - Limit MyTrout.Pipelines.Steps.Core to a maximum of 3.x rather than 32.x.
 
