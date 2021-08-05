@@ -24,6 +24,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 {
@@ -70,13 +71,23 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         public const string WriteToTopicName = "test-write-to-topic";
 
         /// <summary>
-        /// Reads the ASB_CONNECTION_STRING User Environment variable (can be set through launchsettings.json) to feed the connection string.
+        /// Reads the PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING User Environment variable (can be set through launchsettings.json) to feed the connection string.
         /// </summary>
-        public static readonly string AzureServiceBusConnectionString = Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING", EnvironmentVariableTarget.Machine);
+        public static string AzureServiceBusConnectionString { get; private set; }
 
         /// <summary>
         /// An Azure Service Bus ConnectionString that will cause an exception to be thrown by <see cref="TopicClient"/> and <see cref="SubscriptionClient"/>, if used.
         /// </summary>C:\MyTrout.Pipelines\Steps\Azure\ServiceBus\test\Constants.cs
         public const string InvalidAzureServiceBusConnectionString = "SharedAccessKey=8qi3zSXL2pZVMO5nhK7Wz1rIjxZZxiJvrwD9i0HItCc=";
+
+        /// <summary>
+        /// Initializes a static instance of TestConstants.
+        /// </summary>
+        static TestConstants()
+        {
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            string environmentVariable = Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING", environmentVariableTarget);
+            TestConstants.AzureServiceBusConnectionString = environmentVariable;
+        }
     }
 }
