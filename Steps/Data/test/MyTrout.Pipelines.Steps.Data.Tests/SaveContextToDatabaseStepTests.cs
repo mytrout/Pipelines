@@ -373,5 +373,32 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedParamName, result.ParamName);
         }
+
+        [TestMethod]
+        public async Task Throw_InvalidOperationException_From_InvokeCoreAsync_WHen_DbProviderFactory_Returns_Null_Connection()
+        {
+            // arrange
+            ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
+            
+            Mock<DbProviderFactory> mockProviderFactory = new Mock<DbProviderFactory>();
+            mockProviderFactory.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
+            var providerFactory = mockProviderFactory.Object;
+
+            SaveContextToDatabaseOptions options = new SaveContextToDatabaseOptions();
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            IPipelineContext context = null;
+
+            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+
+            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name));
+
+            // act
+            var result = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await sut.InvokeAsync(context));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
+        }
     }
 }
