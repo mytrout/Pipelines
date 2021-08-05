@@ -108,6 +108,51 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_Returns_Null_Connection()
+        {
+            // arrange
+            ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
+
+            Mock<DbProviderFactory> mockProviderFactory = new Mock<DbProviderFactory>();
+            mockProviderFactory.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
+            var providerFactory = mockProviderFactory.Object;
+
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            var options = new SaveContextToDatabaseOptions()
+            {
+                SqlStatements = new List<SqlStatement>()
+                {
+                    new SqlStatement()
+                    {
+                        CommandType = System.Data.CommandType.Text,
+                        Name = "StatementName",
+                        ParameterNames = new List<string>() { "CartoonId" },
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
+                    }
+                },
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            IPipelineContext context = new PipelineContext();
+            context.Items.Add("CartoonId", 1);
+            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+
+            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+
+            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name);
+
+            // act
+            await sut.InvokeAsync(context);
+
+            // assert
+            Assert.AreEqual(1, context.Errors.Count, "At least one error should be in the PipelineContext.");
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Invalid_Query_Is_Provided()
         {
             // arrange
@@ -372,50 +417,6 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedParamName, result.ParamName);
-        }
-
-        [TestMethod]
-        public async Task Throw_InvalidOperationException_From_InvokeCoreAsync_WHen_DbProviderFactory_Returns_Null_Connection()
-        {
-            // arrange
-            ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            
-            Mock<DbProviderFactory> mockProviderFactory = new Mock<DbProviderFactory>();
-            mockProviderFactory.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
-            var providerFactory = mockProviderFactory.Object;
-
-            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
-            var options = new SaveContextToDatabaseOptions()
-            {
-                SqlStatements = new List<SqlStatement>()
-                {
-                    new SqlStatement()
-                    {
-                        CommandType = System.Data.CommandType.Text,
-                        Name = "StatementName",
-                        ParameterNames = new List<string>() { "CartoonId" },
-                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
-                    }
-                },
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
-            };
-            
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            IPipelineContext context = new PipelineContext();
-            context.Items.Add("CartoonId", 1);
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
-
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
-
-            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name);
-
-            // act
-            var result = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await sut.InvokeAsync(context));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedMessage, result.Message);
         }
     }
 }
