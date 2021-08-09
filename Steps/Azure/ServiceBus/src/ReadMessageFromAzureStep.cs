@@ -229,6 +229,12 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             {
                 context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
 
+                // Remove the CorrelationId if it was configured in this step.
+                if (configuredTheCorrelationId)
+                {
+                    context.Items.Remove(MessagingConstants.CORRELATION_ID);
+                }
+                
                 // Remove the values in ApplicationProperties from the context.
                 foreach (var key in this.Options.ApplicationProperties)
                 {
@@ -255,11 +261,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 {
                     // Complete the message so that it is not received again.
                     await this.ServiceBusReceiver.CompleteMessageAsync(message, cancellationToken: token).ConfigureAwait(false);
-                }
-
-                if (configuredTheCorrelationId)
-                {
-                    context.Items.Remove(MessagingConstants.CORRELATION_ID);
                 }
             }
         }
