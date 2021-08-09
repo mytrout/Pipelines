@@ -6,13 +6,13 @@ on:
       - master
     paths:
       - '.github/workflows/build-pipelines-steps-azure-servicebus.yaml'
-      - '**/Pipelines/Steps/Azure/ServiceBus/**/*.*'
+      - 'Steps/Azure/ServiceBus/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
   pull_request:
     paths:
       - '.github/workflows/build-pipelines-steps-azure-servicebus.yaml'
-      - '**/Pipelines/Steps/Azure/ServiceBus/**/*.*'
+      - 'Steps/Azure/ServiceBus/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
 
