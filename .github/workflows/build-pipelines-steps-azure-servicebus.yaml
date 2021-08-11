@@ -78,7 +78,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test  --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet test  --configuration Debug --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: End Sonar scan
