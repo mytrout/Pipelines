@@ -234,7 +234,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 {
                     context.Items.Remove(MessagingConstants.CORRELATION_ID);
                 }
-                
+
                 // Remove the values in ApplicationProperties from the context.
                 foreach (var key in this.Options.ApplicationProperties)
                 {
