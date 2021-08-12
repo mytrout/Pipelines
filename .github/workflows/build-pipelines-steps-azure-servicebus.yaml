@@ -101,7 +101,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test --no-build --no-restore --verbosity normal --collect:"Code Coverage" --logger:trx
+          dotnet test --verbosity normal --collect:"Code Coverage" --logger:trx
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: End Sonar scan
