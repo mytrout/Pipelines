@@ -95,7 +95,7 @@ jobs:
         env:
           PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }};SourceRevisionId=${{ env.PROJECT_VERSION }}+${{ env.GITHUB_SHA }}
+        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }} -p:AssemblyVersion=${{ env.PROJECT_FULL_VERSION }} -p:FileVersion=${{ env.PROJECT_FULL_VERSION }} -p:SourceRevisionId=${{ env.PROJECT_VERSION }}+${{ env.GITHUB_SHA }}
 
         # Skip the Unit and Integration Tests when running under Dependabot. 
       - name: Test
