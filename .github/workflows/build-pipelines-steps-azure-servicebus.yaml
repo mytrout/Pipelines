@@ -34,9 +34,32 @@ env:
   AZURE_SERVER_NAME: 'pipelines-steps-azure-servicebus'
 
 jobs:
-  build:
+  test-on-ubuntu-latest:
     runs-on: ubuntu-latest
     needs: azure-pre-processing
+    env:
+        PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }}
+    steps:
+      - name: Checkout the Source
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET Core SDK 5.0.x
+        uses: actions/setup-dotnet@v1.8.1
+        with:
+          dotnet-version: '5.0.x'
+    
+        # Skip the Unit and Integration Tests when running under Dependabot. 
+      - name: Test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run:
+          dotnet test --configuration Debug --framework net50 --verbosity normal
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+
+  build:
+    runs-on: windows-latest
+    needs: test-on-ubuntu-latest
     env:
         PIPELINE_TEST_AZURE_SERVICE_BUS_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }}
     steps:
@@ -78,7 +101,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test  --configuration Debug --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet test --no-build --no-restore --verbosity normal --collect:"Code Coverage" --logger:trx
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: End Sonar scan
