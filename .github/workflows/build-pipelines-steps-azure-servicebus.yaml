@@ -54,7 +54,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test --configuration Debug --framework net50 --verbosity normal
+          dotnet test --configuration Debug --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
   build:
