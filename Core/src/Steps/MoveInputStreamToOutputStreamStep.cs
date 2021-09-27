@@ -1,7 +1,7 @@
 ﻿// <copyright file="MoveInputStreamToOutputStreamStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,14 @@
 namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Move the Input Stream to Output Stream in the pipeline.
     /// </summary>
-    public class MoveInputStreamToOutputStreamStep : AbstractPipelineStep<MoveInputStreamToOutputStreamStep>
+    public class MoveInputStreamToOutputStreamStep : AbstractCachingPipelineStep<MoveInputStreamToOutputStreamStep>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveInputStreamToOutputStreamStep" /> class with the specified parameters.
@@ -44,34 +45,40 @@ namespace MyTrout.Pipelines.Steps
             // no op
         }
 
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string> { PipelineContextConstants.INPUT_STREAM };
+
+        /// <summary>
+        /// Executes code before the caching for this step is invoked.
+        /// </summary>
+        /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        {
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
+
+            return base.InvokeBeforeCacheAsync(context);
+        }
+
         /// <summary>
         /// Copy the Input Stream to Output Stream in the pipeline.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            Stream? workingStream = null;
-
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
-
             try
             {
-                workingStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
-
-                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-
-                // Using the null forgiving operator ! for workinStream because context.
-                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, workingStream!);
+                if (this.CachedItems.TryGetValue(PipelineContextConstants.INPUT_STREAM, out object? workingStream))
+                {
+                    context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, workingStream);
+                }
 
                 await this.Next.InvokeAsync(context).ConfigureAwait(false);
             }
             finally
             {
                 context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
-
-                // Matches the value passed into the constructor.
-                context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream!);
             }
         }
     }

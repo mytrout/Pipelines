@@ -1,5 +1,10 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 3.1.0
+- Add the AbstractCachingPipelineStep{TStep}, AbstractCachingPipelineStep{TStep,TOption}, RenameContextItemStep, and RenameContextItemOptions.
+- Simplify the MoveInputStreamToOutputStreamStep to use the AbstractCachingPipelineStep{TStep} as its base class.
+- Simplify the MoveOutputStreamToInputStreamStep to use the AbstractCachingPipelineStep{TStep} as its base class.
+
 ## 3.0.2
 - Correct DisposeAsync() method implementation.
 
