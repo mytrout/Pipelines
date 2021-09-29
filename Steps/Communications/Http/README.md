@@ -101,3 +101,10 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
     "UploadInputStreamAsContent": true
 }
 ```
+
+### Notes about usage
+1. Any Header names configured from ~Options should be added to the PipelineContext by another step.
+For instance, each of the values in the previous example ("Accept", "Authorization", and "User-Agent") would need to be 
+added into the context.Items collection with the respective name to be picked up and used for Headers by the SendHttpRequestStep.
+
+2. An HttpClient must be loaded into the Dependency Injection provider as a Singleton to ensure that this process does not exhaust sockets.

@@ -77,7 +77,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
                         {
                             context.Items.Add(HttpCommunicationConstants.HTTP_STATUS_CODE, response.StatusCode);
                             context.Items.Add(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE, response.IsSuccessStatusCode);
-                            context.Items.Add(HttpCommunicationConstants.HTTP_REASON_PHRASE, response.ReasonPhrase);
+                            context.Items.Add(HttpCommunicationConstants.HTTP_REASON_PHRASE, response.ReasonPhrase ?? string.Empty);
                             context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS, response.Headers);
                             context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS, response.TrailingHeaders);
 

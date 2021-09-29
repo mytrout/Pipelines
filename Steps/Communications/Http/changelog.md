@@ -1,5 +1,5 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
 
-## 0.1.0-beta
+## 1.0.0
 - Initial implementation of SendHttpRequestStep
