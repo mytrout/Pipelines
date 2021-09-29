@@ -35,6 +35,11 @@ jobs:
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: '1.0.0'
         
+        # These values are used for unit and integration testing
+        PIPELINE_TEST_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PIPELINE_TEST_GITHUB_QUERY: '{ "query":  "{ viewer { login }}" }'
+        PIPELINE_TEST_GITHUB_QUERY_RESULT: '{"data":{"viewer":{"login":"github-actions[bot]"}}}'
+        
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v2
