@@ -38,7 +38,7 @@ jobs:
         # These values are used for unit and integration testing
         PIPELINE_TEST_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PIPELINE_TEST_GITHUB_QUERY: '{ "query":  "{ viewer { login }}" }'
-        PIPELINE_TEST_GITHUB_QUERY_RESULT: '{"data":{"viewer":{"login":"simkin2004"}}}'
+        PIPELINE_TEST_GITHUB_QUERY_RESULT: '{"data":{"viewer":{"login":"github-actions[bot]"}}}'
         
     steps:
       - name: Checkout the Source
