@@ -47,7 +47,6 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         /// <summary>
         /// Gets or sets the HTTP endpoint to which the stream will be uploaded.
         /// </summary>
-
         public Uri HttpEndpoint { get; set; }
 #pragma warning restore CS8618
 
