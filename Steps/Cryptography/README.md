@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Cryptography
 
-[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-io-cryptography.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-cryptography.yaml)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-cryptography.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-cryptography.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Cryptography?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Cryptography/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
