@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus
 
-[![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Azure.ServiceBus?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=16&branchName=master)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-azure-servicebus.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-azure-servicebus.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Azure.ServiceBus?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Azure.ServiceBus/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
