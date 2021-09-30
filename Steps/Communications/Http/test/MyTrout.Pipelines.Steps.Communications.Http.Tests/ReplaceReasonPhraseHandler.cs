@@ -43,13 +43,13 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             // no op
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Skip calling the actual HTTP handlers.
 
             var result = new HttpResponseMessage((HttpStatusCode)999);
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

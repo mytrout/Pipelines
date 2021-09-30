@@ -43,10 +43,13 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         /// </summary>
         public IEnumerable<string> HeaderNames { get; set; } = new List<string>();
 
+#pragma warning disable CS8618 // HttpEndpoint should always be set in options.
         /// <summary>
         /// Gets or sets the HTTP endpoint to which the stream will be uploaded.
         /// </summary>
+
         public Uri HttpEndpoint { get; set; }
+#pragma warning restore CS8618
 
         /// <summary>
         /// Gets or sets the method for the Htto Endpoint call.
