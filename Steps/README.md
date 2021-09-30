@@ -12,6 +12,8 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 
 ## Available .NET Steps
 
+[Pipelines.Steps.Communications.Http](../Steps/Communications/Http/README.md) 
+
 [Pipelines.Steps.Cryptography](../Steps/Cryptography/README.md) 
 
 [Pipelines.Steps.IO.Command](../Steps/IO/Command/README.md) 
@@ -25,6 +27,10 @@ For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/RE
 ## Available Command Line Steps
 
 [Pipelines.Steps.IO.Command](../Steps/IO/Command/README.md) 
+
+## Available Communication Steps
+
+[Pipelines.Steps.Communications.Http](../Steps/Communications/Http/README.md) 
 
 ## Available Compression Steps
 
