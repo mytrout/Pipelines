@@ -16,7 +16,7 @@
 
 MyTrout.Pipelines provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
-MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
@@ -33,10 +33,10 @@ For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../H
     Install-Package MyTrout.Pipelines
 
 ## Software dependencies
-    1. Microsoft.Extensions.Configuration.Abstractions 5.0.0
-    2. Microsoft.Extensions.Configuration.Binder 5.0.0
-    3. Microsoft.Extensions.DependencyInjection.Abstractions 5.0.0
-    4. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    1. Microsoft.Extensions.Configuration.Abstractions 6.0.0
+    2. Microsoft.Extensions.Configuration.Binder 6.0.0
+    3. Microsoft.Extensions.DependencyInjection.Abstractions 6.0.0
+    4. Microsoft.Extensions.Logging.Abstractions 6.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -178,7 +178,7 @@ Please refer to the [Pipeline.Steps.Core](../Steps/Core/README.md) for more deta
 
 ## Build the software locally.
     1. Clone the software from the Pipelines repository.
-    2. Build the software in Visual Studio 2019 v16.8 or higher to pull down all of the dependencies from nuget.org.
+    2. Build the software in Visual Studio 2022 v17.0 or higher to pull down all of the dependencies from nuget.org.
     3. In Visual Studio, run all tests.  All of the should pass.
-    4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+    4. If you have Visual Studio Enterprise 2022, analyze the code coverage; it should be 100%.
 
