@@ -46,6 +46,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Needs .NET 5.0 to run SonarScanner tool as of 11 NOV 2021.
+      - name: Setup .NET Core SDK 5.0.x
+        uses: actions/setup-dotnet@v1.8.2
+        with:
+          dotnet-version: '5.0.x'
+
       - name: Setup .NET Core SDK 6.0.x
         uses: actions/setup-dotnet@v1.8.2
         with:
