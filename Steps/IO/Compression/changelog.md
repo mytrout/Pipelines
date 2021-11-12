@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
+## 3.1.0
+- Upgrade to .NET 6.0
+
 ## 3.0.0
 - Upgrade to MyTrout.Pipelines v3.0.1
 - Change Resources.tt from .NET Standard 2.1 to .NET 5.0 in the comments.

@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 2.1.0
+- Upgrade to .NET 6.0
+
 ## 2.0.0
 - Convert from Azure DevOps to Github Actions.
 - Delete azure-pipelines.yml and remove from the solution.

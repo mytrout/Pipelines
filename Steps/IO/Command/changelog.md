@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.IO.Command
 
+## 1.1.0
+- Upgrade to .NET 6.0
+
 ## 1.0.0
 - Upgrade to MyTrout.Pipelines.Steps.IO.Files v3.0.0
 - Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.

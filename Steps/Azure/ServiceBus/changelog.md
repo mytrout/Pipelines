@@ -1,6 +1,9 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
-##3.0.0
+## 3.1.0
+- Upgrade to .NET 6.0
+
+## 3.0.0
 - Convert from Azure DevOps to Github Actions.
 - Delete azure-pipelines.yml and remove from the solution.
 - Upgrade Azure.Azure.ServiceBus library from 7.0.x to 7.2.x.

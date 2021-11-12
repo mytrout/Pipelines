@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 3.1.0
+- Upgrade to .NET 6.0
+
 ## 3.0.0
  - Use refactored MyTrout.Pipelines 3.x.
  - Remove azure-pipelines.yml due to GitHub Actions conversion.

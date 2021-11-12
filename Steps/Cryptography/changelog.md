@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Cryptography Change Log
 
+## 3.1.0
+- Upgrade to .NET 6.0
+
 ## 3.0.0
 - Upgrade to MyTrout.Pipelines v3.0.1
 - Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.

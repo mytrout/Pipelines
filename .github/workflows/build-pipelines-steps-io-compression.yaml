@@ -32,7 +32,7 @@ jobs:
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.IO.Compression.sln'
         
         # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '3.0.0'
+        PROJECT_VERSION: '3.1.0'
         
     steps:
       - name: Checkout the Source
