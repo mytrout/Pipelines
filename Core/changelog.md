@@ -1,5 +1,9 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 3.2.0
+- Upgrade to .NET 6.0
+- Upgrade libraries to 6.0.0 versions.
+
 ## 3.1.0
 - Add the AbstractCachingPipelineStep{TStep}, AbstractCachingPipelineStep{TStep,TOption}, RenameContextItemStep, and RenameContextItemOptions.
 - Simplify the MoveInputStreamToOutputStreamStep to use the AbstractCachingPipelineStep{TStep} as its base class.
