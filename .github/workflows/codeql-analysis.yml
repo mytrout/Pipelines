@@ -41,7 +41,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-      
     # Needs .NET 6.0 to build the code in the run Autobuild step.
     - name: Setup .NET Core SDK 6.0.x
       uses: actions/setup-dotnet@v1.8.2

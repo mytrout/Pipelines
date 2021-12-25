@@ -13,7 +13,7 @@ The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
 
 ## BREAKING CHANGES INTRODUCED WITH 3.0.0
 
-See [Breaking Changes for 3.0.0](./Core/breaking-changes-3-0-0.md)
+See [Breaking Changes for 3.0.0](./docs/pipelines-core-breaking-changes-3-0-0.md)
 
 ## Installing via NuGet
 
