@@ -15,7 +15,8 @@ on:
       - '**/Pipelines/Core/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
-      
+  workflow_dispatch:
+  
 jobs:
   build:
 
