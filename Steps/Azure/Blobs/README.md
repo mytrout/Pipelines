@@ -16,7 +16,7 @@
 ## Introduction
 MyTrout.Pipelines.Steps.Azure.Blobs provides Pipeline steps to read, write, and delete blobs on the Azure Storage.
 
-MyTrout.Pipelines.Steps.Azure.Blobs targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines.Steps.Azure.Blobs targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../../Core/README.md)
 
@@ -31,7 +31,7 @@ For a list of available steps, see [Available Steps](../../README.md)
 ## Software dependencies
 
     1. Azure.Storage.Blobs 12.9.0
-    2. MyTrout.Pipelines 3.0.1 minimum.
+    2. MyTrout.Pipelines 3.2.0 minimum and below 3.3.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
