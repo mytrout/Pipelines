@@ -1,5 +1,22 @@
 # MyTrout.Pipelines.Steps.Data Change Log
 
+## 2.1.0
+ - Upgrade to .NET 6.0 while maintaining 5.0 support.
+ - Update Resources.tt to reflect .NET 6.0 instead of .NET 5.0
+ - Update C# Language Version from 9.0 to 10.0.
+ - Change code to match C# 10.0 language constructs.
+ - Upgrade Tests to .NET 6.0 only.
+ - Upgrade documentation to reflect .NET 6.0.
+ - Upgrade Dapper 2.0.78 to 2.0.123
+ - Upgrade MyTrout.Pipelines from 3.0.1 to 3.2.0
+ - Install Microsoft.CodeAnalysis.Analyzers from 3.3.2 to 3.3.3
+ - Install Microsoft.CodeAnalysis.NetAnalyzers 6.0.0
+ - Upgrade Microsoft.VisualStudio.Threading.Analyzers from 16.8.55 to 17.0.64
+ - Upgrade SonarAnalyzer.CSharp from 8.16.0.25740 to 8.33.0.40503
+ - Upgrade StyleCop.Analyzers from 1.1.118 to 1.2.0-beta.376
+ - Upgrade all Test dependencies to ensure Unit Tests continue to operate.
+  - Add work_dispatch element to allow this library to to built manually in Github.
+
 ## 2.0.0
 - Upgrade to MyTrout.Pipelines v3.0.1
 - Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.

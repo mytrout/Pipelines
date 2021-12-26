@@ -16,6 +16,7 @@ on:
       - '**/Pipelines/Steps/Data/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
+  workflow_dispatch:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +29,7 @@ env:
   SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Data.sln'
         
   # This value should change on each deployable version of this solution.
-  PROJECT_VERSION: '2.0.0'  
+  PROJECT_VERSION: '2.1.0'  
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
@@ -46,10 +47,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core SDK 5.0.x
+      - name: Setup .NET Core SDK 5.0.x and 6.0.x
         uses: actions/setup-dotnet@v1.9.0
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: |
+            5.0.x
+            6.0.x
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
       - name: Setup Java 11 for SonarQube.
