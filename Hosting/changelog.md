@@ -1,5 +1,18 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 3.1.0
+ - Upgrade to .NET 6.0 while maintaining 5.0 support.
+ - Update Resources.tt to reflect .NET 5.0 instead of .NET Standard 2.1
+ - Update C# Language Version from 9.0 to 10.0
+ - Upgrade Tests to .NET 6.0 only.
+ - Upgrade documentation to reflect .NET 6.0.
+ - Upgrade MyTrout.Pipelines from 3.0.0 to 3.2.0
+ - Upgrade Microsoft.Extensions.Hosting from 5.0.0 to 6.0.0
+ - Upgrade Microsoft.Extensions.Hosting.Abstractions from 5.0.0 to 6.0.0
+ - Upgrade Microsoft.CodeAnalysis.Analyzers from 3.3.2 to 3.3.3
+ - Upgrade Microsoft.VisualStudio.Threading.Analyzers from 16.8.55 to 17.0.64
+ - Upgrade SonarAnalyzer.CSharp from 8.15.0.24505 to 8.33.0.40503
+
 ## 3.0.0
  - Use refactored MyTrout.Pipelines 3.x.
  - Remove azure-pipelines.yml due to GitHub Actions conversion.
