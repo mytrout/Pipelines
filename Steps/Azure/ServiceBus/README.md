@@ -17,9 +17,11 @@ MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and 
 
 MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
-[Pipelines.Hosting](../../Hosting/README.md) runs the Pipeline in a Console Application using Generic Host.
+For more details on Pipelines, see [Pipelines.Core](../../../Core/)
 
-[List of Available Steps](../README.md) 
+[Pipelines.Hosting](../../../Hosting/) runs the Pipeline in a Console Application using Generic Host.
+
+[List of Available Steps](../../) 
 
 ## Installing via NuGet
 
