@@ -15,6 +15,7 @@ on:
       - '**/Pipelines/Hosting/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
+  workflow_dispatch:
       
 jobs:
   build:
@@ -40,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core SDK 5.0.x
+      - name: Setup .NET Core SDK 5.0.x and 6.0.x
         uses: actions/setup-dotnet@v1.9.0
         with:
           dotnet-version: |

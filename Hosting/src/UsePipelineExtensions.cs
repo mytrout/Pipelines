@@ -101,7 +101,7 @@ namespace MyTrout.Pipelines.Hosting
             source.AssertParameterIsNotNull(nameof(source));
             pipelineAction.AssertParameterIsNotNull(nameof(pipelineAction));
 
-            PipelineBuilder builder = new PipelineBuilder();
+            PipelineBuilder builder = new ();
 
             pipelineAction.Invoke(builder);
 
