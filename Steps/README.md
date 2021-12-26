@@ -1,6 +1,6 @@
 # Base Implentation of Steps
 
-For more details on Pipelines.Steps, see [Pipelines.Steps.Core](../Steps/Core/README.md)
+For more details on implementing Pipeline Steps, see [MyTrout.Pipelines](../Core/)
 
 # Steps By Provider
 
