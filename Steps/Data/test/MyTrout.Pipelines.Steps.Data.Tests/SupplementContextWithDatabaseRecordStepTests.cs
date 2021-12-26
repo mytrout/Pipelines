@@ -48,7 +48,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
-            SupplementContextWithDatabaseRecordOptions options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             // act
@@ -91,7 +91,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            SupplementContextWithDatabaseRecordStep sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
 
             int expectedErrorCount = 1;
             string expectedMessage = Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture, providerFactory.GetType().Name);
@@ -128,11 +128,11 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var context = new PipelineContext();
             context.Items.Add("CartoonId", expectedId);
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
             var next = mockNext.Object;
 
-            SupplementContextWithDatabaseRecordStep sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -177,7 +177,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var context = new PipelineContext();
             context.Items.Add("CartoonId", expectedId);
 
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            var mockNext = new Mock<IPipelineRequest>();
             // Verify that these values are passed to the next step in the pipeline.
             mockNext.Setup(x => x.InvokeAsync(context)).Callback(() =>
                 {
@@ -200,7 +200,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 await connection.ExecuteAsync("dbo.CartoonInsert", new { CartoonId = expectedId, Name = expectedName, Description = expectedDescription }, commandType: System.Data.CommandType.StoredProcedure).ConfigureAwait(false);
             }
 
-            SupplementContextWithDatabaseRecordStep sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -225,7 +225,9 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             finally
             {
                 // cleanup
+#pragma warning disable IDE0063 // Use simple 'using' statement
                 using (var connection = providerFactory.CreateConnection())
+#pragma warning restore IDE0063 // Use simple 'using' statement
                 {
                     connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
                     await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = expectedId }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
@@ -239,7 +241,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = null;
             DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
-            SupplementContextWithDatabaseRecordOptions options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
@@ -258,7 +260,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
-            SupplementContextWithDatabaseRecordOptions options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
@@ -297,7 +299,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             DbProviderFactory providerFactory = null;
-            SupplementContextWithDatabaseRecordOptions options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(providerFactory);
@@ -316,7 +318,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
-            SupplementContextWithDatabaseRecordOptions options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             IPipelineContext context = null;
