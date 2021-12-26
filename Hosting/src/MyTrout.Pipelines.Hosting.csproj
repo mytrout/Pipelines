@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net6.0;net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2019-2021 Chris Trout. All Rights Reserved.</Copyright>
@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/tree/master/Hosting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -23,7 +23,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;SA1413;SA1636;S4792</NoWarn>
+    <NoWarn>1701;1702;SA1413;SA1636;S4792;CA2254</NoWarn>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
@@ -35,18 +35,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55">
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyTrout.Pipelines" Version="[3.0.0,4)" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.15.0.24505">
+    <PackageReference Include="MyTrout.Pipelines" Version="[3.2.0,4)" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.33.0.40503">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
