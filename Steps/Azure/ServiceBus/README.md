@@ -15,7 +15,7 @@
 ## Introduction
 MyTrout.Pipelines.Steps.Azure.ServiceBus provides Pipeline steps to receive and send messages using Azure ServiceBus.
 
-MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 [Pipelines.Hosting](../../Hosting/README.md) runs the Pipeline in a Console Application using Generic Host.
 
@@ -27,8 +27,8 @@ MyTrout.Pipelines.Steps.Azure.ServiceBus targets [.NET 5.0](https://dotnet.micro
 
 ## Software dependencies
 
-    1. Azure.Messaging.ServiceBus 7.0.0
-    2. MyTrout.Pipelines.Steps 2.0.6 minimum, 2.*.* is acceptable.
+    1. Azure.Messaging.ServiceBus 7.5.1 minimum, less than 7.6.x
+    2. MyTrout.Pipelines.Steps 2.3.0 minimum, less than 2.4.x
     
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

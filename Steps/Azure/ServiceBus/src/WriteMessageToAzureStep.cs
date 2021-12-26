@@ -40,8 +40,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// Initializes a new instance of the <see cref="WriteMessageToAzureStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
+        /// <param name="next">The next step in the pipeline.</param>
         public WriteMessageToAzureStep(ILogger<WriteMessageToAzureStep> logger, WriteMessageToAzureOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
@@ -63,7 +63,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// Dispose of any unmanaged resources.
         /// </summary>
         /// <returns>A completed <see cref="ValueTask"/>.</returns>
-        public async override ValueTask DisposeAsync()
+        protected async override ValueTask DisposeCoreAsync()
         {
             if (this.ServiceBusSender != null)
             {
@@ -75,7 +75,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 await this.ServiceBusClient.DisposeAsync().ConfigureAwait(false);
             }
 
-            await base.DisposeAsync().ConfigureAwait(false);
+            await base.DisposeCoreAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
 #pragma warning restore CS8604
 
-            ServiceBusMessage result = new ServiceBusMessage(messageBody);
+            var result = new ServiceBusMessage(messageBody);
 
             if (context.Items.ContainsKey(MessagingConstants.CORRELATION_ID))
             {

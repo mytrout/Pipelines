@@ -1,7 +1,7 @@
 ﻿// <copyright file="GlobalSuppressions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,5 @@
 // </copyright>
 
 using System.Diagnostics.CodeAnalysis;
-
-[assembly: SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "AssertParameterIsNotNull handles the null check.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.Azure.ServiceBus.WriteMessageToAzureStep.InvokeCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]
 
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.Azure.ServiceBus.MessagingConstants.CORRELATION_ID")]
