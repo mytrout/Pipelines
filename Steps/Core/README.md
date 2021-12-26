@@ -1,5 +1,5 @@
 # MyTrout.Pipelines.Steps 
-*All classes that were contained in MyTrout.Pipelines.Steps v2.1.1 and lower have been combined into MyTrout.Pipelines 3.0.0 and higher*
+# All classes that were contained in MyTrout.Pipelines.Steps v2.1.1 and lower have been combined into MyTrout.Pipelines 3.0.0 and higher
 
 [![Build Status](https://dev.azure.com/mytrout/Pipelines/_apis/build/status/mytrout.Pipelines.Steps.Core?branchName=master)](https://dev.azure.com/mytrout/Pipelines/_build/latest?definitionId=14&branchName=master)
 [![nuget](https://img.shields.io/nuget/v/MyTrout.Pipelines.Steps.svg)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps/)
