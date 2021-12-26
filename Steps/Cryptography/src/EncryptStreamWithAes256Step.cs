@@ -58,7 +58,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-            using (var cryptoProvider = new AesCryptoServiceProvider())
+            // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
+            using (var cryptoProvider = Aes.Create())
             {
                 using (var unencryptedStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
                 {
@@ -69,10 +70,10 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                     var encryptedStream = new MemoryStream();
 
-                    using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
+                    using (var cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
                     {
 #pragma warning disable CS8604 // Possible null reference argument.
-                        using (StreamReader unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
+                        using (var unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
 #pragma warning restore CS8604 // Possible null reference argument.
                         {
                             byte[] workingArray = await StreamExtensions.ConvertStreamToByteArrayAsync(unencryptedStream).ConfigureAwait(false);

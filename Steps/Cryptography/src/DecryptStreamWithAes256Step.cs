@@ -62,7 +62,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
             context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
 
-            var cryptoProvider = new AesCryptoServiceProvider();
+            // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
+            var cryptoProvider = Aes.Create();
 
             try
             {
@@ -71,9 +72,9 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                 ICryptoTransform decryptor = cryptoProvider.CreateDecryptor(key, initializationVector);
 
-                using (CryptoStream cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
+                using (var cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
                 {
-                    using (StreamReader reader = new StreamReader(cryptoStream, this.Options.DecryptionEncoding, false, 1024, true))
+                    using (var reader = new StreamReader(cryptoStream, this.Options.DecryptionEncoding, false, 1024, true))
                     {
                         byte[] output = this.Options.DecryptionEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
