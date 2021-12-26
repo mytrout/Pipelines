@@ -1,6 +1,6 @@
 # Base Implentation of Steps
 
-For more details on implementing Pipeline Steps, see [MyTrout.Pipelines](../Core/)
+TODO -> Provide details and thoughts about writing steps.
 
 # Steps By Provider
 
