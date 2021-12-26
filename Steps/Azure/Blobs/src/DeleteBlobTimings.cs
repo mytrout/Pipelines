@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteBlobTiming.cs" company="Chris Trout">
+﻿// <copyright file="DeleteBlobTimings.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2020-2021 Chris Trout
