@@ -16,7 +16,7 @@
 
 MyTrout.Pipelines.Steps.Cryptography provides Pipeline steps to encrypt, hash, and decrypt streams.
 
-MyTrout.Pipelines.Steps.Cryptography targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines.Steps.Cryptography targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
@@ -30,7 +30,7 @@ For a list of available steps, see [Available Steps](../)
 
 ## Software dependencies
 
-    1. MyTrout.Pipelines 3.0.0
+    1. MyTrout.Pipelines 3.2.0 minimum
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

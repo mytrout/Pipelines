@@ -138,7 +138,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             var encryptedStream = new MemoryStream();
 
-            using (var cryptoProvider = new AesCryptoServiceProvider())
+            // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
+            using (var cryptoProvider = Aes.Create())
             {
                 byte[] key = Encoding.UTF8.GetBytes(TestConstants.Key);
                 byte[] initializationVector = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);

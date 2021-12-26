@@ -77,11 +77,12 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
 #pragma warning restore CS8600, CS8602
 
-            using (StreamReader reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
+            using (var reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
             {
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
-                using (SHA256CryptoServiceProvider hashProvider = new SHA256CryptoServiceProvider())
+                // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
+                using (var hashProvider = SHA256.Create())
                 {
                     byte[] workingHash = hashProvider.ComputeHash(workingResult);
                     string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
