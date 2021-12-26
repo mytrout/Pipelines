@@ -90,7 +90,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
                 IncludeFileNameTransformInArguments = false
             };
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
@@ -149,7 +149,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
                 IncludeFileNameTransformInArguments = true
             };
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.TARGET_FILE, options.ExpectedResult);
 
             var mockNext = new Mock<IPipelineRequest>();
@@ -192,7 +192,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
                 IncludeFileNameTransformInArguments = false
             };
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(FileConstants.SOURCE_FILE, $"{ExecuteCommandStepTests.RootPath}ExecuteCommandStepTests.cs");
 
             var mockNext = new Mock<IPipelineRequest>();

@@ -16,6 +16,7 @@ on:
       - '**/Pipelines/Steps/IO/Command/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
+  workflow_dispatch:
       
 jobs:
   build:
@@ -33,7 +34,7 @@ jobs:
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.IO.Command.sln'
         
         # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '1.0.0'
+        PROJECT_VERSION: '1.1.0'
         
     steps:
       - name: Checkout the Source
@@ -41,10 +42,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core SDK 5.0.x
+      - name: Setup .NET Core SDK 5.0.x and 6.0.x
         uses: actions/setup-dotnet@v1.9.0
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: |
+            5.0.x
+            6.0.x
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
       - name: Setup Java 11 for SonarQube.
