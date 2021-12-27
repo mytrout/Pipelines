@@ -38,21 +38,9 @@ Please refer to the [Pipeline.Hosting](./Hosting/README.md) for more details on 
 
 ## Build the software locally.
     1. Clone the software from the Pipelines repository.
-    2. Build the software in Visual Studio 2019 v16.8 or higher to pull down all of the dependencies from nuget.org.
+    2. Build the software in Visual Studio 2022 v17.0 or higher to pull down all of the dependencies from nuget.org.
     3. In Visual Studio, run all tests.  All of the should pass.
-    4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+    4. If you have Visual Studio Enterprise 2022, analyze the code coverage; it should be 100%.
 
-## Build the software in Azure DevOps.
-    1. In Organization Settings, select Extensions option.
-    2. Install the SonarCloud Extension.
-    3. Login to the SonarQube instance and generate a SonarQube token with the user account to use for running analysis.
-    4. In Project Settings, select Service Connections option.
-    5. Add a Service Connection for SonarQube and enter the token.
-    6. Make sure you check the 'Grant access permission to all pipelines' checkbox or configure appropriate security to this connection.
-    7. In Artifacts, add a new Feed named mytrout.
-    8. On the mytrout Artifacts feed, select the gear icon to configure the feed.
-    9. Select the Permissions tab, and click the ...
-    10. Click on Allow builds and Releases (which will add Project Collection Build Services as a Contributor).
-    11. Click on Allow project-scoped builds (which will add Pipeline Build Service as a Contributor)
-    12. Create a New Pipeline and reference the azure-pipelines.yml file in the /Core directory.
-    13. Run the newly created pipeline.
+## Build the software in Github
+    TODO ->
