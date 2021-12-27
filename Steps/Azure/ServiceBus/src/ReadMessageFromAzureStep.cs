@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadMessageFromAzureStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -86,7 +86,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// Dispose of any unmanaged resources.
         /// </summary>
         /// <returns>A completed <see cref="ValueTask"/>.</returns>
-        public async override ValueTask DisposeAsync()
+        protected async override ValueTask DisposeCoreAsync()
         {
             if (this.ServiceBusClient != null)
             {
@@ -97,8 +97,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             {
                 await this.ServiceBusReceiver.DisposeAsync().ConfigureAwait(false);
             }
-
-            await base.DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -209,12 +207,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             try
             {
                 // Add the values in ApplicationProperties to the context.
-                foreach (var key in this.Options.ApplicationProperties)
+                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
                 {
-                    if (message.ApplicationProperties.ContainsKey(key))
-                    {
-                        context.Items.Add(key, message.ApplicationProperties[key]);
-                    }
+                    context.Items.Add(key, message.ApplicationProperties[key]);
                 }
 
                 // Load inputStream and pass it into the InvokeAsync().
@@ -236,12 +231,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 }
 
                 // Remove the values in ApplicationProperties from the context.
-                foreach (var key in this.Options.ApplicationProperties)
+                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
                 {
-                    if (message.ApplicationProperties.ContainsKey(key))
-                    {
-                        context.Items.Remove(key);
-                    }
+                    context.Items.Remove(key);
                 }
 
                 if (context.Errors.Count > errorCount)
