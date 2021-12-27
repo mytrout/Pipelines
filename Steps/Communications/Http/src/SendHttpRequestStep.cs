@@ -130,7 +130,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
                 context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
                 // Used the null-forgiving operator '!' because context.AssertValueIsValid guarantees it is a non-null value.
-                result.Content = new StreamContent((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream) !);
+                result.Content = new StreamContent((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!);
             }
 
             return result;

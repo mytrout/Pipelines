@@ -309,7 +309,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             var context = new PipelineContext();
             context.Items.Add("Accept", "application/vnd.github.v4.idl");
             context.Items.Add("Authorization", $"Bearer {SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_API_TOKEN}");
-            context.Items.Add("User-Agent", "MyTrout.Pipelines.Steps.Communications.Http.v1.0");
+            context.Items.Add("User-Agent", "MyTrout.Pipelines.Steps.Communications.Http.v1.1");
             context.Items.Add("Content-Type", "application/graphql");
 
 
