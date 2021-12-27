@@ -3,7 +3,7 @@
 ## Introduction
 Provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
-MyTrout.Pipelines targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
@@ -20,10 +20,10 @@ See [Breaking Changes for 3.0.0](./docs/pipelines-core-breaking-changes-3-0-0.md
     Install-Package MyTrout.Pipelines
 
 ## Software dependencies
-    1. Microsoft.Extensions.Configuration.Abstractions 5.0.0
-    2. Microsoft.Extensions.Configuration.Binder 5.0.0
-    3. Microsoft.Extensions.DependencyInjection.Abstractions 5.0.0
-    4. Microsoft.Extensions.Logging.Abstractions 5.0.0
+    1. Microsoft.Extensions.Configuration.Abstractions 6.0.0
+    2. Microsoft.Extensions.Configuration.Binder 6.0.0
+    3. Microsoft.Extensions.DependencyInjection.Abstractions 6.0.0
+    4. Microsoft.Extensions.Logging.Abstractions 6.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
@@ -31,7 +31,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 Please refer to the [Pipelines.Core](./Core/README.md) for details on the basics of how to use Pipelines.
 
 ## How do I write Steps?
-Please refer to the [Pipeline.Steps.Core](./Steps/Core/README.md) for more details on how to write steps.
+Please refer to the [Steps](./Steps/README.md) for more details on how to write steps.
 
 ## How do I use Pipelines with Console Applications / Generic Host?
 Please refer to the [Pipeline.Hosting](./Hosting/README.md) for more details on how to use Pipelines with Console applications.
