@@ -1,5 +1,9 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
+## 3.1.1
+- Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages.
+- 
+
 ## 3.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
  - Update Resources.tt to reflect .NET 6.0 instead of .NET 5.0
