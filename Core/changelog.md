@@ -1,5 +1,16 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 3.2.0 - SonarCloud UPDATE ONLY
+- Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages
+- Correct test project steps to conform with CA1816 warning
+- Simplify loop to use LINQ expression in RenameContextItemstep to conform with S3267
+= Install Microsoft.CodeAnalysis.NetAnalyzers 3.3.0
+- Install Roslynator.Analyzers 3.3.0
+- Install SonarAnalyzer.CSharp 8.33.0.40503
+- Commented out ability to publish to nuget or github to ensure this update does not cause a build failure.
+- Add "if-no-files-found: error" to the nuget publishing step. (see Issue #94)
+- NOTE TO DEVELOPERS: Developers must reverse the removal of nuget and github publishing when the next version is ready to be released
+
 ## 3.2.0
 - Upgrade to .NET 6.0
 - Upgrade libraries to 6.0.0 versions.

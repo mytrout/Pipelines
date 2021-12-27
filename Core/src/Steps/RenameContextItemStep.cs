@@ -26,6 +26,7 @@ namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -83,14 +84,11 @@ namespace MyTrout.Pipelines.Steps
             }
             finally
             {
-                foreach (var renamedKey in this.Options.RenameValues.Values)
+                foreach (var renamedKey in this.Options.RenameValues.Values.Where(x => context.Items.ContainsKey(x)))
                 {
-                    if (context.Items.ContainsKey(renamedKey))
-                    {
-                        // Restoration of the original contextKey is unnecessary because the AbstractCachingPipelineStep handles it.
-                        context.Items.Remove(renamedKey);
-                        this.Logger.LogDebug("Removed '{renamedKey}' from Pipeline.Items.", renamedKey);
-                    }
+                    // Restoration of the original contextKey is unnecessary because the AbstractCachingPipelineStep handles it.
+                    context.Items.Remove(renamedKey);
+                    this.Logger.LogDebug("Removed '{renamedKey}' from Pipeline.Items.", renamedKey);
                 }
             }
         }
