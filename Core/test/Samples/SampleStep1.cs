@@ -43,11 +43,16 @@ namespace MyTrout.Pipelines.Samples.Tests
             GC.SuppressFinalize(this);
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
+            // Perform async cleanup.
+            await this.DisposeCoreAsync();
+
+            // Dispose of synchronous unmanaged resources.
             this.Dispose(false);
 
-            return new ValueTask(Task.CompletedTask);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
         }
 
         public Task InvokeAsync(IPipelineContext context)
@@ -72,10 +77,19 @@ namespace MyTrout.Pipelines.Samples.Tests
         /// <summary>
         /// Disposes of any disposable resources for this instance.
         /// </summary>
-        /// <param name="disposing">Determines if this method needs to dispose unmanaged resources.</param>
+        /// <param name="disposing">A flag indicating whether this instance is already being disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
             // no op
+        }
+
+        /// <summary>
+        /// Disposes of any asynchronous disposable resources for this instance.
+        /// </summary>
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        protected virtual ValueTask DisposeCoreAsync()
+        {
+            return default;
         }
     }
 }

@@ -76,11 +76,8 @@ namespace MyTrout.Pipelines.Steps
             // Dispose of synchronous unmanaged resources.
             this.Dispose(false);
 
-#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
-
             // Suppress finalization.
             GC.SuppressFinalize(this);
-#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         }
 
         /// <summary>
