@@ -1,7 +1,7 @@
 ﻿// <copyright file="TestingStep1.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,22 +36,28 @@ namespace MyTrout.Pipelines.Hosting.Tests
 
         public TestingStep1(IPipelineRequest next) => this.next = next;
 
+        /// <inheritdoc />
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        /// <remarks>Developers who need to dispose of unmanaged resources should override this method.</remarks>
+        public async ValueTask DisposeAsync()
         {
-            // Cleanup
-        }
+            // Perform async cleanup.
+            await this.DisposeCoreAsync();
 
-        public ValueTask DisposeAsync()
-        {
-            this.Dispose();
+            // Dispose of synchronous unmanaged resources.
+            this.Dispose(false);
 
-            return new ValueTask(Task.CompletedTask);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
         }
 
         public Task InvokeAsync(IPipelineContext context)
@@ -66,6 +72,26 @@ namespace MyTrout.Pipelines.Hosting.Tests
             }
 
             return this.next.InvokeAsync(context);
+        }
+
+
+
+        /// <summary>
+        /// Disposes of any disposable resources for this instance.
+        /// </summary>
+        /// <param name="disposing">A flag indicating whether this instance is already being disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // no op
+        }
+
+        /// <summary>
+        /// Disposes of any asynchronous disposable resources for this instance.
+        /// </summary>
+        /// <returns>A completed <see cref="ValueTask" />.</returns>
+        protected virtual ValueTask DisposeCoreAsync()
+        {
+            return default;
         }
     }
 }
