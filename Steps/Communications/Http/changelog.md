@@ -1,10 +1,10 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
 ## 1.1.0 - SonarCloud UPDATE ONLY
-Suppress SA1009 to prevent false positives in SonarCloud.io with after paranthesis spacing.
-Commented out ability to publish to nuget or github to ensure this update does not cause a build failure.
-Add "if-no-files-found: error" to the nuget publishing step. (see Issue #94)
-NOTE TO DEVELOPERS: Developers must reverse the removal of nuget and github publishing when the next version is ready to be released
+ - Suppress SA1009 to prevent false positives in SonarCloud.io with after paranthesis spacing.
+ - Commented out ability to publish to nuget or github to ensure this update does not cause a build failure.
+ - Add "if-no-files-found: error" to the nuget publishing step. (see Issue #94)
+ - NOTE TO DEVELOPERS: Developers must reverse the removal of nuget and github publishing when the next version is ready to be released
 
 ## 1.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
