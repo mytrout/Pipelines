@@ -16,9 +16,9 @@
 ## Introduction
 MyTrout.Pipelines.Steps.Data provides Pipeline steps to persist data to a database from the IPipelineContext and read data from a database and put it in the IPipelineContext.
 
-MyTrout.Pipelines.Steps.Data targets [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+MyTrout.Pipelines.Steps.Data targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 
-For more details on Pipelines, see [Pipelines.Core](../Core/README.md)
+For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
 For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/README.md)
 
