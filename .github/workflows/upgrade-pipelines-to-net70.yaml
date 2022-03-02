@@ -55,10 +55,8 @@ jobs:
         include: "**readme.md"
         regex: false
 
-    - name: Setup the Git configuration and commit the upgrade/
-      run: |
-        # Setup the username and no email.
-        git config user.name ".NET 7.0-preview Upgrade Bot"
-        git config user.email "<>"
-        git commit -m "Upgrade Pipelines to .NET 7.0-preview"
-        git push origin ${{ env.FEATURE_BRANCH_NAME }}
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ feature/net-70-upgrade-test }}
