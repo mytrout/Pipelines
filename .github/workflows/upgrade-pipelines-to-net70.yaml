@@ -1,0 +1,64 @@
+name: Upgrade Pipelines to .NET 7.0-preview
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	      FEATURE_BRANCH_NAME: 'feature/net-70-upgrade-test'
+
+    steps:
+    - name: Create .NET 7.0 upgrade feature branch
+      uses: peterjgrainger/action-create-branch@v2.0.1
+      with:
+        branch: ${{ env.FEATURE_BRANCH_NAME }}
+
+    - name: Checkout the Feature Branch to be altered.
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ env.FEATURE_BRANCH_NAME }}
+        fetch-depth: 0
+
+    - name: Replace title of Setup .NET Core Load step.
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "(.*)- name: Setup .NET Core SDK 5.0.x and 6.0.x"
+        replace: "$1- name: Set up .NET SDK 5.0.x and 6.0.x and 7.0.x-preview"
+        include: "**\.github\workflows\*.yaml"
+
+    - name: Replace which versions of .NET should be loaded.
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "(.*)with:\r          dotnet-version: |\r            5.0.x\r            6.0.x"
+        replace: "$1with:\r          dotnet-version: |\r            5.0.x\r            6.0.x\r            7.0.x"
+        include: "**\.github\workflows\*.yaml"
+        regex: false
+
+    - name: Ensure that Upload Package Steps are uncommented.
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "#(.*)(- name:|uses:|with:|name:|path:|if-no-files-found:|if:|run:)"
+        replace: "$1$2"
+        include: "**\.github\workflows\*.yaml"
+        regex: true
+
+    - name: Add latest .NET to the supported versions in all readme.md files.
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "[.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)"
+        replace: ".NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) and [.NET 7.0-preview](https://dotnet.microsoft.com/download/dotnet/7.0)"
+        include: "**readme.md"
+        regex: false
+
+    - name: Setup the Git configuration and commit the upgrade/
+      run: |
+        # Setup the username and no email.
+        git config user.name ".NET 7.0-preview Upgrade Bot"
+        git config user.email "<>"
+        git commit -m "Upgrade Pipelines to .NET 7.0-preview"
+        git push origin ${{ env.FEATURE_BRANCH_NAME }}
