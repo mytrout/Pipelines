@@ -126,7 +126,7 @@ jobs:
         with:
           scope: 'subscription'
           region: 'eastus'
-          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
+          template: ${{ env.WORKING_DIRECTORY }}/azure-eastus-arm-resourcegroup.json
           parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
       - name: Deploy Azure SQL Server
@@ -138,7 +138,7 @@ jobs:
         with:
           scope: 'resourcegroup'
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
-          template: ${{ env.WORKING_DIRECTORY }}/azure-arm-sqlserver.json
+          template: ${{ env.WORKING_DIRECTORY }}/azure-eastus-arm-sqlserver.json
           deploymentMode: 'Incremental'
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
         
