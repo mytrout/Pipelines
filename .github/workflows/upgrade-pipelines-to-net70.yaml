@@ -59,4 +59,4 @@ jobs:
       uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ feature/net-70-upgrade-test }}
+        branch: ${{ env.FEATURE_BRANCH_NAME  }}
