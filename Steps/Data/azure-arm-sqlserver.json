@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "location": {
-      "defaultValue": "Central US",
+      "defaultValue": "South Central US",
       "type": "string"
     },
     "administratorLogin": {
