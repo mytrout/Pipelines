@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-	      FEATURE_BRANCH_NAME: 'feature/net-70-upgrade-test'
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      FEATURE_BRANCH_NAME: 'feature/net-70-upgrade-test'
 
     steps:
     - name: Create .NET 7.0 upgrade feature branch
@@ -29,14 +29,14 @@ jobs:
       with:
         find: "(.*)- name: Setup .NET Core SDK 5.0.x and 6.0.x"
         replace: "$1- name: Set up .NET SDK 5.0.x and 6.0.x and 7.0.x-preview"
-        include: "**\.github\workflows\*.yaml"
+        include: "**\\.github\\workflows\\*.yaml"
 
     - name: Replace which versions of .NET should be loaded.
       uses: jacobtomlinson/gha-find-replace@v2
       with:
         find: "(.*)with:\r          dotnet-version: |\r            5.0.x\r            6.0.x"
         replace: "$1with:\r          dotnet-version: |\r            5.0.x\r            6.0.x\r            7.0.x"
-        include: "**\.github\workflows\*.yaml"
+        include: "**\\.github\\workflows\\*.yaml"
         regex: false
 
     - name: Ensure that Upload Package Steps are uncommented.
@@ -44,7 +44,7 @@ jobs:
       with:
         find: "#(.*)(- name:|uses:|with:|name:|path:|if-no-files-found:|if:|run:)"
         replace: "$1$2"
-        include: "**\.github\workflows\*.yaml"
+        include: "**\\.github\\workflows\\*.yaml"
         regex: true
 
     - name: Add latest .NET to the supported versions in all readme.md files.
