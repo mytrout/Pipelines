@@ -42,7 +42,7 @@ jobs:
         PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING: ${{ needs.azure-pre-processing.outputs.connection-string }}
     steps:
       - name: Checkout the Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -111,7 +111,7 @@ jobs:
 
     steps:
       - name: Checkout the Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Login to Azure'
         uses: azure/login@v1

@@ -19,7 +19,7 @@ jobs:
         branch: ${{ env.FEATURE_BRANCH_NAME }}
 
     - name: Checkout the Feature Branch to be altered.
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ env.FEATURE_BRANCH_NAME }}
         fetch-depth: 0
