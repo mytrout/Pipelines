@@ -125,7 +125,7 @@ jobs:
           AZURE_RG_NAME: RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
         with:
           scope: 'subscription'
-          region: 'centralus'
+          region: 'eastus'
           template: ${{ env.WORKING_DIRECTORY }}/azure-arm-resourcegroup.json
           parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
