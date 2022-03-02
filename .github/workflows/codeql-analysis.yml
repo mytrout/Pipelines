@@ -14,9 +14,13 @@ name: "CodeQL"
 on:
   push:
     branches: [ master ]
+    paths:
+      - '!.github/workflows/upgrade-pipelines-*.yaml'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
+    paths:
+      - '!.github/workflows/upgrade-pipelines-*.yaml'
   schedule:
     - cron: '45 23 * * *'
 
@@ -39,7 +43,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Needs .NET 6.0 to build the code in the run Autobuild step.
     - name: Setup .NET Core SDK 6.0.x
