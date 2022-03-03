@@ -3,11 +3,11 @@
   "contentVersion": "1.0.0.1",
   "parameters": {
     "location": {
-      "defaultValue": "Central US",
+      "defaultValue": "East US",
       "type": "string"
     },
     "resourceGroupName": {
-      "defaultValue": "mytrout-developer-rg",
+      "defaultValue": "mytrout-developer-east-rg",
       "type": "string"
     }
   },
