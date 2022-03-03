@@ -90,36 +90,34 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
-      - name: Upload nupkg
-        uses: actions/upload-artifact@v2
-        with:
-          name: nupkg
-          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+      #- name: Upload nupkg
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: nupkg
+      #    path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
+      #  if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
-      - name: Publish the package to nuget.org.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+      #- name: Publish the package to nuget.org.
+      #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
+      #  if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
-      - name: Publish the package to GitHub.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+      #- name: Publish the package to GitHub.
+      #  run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
+      #  if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
    
   azure-pre-processing:
-    runs-on: windows-latest
+    runs-on: windows-2019
     outputs:
       connection-string: ${{ steps.sqlserver.outputs.ConnectionString }}
 
     steps:
       - name: Checkout the Source
         uses: actions/checkout@v3
+      
+      - name: Build the DACPAC separately
+        working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
+        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
         
-      - name: Setup .NET Core SDK 6.0.x
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: |
-            6.0.x
-            
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
@@ -149,11 +147,7 @@ jobs:
           deploymentMode: 'Incremental'
           deploymentName: DEPLOY_SQL_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
-        
-      - name: Build the DACPAC separately
-        working-directory: ${{ env.WORKING_DIRECTORY }}//test/MyTrout.Pipelines.Steps.Data.Database
-        run: dotnet build MyTrout.Pipelines.Steps.Data.Database.Ubuntu.csproj --configuration Release
-      
+             
       - name: Apply DACPAC to Azure SQL Server
         uses: azure/sql-action@v1
         env:
