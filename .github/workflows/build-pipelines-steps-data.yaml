@@ -127,6 +127,7 @@ jobs:
           scope: 'subscription'
           region: 'eastus'
           template: ${{ env.WORKING_DIRECTORY }}/azure-eastus-arm-resourcegroup.json
+          deploymentName: DEPLOY_RG_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
           parameters: resourceGroupName=${{ env.AZURE_RG_NAME }}
     
       - name: Deploy Azure SQL Server
@@ -140,6 +141,7 @@ jobs:
           resourceGroupName: ${{ env.AZURE_RG_NAME }}
           template: ${{ env.WORKING_DIRECTORY }}/azure-eastus-arm-sqlserver.json
           deploymentMode: 'Incremental'
+          deploymentName: DEPLOY_SQL_${{ env.SONAR_PROJECT_NAME }}_${{ github.run_number }}
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
         
       - name: Build the DACPAC separately
