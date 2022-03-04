@@ -80,8 +80,12 @@ namespace MyTrout.Pipelines.Steps.Data
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
-            using (var connection = this.ProviderFactory.CreateConnection())
+            // Removed using block to determine if OpenCover can correctly determine code coverage on this block.
+            DbConnection? connection = null;
+            try
             {
+                connection = this.ProviderFactory.CreateConnection();
+
                 connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
 
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
@@ -93,6 +97,10 @@ namespace MyTrout.Pipelines.Steps.Data
 #pragma warning restore CS8602
 
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
+            }
+            finally
+            {
+                connection?.Dispose();
             }
 
             await Task.CompletedTask.ConfigureAwait(false);
