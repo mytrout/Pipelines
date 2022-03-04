@@ -27,4 +27,8 @@ My requirements are to
 AltCover uses the MIT License which is the same license under which Pipelines is released.
 
 ## Challenge #2 - Alter the Pipelines.Steps.Data solution and build to make it work.
-TO BE DETERMINED!
+1. Added the AltCover nuget package to the Unit Test solution
+2. Add the /p:AltCover:"true" /p:CopyLocalLockFileAssemblies="true" to the dotnet test step.
+3. Remove all of the OpenCover/XPLAT Data Collector from the dotnet test step.
+4. Change the /d:sonar.cs.opencover.reportsPaths to **/coverage.xml on the Begin SonarQube Scan step.
+5. Remove the vstest collection of the trx files from the Begin SonarQube Scan step.
