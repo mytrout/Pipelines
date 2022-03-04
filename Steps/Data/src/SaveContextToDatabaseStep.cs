@@ -69,28 +69,33 @@ namespace MyTrout.Pipelines.Steps.Data
             var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
             var sql = this.Options.SqlStatements.FirstOrDefault(x => x.Name == sqlName);
 
-            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+            if (sql is null)
+            {
+                throw new InvalidOperationException(Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+            }
 
-#pragma warning disable CS8602 // AssertValueIsNotNull guarantees a non-null value here.
+            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
 
             DynamicParameters parameters = new DynamicParameters();
 
-            foreach (var parameterName in sql.ParameterNames)
+            // Use the null-forgiving operator because AssertValueIsNotNull guarantees that the value of sql variable is not null.
+            foreach (var parameterName in sql!.ParameterNames)
             {
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
             using (var connection = this.ProviderFactory.CreateConnection())
             {
-                connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                if (connection is null)
+                {
+                    throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                }
 
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
                 int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
-
-#pragma warning restore CS8602
 
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
             }
