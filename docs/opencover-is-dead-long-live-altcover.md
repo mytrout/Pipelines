@@ -23,5 +23,8 @@ My requirements are to
 6. determine if code coverage results are more accurate using AltCover.
 7. open a bug if the code coverage results have the same issue as OpenCover did.
 
-## Challenge #1 - TODO: Alter the Pipelines.Steps.Data solution and build to make it work.
+## Accomplishment #1 - Determine the License of the AltCover
+AltCover uses the MIT License which is the same license under which Pipelines is released.
+
+## Challenge #2 - Alter the Pipelines.Steps.Data solution and build to make it work.
 TO BE DETERMINED!
