@@ -154,7 +154,7 @@ jobs:
           AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           server-name: ${{ env.AZURE_SV_NAME }}.database.windows.net
-          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/net5.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}Password=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD}};
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
