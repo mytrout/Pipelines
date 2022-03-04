@@ -2,7 +2,9 @@
 
 As I was research a bug with Pipelines.Steps.Data where this line cause 2 of 4 code conditions to be covered:
 
+```csharp
 DbConnection? connection = null;
+```
 
 I noticed that the OpenCover Github project had been archived and was no longer accepting issues.
 
