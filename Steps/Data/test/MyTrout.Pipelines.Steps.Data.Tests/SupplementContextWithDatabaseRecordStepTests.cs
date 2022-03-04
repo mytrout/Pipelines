@@ -63,7 +63,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_Returns_Null()
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Returns_Null()
         {
             // arrange
             var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
@@ -101,6 +101,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             // assert
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
