@@ -55,8 +55,8 @@ jobs:
         include: "**readme.md"
         regex: false
 
-    - name: Push changes
+    - name: Push changes to ${{ env.FEATURE_BRANCH_NAME }}
       uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ env.FEATURE_BRANCH_NAME  }}
+        branch: ${{ github.ref }}
