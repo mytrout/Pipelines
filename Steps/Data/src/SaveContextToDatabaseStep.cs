@@ -84,7 +84,7 @@ namespace MyTrout.Pipelines.Steps.Data
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
-            using (var connection = this.CreateConnection())
+            using (var connection = this.ProviderFactory.CreateConnection())
             {
                 if (connection is null)
                 {
@@ -101,13 +101,6 @@ namespace MyTrout.Pipelines.Steps.Data
             }
 
             await Task.CompletedTask.ConfigureAwait(false);
-        }
-
-        // This method was created to allow the application to get 100% code coverage.
-        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        private DbConnection? CreateConnection()
-        {
-            return this.ProviderFactory.CreateConnection();
         }
     }
 }

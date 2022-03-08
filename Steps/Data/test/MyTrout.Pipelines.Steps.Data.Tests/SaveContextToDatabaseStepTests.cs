@@ -109,6 +109,50 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Throws_Exception()
+        {
+            // arrange
+            var logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
+
+            var providerFactoryMock = new Mock<DbProviderFactory>();
+            providerFactoryMock.Setup(x => x.CreateConnection()).Throws<MarshalDirectiveException>();
+            var providerFactory = providerFactoryMock.Object;
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
+            var options = new SaveContextToDatabaseOptions()
+            {
+                SqlStatements = new List<SqlStatement>()
+                {
+                    new SqlStatement()
+                    {
+                        CommandType = System.Data.CommandType.StoredProcedure,
+                        Name = "StatementName",
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > 1;",
+                    }
+                },
+
+
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+
+            var context = new PipelineContext();
+            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+
+            int expectedErrorCount = 1;
+
+            // act
+            await sut.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            Assert.AreEqual(expectedErrorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(MarshalDirectiveException));
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Invalid_Query_Is_Provided()
         {
             // arrange
