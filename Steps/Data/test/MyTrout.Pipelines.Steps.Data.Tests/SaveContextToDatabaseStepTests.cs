@@ -138,7 +138,9 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var context = new PipelineContext();
             context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
 
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
+            var next = mockNext.Object;
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
@@ -184,7 +186,9 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var context = new PipelineContext();
             context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
 
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
+            var next = mockNext.Object;
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
@@ -241,7 +245,9 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var context = new PipelineContext();
             context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, missingStatementName);
 
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
+            var next = mockNext.Object;
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
