@@ -24,6 +24,10 @@ For more details on Pipelines.Hosting, see [Pipelines.Hosting](../../Hosting/REA
 
 For a list of available steps, see [Available Steps](../README.md)
 
+## Code Coverage is less than 100% !
+1. An issue was raised to [altcover #143](https://github.com/SteveGilham/altcover/issues/143) because the same line in two different classes is showing different branch coverage.
+2. The async method ExecuteReaderAsync() in SupplementContextWithDatabaseRecordStep is being reviewed to determine what additional unit tests are required to ensure full coverage on that method call.
+
 ## Installing via NuGet
 
     Install-Package MyTrout.Pipelines.Steps.Data
