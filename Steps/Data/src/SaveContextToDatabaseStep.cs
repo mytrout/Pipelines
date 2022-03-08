@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.Data
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
+    ///  Saves data from the <see cref="IPipelineContext"/> to the database after downstream processing is completed.
     /// </summary>
     public class SaveContextToDatabaseStep : AbstractPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
     {
@@ -56,7 +56,7 @@ namespace MyTrout.Pipelines.Steps.Data
         public DbProviderFactory ProviderFactory { get; }
 
         /// <summary>
-        /// Reads one record from the database, supplements the <paramref name="context"/> and restores the original values once downstream processing is completed.
+        /// When downstream processing is completed, writes any context values that are configured to be written to the database.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
