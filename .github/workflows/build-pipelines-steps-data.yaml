@@ -82,7 +82,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" --configuration Release --no-build --no-restore --verbosity normal
+          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" /p:AltCoverLocalSource=true --configuration Release --no-build --no-restore --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: End Sonar scan
@@ -90,6 +90,12 @@ jobs:
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
+      - name: Upload nupkg
+        uses: actions/upload-artifact@v2
+        with:
+          name: nupkg
+          path: ${{ env.WORKING_DIRECTORY }}/**/coverage.xml
+          
       #- name: Upload nupkg
       #  uses: actions/upload-artifact@v2
       #  with:
