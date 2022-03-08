@@ -237,6 +237,91 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_Values_From_InvokeAsync_When_Delay_Is_Created_For_Record_Returned()
+        {
+            // arrange
+            var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
+            var providerFactory = SqlClientFactory.Instance;
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
+            var options = new SupplementContextWithDatabaseRecordOptions()
+            {
+                SqlStatement = new SqlStatement()
+                {
+                    CommandType = System.Data.CommandType.Text,
+                    ParameterNames = new List<string>() { "CartoonId" },
+                    Statement = "WAITFOR DELAY '00:00:02'; SELECT * FROM dbo.Cartoon WHERE CartoonId = @CartoonId;"
+                },
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+
+            int expectedId = 12;
+            string expectedName = "Bugs Bunny #12";
+            string expectedDescription = "What's up, Doc12?";
+            bool expectedIsActive = true;
+
+            var context = new PipelineContext();
+            context.Items.Add("CartoonId", expectedId);
+
+            var mockNext = new Mock<IPipelineRequest>();
+            // Verify that these values are passed to the next step in the pipeline.
+            mockNext.Setup(x => x.InvokeAsync(context)).Callback(() =>
+            {
+                Assert.IsTrue(context.Items.ContainsKey("CartoonId"), "Context does not contain CartoonId.");
+                Assert.AreEqual(expectedId, context.Items["CartoonId"]);
+                Assert.IsTrue(context.Items.ContainsKey("Name"), "Context does not contain Name.");
+                Assert.AreEqual(expectedName, context.Items["Name"]);
+                Assert.IsTrue(context.Items.ContainsKey("Description"), "Context does not contain Description.");
+                Assert.AreEqual(expectedDescription, context.Items["Description"]);
+                Assert.IsTrue(context.Items.ContainsKey("IsActive"), "Context does not contain IsActive.");
+                Assert.AreEqual(expectedIsActive, context.Items["IsActive"]);
+                Assert.IsTrue(context.Items.ContainsKey("ModifiedBy"), "Context contains ModifiedBy.");
+                Assert.IsTrue(context.Items.ContainsKey("ModifiedDate"), "Context contains ModifiedDate.");
+            });
+            var next = mockNext.Object;
+
+            using (var connection = providerFactory.CreateConnection())
+            {
+                connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
+                await connection.ExecuteAsync("dbo.CartoonInsert", new { CartoonId = expectedId, Name = expectedName, Description = expectedDescription }, commandType: System.Data.CommandType.StoredProcedure).ConfigureAwait(false);
+            }
+
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+
+            // act
+            await sut.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            try
+            {
+                if (context.Errors.Any())
+                {
+                    throw context.Errors[0];
+                }
+
+                // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
+                Assert.IsTrue(context.Items.ContainsKey("CartoonId"), "Context does not contain CartoonId.");
+                Assert.AreEqual(expectedId, context.Items["CartoonId"]);
+                Assert.IsFalse(context.Items.ContainsKey("Name"), "Context contains Name.");
+                Assert.IsFalse(context.Items.ContainsKey("Description"), "Context contains Description.");
+                Assert.IsFalse(context.Items.ContainsKey("IsActive"), "Context contains IsActive.");
+                Assert.IsFalse(context.Items.ContainsKey("ModifiedBy"), "Context contains ModifiedBy.");
+                Assert.IsFalse(context.Items.ContainsKey("ModifiedDate"), "Context contains ModifiedDate.");
+            }
+            finally
+            {
+                // cleanup
+#pragma warning disable IDE0063 // Use simple 'using' statement
+                using (var connection = providerFactory.CreateConnection())
+#pragma warning restore IDE0063 // Use simple 'using' statement
+                {
+                    connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
+                    await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = expectedId }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Throw_ArgumentNullException_From_Constructor_When_Logger_Is_Null()
         {
             // arrange
