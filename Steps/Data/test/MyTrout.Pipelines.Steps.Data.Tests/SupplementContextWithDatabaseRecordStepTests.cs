@@ -107,7 +107,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
-        [TestMethod]
+        //[TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Throws_Exception()
         {
             // arrange
