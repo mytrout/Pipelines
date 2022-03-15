@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/mytrout/Pipelines</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

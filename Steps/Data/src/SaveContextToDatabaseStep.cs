@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.Data
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
+    ///  Saves data from the <see cref="IPipelineContext"/> to the database after downstream processing is completed.
     /// </summary>
     public class SaveContextToDatabaseStep : AbstractPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
     {
@@ -56,7 +56,7 @@ namespace MyTrout.Pipelines.Steps.Data
         public DbProviderFactory ProviderFactory { get; }
 
         /// <summary>
-        /// Reads one record from the database, supplements the <paramref name="context"/> and restores the original values once downstream processing is completed.
+        /// When downstream processing is completed, writes any context values that are configured to be written to the database.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
@@ -69,24 +69,27 @@ namespace MyTrout.Pipelines.Steps.Data
             var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
             var sql = this.Options.SqlStatements.FirstOrDefault(x => x.Name == sqlName);
 
-            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+            if (sql is null)
+            {
+                throw new InvalidOperationException(Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
+            }
 
-#pragma warning disable CS8602 // AssertValueIsNotNull guarantees a non-null value here.
+            sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
 
             DynamicParameters parameters = new DynamicParameters();
 
-            foreach (var parameterName in sql.ParameterNames)
+            // Use the null-forgiving operator because AssertValueIsNotNull guarantees that the value of sql variable is not null.
+            foreach (var parameterName in sql!.ParameterNames)
             {
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
-            // Removed using block to determine if OpenCover can correctly determine code coverage on this block.
-            DbConnection? connection = null;
-            try
+            using (var connection = this.ProviderFactory.CreateConnection())
             {
-                connection = this.ProviderFactory.CreateConnection();
-
-                connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                if (connection is null)
+                {
+                    throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                }
 
                 connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
 
@@ -94,13 +97,7 @@ namespace MyTrout.Pipelines.Steps.Data
 
                 int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
 
-#pragma warning restore CS8602
-
                 context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
-            }
-            finally
-            {
-                connection?.Dispose();
             }
 
             await Task.CompletedTask.ConfigureAwait(false);

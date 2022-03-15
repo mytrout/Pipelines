@@ -63,7 +63,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_Returns_Null()
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Returns_Null()
         {
             // arrange
             var logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
@@ -104,52 +104,52 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             // assert
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_Returns_Null_Connection()
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Throws_Exception()
         {
             // arrange
-            ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
+            var logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
 
-            var mockProviderFactory = new Mock<DbProviderFactory>();
-            mockProviderFactory.Setup(x => x.CreateConnection()).Returns(null as DbConnection);
-            var providerFactory = mockProviderFactory.Object;
-
+            var providerFactoryMock = new Mock<DbProviderFactory>();
+            providerFactoryMock.Setup(x => x.CreateConnection()).Throws<MarshalDirectiveException>();
+            var providerFactory = providerFactoryMock.Object;
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
             var options = new SaveContextToDatabaseOptions()
             {
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
                     {
-                        CommandType = System.Data.CommandType.Text,
+                        CommandType = System.Data.CommandType.StoredProcedure,
                         Name = "StatementName",
-                        ParameterNames = new List<string>() { "CartoonId" },
-                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > @CartoonId;",
+                        Statement = "UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > 1;",
                     }
                 },
+
+
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            IPipelineContext context = new PipelineContext();
-            context.Items.Add("CartoonId", 1);
+            var context = new PipelineContext();
             context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
 
-            var expectedMessage = Resources.CONNECTION_IS_NULL(providerFactory.GetType().Name);
+            int expectedErrorCount = 1;
 
             // act
-            await sut.InvokeAsync(context);
+            await sut.InvokeAsync(context).ConfigureAwait(false);
 
             // assert
-            Assert.AreEqual(1, context.Errors.Count, "At least one error should be in the PipelineContext.");
-            Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
-            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+            Assert.AreEqual(expectedErrorCount, context.Errors.Count);
+            Assert.IsInstanceOfType(context.Errors[0], typeof(MarshalDirectiveException));
         }
 
         [TestMethod]
