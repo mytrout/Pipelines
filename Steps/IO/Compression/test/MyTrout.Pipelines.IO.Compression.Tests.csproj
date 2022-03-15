@@ -8,7 +8,7 @@
 
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>CA1707;IDE0063;SA0001;SA1413;SA1600</NoWarn>
+    <NoWarn>CA1707;IDE0063;SA0001;SA1413;SA1600;SA1636</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
