@@ -107,47 +107,6 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
-        //[TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_DbProviderFactory_CreateConnection_Throws_Exception()
-        {
-            // arrange
-            var logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
-
-            var providerFactoryMock = new Mock<DbProviderFactory>();
-            providerFactoryMock.Setup(x => x.CreateConnection()).Throws<MarshalDirectiveException>();
-            var providerFactory = providerFactoryMock.Object;
-            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
-
-            var options = new SupplementContextWithDatabaseRecordOptions()
-            {
-                SqlStatement = new SqlStatement()
-                {
-                    CommandType = System.Data.CommandType.StoredProcedure,
-                    ParameterNames = new List<string>() { "CartoonId" },
-                    Statement = "dbo.CartoonSelect"
-                },
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_SQL_SERVER_CONNECTION_STRING", environmentVariableTarget)); }
-            };
-
-            var context = new PipelineContext();
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
-
-            var mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
-            var next = mockNext.Object;
-
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
-
-            int expectedErrorCount = 1;
-
-            // act
-            await sut.InvokeAsync(context).ConfigureAwait(false);
-
-            // assert
-            Assert.AreEqual(expectedErrorCount, context.Errors.Count);
-            Assert.IsInstanceOfType(context.Errors[0], typeof(MarshalDirectiveException));
-        }
-
         [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Record_Is_Not_Returned()
         {
