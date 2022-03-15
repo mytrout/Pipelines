@@ -68,7 +68,7 @@ jobs:
 
       - name: Begin Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.vstest.reportsPaths=**/*.trx /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+        run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.opencover.reportsPaths=**/coverage.xml
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: Build
@@ -81,7 +81,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test  --configuration Release --no-build --no-restore --verbosity normal --collect:"XPlat Code Coverage" --logger:trx -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" /p:AltCoverLocalSource=true /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage --configuration Release --no-build --no-restore --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: End Sonar scan
