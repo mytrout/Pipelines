@@ -66,7 +66,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
-            - name: Begin Sonar scan
+      - name: Begin Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.opencover.reportsPaths=**/coverage.xml
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
