@@ -1,7 +1,7 @@
 ﻿// <copyright file="MoveOutputStreamToInputStreamStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,11 +68,9 @@ namespace MyTrout.Pipelines.Steps
         {
             try
             {
-                if (this.CachedItems.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object? workingStream))
-                {
-                    // Using the null forgiving operator ! for workinStream because context.
-                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream);
-                }
+                // InvokeBeforeCacheAsync guarantees that this key will exist and is a Stream.
+                object workingStream = this.CachedItems[PipelineContextConstants.OUTPUT_STREAM];
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream);
 
                 await this.Next.InvokeAsync(context).ConfigureAwait(false);
             }

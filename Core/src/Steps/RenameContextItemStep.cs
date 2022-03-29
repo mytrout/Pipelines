@@ -1,7 +1,7 @@
 ﻿// <copyright file="RenameContextItemStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -84,11 +84,14 @@ namespace MyTrout.Pipelines.Steps
             }
             finally
             {
-                foreach (var renamedKey in this.Options.RenameValues.Values.Where(x => context.Items.ContainsKey(x)))
+                foreach (var renamedKey in this.Options.RenameValues.Values)
                 {
                     // Restoration of the original contextKey is unnecessary because the AbstractCachingPipelineStep handles it.
-                    context.Items.Remove(renamedKey);
-                    this.Logger.LogDebug("Removed '{renamedKey}' from Pipeline.Items.", renamedKey);
+                    // Remove does not throw an exception if the key doesn't exist.
+                    if (context.Items.Remove(renamedKey))
+                    {
+                        this.Logger.LogDebug("Removed '{renamedKey}' from Pipeline.Items.", renamedKey);
+                    }
                 }
             }
         }
