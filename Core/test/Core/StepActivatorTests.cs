@@ -150,6 +150,43 @@ namespace MyTrout.Pipelines.Core.Tests
         }
 
         [TestMethod]
+        public void Returns_Valid_Step_Instance_From_CreateInstance_When_StepWithContext_Containing_Whitespace_ConfigKeys_Is_Used()
+        {
+            // arrange
+            string configContext = "last-context";
+            string stepContext = "leading-context";
+            string whitespaceContext = "    ";
+
+            var config = new ConfigurationBuilder().AddJsonFile("test.json").Build();
+
+            var mockLogger = new Mock<ILogger<StepActivator>>();
+            var logger = mockLogger.Object;
+
+            ILogger<SampleWithOptionsStep> stepLogger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
+            int expectedLogMessages = 0;
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(ILogger<SampleWithOptionsStep>))).Returns(stepLogger);
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            var serviceProvider = mockServiceProvider.Object;
+
+            using (var pipelineRequest = new NoOpStep())
+            {
+                var source = new StepActivator(logger, serviceProvider);
+                var step = new StepWithContext(typeof(SampleWithOptionsStep), typeof(SampleOptions), stepContext: stepContext, whitespaceContext, configContext);
+
+                // act
+                var result = source.CreateInstance(step, pipelineRequest);
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOfType(result, typeof(SampleWithOptionsStep));
+                Assert.AreEqual("last-connection-string", (result as SampleWithOptionsStep).Options.ConnectionString);
+                Assert.AreEqual(expectedLogMessages, mockLogger.Invocations.Count, "Expected only 1 log message.");
+            }
+        }
+
+        [TestMethod]
         public void Returns_Valid_Step_Instance_From_CreateInstance_When_TypeContext_Is_Used()
         {
             // arrange
