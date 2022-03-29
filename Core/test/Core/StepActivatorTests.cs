@@ -185,6 +185,7 @@ namespace MyTrout.Pipelines.Core.Tests
                 Assert.AreEqual(expectedLogMessages, mockLogger.Invocations.Count, "Expected only 1 log message.");
             }
         }
+
         [TestMethod]
         public void Returns_Valid_Step_Instance_From_CreateInstance_When_TypeContext_Is_Used()
         {
