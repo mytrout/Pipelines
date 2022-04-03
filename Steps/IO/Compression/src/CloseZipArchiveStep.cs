@@ -51,7 +51,6 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
             await this.Next.InvokeAsync(context);
