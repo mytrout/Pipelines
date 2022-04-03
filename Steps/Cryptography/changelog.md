@@ -4,10 +4,9 @@
  - Add unit test because AltCover shows a branch code coverage discrepancy causing coverage to fall to 96.6%
  - Use the null-forgiving operator to remove known null suppression false positives.
  - Suppress SA1636 because Steps are being upgraded to use null-forgiving operator in known good cases.
- - Change DecryptStreamWithAes256Step to AbstractCachingPipelineStep to eliminate an unnecessary context item removal which caused code coveraget decrease.
-     IMPORTANT NOTE: Any change *WILL NOT* be considered breaking when the public/protected interface is not changed, including marking an item Obsolete.
+ - Upgrade DecryptStreamWithAes256Step to use AbstractCachingPipelineStep to eliminate an unnecessary context item removal which caused code coverage decrease.
+      IMPORTANT NOTE: Any change *WILL NOT* be considered breaking when the public/protected interface is not changed, including marking an item Obsolete.
 - Added RemoveItemFromContextStep to tests to ensure that 100% coverage is achieved.
-            
 
 ## 3.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.

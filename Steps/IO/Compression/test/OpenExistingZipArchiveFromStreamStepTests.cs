@@ -106,6 +106,48 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         }
 
         [TestMethod]
+        public async Task Returns_InputStream_From_InvokeAsync_When_Downstream_Step_Removes_Zip_Archive_From_PipelineContext()
+        {
+            // arrange
+            var context = new PipelineContext();
+
+            var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
+
+            IPipelineRequest next = new RemoveItemFromContextStep(new string[1] { CompressionConstants.ZIP_ARCHIVE });
+
+            var options = new OpenExistingZipArchiveFromStreamOptions();
+
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+
+            using (var inputStream = new MemoryStream())
+            {
+                using (var fileStream = File.OpenRead(zipFilePath))
+                {
+                    fileStream.CopyTo(inputStream);
+                }
+
+                await using (var source = new OpenExistingZipArchiveFromStreamStep(logger, options, next))
+                {
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+
+                    // act
+                    await source.InvokeAsync(context).ConfigureAwait(false);
+
+                    // assert
+                    if (context.Errors.Any())
+                    {
+                        throw context.Errors[0];
+                    }
+
+                    Assert.IsFalse(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should not exist.");
+                    Assert.IsNotNull(context.Items[PipelineContextConstants.INPUT_STREAM]);
+                    Assert.IsInstanceOfType(context.Items[PipelineContextConstants.INPUT_STREAM], typeof(Stream));
+                    Assert.AreEqual(inputStream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Context_Lacks_InputStream()
         {
             // arrange
