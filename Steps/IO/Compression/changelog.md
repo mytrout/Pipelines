@@ -7,6 +7,7 @@
 - Update Resources.tt to use the new NamespaceHint code so that the Resources.tt can be copied into any project.
 - Update unit tests because two are failing due to OUTPUT_STREAM Breaking Change.
 - NOTE TO DEVELOPERS: Resources.tt cannot be linked into the project yet due to issues with this.Host.Template file location at the root.
+- Upgrade CreateNewZipArchiveStep to use AbstractCachingPipelineStep.
 
 ## 3.1.1
 - Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages.
