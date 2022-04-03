@@ -147,8 +147,48 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                         }
 
                         Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
-                        Assert.IsFalse(previousOutputStream.CanRead, "OutputStream should be closed.");
-                        Assert.AreNotEqual(previousOutputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
+                        Assert.IsTrue(previousOutputStream.CanRead, "OutputStream should NOT be closed.");
+                        Assert.AreEqual(previousOutputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
+                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
+                        Assert.AreEqual(previousZipArchive, context.Items[CompressionConstants.ZIP_ARCHIVE]);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_Previous_ZipArchive_From_InvokeAsync_When_Current_ZipArchive_Was_Removed_By_Next_Step()
+        {
+            // arrange
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+
+            var context = new PipelineContext();
+
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+
+            await using (var previousOutputStream = File.OpenRead(zipFilePath))
+            {
+                using (var previousZipArchive = new ZipArchive(previousOutputStream, ZipArchiveMode.Read, leaveOpen: true))
+                {
+                    var next = new RemoveItemFromContextStep(CompressionConstants.ZIP_ARCHIVE);
+
+                    await using (var source = new CreateNewZipArchiveStep(logger, next))
+                    {
+                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, previousOutputStream);
+                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, previousZipArchive);
+
+                        // act
+                        await source.InvokeAsync(context).ConfigureAwait(false);
+
+                        // assert
+                        if (context.Errors.Any())
+                        {
+                            throw context.Errors[0];
+                        }
+
+                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
+                        Assert.IsTrue(previousOutputStream.CanRead, "OutputStream should NOT be closed.");
+                        Assert.AreEqual(previousOutputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
                         Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
                         Assert.AreEqual(previousZipArchive, context.Items[CompressionConstants.ZIP_ARCHIVE]);
                     }
