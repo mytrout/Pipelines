@@ -65,7 +65,7 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                                             .AddStep<WriteStreamToFileSystemStep>()
                                             
                                             // Closes the Archive Step so the OUTPUT_STREAM is populated (on the Response side)
-                                            .AddStep<CloseZipArchiveStep>
+                                            .AddStep<CloseZipArchiveStep>()
                                             
                                             // This step functionality add each file one at a time to an INPUT_STREAM. (coming soon as Steps.IO.Directories)
                                             // .AddStep<LoopThroughFilesInDirectoryStep>()
