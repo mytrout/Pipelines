@@ -78,6 +78,9 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                                             // Located in Pipelines.Steps
                                             .AddStep<MoveInputStreamToOutputStream>() 
                                             
+                                            // Create a custom TARGET_FILE PipelineContext.Item to enable the ZipArchive entry to be named.
+                                            .AddStep<SomeCustomCodeToCreateTheNameOfTheEntry()
+
                                             .AddStep<AddZipArchiveEntryStep>();
                                     })
                                     .Build();
