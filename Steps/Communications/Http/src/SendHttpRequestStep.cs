@@ -1,7 +1,7 @@
 ﻿// <copyright file="SendHttpRequestStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -81,12 +81,12 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
                             context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS, response.Headers);
                             context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS, response.TrailingHeaders);
 
-                            if (response.Content != null)
-                            {
-                                await response.Content.CopyToAsync(responseStream).ConfigureAwait(false);
-                                responseStream.Position = 0;
-                                context.Items.Add(PipelineContextConstants.INPUT_STREAM, responseStream);
-                            }
+                            // https://github.com/dotnet/runtime/pull/35910
+                            // Removed the response.Content != null check because the upgrade from .NET 3.1 to .NET 5.0 makes
+                            // response.Content into a non-null guaranteed value.
+                            await response.Content.CopyToAsync(responseStream).ConfigureAwait(false);
+                            responseStream.Position = 0;
+                            context.Items.Add(PipelineContextConstants.INPUT_STREAM, responseStream);
 
                             await this.Next.InvokeAsync(context).ConfigureAwait(false);
                         }
