@@ -1,7 +1,7 @@
-﻿// <copyright file="CreateSha256HashStepTests.cs" company="Chris Trout">
+﻿// <copyright file="CreateHashStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,23 +34,21 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
     using System.Text;
     using System.Threading.Tasks;
 
-#pragma warning disable CS0618 // Needed to suppress warnings on Obsolete-marked class.
-
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class CreateSha256HashStepTests
+    public class CreateHashStepTests
     {
         [TestMethod]
-        public void Constructs_CreateSha256HashStep_Successfully()
+        public void Constructs_CreateHashStep_Successfully()
         {
             // arrange
-            var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
-            var options = new CreateSha256HashOptions();
+            var logger = new Mock<ILogger<CreateHashStep>>().Object;
+            var options = new CreateHashOptions();
 
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            using (var result = new CreateSha256HashStep(logger, options, next))
+            using (var result = new CreateHashStep(logger, options, next))
             {
                 // assert
                 Assert.IsNotNull(result);
@@ -64,8 +62,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         {
             // arrange
             int errorCount = 1;
-            var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
-            var options = new CreateSha256HashOptions();
+            var logger = new Mock<ILogger<CreateHashStep>>().Object;
+            var options = new CreateHashOptions();
 
             var context = new PipelineContext();
 
@@ -74,7 +72,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                                     .Returns(Task.CompletedTask);
             var next = nextMock.Object;
 
-            using (var source = new CreateSha256HashStep(logger, options, next))
+            using (var source = new CreateHashStep(logger, options, next))
             {
                 var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
 
@@ -105,15 +103,15 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                     context.Items.Add(CryptographyConstants.HASH_STREAM, previousHash);
                     context.Items.Add(CryptographyConstants.HASH_STRING, previousHashString);
 
-                    var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
-                    var options = new CreateSha256HashOptions();
+                    var logger = new Mock<ILogger<CreateHashStep>>().Object;
+                    var options = new CreateHashOptions();
 
                     var nextMock = new Mock<IPipelineRequest>();
                     nextMock.Setup(x => x.InvokeAsync(context))
                                             .Returns(Task.CompletedTask);
                     var next = nextMock.Object;
 
-                    using (var source = new CreateSha256HashStep(logger, options, next))
+                    using (var source = new CreateHashStep(logger, options, next))
                     {
                         // act
                         await source.InvokeAsync(context);
@@ -156,16 +154,15 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                 var context = new PipelineContext();
                 context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
 
-                var logger = new Mock<ILogger<CreateSha256HashStep>>().Object;
-
-                var options = new CreateSha256HashOptions();
+                var logger = new Mock<ILogger<CreateHashStep>>().Object;
+                var options = new CreateHashOptions();
 
                 var nextMock = new Mock<IPipelineRequest>();
                 nextMock.Setup(x => x.InvokeAsync(context))
                                         .Returns(Task.CompletedTask);
                 var next = nextMock.Object;
 
-                using (var source = new CreateSha256HashStep(logger, options, next))
+                using (var source = new CreateHashStep(logger, options, next))
                 {
                     // act
                     await source.InvokeAsync(context);
@@ -194,5 +191,4 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             }
         }
     }
-#pragma warning restore CS0618 // Type or member is obsolete
 }

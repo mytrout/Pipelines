@@ -1,7 +1,7 @@
 ﻿// <copyright file="EncryptStreamWithAes256Step.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
             using (var cryptoProvider = Aes.Create())
             {
-                using (var unencryptedStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
+                // Guaranteed to be non-null and a stream by AssertValueIsValid<Stream>
+                using (var unencryptedStream = (context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!)
                 {
                     byte[] key = this.Options.EncryptionEncoding.GetBytes(this.Options.RetrieveEncryptionKey());
                     byte[] initializationVector = this.Options.EncryptionEncoding.GetBytes(this.Options.RetrieveEncryptionInitializationVector());
@@ -72,9 +73,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
                     using (var cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
                     {
-#pragma warning disable CS8604 // Possible null reference argument.
                         using (var unencryptedReader = new StreamReader(unencryptedStream, this.Options.EncryptionEncoding, false, 1024, false))
-#pragma warning restore CS8604 // Possible null reference argument.
                         {
                             byte[] workingArray = await StreamExtensions.ConvertStreamToByteArrayAsync(unencryptedStream).ConfigureAwait(false);
                             await cryptoStream.WriteAsync(workingArray).ConfigureAwait(false);
