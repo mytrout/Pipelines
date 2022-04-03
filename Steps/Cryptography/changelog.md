@@ -6,6 +6,7 @@
  - Suppress SA1636 because Steps are being upgraded to use null-forgiving operator in known good cases.
  - Change DecryptStreamWithAes256Step to AbstractCachingPipelineStep to eliminate an unnecessary context item removal which caused code coveraget decrease.
      IMPORTANT NOTE: Any change *WILL NOT* be considered breaking when the public/protected interface is not changed, including marking an item Obsolete.
+- Added RemoveItemFromContextStep to tests to ensure that 100% coverage is achieved.
             
 
 ## 3.1.0

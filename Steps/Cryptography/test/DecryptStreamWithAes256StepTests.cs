@@ -132,6 +132,47 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
             }
         }
 
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Input_Stream_Is_Removed_By_Next_Step()
+        {
+            // arrange
+            string contents = "Hey na, hey na, my boyfriend's back.";
+
+            using (var inputStream = await DecryptStreamWithAes256StepTests.EncryptValueAsync(contents))
+            {
+                var context = new PipelineContext();
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+                context.Items.Add("TEST_CHECK_DECRYPTED_CONTENTS", contents);
+
+                var logger = new Mock<ILogger<DecryptStreamWithAes256Step>>().Object;
+                var options = new DecryptStreamWithAes256Options()
+                {
+                    // Must be 16 bytes
+                    DecryptionInitializationVector = TestConstants.InitializationVector,
+
+                    // Must be 32 bytes
+                    DecryptionKey = TestConstants.Key
+                };
+
+                var next = new RemoveItemFromContextStep(new string[1] { PipelineContextConstants.INPUT_STREAM });
+
+                using (var source = new DecryptStreamWithAes256Step(logger, options, next))
+                {
+                    // act
+                    await source.InvokeAsync(context);
+
+                    // assert
+                    if (context.Errors.Any())
+                    {
+                        throw context.Errors[0];
+                    }
+
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM));
+                    Assert.AreEqual(inputStream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                }
+            }
+        }
+
         internal static async Task<Stream> EncryptValueAsync(string contents)
         {
             byte[] workingContents = Encoding.UTF8.GetBytes(contents);
