@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
-## 4.0.0 
+## 5.0.0
 - (BREAKING CHANGE) On OpenExistingZipArchiveFromStreamStep, INPUT_STREAM is no longer copied to OUTPUT_STREAM on the response side.
 - Suppress SA1636 because three file headers have copyrights changed to 2020 - 2022.
 - Alter the build.yaml to include the new version and uncomment the Upload Nuget step.
@@ -9,6 +9,9 @@
 - NOTE TO DEVELOPERS: Resources.tt cannot be linked into the project yet due to issues with this.Host.Template file location at the root.
 - Upgrade CreateNewZipArchiveStep to use AbstractCachingPipelineStep.
 - Added CloseZipArchiveStep to populate the OUTPUT_STREAM from the ZIP_ARCHIVE for CreateNewZipArchiveStep and any changes made after OpenExistingZipArchiveStep.
+
+## 4.0.0
+- Not sure why this version was pushed out the public, nor what is in it.
 
 ## 3.1.1
 - Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages.
