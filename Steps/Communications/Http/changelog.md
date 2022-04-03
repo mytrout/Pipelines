@@ -1,6 +1,9 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
 ## 1.1.0 - SonarCloud UPDATE ONLY
+ - Removed the null check when returning HttpResponseMessage.Content because it is non-nullable in .NET 5.0 and higher.
+
+## 1.1.0 - SonarCloud UPDATE ONLY
  - Suppress SA1009 to prevent false positives in SonarCloud.io with after paranthesis spacing.
  - Commented out ability to publish to nuget or github to ensure this update does not cause a build failure.
  - Add "if-no-files-found: error" to the nuget publishing step. (see Issue #94)
