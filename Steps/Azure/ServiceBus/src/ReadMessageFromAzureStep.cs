@@ -90,14 +90,14 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="ValueTask"/>.</returns>
         protected async override ValueTask DisposeCoreAsync()
         {
-            if (this.ServiceBusClient != null)
-            {
-                await this.ServiceBusReceiver.CloseAsync().ConfigureAwait(false);
-            }
-
             if (this.ServiceBusReceiver != null)
             {
                 await this.ServiceBusReceiver.DisposeAsync().ConfigureAwait(false);
+            }
+
+            if (this.ServiceBusClient != null)
+            {
+                await this.ServiceBusClient.DisposeAsync().ConfigureAwait(false);
             }
         }
 

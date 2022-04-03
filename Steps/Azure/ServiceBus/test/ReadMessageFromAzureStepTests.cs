@@ -69,6 +69,28 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
+        public async Task Disposes_ReadMessageFromAzureStep_Successfully()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+            var next = new Mock<IPipelineRequest>().Object;
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = TestConstants.AzureServiceBusConnectionString,
+                EntityPath = "${TestConstants.MissingTopicName}/{TestConstants.MissingSubscriptionName}"
+            };
+
+            
+            var sut = new TestOverrideReadMessageFromAzureDisposeStep(logger, options, next);
+
+            // act
+            await sut.DisposeAsync();
+
+            // No exceptions is success.
+            // This test is to test if Dispose can handle both of the IDisposable properties being null.
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_And_Abandoned_Message_From_InvokeAsync()
         {
             // arrange
