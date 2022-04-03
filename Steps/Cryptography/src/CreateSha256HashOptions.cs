@@ -1,7 +1,7 @@
 ﻿// <copyright file="CreateSha256HashOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,16 +36,15 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// </summary>
     [Obsolete("Use CreateHashStep with the default options.")]
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class CreateSha256HashOptions
+    public class CreateSha256HashOptions : CreateHashOptions
     {
         /// <summary>
-        /// Gets or sets the <see cref="Encoding"/> used to hash this value.
+        /// Initializes a new instance of the <see cref="CreateSha256HashOptions"/> class with the specified parameters.
         /// </summary>
-        public Encoding HashEncoding { get; set; } = Encoding.UTF8;
-
-        /// <summary>
-        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
-        /// </summary>
-        public string HashStreamKey { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+        public CreateSha256HashOptions()
+            : base()
+        {
+            // no op
+        }
     }
 }
