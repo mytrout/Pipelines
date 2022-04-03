@@ -40,7 +40,10 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
     using MyTrout.Pipelines;
     using MyTrout.Pipelines.Hosting;
-    using MyTrout.Pipelines.Steps.IO.Compression
+    using MyTrout.Pipelines.Steps;
+    using MyTrout.Pipelines.Steps.IO.Compression;
+    // using MyTrout.Pipelines.Steps.IO.Directories; -> Coming soon.
+    using MyTrout.Pipelines.Steps.IO.Files;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -57,8 +60,24 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
                                     {
                                         builder
                                             .AddStep<CreateNewZipArchiveStep>()
-                                            // This step functionality adds an INPUT_STREAM and loops. (It doesn't exist)
-                                            .AddStep<GatherEachFileInADirectoryStep>()
+                                            
+                                            // Configured for ExecutionTimings.After only to force the step to write (on the Response side).
+                                            .AddStep<WriteStreamToFileSystemStep>()
+                                            
+                                            // Closes the Archive Step so the OUTPUT_STREAM is populated (on the Response side)
+                                            .AddStep<CloseZipArchiveStep>
+                                            
+                                            // This step functionality add each file one at a time to an INPUT_STREAM. (coming soon as Steps.IO.Directories)
+                                            // .AddStep<LoopThroughFilesInDirectoryStep>()
+                                            
+                                            // Read a file from the file system into the INPUT_STREAM.
+                                            .AddStep<ReadStreamFromFileSystem>()
+                                            
+                                            // ReadStreamFromFileSystem names the Stream INPUT_STREAM.
+                                            // AddZipArchiveEntry needs the Stream named OUTPUT_STREAM.
+                                            // Located in Pipelines.Steps
+                                            .AddStep<MoveInputStreamToOutputStream>() 
+                                            
                                             .AddStep<AddZipArchiveEntryStep>();
                                     })
                                     .Build();
@@ -87,6 +106,6 @@ All software dependencies listed above use the [MIT License](https://licenses.nu
 
 ## Build the software locally.
     1. Clone the software from the Pipelines repository.
-    2. Build the software in Visual Studio 2019 to pull down all of the dependencies from nuget.org.
+    2. Build the software in Visual Studio 2022 to pull down all of the dependencies from nuget.org.
     3. In Visual Studio, run all tests.  All of the should pass.
-    4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
+    4. If you have Visual Studio Enterprise 2022, analyze the code coverage; it should be 100%.
