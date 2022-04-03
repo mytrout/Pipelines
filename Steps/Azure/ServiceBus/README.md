@@ -35,15 +35,16 @@ For more details on Pipelines, see [Pipelines.Core](../../../Core/)
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
 
-## BREAKING CHANGES FROM v1.x to V2.0
+## BREAKING CHANGES FROM v3.x to v4.x
+- Supports .NET 6.0 and .NET 5.0
 - ReadMessageFromAzureStep will always copy all ApplicationProperties values from a message into PipelineContext.Items with a prefix provided by ReadMessageFromAzureOptions.
 - ReadMessageFromAzureOptions.ApplicationProperties has been removed permanently.
 - WriteMessageToAzureStep will always copy all ApplicationProperties values from PipelineContext.Items to the message with a prefix provided by WriteMessageToAzureOptions.
 - WriteMessageToAzureOptions.ApplicationProperties has been removed permanently.
 
+## BREAKING CHANGES FROM v2.x to v3.x
+- Drop support for .NET Standard 2.1
 
-## BREAKING CHANGES FROM v1.x to V2.0
-- Update from .NET Standard 2.1 to .NET 5.0
 
 ## How do I use the steps in this library ([ReadMessageFromAzureStep](./src/ReadMessageFromAzureStep.cs)) ?
 
