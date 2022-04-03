@@ -2,6 +2,7 @@
 
 ## 1.1.0 - SonarCloud UPDATE ONLY
  - Removed the null check when returning HttpResponseMessage.Content because it is non-nullable in .NET 5.0 and higher.
+ - Suppress SA1636 Copyright Header violations since SendHttpRequestStep.cs is now 2021-2022 Copyright.
 
 ## 1.1.0 - SonarCloud UPDATE ONLY
  - Suppress SA1009 to prevent false positives in SonarCloud.io with after paranthesis spacing.
