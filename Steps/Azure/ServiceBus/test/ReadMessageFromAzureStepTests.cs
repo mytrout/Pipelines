@@ -354,8 +354,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
                                     // assert
                                     using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
                                     {
-                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
-                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(keyId, context.Items["MSG_KeyId"]);
+                                        Assert.AreEqual(name, context.Items["MSG_Name"]);
                                         Assert.AreEqual(messageValue, reader.ReadToEnd());
                                     }
 
@@ -426,8 +426,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
                                     // assert
                                     using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
                                     {
-                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
-                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(keyId, context.Items["CHANGED_KeyId"]);
+                                        Assert.AreEqual(name, context.Items["CHANGED_Name"]);
                                         Assert.AreEqual(messageValue, reader.ReadToEnd());
                                     }
                                     
@@ -440,6 +440,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             {
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 EntityPath = $"{Tests.TestConstants.ReadFromTopicName}/{Tests.TestConstants.SubscriptionName}",
+                MessageContextItemsPrefix = "CHANGED_",
                 TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
                 TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
             };

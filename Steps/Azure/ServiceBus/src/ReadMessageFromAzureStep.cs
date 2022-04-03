@@ -99,6 +99,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             {
                 await this.ServiceBusClient.DisposeAsync().ConfigureAwait(false);
             }
+
+            await base.DisposeCoreAsync().ConfigureAwait(false);
         }
 
         /// <summary>
