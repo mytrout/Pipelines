@@ -1,7 +1,7 @@
-﻿// <copyright file="TestOverrideEvaluateCancellationTokenStep.cs" company="Chris Trout">
+﻿// <copyright file="TestOverrideWriteMessageToAzureDisposeStep .cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,28 +26,16 @@
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 {
-    using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage()]
-    public class TestOverrideEvaluateCancellationTokenStep : ReadMessageFromAzureStep
+    public class TestOverrideWriteMessageToAzureDisposeStep : WriteMessageToAzureStep
     {
-        public TestOverrideEvaluateCancellationTokenStep(ILogger<ReadMessageFromAzureStep> logger, ReadMessageFromAzureOptions options, IPipelineRequest next) 
+        public TestOverrideWriteMessageToAzureDisposeStep(ILogger<WriteMessageToAzureStep> logger, WriteMessageToAzureOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            // no op
-        }
-
-        protected override Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message, ServiceBusReceiver serviceBusReceiver, params CancellationToken[] tokens)
-        {
-            var tokenSource = new CancellationTokenSource();
-            tokenSource.Cancel();
-            context.CancellationToken = tokenSource.Token;
-
-            var tempReceiver = this.ServiceBusClient.CreateReceiver(this.Options.ReadEntity.QueueName);
-            return base.EvaluateCancellationOfMessageAsync(context, message,  tempReceiver, context.CancellationToken);
+            this.ServiceBusClient = null;
+            this.ServiceBusSender = null;
         }
     }
 }

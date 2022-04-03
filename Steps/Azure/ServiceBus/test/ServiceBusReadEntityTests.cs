@@ -70,7 +70,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public void Constructs_ServiceBusReadEntity_With_Unknqwn_Successfully()
+        public void Constructs_ServiceBusReadEntity_With_Unknown_EntityPath_Successfully()
         {
             // arrange
             string entityPath = "unknown/topic/subscription";
@@ -90,6 +90,34 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         {
             // arrange
             string entityPath = null;
+            var paramName = nameof(entityPath);
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new ServiceBusReadEntity(entityPath));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(paramName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_EntityPath_Is_Empty()
+        {
+            // arrange
+            string entityPath = string.Empty;
+            var paramName = nameof(entityPath);
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new ServiceBusReadEntity(entityPath));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(paramName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_EntityPath_Is_Whitespace()
+        {
+            // arrange
+            string entityPath = "\r\n\t";
             var paramName = nameof(entityPath);
             // act
             var result = Assert.ThrowsException<ArgumentNullException>(() => new ServiceBusReadEntity(entityPath));

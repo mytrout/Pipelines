@@ -37,21 +37,23 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="entityPath">A value representing either a queue or subscription with topic name.</param>
         public ServiceBusReadEntity(string entityPath)
         {
-            this.EntityPath = entityPath ?? throw new ArgumentNullException(nameof(entityPath));
-
-            if (!string.IsNullOrWhiteSpace(this.EntityPath))
+            if (string.IsNullOrWhiteSpace(entityPath))
             {
-                if (!this.EntityPath.Contains('/'))
-                {
-                    this.Kind = ServiceBusReadEntityKind.Queue;
-                    this.QueueName = entityPath;
-                }
-                else if (this.EntityPath.IndexOf('/') == this.EntityPath.LastIndexOf('/'))
-                {
-                    this.Kind = ServiceBusReadEntityKind.Subscription;
-                    this.SubscriptionName = this.EntityPath.Substring(startIndex: this.EntityPath.IndexOf('/') + 1);
-                    this.TopicName = this.EntityPath.Substring(startIndex: 0, length: this.EntityPath.IndexOf('/'));
-                }
+                throw new ArgumentNullException(nameof(entityPath));
+            }
+
+            this.EntityPath = entityPath;
+
+            if (!this.EntityPath.Contains('/'))
+            {
+                this.Kind = ServiceBusReadEntityKind.Queue;
+                this.QueueName = entityPath;
+            }
+            else if (this.EntityPath.IndexOf('/') == this.EntityPath.LastIndexOf('/'))
+            {
+                this.Kind = ServiceBusReadEntityKind.Subscription;
+                this.SubscriptionName = this.EntityPath.Substring(startIndex: this.EntityPath.IndexOf('/') + 1);
+                this.TopicName = this.EntityPath.Substring(startIndex: 0, length: this.EntityPath.IndexOf('/'));
             }
         }
 

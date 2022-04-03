@@ -36,14 +36,13 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         public void Constructs_ReadMessageFromStepOptions_Successfully()
         {
             // arrange
-            List<string> applicationProperties = new List<string>() { "UserId", "MessageId" };
             string azureServiceBusConnectionString = "ConnectionString";
             int batchSize = 100;
             int deliveryAttemptsBeforeDeadLetter = 2;
             string entityPath = "topic/subscription";
             string messagePrefix = "CHANGED_";
-            TimeSpan timeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 1);
-            TimeSpan timeToWaitForNewMessage = new TimeSpan(0, 1, 0);
+            var timeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 1);
+            var timeToWaitForNewMessage = new TimeSpan(0, 1, 0);
 
 
             // act

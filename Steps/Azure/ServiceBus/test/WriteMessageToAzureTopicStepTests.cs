@@ -31,11 +31,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
     using MyTrout.Pipelines;
     using MyTrout.Pipelines.Core;
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.IO;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -65,6 +62,27 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
+        public async void Disposes_WriteMessageToAzureStep_Successfully()
+        {
+            // arrange
+            ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            var options = new WriteMessageToAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                QueueOrTopicName = Tests.TestConstants.WriteToTopicName
+            };
+
+            var sut = new TestOverrideWriteMessageToAzureDisposeStep(logger, options, next);
+
+            // act
+            await sut.DisposeAsync();
+
+            // assert
+            Assert.IsNull(sut);
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_Using_FileStream()
         {
             // arrange
@@ -79,17 +97,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, inputStream);
             context.Items.Add(MessagingConstants.CORRELATION_ID, Guid.NewGuid());
-            context.Items.Add("id", id);
-            context.Items.Add("name", name);
-            context.Items.Add("isActive", isActive);
+            context.Items.Add("MSG_id", id);
+            context.Items.Add("MSG_name", name);
+            context.Items.Add("MSG_isActive", isActive);
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockPipelineRequest.Object;
 
             var options = new WriteMessageToAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "id", "name", "isActive" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
@@ -145,17 +162,16 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, inputStream);
-            context.Items.Add("id", id);
-            context.Items.Add("name", name);
-            context.Items.Add("isActive", isActive);
+            context.Items.Add("MSG_id", id);
+            context.Items.Add("MSG_name", name);
+            context.Items.Add("MSG_isActive", isActive);
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockPipelineRequest.Object;
 
             var options = new WriteMessageToAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "description" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 QueueOrTopicName = Tests.TestConstants.WriteToTopicName
             };
@@ -257,7 +273,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<WriteMessageToAzureStep> logger = null;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-            WriteMessageToAzureOptions options = new WriteMessageToAzureOptions();
+            var options = new WriteMessageToAzureOptions();
             const string paramName = nameof(logger);
 
             // act
@@ -274,7 +290,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
             IPipelineRequest next = null;
-            WriteMessageToAzureOptions options = new WriteMessageToAzureOptions();
+            var options = new WriteMessageToAzureOptions();
             const string paramName = nameof(next);
 
             // act

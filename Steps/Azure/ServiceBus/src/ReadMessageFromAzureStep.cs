@@ -77,12 +77,10 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         public ServiceBusClient ServiceBusClient { get; init; }
 
-        // DEVELOPERS NOTE: This property is specifically protected set because unit testing needs it this way instead of init.
-
         /// <summary>
-        /// Gets or setsthe Azure Service Bus message receiver.
+        /// Gets the Azure Service Bus message receiver.
         /// </summary>
-        public ServiceBusReceiver ServiceBusReceiver { get; protected set; }
+        public ServiceBusReceiver ServiceBusReceiver { get; init; }
 
         /// <summary>
         /// Dispose of any unmanaged resources.
@@ -152,14 +150,20 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
         }
 
+        // DEVELOPER NOTE: The method signature below was refactored to allow integration testing without altering the property
+        // named ServiceBusReceiver to a protected set for the setter (preference was init).
+        // The ServiceBusReceiver, even though it is an internal property, had to be passed in to allow an
+        // integration test to alter its behavior.
+
         /// <summary>
         /// Evaluate whether a message should be cancelled.
         /// </summary>
         /// <param name="context">The context f0r the currently executing pipeline.</param>
         /// <param name="message">The <see cref="ServiceBusMessage"/> to be cancelled.</param>
+        /// <param name="serviceBusReceiver">The <see cref="ServiceBusReceiver"/> to use for this Evaluation.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
         /// <returns><see langword="true"/> if the message was cancelled; otherwise <see langword="false"/>.</returns>
-        protected virtual async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  params CancellationToken[] tokens)
+        protected virtual async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  ServiceBusReceiver serviceBusReceiver, params CancellationToken[] tokens)
         {
             message.AssertParameterIsNotNull(nameof(message));
             context.AssertParameterIsNotNull(nameof(context));
@@ -172,7 +176,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 if (result)
                 {
                     this.Logger.LogDebug(Resources.CANCELLATION_REQUESTED(CultureInfo.CurrentCulture, nameof(ReadMessageFromAzureStep)));
-                    await this.ServiceBusReceiver.AbandonMessageAsync(message).ConfigureAwait(false);
+                    await serviceBusReceiver.AbandonMessageAsync(message).ConfigureAwait(false);
                 }
             }
             catch (Exception exc)
@@ -192,7 +196,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="Task"/>.</returns>
         protected virtual async Task ProcessMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message, CancellationToken token)
         {
-            if (await this.EvaluateCancellationOfMessageAsync(context, message, token, context.CancellationToken).ConfigureAwait(false))
+            if (await this.EvaluateCancellationOfMessageAsync(context, message, this.ServiceBusReceiver, token, context.CancellationToken).ConfigureAwait(false))
             {
                 return;
             }
