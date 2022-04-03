@@ -310,6 +310,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             await receiver.CloseAsync();
             await client.DisposeAsync();
         }
+
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Queue()
         {
@@ -343,7 +344,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var options = new ReadMessageFromAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 EntityPath = Tests.TestConstants.QueueName,
                 TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
@@ -382,17 +382,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Subscription()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Subscription_With_PreExisting_CorrelationId()
         {
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
             int keyId = 1;
             string name = "Name";
+            Guid correlationid = Guid.NewGuid();
 
             var previousStream = new MemoryStream();
             PipelineContext context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
+            context.Items.Add(MessagingConstants.CORRELATION_ID, correlationid);
 
             string messageValue = "Are you there?";
             Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
@@ -414,7 +416,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var options = new ReadMessageFromAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 EntityPath = $"{Tests.TestConstants.ReadFromTopicName}/{Tests.TestConstants.SubscriptionName}",
                 TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
@@ -445,6 +446,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             {
                 throw context.Errors[0];
             }
+            Assert.IsTrue(context.Items.ContainsKey(MessagingConstants.CORRELATION_ID), "CORRELATION_ID should exist in PipelineContext.Items and does not.");
+            Assert.AreEqual(correlationid, context.Items[MessagingConstants.CORRELATION_ID]);
 
             // cleanup
             await source.DisposeAsync();

@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadMessageFromAzureStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -77,8 +77,10 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         public ServiceBusClient ServiceBusClient { get; init; }
 
+        // DEVELOPERS NOTE: This property is specifically protected set because unit testing needs it this way instead of init.
+
         /// <summary>
-        /// Gets or sets the Azure Service Bus message receiver.
+        /// Gets or setsthe Azure Service Bus message receiver.
         /// </summary>
         public ServiceBusReceiver ServiceBusReceiver { get; protected set; }
 
@@ -207,9 +209,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             try
             {
                 // Add the values in ApplicationProperties to the context.
-                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
+                foreach (var key in message.ApplicationProperties.Keys)
                 {
-                    context.Items.Add(key, message.ApplicationProperties[key]);
+                    context.Items.Add($"{this.Options.MessageContextItemsPrefix}{key}", message.ApplicationProperties[key]);
                 }
 
                 // Load inputStream and pass it into the InvokeAsync().
@@ -231,9 +233,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 }
 
                 // Remove the values in ApplicationProperties from the context.
-                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
+                foreach (var key in message.ApplicationProperties.Keys)
                 {
-                    context.Items.Remove(key);
+                    context.Items.Remove($"{this.Options.MessageContextItemsPrefix}{key}");
                 }
 
                 if (context.Errors.Count > errorCount)

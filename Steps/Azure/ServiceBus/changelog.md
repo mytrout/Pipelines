@@ -1,4 +1,7 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
+## 4.0.0
+ - (BREAKING CHANGE) - ReadMessageFromAzureStep will always copy all ApplicationProperties values from a message into PipelineContext.Items with a prefix provided by ReadMessageFromAzureOptions.
+ - (BREAKING CHANGE) - ReadMessageFromAzureOptions.ApplicationProperties has been removed permanently.
 
 ## 3.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
