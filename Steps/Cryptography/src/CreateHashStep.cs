@@ -1,7 +1,7 @@
-﻿// <copyright file="CreateSha256HashStep.cs" company="Chris Trout">
+﻿// <copyright file="CreateHashStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,29 +27,27 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
-    using System.Security.Cryptography;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Creates a SHA256 Hash of the pipeline's <see cref="PipelineContextConstants.OUTPUT_STREAM"/>.
     /// </summary>
-    [Obsolete("Use CreateHashStep with the default options.")]
-    public class CreateSha256HashStep : AbstractPipelineStep<CreateSha256HashStep, CreateSha256HashOptions>
+    public class CreateHashStep : AbstractPipelineStep<CreateHashStep, CreateHashOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CreateSha256HashStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="CreateHashStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public CreateSha256HashStep(ILogger<CreateSha256HashStep> logger, CreateSha256HashOptions options, IPipelineRequest next)
+        public CreateHashStep(ILogger<CreateHashStep> logger, CreateHashOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
         /// <summary>
-        /// Generates a SHA256 Hash of the <see cref="CreateSha256HashOptions.HashStreamKey" />.
+        /// Generates a SHA256 Hash of the <see cref="CreateHashOptions.HashStreamKey" />.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
@@ -80,7 +78,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
                 // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
-                using (var hashProvider = SHA256.Create())
+                using (var hashProvider = this.Options.HashAlgorithm)
                 {
                     byte[] workingHash = hashProvider.ComputeHash(workingResult);
                     string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);

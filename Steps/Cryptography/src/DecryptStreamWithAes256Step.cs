@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
+    using System.Collections.Generic;
     using System.IO;
     using System.Security.Cryptography;
     using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// <summary>
     /// Decrypts the <see cref="PipelineContextConstants.INPUT_STREAM" /> using AES256.
     /// </summary>
-    public class DecryptStreamWithAes256Step : AbstractPipelineStep<DecryptStreamWithAes256Step, DecryptStreamWithAes256Options>
+    public class DecryptStreamWithAes256Step : AbstractCachingPipelineStep<DecryptStreamWithAes256Step, DecryptStreamWithAes256Options>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DecryptStreamWithAes256Step" /> class with the specified parameters.
@@ -46,21 +47,33 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             // no op
         }
 
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { PipelineContextConstants.INPUT_STREAM };
+
+        /// <summary>
+        /// Guarantees that <see cref="PipelineContextConstants.INPUT_STREAM"/> exists and is non-null from <paramref name="context"/>.
+        /// </summary>
+        /// <param name="context">PipelineContext.</param>
+        /// <returns>A completed <see cref="Task"/>.</returns>
+        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        {
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
+
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Decrypts the context <see cref="Stream"/> named <see cref="PipelineContextConstants.INPUT_STREAM"/>.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
-        protected async override Task InvokeCoreAsync(IPipelineContext context)
+        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" />- by the base class.</remarks>
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
+            _ = this.CachedItems.TryGetValue(PipelineContextConstants.INPUT_STREAM, out var tempStream);
 
-#pragma warning disable CS8600, CS8604 // context.AssertValueIsValid() guarantees a non-null value.
-
-            Stream encryptedStream = context.Items[PipelineContextConstants.INPUT_STREAM] as Stream;
-
-            context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
+            // InvokeBeforeCache guarantees that tempStream will not be null.
+            Stream encryptedStream = (tempStream as Stream)!;
 
             // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
             var cryptoProvider = Aes.Create();
@@ -95,10 +108,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                 {
                     context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
-
-                context.Items.Add(PipelineContextConstants.INPUT_STREAM, encryptedStream);
-
-#pragma warning restore CS8600, CS8604 // context.AssertValueIsValid() guarantees a non-null value.
             }
         }
     }
