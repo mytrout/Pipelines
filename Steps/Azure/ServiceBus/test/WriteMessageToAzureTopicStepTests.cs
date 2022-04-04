@@ -62,7 +62,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public async void Disposes_WriteMessageToAzureStep_Successfully()
+        public async Task Disposes_WriteMessageToAzureStep_Successfully()
         {
             // arrange
             ILogger<WriteMessageToAzureStep> logger = new Mock<ILogger<WriteMessageToAzureStep>>().Object;
@@ -81,7 +81,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // assert
             // No exception means that everything went well.
             Assert.IsTrue(true);
-
         }
 
         [TestMethod]
