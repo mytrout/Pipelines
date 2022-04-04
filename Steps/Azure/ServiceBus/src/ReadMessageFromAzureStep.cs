@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadMessageFromAzureStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -78,9 +78,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public ServiceBusClient ServiceBusClient { get; init; }
 
         /// <summary>
-        /// Gets or sets the Azure Service Bus message receiver.
+        /// Gets the Azure Service Bus message receiver.
         /// </summary>
-        public ServiceBusReceiver ServiceBusReceiver { get; protected set; }
+        public ServiceBusReceiver ServiceBusReceiver { get; init; }
 
         /// <summary>
         /// Dispose of any unmanaged resources.
@@ -88,15 +88,17 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="ValueTask"/>.</returns>
         protected async override ValueTask DisposeCoreAsync()
         {
-            if (this.ServiceBusClient != null)
-            {
-                await this.ServiceBusReceiver.CloseAsync().ConfigureAwait(false);
-            }
-
             if (this.ServiceBusReceiver != null)
             {
                 await this.ServiceBusReceiver.DisposeAsync().ConfigureAwait(false);
             }
+
+            if (this.ServiceBusClient != null)
+            {
+                await this.ServiceBusClient.DisposeAsync().ConfigureAwait(false);
+            }
+
+            await base.DisposeCoreAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -148,14 +150,20 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
         }
 
+        // DEVELOPER NOTE: The method signature below was refactored to allow integration testing without altering the property
+        // named ServiceBusReceiver to a protected set for the setter (preference was init).
+        // The ServiceBusReceiver, even though it is an internal property, had to be passed in to allow an
+        // integration test to alter its behavior.
+
         /// <summary>
         /// Evaluate whether a message should be cancelled.
         /// </summary>
         /// <param name="context">The context f0r the currently executing pipeline.</param>
         /// <param name="message">The <see cref="ServiceBusMessage"/> to be cancelled.</param>
+        /// <param name="serviceBusReceiver">The <see cref="ServiceBusReceiver"/> to use for this Evaluation.</param>
         /// <param name="tokens">The <see cref="CancellationToken"/> to be checked for cancellation.</param>
         /// <returns><see langword="true"/> if the message was cancelled; otherwise <see langword="false"/>.</returns>
-        protected virtual async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  params CancellationToken[] tokens)
+        protected virtual async Task<bool> EvaluateCancellationOfMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message,  ServiceBusReceiver serviceBusReceiver, params CancellationToken[] tokens)
         {
             message.AssertParameterIsNotNull(nameof(message));
             context.AssertParameterIsNotNull(nameof(context));
@@ -168,7 +176,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 if (result)
                 {
                     this.Logger.LogDebug(Resources.CANCELLATION_REQUESTED(CultureInfo.CurrentCulture, nameof(ReadMessageFromAzureStep)));
-                    await this.ServiceBusReceiver.AbandonMessageAsync(message).ConfigureAwait(false);
+                    await serviceBusReceiver.AbandonMessageAsync(message).ConfigureAwait(false);
                 }
             }
             catch (Exception exc)
@@ -188,7 +196,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>A completed <see cref="Task"/>.</returns>
         protected virtual async Task ProcessMessageAsync(IPipelineContext context, ServiceBusReceivedMessage message, CancellationToken token)
         {
-            if (await this.EvaluateCancellationOfMessageAsync(context, message, token, context.CancellationToken).ConfigureAwait(false))
+            if (await this.EvaluateCancellationOfMessageAsync(context, message, this.ServiceBusReceiver, token, context.CancellationToken).ConfigureAwait(false))
             {
                 return;
             }
@@ -207,9 +215,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             try
             {
                 // Add the values in ApplicationProperties to the context.
-                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
+                foreach (var key in message.ApplicationProperties.Keys)
                 {
-                    context.Items.Add(key, message.ApplicationProperties[key]);
+                    context.Items.Add($"{this.Options.MessageContextItemsPrefix}{key}", message.ApplicationProperties[key]);
                 }
 
                 // Load inputStream and pass it into the InvokeAsync().
@@ -231,9 +239,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 }
 
                 // Remove the values in ApplicationProperties from the context.
-                foreach (var key in this.Options.ApplicationProperties.Where(x => message.ApplicationProperties.ContainsKey(x)))
+                foreach (var key in message.ApplicationProperties.Keys)
                 {
-                    context.Items.Remove(key);
+                    context.Items.Remove($"{this.Options.MessageContextItemsPrefix}{key}");
                 }
 
                 if (context.Errors.Count > errorCount)

@@ -1,7 +1,7 @@
 // <copyright file="ReadMessageFromAzureStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,20 +69,44 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
+        public async Task Disposes_ReadMessageFromAzureStep_Successfully()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+            var next = new Mock<IPipelineRequest>().Object;
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = TestConstants.AzureServiceBusConnectionString,
+                EntityPath = "${TestConstants.MissingTopicName}/{TestConstants.MissingSubscriptionName}"
+            };
+
+            
+            var sut = new TestOverrideReadMessageFromAzureDisposeStep(logger, options, next);
+
+            // act
+            await sut.DisposeAsync();
+
+            // assert
+            // No exception means that everything went well.
+            Assert.IsTrue(true);
+
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_And_Abandoned_Message_From_InvokeAsync()
         {
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() =>
                                 {
                                     context.Errors.Add(new InvalidDataException());
-                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    var tokenSource = new CancellationTokenSource();
                                     tokenSource.Cancel();
                                     context.CancellationToken = tokenSource.Token;
 
@@ -107,7 +131,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.CloseAsync().ConfigureAwait(false);
@@ -137,10 +161,10 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() =>
                                 {
@@ -167,7 +191,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.CloseAsync().ConfigureAwait(false);
@@ -197,14 +221,14 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() =>
                                 {
-                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    var tokenSource = new CancellationTokenSource();
                                     tokenSource.Cancel();
                                     context.CancellationToken = tokenSource.Token;
                                 })
@@ -226,7 +250,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.SendMessageAsync(message).ConfigureAwait(false);
@@ -256,14 +280,14 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() =>
                                 {
-                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                                    var tokenSource = new CancellationTokenSource();
                                     tokenSource.Cancel();
                                     context.CancellationToken = tokenSource.Token;
                                 })
@@ -285,7 +309,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
             await sender.SendMessageAsync(message).ConfigureAwait(false);
@@ -310,6 +334,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             await receiver.CloseAsync();
             await client.DisposeAsync();
         }
+
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Queue()
         {
@@ -320,19 +345,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             string name = "Name";
 
             var previousStream = new MemoryStream();
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() =>
                                 {
                                     // assert
                                     using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
                                     {
-                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
-                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(keyId, context.Items["MSG_KeyId"]);
+                                        Assert.AreEqual(name, context.Items["MSG_Name"]);
                                         Assert.AreEqual(messageValue, reader.ReadToEnd());
                                     }
 
@@ -343,7 +368,6 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var options = new ReadMessageFromAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 EntityPath = Tests.TestConstants.QueueName,
                 TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
@@ -357,7 +381,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
             message.ApplicationProperties.Add("KeyId", keyId);
             message.ApplicationProperties.Add("Name", name);
 
@@ -382,28 +406,30 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Subscription()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Message_Is_Read_From_Subscription_With_PreExisting_CorrelationId()
         {
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
             int keyId = 1;
             string name = "Name";
+            Guid correlationid = Guid.NewGuid();
 
             var previousStream = new MemoryStream();
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
             context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
+            context.Items.Add(MessagingConstants.CORRELATION_ID, correlationid);
 
             string messageValue = "Are you there?";
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Callback(() => 
                                 {
                                     // assert
                                     using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
                                     {
-                                        Assert.AreEqual(keyId, context.Items["KeyId"]);
-                                        Assert.AreEqual(name, context.Items["Name"]);
+                                        Assert.AreEqual(keyId, context.Items["CHANGED_KeyId"]);
+                                        Assert.AreEqual(name, context.Items["CHANGED_Name"]);
                                         Assert.AreEqual(messageValue, reader.ReadToEnd());
                                     }
                                     
@@ -414,9 +440,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             var options = new ReadMessageFromAzureOptions()
             {
-                ApplicationProperties = new List<string>() { "KeyId", "Name" },
                 AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
                 EntityPath = $"{Tests.TestConstants.ReadFromTopicName}/{Tests.TestConstants.SubscriptionName}",
+                MessageContextItemsPrefix = "CHANGED_",
                 TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
                 TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
             };
@@ -428,7 +454,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
 
             byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
 
-            ServiceBusMessage message = new ServiceBusMessage(messageBody);
+            var message = new ServiceBusMessage(messageBody);
             message.ApplicationProperties.Add("KeyId", keyId);
             message.ApplicationProperties.Add("Name", name);
 
@@ -445,6 +471,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             {
                 throw context.Errors[0];
             }
+            Assert.IsTrue(context.Items.ContainsKey(MessagingConstants.CORRELATION_ID), "CORRELATION_ID should exist in PipelineContext.Items and does not.");
+            Assert.AreEqual(correlationid, context.Items[MessagingConstants.CORRELATION_ID]);
 
             // cleanup
             await source.DisposeAsync();
@@ -458,13 +486,13 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = null;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             var next = mockPipelineRequest.Object;
 
-            ReadMessageFromAzureOptions options = new ReadMessageFromAzureOptions();
+            var options = new ReadMessageFromAzureOptions();
             const string paramName = nameof(logger);
 
             // act
@@ -481,11 +509,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
             IPipelineRequest next = null;
 
-            ReadMessageFromAzureOptions options = new ReadMessageFromAzureOptions();
+            var options = new ReadMessageFromAzureOptions();
             const string paramName = nameof(next);
 
             // act
@@ -502,9 +530,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             var next = mockPipelineRequest.Object;
 
@@ -525,9 +553,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             // arrange
             ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
 
-            PipelineContext context = new PipelineContext();
+            var context = new PipelineContext();
 
-            Mock<IPipelineRequest> mockPipelineRequest = new Mock<IPipelineRequest>();
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
             mockPipelineRequest.Setup(x => x.InvokeAsync(context))
                                 .Returns(Task.CompletedTask);
 

@@ -1,7 +1,7 @@
 ﻿// <copyright file="ServiceBusReadEntity.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,21 +37,23 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="entityPath">A value representing either a queue or subscription with topic name.</param>
         public ServiceBusReadEntity(string entityPath)
         {
-            this.EntityPath = entityPath ?? throw new ArgumentNullException(nameof(entityPath));
-
-            if (!string.IsNullOrWhiteSpace(this.EntityPath))
+            if (string.IsNullOrWhiteSpace(entityPath))
             {
-                if (!this.EntityPath.Contains('/'))
-                {
-                    this.Kind = ServiceBusReadEntityKind.Queue;
-                    this.QueueName = entityPath;
-                }
-                else if (this.EntityPath.IndexOf('/') == this.EntityPath.LastIndexOf('/'))
-                {
-                    this.Kind = ServiceBusReadEntityKind.Subscription;
-                    this.SubscriptionName = this.EntityPath.Substring(startIndex: this.EntityPath.IndexOf('/') + 1);
-                    this.TopicName = this.EntityPath.Substring(startIndex: 0, length: this.EntityPath.IndexOf('/'));
-                }
+                throw new ArgumentNullException(nameof(entityPath));
+            }
+
+            this.EntityPath = entityPath;
+
+            if (!this.EntityPath.Contains('/'))
+            {
+                this.Kind = ServiceBusReadEntityKind.Queue;
+                this.QueueName = entityPath;
+            }
+            else if (this.EntityPath.IndexOf('/') == this.EntityPath.LastIndexOf('/'))
+            {
+                this.Kind = ServiceBusReadEntityKind.Subscription;
+                this.SubscriptionName = this.EntityPath.Substring(startIndex: this.EntityPath.IndexOf('/') + 1);
+                this.TopicName = this.EntityPath.Substring(startIndex: 0, length: this.EntityPath.IndexOf('/'));
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteMessageToAzureOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
 
 namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 {
+    using global::Azure.Messaging.ServiceBus;
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Provides user-configurable options for the <see cref="WriteMessageToAzureStep" /> step.
@@ -43,14 +43,14 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         }
 
         /// <summary>
-        /// Gets or sets UserProperty names that will be added to the Message from <see cref="MyTrout.Pipelines.Core.PipelineContext" />, if they are available.
-        /// </summary>
-        public IEnumerable<string> ApplicationProperties { get; set; } = new List<string>();
-
-        /// <summary>
         /// Gets or sets the connection string for Azure Service Bus.
         /// </summary>
         public string AzureServiceBusConnectionString { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the prefix for keys in <see cref="IPipelineContext.Items"/> that should be copied to <see cref="ServiceBusMessage.ApplicationProperties"/>.
+        /// </summary>
+        public string MessageContextItemsPrefix { get; set; } = "MSG_";
 
         /// <summary>
         /// Gets or sets the Queue or Topic Name to which the message will be written.

@@ -1,4 +1,12 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
+## 4.0.0
+ - (BREAKING CHANGE) - ReadMessageFromAzureStep will always copy all ApplicationProperties values from a message into PipelineContext.Items with a prefix provided by ReadMessageFromAzureOptions.
+ - (BREAKING CHANGE) - ReadMessageFromAzureOptions.ApplicationProperties has been removed permanently.
+ - (BREAKING CHANGE) - ReadMessageFromAzureStep.EvaluateCancellationOfMessageAsync method was refactored to allow integration testing to use a change in this method instead of a protected setter on the ServiceBusReceiver property.
+ - (BREAKING CHANGE) - ReadMessageFromAzureStep.ServiceBusReceiver is no longer a protected setter; it is read-only after construction.
+ - (BREAKING CHANGE) - WriteMessageToAzureOptions.ApplicationProperties has been removed permanently.
+ - (BREAKING CHANGE) - WriteMessageToAzureStep will always copy all PipelineContext.Items values prefixed with WriteMessageToAzureOptions.MessageContextItemsPrefix to the message being sent.
+ - Correction of StyleCop and other analyzers to ensure consistency across projects.
 
 ## 3.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.

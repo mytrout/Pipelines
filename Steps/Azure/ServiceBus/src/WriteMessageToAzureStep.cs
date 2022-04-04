@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteMessageToAzureStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         {
             if (this.ServiceBusSender != null)
             {
-                await this.ServiceBusSender.CloseAsync().ConfigureAwait(false);
+                await this.ServiceBusSender.DisposeAsync().ConfigureAwait(false);
             }
 
             if (this.ServiceBusClient != null)
@@ -116,11 +116,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
 
-#pragma warning disable CS8604 // context.AssertValueIsValue(OUTPUT_STREAM) ensures that outputStream is not null when converted to a Stream.
-
-            var messageBody = await BinaryData.FromStreamAsync(outputStream);
-
-#pragma warning restore CS8604
+            var messageBody = await BinaryData.FromStreamAsync(outputStream!);
 
             var result = new ServiceBusMessage(messageBody);
 
@@ -134,16 +130,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             }
 
             // Sets UserProperties aka Filter Values on the Message, if they are available in the context.
-            foreach (var userProperty in this.Options.ApplicationProperties)
+            foreach (var userProperty in context.Items.Keys.Where(x => x.StartsWith(this.Options.MessageContextItemsPrefix)))
             {
-                if (context.Items.ContainsKey(userProperty))
-                {
-                    result.ApplicationProperties.Add(userProperty, context.Items[userProperty]);
-                }
-                else
-                {
-                    this.Logger.LogDebug(Resources.USER_PROPERTY_MISSING(CultureInfo.CurrentCulture, result.CorrelationId, userProperty));
-                }
+                result.ApplicationProperties.Add(userProperty.Substring(this.Options.MessageContextItemsPrefix.Length), context.Items[userProperty]);
             }
 
             return result;
