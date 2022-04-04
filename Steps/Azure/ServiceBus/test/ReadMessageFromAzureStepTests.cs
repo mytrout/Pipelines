@@ -87,7 +87,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
             await sut.DisposeAsync();
 
             // assert
-            Assert.IsNull(sut);
+            // No exception means that everything went well.
+            Assert.IsTrue(true);
+
         }
 
         [TestMethod]
