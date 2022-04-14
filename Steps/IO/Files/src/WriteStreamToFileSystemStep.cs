@@ -48,7 +48,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         }
 
         /// <summary>
-        /// Reads a file from the configured file system location.
+        /// Writes a file to the configured file system location.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
@@ -73,9 +73,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.WriteFileBaseDirectory);
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-#pragma warning disable CS8600, CS8602, CS8604 // Assert~ methods guarantee that workingFile and workStream are not null.
-
-            string workingFile = context.Items[FileConstants.TARGET_FILE] as string;
+            string workingFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
 
             workingFile = workingFile.GetFullyQualifiedPath(options.WriteFileBaseDirectory);
 
@@ -84,13 +82,12 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 throw new InvalidOperationException(Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, workingFile));
             }
 
-            Stream workingStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+            Stream workingStream = (context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!;
 
             using (FileStream outputStream = File.OpenWrite(workingFile))
             {
                 await workingStream.CopyToAsync(outputStream).ConfigureAwait(false);
             }
-#pragma warning restore CS8600, CS8602, CS8604
         }
     }
 }
