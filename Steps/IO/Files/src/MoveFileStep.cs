@@ -73,9 +73,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
             context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, options.MoveSourceFileBaseDirectory);
             context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.MoveTargetFileBaseDirectory);
 
-#pragma warning disable CS8600, CS8604 // AssertFileNameParameterIsValid guarantees that SOURCE_FILE and TARGET_FILE is not null.
-
-            string sourceFile = context.Items[FileConstants.SOURCE_FILE] as string;
+            string sourceFile = (context.Items[FileConstants.SOURCE_FILE] as string)!;
 
             sourceFile = sourceFile.GetFullyQualifiedPath(options.MoveSourceFileBaseDirectory);
 
@@ -84,7 +82,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 throw new InvalidOperationException(Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, sourceFile));
             }
 
-            string targetFile = context.Items[FileConstants.TARGET_FILE] as string;
+            string targetFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
             targetFile = targetFile.GetFullyQualifiedPath(options.MoveTargetFileBaseDirectory);
 
             if (File.Exists(targetFile))
@@ -96,12 +94,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             if (!Directory.Exists(workingPath))
             {
-                Directory.CreateDirectory(workingPath);
+                Directory.CreateDirectory(workingPath!);
             }
 
             File.Move(sourceFile, targetFile);
-
-#pragma warning restore CS8600, CS8604
 
             return Task.CompletedTask;
         }

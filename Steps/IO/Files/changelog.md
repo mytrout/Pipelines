@@ -1,5 +1,15 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 3.2.0
+- Change from suppressions to null-forgiving operators to handle known false positive null warnings.
+- Add AppendStreamToFileStep and ~Options to allow a stream to be appended to an new or existing file.
+- Change the underlying base type for ReadStreamFromFileSystemStep to use the AbstractCachingPipelineStep<TService, TOptions> instead of implementing caching in this class.
+- Uncomment the nuget publishing to allow version 3.2.0 to be published.
+- Suppress SA1636 to allow for variation in the copyright headers for 2022 and range from 2019-2022.
+- Add if-no-files-found to the nuget publish step in build.
+- Bump actions/upload-artifact from 2 to 3.
+- Uncomment the local Github artifact publish, nuget.org publish, and local Github nuget publish to allow these actions to run again.
+
 ## 3.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
  - Update Resources.tt to reflect .NET 6.0 instead of .NET 5.0

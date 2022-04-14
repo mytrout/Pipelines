@@ -1,7 +1,7 @@
-﻿// <copyright file="DeleteFileStep.cs" company="Chris Trout">
+﻿// <copyright file="AppendStreamToFileStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,24 +29,24 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Deletes a file located on the file system.
+    /// Writes a file tp the File System from an output <see cref="Stream"/> in <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
     /// </summary>
-    public class DeleteFileStep : AbstractPipelineStep<DeleteFileStep, DeleteFileOptions>
+    public class AppendStreamToFileStep : AbstractPipelineStep<AppendStreamToFileStep, AppendStreamToFileOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteFileStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="AppendStreamToFileStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public DeleteFileStep(ILogger<DeleteFileStep> logger, IPipelineRequest next, DeleteFileOptions options)
+        public AppendStreamToFileStep(ILogger<AppendStreamToFileStep> logger, IPipelineRequest next, AppendStreamToFileOptions options)
             : base(logger, options, next)
         {
             // no op
         }
 
         /// <summary>
-        /// Deletes a file from the specified location.
+        /// Reads a file from the configured file system location.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
@@ -55,28 +55,34 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         {
             if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.Before))
             {
-                await DeleteFileStep.DeleteFileAsync(context, this.Options).ConfigureAwait(false);
+                await AppendStreamToFileStep.AppendStreamToFileAsync(context, this.Options);
             }
 
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
             if (this.Options.ExecutionTimings.HasFlag(ExecutionTimings.After))
             {
-                await DeleteFileStep.DeleteFileAsync(context, this.Options).ConfigureAwait(false);
+                await AppendStreamToFileStep.AppendStreamToFileAsync(context, this.Options);
             }
         }
 
-        private static Task DeleteFileAsync(IPipelineContext context, DeleteFileOptions options)
+        private static async Task AppendStreamToFileAsync(IPipelineContext context, AppendStreamToFileOptions options)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.DeleteFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.AppendFileBaseDirectory);
+            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
-            string targetFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
+            string workingFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
 
-            targetFile = targetFile.GetFullyQualifiedPath(options.DeleteFileBaseDirectory);
+            workingFile = workingFile.GetFullyQualifiedPath(options.AppendFileBaseDirectory);
 
-            File.Delete(targetFile);
+            Stream workingStream = (context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!;
 
-            return Task.CompletedTask;
+            using (StreamReader reader = new StreamReader(workingStream, leaveOpen: true))
+            {
+                string contents = await reader.ReadToEndAsync();
+
+                await File.AppendAllTextAsync(workingFile, contents, context.CancellationToken);
+            }
         }
     }
 }
