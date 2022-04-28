@@ -89,7 +89,7 @@ jobs:
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-          if-no-files-found: 
+          if-no-files-found: error
         if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
         
       - name: Publish the package to nuget.org.
