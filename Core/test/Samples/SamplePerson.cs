@@ -23,7 +23,7 @@
 // </copyright>
 
 namespace MyTrout.Pipelines.Tests
-{ 
+{
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SamplePerson
     {

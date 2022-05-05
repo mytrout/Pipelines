@@ -1,4 +1,4 @@
-﻿// <copyright file="SampleWithFromServicesAttributeOptionsStep.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithFromServicesAttributeStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
