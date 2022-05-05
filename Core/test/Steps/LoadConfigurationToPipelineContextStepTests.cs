@@ -24,11 +24,13 @@
 
 namespace MyTrout.Pipelines.Steps.Tests
 {
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -40,7 +42,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         {
             // arrange
             ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
-            LoadValuesFromConfigurationToPipelineContextOptions options = new LoadValuesFromConfigurationToPipelineContextOptions();
+            LoadValuesFromConfigurationToPipelineContextOptions options = new();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             // act
@@ -54,11 +56,91 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Provides_Configuration_Value_In_InvokeAsync_To_Downstream_Callers()
+        {
+            // arrange
+            var errorCount = 0;
+            IConfiguration configuration = new ConfigurationBuilder()
+                                                    .AddJsonFile("input-stream.json")
+                                                    .Build();
+
+            ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
+            LoadValuesFromConfigurationToPipelineContextOptions options = new()
+            {
+                ConfigurationNames = new List<string>() { "InputStreamContextName" },
+                Configuration = configuration
+            };
+            var context = new PipelineContext();
+            var contextName = "InputStreamContextName";
+            var expectedValue = PipelineContextConstants.INPUT_STREAM;
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                        .Callback(() =>
+                        {
+                            // assertion here ensures that the expectedValue passed to downstream callers.
+                            Assert.AreEqual(expectedValue, context.Items[contextName]);
+                        })
+                        .Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+            using (var source = new LoadValuesFromConfigurationToPipelineContextStep(logger, options, next))
+            {
+                var expectedItemsCount = 0;
+
+                // act
+                await source.InvokeAsync(context);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedItemsCount, context.Items.Count);
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            var errorCount = 0;
+            IConfiguration configuration = new ConfigurationBuilder()
+                                                    .AddJsonFile("input-stream.json")
+                                                    .Build();
+
+            ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
+            LoadValuesFromConfigurationToPipelineContextOptions options = new()
+            {
+                ConfigurationNames = new List<string>() { "InputStreamContextName" },
+                Configuration = configuration
+            };
+            var context = new PipelineContext();
+            var contextName = "InputStreamContextName";
+            var contextValue = Guid.NewGuid();
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            using (var source = new LoadValuesFromConfigurationToPipelineContextStep(logger, options, next))
+            {
+                context.Items.Add(contextName, contextValue);
+                var expectedItemsCount = 1;
+
+                // act
+                await source.InvokeAsync(context);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_Task_From_DisposeAsync()
         {
             // arrange
             ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
-            LoadValuesFromConfigurationToPipelineContextOptions options = new LoadValuesFromConfigurationToPipelineContextOptions();
+            LoadValuesFromConfigurationToPipelineContextOptions options = new();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             using (var source = new LoadValuesFromConfigurationToPipelineContextStep(logger, options, next))
@@ -78,7 +160,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         {
             // arrange
             ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = null;
-            LoadValuesFromConfigurationToPipelineContextOptions options = new LoadValuesFromConfigurationToPipelineContextOptions();
+            LoadValuesFromConfigurationToPipelineContextOptions options = new();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
@@ -96,7 +178,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         {
             // arrange
             ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
-            LoadValuesFromConfigurationToPipelineContextOptions options = new LoadValuesFromConfigurationToPipelineContextOptions();
+            LoadValuesFromConfigurationToPipelineContextOptions options = new();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
@@ -135,7 +217,7 @@ namespace MyTrout.Pipelines.Steps.Tests
             string expectedParamName = nameof(context);
 
             ILogger<LoadValuesFromConfigurationToPipelineContextStep> logger = new Mock<ILogger<LoadValuesFromConfigurationToPipelineContextStep>>().Object;
-            LoadValuesFromConfigurationToPipelineContextOptions options = new LoadValuesFromConfigurationToPipelineContextOptions();
+            LoadValuesFromConfigurationToPipelineContextOptions options = new();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             using (var source = new LoadValuesFromConfigurationToPipelineContextStep(logger, options, next))
