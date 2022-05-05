@@ -25,8 +25,13 @@
 namespace MyTrout.Pipelines.Steps.Tests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleOptions
+    public class SampleOptions : IContextNameBuilder
     {
         public string Option1 { get; set; }
+
+        public string BuildContextName(string typeName, string propertyName)
+        {
+            return $"{typeName}.{propertyName}";
+        }
     }
 }

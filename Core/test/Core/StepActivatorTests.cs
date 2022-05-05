@@ -115,6 +115,42 @@ namespace MyTrout.Pipelines.Core.Tests
         }
 
         [TestMethod]
+        public void Returns_Valid_Step_Instance_From_CreateInstance_When_Options_Uses_FromServices_Attribute()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+
+            var config = new ConfigurationBuilder().AddJsonFile("test-type.json").Build();
+
+            var contextNameBuilder = new Mock<IContextNameBuilder>().Object;
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            mockServiceProvider.Setup(x => x.GetService(typeof(IContextNameBuilder))).Returns(contextNameBuilder);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
+            Type stepType = typeof(SampleWithFromServicesAttributeStep);
+            using (var pipelineRequest = new NoOpStep())
+            {
+                string stepContext = null;
+
+                var source = new StepActivator(logger, serviceProvider);
+
+                // act
+                var result = source.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest);
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOfType(result, stepType);
+
+                var typedResult = result as SampleWithFromServicesAttributeStep;
+                Assert.IsNotNull(typedResult, "result is not SampleWithFromServicesAttributeOptionsStep.");
+                Assert.IsNotNull(typedResult.Options.ContextNameBuilder, "Options.ContextNameBuilder is null.");
+                Assert.AreEqual(typedResult.Options.ContextNameBuilder, contextNameBuilder);
+            }
+        }
+
+        [TestMethod]
         public void Returns_Valid_Step_Instance_From_CreateInstance_When_StepWithContext_Containing_ConfigKeys_Is_Used()
         {
             // arrange
@@ -453,6 +489,74 @@ namespace MyTrout.Pipelines.Core.Tests
                 var sut = new StepActivator(logger, serviceProvider);
 
                 var expectedMessage = $"'{stepType.Name}' step does not contain a constructor that has a PipelineRequest parameter.";
+
+                // act
+                var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest));
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedMessage, result.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_CreateInstance_When_FromServices_Property_Does_Not_Have_A_Setter()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+
+            var config = new ConfigurationBuilder().AddJsonFile("test-type.json").Build();
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
+            Type stepType = typeof(SampleWithFromServicesAttributeWithNoSetterStep);
+            using (var pipelineRequest = new NoOpStep())
+            {
+                string stepContext = null;
+
+                var sut = new StepActivator(logger, serviceProvider);
+
+                var expectedMessage = Resources.FROMSERVICES_PROPERTY_MUST_HAVE_SETTER(
+                                                    CultureInfo.InvariantCulture,
+                                                    nameof(SampleWithFromServicesAttributeWithNoSetterOptions.Configuration),
+                                                    nameof(SampleWithFromServicesAttributeWithNoSetterOptions),
+                                                    nameof(SampleWithFromServicesAttributeWithNoSetterStep));
+
+                // act
+                var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest));
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedMessage, result.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_CreateInstance_When_FromServices_Dependency_Injected_Property_Does_Not_Exist_In_Service_Provider()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+
+            var config = new ConfigurationBuilder().AddJsonFile("test-type.json").Build();
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
+            Type stepType = typeof(SampleWithFromServicesAttributeStep);
+            using (var pipelineRequest = new NoOpStep())
+            {
+                string stepContext = null;
+
+                var sut = new StepActivator(logger, serviceProvider);
+
+                var expectedMessage = Resources.SERVICEPROVIDER_LACKS_PARAMETER(
+                                                    CultureInfo.InvariantCulture,
+                                                    nameof(SampleWithFromServicesAttributeOptions),
+                                                    nameof(SampleWithFromServicesAttributeOptions.ContextNameBuilder),
+                                                    nameof(SampleWithFromServicesAttributeStep));
 
                 // act
                 var result = Assert.ThrowsException<InvalidOperationException>(() => sut.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest));

@@ -39,7 +39,7 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        /// <param name="options">THe options to configure this pipeline.</param>/
+        /// <param name="options">The options to configure this pipeline.</param>
         public RenameContextItemStep(ILogger<RenameContextItemStep> logger, RenameContextItemOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
@@ -78,7 +78,7 @@ namespace MyTrout.Pipelines.Steps
 
                 int failedCount = this.Options.RenameValues.Count - renamedCount;
 
-                this.Logger.LogDebug("{count} PipelineContext.Items were renamed successfully. {failedCount} were removed without being renamed.", renamedCount, failedCount);
+                this.Logger.LogDebug("{SuccessfulCount} PipelineContext.Items were renamed successfully. {FailedCount} items were removed without being renamed.", renamedCount, failedCount);
 
                 await this.Next.InvokeAsync(context);
             }
@@ -90,10 +90,12 @@ namespace MyTrout.Pipelines.Steps
                     // Remove does not throw an exception if the key doesn't exist.
                     if (context.Items.Remove(renamedKey))
                     {
-                        this.Logger.LogDebug("Removed '{renamedKey}' from Pipeline.Items.", renamedKey);
+                        this.Logger.LogDebug("Removed '{RenamedKey}' from Pipeline.Items.", renamedKey);
                     }
                 }
             }
+
+            await Task.CompletedTask.ConfigureAwait(false);
         }
     }
 }

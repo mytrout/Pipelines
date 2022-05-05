@@ -1,7 +1,7 @@
-﻿// <copyright file="MoveInputStreamToOutputStreamStep.cs" company="Chris Trout">
+﻿// <copyright file="LoadValuesFromOptionsToPipelineContextStep{TOptions}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,40 +25,30 @@
 namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
-    using System.IO;
-    using System.Threading.Tasks;
 
     /// <summary>
-    /// Move the Input Stream to Output Stream in the pipeline.
+    /// Loads the properties from <typeparamref name="TOptions"/> into <see cref="IPipelineContext.Items"/>.
     /// </summary>
-    public class MoveInputStreamToOutputStreamStep : RenameContextItemStep
+    /// <typeparam name="TOptions">The object from which new properties will be loaded into <see cref="IPipelineContext.Items"/>.</typeparam>
+    public class LoadValuesFromOptionsToPipelineContextStep<TOptions> : AbstractLoadItemToPipelineContextStep<TOptions, TOptions>
+        where TOptions : class, IContextNameBuilder
     {
-        private static readonly RenameContextItemOptions DefaultOptions = new()
-        {
-            RenameValues = { { PipelineContextConstants.INPUT_STREAM, PipelineContextConstants.OUTPUT_STREAM } }
-        };
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoveInputStreamToOutputStreamStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="LoadValuesFromOptionsToPipelineContextStep{TOptions}" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public MoveInputStreamToOutputStreamStep(ILogger<MoveInputStreamToOutputStreamStep> logger, IPipelineRequest next)
-            : base(logger, MoveInputStreamToOutputStreamStep.DefaultOptions, next)
+        /// /// <param name="options">THe options to configure this pipeline.</param>
+        public LoadValuesFromOptionsToPipelineContextStep(ILogger<LoadValuesFromOptionsToPipelineContextStep<TOptions>> logger, TOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
 
-        /// <summary>
-        /// Executes code before the caching for this step is invoked.
-        /// </summary>
-        /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
-        /// <returns>A <see cref="Task" />.</returns>
-        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        /// <inheritdoc />
+        protected override TOptions RetrieveItemToLoad(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
-
-            return base.InvokeBeforeCacheAsync(context);
+            return this.Options;
         }
     }
 }

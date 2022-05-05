@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="SamplePersonEnumerator.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright (c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,25 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Tests
 {
-    using MyTrout.Pipelines.Core;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-    /// </summary>
-    public interface IStepActivator
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SamplePersonEnumerator : IEnumerable<SamplePerson>
     {
-        /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
-        /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
+        public List<SamplePerson> Persons { get; set; } = new List<SamplePerson>();
 
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        public IEnumerator<SamplePerson> GetEnumerator()
+        {
+            return this.Persons.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

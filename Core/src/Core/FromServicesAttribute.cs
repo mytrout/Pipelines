@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="FromServicesAttribute.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,36 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Core
 {
-    using MyTrout.Pipelines.Core;
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Specifies that a Options property should be bound using the a service from Dependency Injection.
     /// </summary>
-    public interface IStepActivator
+    /// <example>
+    /// In this example an implementation of IConfiguration will be injected into this SpecialOptions class from Dependency Injection
+    /// while the ConnectionString property will be set during object construction.
+    /// <code>
+    /// public class SpecialOptions
+    /// {
+    ///     public string ConnectionString { get; set; }
+    ///
+    ///     [FromServices]
+    ///     public IConfiguration Configuration { get; set; }
+    /// }
+    /// </code>
+    /// </example>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class FromServicesAttribute : Attribute
     {
         /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
+        /// Initializes a new instance of the <see cref="FromServicesAttribute"/> class.
         /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
-
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        public FromServicesAttribute()
+        {
+            // no op
+        }
     }
 }

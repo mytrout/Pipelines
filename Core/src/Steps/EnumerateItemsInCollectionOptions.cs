@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="EnumerateItemsInCollectionOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,26 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Steps
 {
-    using MyTrout.Pipelines.Core;
-    using System;
-    using System.Collections.Generic;
+    /*
+     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+     */
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Provides caller-configurable options to change the behavior of <see cref="EnumerateItemsInCollectionStep{TParent,TObject}"/>.
     /// </summary>
-    public interface IStepActivator
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class EnumerateItemsInCollectionOptions
     {
         /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
+        /// Gets or sets the name used from the <see cref="IPipelineContext"/> to enumerate.
         /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
+        public string InputObjectContextName { get; set; } = PipelineContextConstants.INPUT_OBJECT;
 
         /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+        /// Gets or sets the name used to populate an object in <see cref="IPipelineContext"/>.
         /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        public string OutputObjectContextName { get; set; } = PipelineContextConstants.OUTPUT_OBJECT;
     }
 }

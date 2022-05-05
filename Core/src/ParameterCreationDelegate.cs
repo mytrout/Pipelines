@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="ParameterCreationDelegate.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2021 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,17 @@
 
 namespace MyTrout.Pipelines
 {
-    using MyTrout.Pipelines.Core;
+    using Microsoft.Extensions.Logging;
     using System;
-    using System.Collections.Generic;
+    using System.Reflection;
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Retrieve a parameter to be used by <see cref="IStepActivator"/> in the construction of Pipeline steps and their dependencies.
     /// </summary>
-    public interface IStepActivator
-    {
-        /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
-        /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
-
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
-    }
+    /// <param name="logger">A logger for debug logging.</param>
+    /// <param name="services">An injected dependency service that provides some parameters.</param>
+    /// <param name="pipelineStep">The step being configured.</param>
+    /// <param name="parameter">The constructor parameter being built.</param>
+    /// <returns>A <see cref="ParameterCreationResult"/> indicating whether this delegate suggests further processing is required and the instance on which processing should be or has been done.</returns>
+    public delegate ParameterCreationResult ParameterCreationDelegate(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter);
 }

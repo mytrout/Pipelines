@@ -55,11 +55,13 @@ namespace MyTrout.Pipelines.Core.Tests
                 // assert
                 Assert.IsNotNull(result, "PipelineContext should not be null.");
                 Assert.AreEqual(expectedCancellationSource.Token, result.CancellationToken, "CancellationToken should be CancellationToken.None.");
+#pragma warning disable CS0618 // Type or member is obsolete - The values will be removed in the next major release.
                 Assert.IsNull(result.Configuration, "Configuration should be null.");
+                Assert.IsFalse(result.IsConfigurationAvailable, "IsConfigurationAvailable should be false.");
+#pragma warning restore CS0618 // Type or member is obsolete
                 Assert.AreNotEqual(invalidCorrelationId, result.CorrelationId, "CorrelationID cannot be Guid.Empty.");
                 Assert.IsNotNull(result.Errors, "PipelineContext.Errors should not be null.");
                 Assert.AreEqual(expectedExceptionCount, result.Errors.Count);
-                Assert.IsFalse(result.IsConfigurationAvailable, "IsConfigurationAvailable should be false.");
                 Assert.IsNotNull(result.Items, "PipelineContext.Items should not be null.");
                 Assert.AreEqual(expectedItemCount, result.Items.Count);
                 Assert.IsTrue(startingOffset < result.Timestamp, "StartingOffset is greater than or equal to the PipelineContext.Timestamp.");
@@ -74,11 +76,14 @@ namespace MyTrout.Pipelines.Core.Tests
             var context = new PipelineContext();
             IConfiguration expectedConfiguration = new Mock<IConfiguration>().Object;
 
+#pragma warning disable CS0618 // Type or member is obsolete - The values will be removed in the next major release.
+
             // act
             context.Configuration = expectedConfiguration;
 
             // assert
             Assert.AreEqual(expectedConfiguration, context.Configuration);
+#pragma warning restore CS0618
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="BuildContextNameDelegate.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,13 @@
 
 namespace MyTrout.Pipelines
 {
-    using MyTrout.Pipelines.Core;
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Builds a context name for use with <see cref="IPipelineContext.Items"/>.
     /// </summary>
-    public interface IStepActivator
-    {
-        /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
-        /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
-
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
-    }
+    /// <returns>A context name.</returns>
+    /// <param name="typeName">The simplied <see cref="Type"/> name that owns this value.</param>
+    /// <param name="propertyName">The value name in the <see cref="Type"/>.</param>
+    public delegate string BuildContextNameDelegate(string typeName, string propertyName);
 }

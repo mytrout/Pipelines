@@ -103,6 +103,37 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            int errorCount = 0;
+            ILogger<SampleCachingStep> logger = new Mock<ILogger<SampleCachingStep>>().Object;
+            var options = new SampleOptions();
+
+            using (IPipelineRequest next = new NoOpStep())
+            {
+                var context = new PipelineContext();
+                var contextName = Guid.NewGuid().ToString();
+                var contextValue = Guid.NewGuid();
+                context.Items.Add(contextName, contextValue);
+
+                var expectedItemsCount = 1;
+
+                using (var step = new SampleCachingStep(logger, options, next))
+                {
+                    // act
+                    await step.InvokeAsync(context);
+
+                    // assert
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+                    Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                    Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                    Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_Without_Error_From_InvokeAsync()
         {
             // arrange

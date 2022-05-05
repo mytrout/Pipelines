@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="UnixEpochKind.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,21 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines
+namespace MyTrout.Pipelines.Steps
 {
-    using MyTrout.Pipelines.Core;
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Provides the kind of Unix Epoch that will be created by the <see cref="CreateUnixEpochStep"/>.
     /// </summary>
-    public interface IStepActivator
+    public enum UnixEpochKind
     {
         /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
+        /// Seconds since January 1, 1970 at midnight.
         /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
+        InSeconds = 0,
 
         /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+        /// MilliSeconds since January 1, 1970 at midnight.
         /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        InMilliseconds = 1,
     }
 }

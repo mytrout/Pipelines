@@ -1,7 +1,7 @@
 ﻿// <copyright file="IPipelineContext.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.
         /// </summary>
+        [Obsolete("Use the LoadConfigurationValuesToPipelineContextStep in lieu of accessing IConfiguration.")]
         IConfiguration? Configuration { get; set; }
 
         /// <summary>
@@ -57,6 +58,7 @@ namespace MyTrout.Pipelines
         /// <summary>
         /// Gets a value indicating whether or not <see cref="Configuration"/> is available.
         /// </summary>
+        [Obsolete("Use the LoadConfigurationValuesToPipelineContextStep in lieu of accessing IConfiguration.")]
         bool IsConfigurationAvailable { get; }
 
         /// <summary>

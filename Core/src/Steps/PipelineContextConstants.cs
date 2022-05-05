@@ -1,7 +1,7 @@
 ﻿// <copyright file="PipelineContextConstants.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,13 +30,28 @@ namespace MyTrout.Pipelines.Steps
     public static class PipelineContextConstants
     {
         /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="object" /> that is considered input to the Pipeline.
+        /// </summary>
+        public const string INPUT_OBJECT = "PIPELINE_INPUT_OBJECT";
+
+        /// <summary>
         /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered input to the Pipeline.
         /// </summary>
         public const string INPUT_STREAM = "PIPELINE_INPUT_STREAM";
 
         /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="object" /> that is considered output to the Pipeline.
+        /// </summary>
+        public const string OUTPUT_OBJECT = "PIPELINE_OUTPUT_OBJECT";
+
+        /// <summary>
         /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a <see cref="System.IO.Stream" /> that is considered output from the Pipeline.
         /// </summary>
         public const string OUTPUT_STREAM = "PIPELINE_OUTPUT_STREAM";
+
+        /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is a Unix Epoch (seconds or milliseconds since January 1, 1970 midnight).
+        /// </summary>
+        public const string UNIX_EPOCH = "PIPELINE_UNIX_EPOCH";
     }
 }
