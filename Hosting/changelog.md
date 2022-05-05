@@ -1,5 +1,12 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 4.0.0 - BREAKING CHANGES
+- BREAKING CHANGE: Upgrade Hosting to MyTrout.Pipelines 4.x
+- BREAKING CHANGE: Remove support for .NET 5.0.
+- Add support for .NET 7.0.100-preview.3.22179.4
+- Uncomment the nuget and github publishing to allow v4.x to be published.
+- Change Resources.tt to automatically read the namespace from NamespaceHint and change copyright year.
+
 ## 3.1.0 - SonarCloud UPDATE ONLY
 - Correct 3 CA1816 on Test classes
 - Commented out ability to publish to nuget or github to ensure this update does not cause a build failure.
