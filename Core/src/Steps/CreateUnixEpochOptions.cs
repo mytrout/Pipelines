@@ -1,7 +1,7 @@
-﻿// <copyright file="ParameterCreationDelegate.cs" company="Chris Trout">
+﻿// <copyright file="CreateUnixEpochOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,26 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Core
+namespace MyTrout.Pipelines.Steps
 {
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Reflection;
+    /*
+     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+     */
 
     /// <summary>
-    /// Retrieve a parameter to be used by <see cref="StepActivator"/> in the construction of Pipeline steps and their dependencies.
+    /// Provides caller-configurable options to change the behavior of <see cref="CreateUnixEpochStep"/>.
     /// </summary>
-    /// <param name="logger">A logger for debug logging.</param>
-    /// <param name="services">An injected dependency service that provides some parameters.</param>
-    /// <param name="pipelineStep">The step being configured.</param>
-    /// <param name="parameter">The constructor parameter being built.</param>
-    /// <returns>A <see cref="ParameterCreationResult"/> indicating whether this delegate suggests further processing is required and the instance on which processing should be or has been done.</returns>
-    public delegate ParameterCreationResult ParameterCreationDelegate(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter);
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class CreateUnixEpochOptions
+    {
+        /// <summary>
+        /// Gets or sets the kind of Unix Epoch to generate.
+        /// </summary>
+        public UnixEpochKind EpochKind { get; set; } = UnixEpochKind.InSeconds;
+
+        /// <summary>
+        /// Gets or sets the name used in the <see cref="IPipelineContext"/> to store the Unix Epoch.
+        /// </summary>
+        public string UnixEpochContextName { get; set; } = PipelineContextConstants.UNIX_EPOCH;
+    }
 }

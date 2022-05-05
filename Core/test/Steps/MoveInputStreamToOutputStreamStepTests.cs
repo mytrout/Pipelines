@@ -104,6 +104,36 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Provides_OutputStream_In_InvokeAsync_To_Downstream_Callers()
+        {
+            // arrange
+            using (var stream = new MemoryStream())
+            {
+                var context = new PipelineContext();
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
+
+                var logger = new Mock<ILogger<MoveInputStreamToOutputStreamStep>>().Object;
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                                        .Callback(() => MoveInputStreamToOutputStreamStepTests.Validate_Context(context, stream))
+                                        .Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                using (var source = new MoveInputStreamToOutputStreamStep(logger, next))
+                {
+                    // act
+                    await source.InvokeAsync(context);
+
+                    // assert
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM), "INPUT_STREAM should exist in the Pipeline context.");
+                    Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OUTPUT_STREAM should not exist in the Pipeline context.");
+
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Exception_Is_Thrown_In_Next()
         {
             // arrange

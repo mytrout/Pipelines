@@ -22,10 +22,10 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Core
+namespace MyTrout.Pipelines
 {
     /// <summary>
-    /// Provides the result when a Parameter Creation attempt is made by one of the <see cref="StepActivator"/>-configured delegates.
+    /// Provides the result when a Parameter Creation attempt is made by one of the <see cref="IStepActivator"/>-configured delegates.
     /// </summary>
     public record ParameterCreationResult
     {

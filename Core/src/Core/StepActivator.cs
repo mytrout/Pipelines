@@ -1,7 +1,7 @@
 ﻿// <copyright file="StepActivator.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright © 2019-2021 Chris Trout
+// Copyright © 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ namespace MyTrout.Pipelines.Core
                     StepActivator.CreateParameterFromStepFactory,
                     StepActivator.CreateParameterFromStepInstance,
                     StepActivator.CreateParameterFromDependencyInjectionInstance,
-                    StepActivator.CreateParameterFromConfiguration
+                    StepActivator.CreateParameterFromConfigurationAndDependencyInjection
                 };
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace MyTrout.Pipelines.Core
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
         /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
-        public static ParameterCreationResult CreateParameterFromConfiguration(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        public static ParameterCreationResult CreateParameterFromConfiguration(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             services.AssertParameterIsNotNull(nameof(services));
             parameter.AssertParameterIsNotNull(nameof(parameter));
@@ -139,6 +139,47 @@ namespace MyTrout.Pipelines.Core
         }
 
         /// <summary>
+        /// Retrieve a parameter from the <see cref="IConfiguration"/> and hen injects any properties with <see cref="FromServicesAttribute"/> from dependency injection.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
+        public static ParameterCreationResult CreateParameterFromConfigurationAndDependencyInjection(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            var results = StepActivator.CreateParameterFromConfiguration(logger, services, pipelineStep, parameter);
+
+            // Bind any Service Dependencies that are marked with the FromServicesAttribute.
+            foreach (var property in parameter.ParameterType.GetProperties().Where(x => Attribute.IsDefined(x, typeof(FromServicesAttribute), true)))
+            {
+                // Setter must exist for this property.
+                var parameterInfo = property.GetSetMethod(true)?.GetParameters().First();
+
+                if (parameterInfo == null)
+                {
+                    // new issue here...Options class must have a setter.
+                }
+                else
+                {
+                    var injectedResult = StepActivator.CreateParameterFromDependencyInjectionInstance(logger, services, pipelineStep, parameterInfo);
+
+                    if (injectedResult.Instance == null)
+                    {
+                        // injected instance isn't available in Dependency Injection.
+                    }
+                    else
+                    {
+                        property.GetSetMethod()!.Invoke(results.Instance, new object[1] { injectedResult.Instance });
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// Retrieve a parameter from the <see cref="IServiceProvider"/>.
         /// </summary>
         /// <param name="logger">A logger for debug logging.</param>
@@ -146,7 +187,7 @@ namespace MyTrout.Pipelines.Core
         /// <param name="pipelineStep">The step being configured.</param>
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
-        public static ParameterCreationResult CreateParameterFromDependencyInjectionInstance(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        public static ParameterCreationResult CreateParameterFromDependencyInjectionInstance(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             services.AssertParameterIsNotNull(nameof(services));
             parameter.AssertParameterIsNotNull(nameof(parameter));
@@ -172,7 +213,7 @@ namespace MyTrout.Pipelines.Core
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
         /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
-        public static ParameterCreationResult CreateParameterForNextPipelineRequest(IPipelineRequest next, ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        public static ParameterCreationResult CreateParameterForNextPipelineRequest(IPipelineRequest next, ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             next.AssertParameterIsNotNull(nameof(next));
             logger.AssertParameterIsNotNull(nameof(logger));
@@ -196,7 +237,7 @@ namespace MyTrout.Pipelines.Core
         /// <param name="pipelineStep">The step being configured.</param>
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
-        public static ParameterCreationResult CreateParameterFromStepFactory(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        public static ParameterCreationResult CreateParameterFromStepFactory(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             services.AssertParameterIsNotNull(nameof(services));
             parameter.AssertParameterIsNotNull(nameof(parameter));
@@ -218,7 +259,7 @@ namespace MyTrout.Pipelines.Core
         /// <param name="pipelineStep">The step being configured.</param>
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
-        public static ParameterCreationResult CreateParameterFromStepInstance(ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        public static ParameterCreationResult CreateParameterFromStepInstance(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             services.AssertParameterIsNotNull(nameof(services));
             parameter.AssertParameterIsNotNull(nameof(parameter));
@@ -259,7 +300,7 @@ namespace MyTrout.Pipelines.Core
                 // Inject the NextPipelineRequest into the ParameterCreators methods to allow every parameter to be treated exactly the same.
                 indexedParameterCreators.Insert(
                             0,
-                            (ILogger<StepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+                            (ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
                                 => StepActivator.CreateParameterForNextPipelineRequest(nextRequest, logger, services, pipelineStep, parameter));
 
                 var parametersForConstructor = new List<object?>();

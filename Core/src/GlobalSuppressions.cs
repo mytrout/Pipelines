@@ -24,6 +24,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.INPUT_OBJECT")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.INPUT_STREAM")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.OUTPUT_OBJECT")]
 [assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.OUTPUT_STREAM")]
+[assembly: SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:Field names should not contain underscore", Justification = "Constant names should contain underscores.", Scope = "member", Target = "~F:MyTrout.Pipelines.Steps.PipelineContextConstants.UNIX_EPOCH")]
 [assembly: SuppressMessage("Minor Code Smell", "S3267:Loops should be simplified with \"LINQ\" expressions", Justification = "This code doesn't have a simple LINQ expression conversion.", Scope = "member", Target = "~M:MyTrout.Pipelines.Steps.RenameContextItemStep.InvokeCachedCoreAsync(MyTrout.Pipelines.IPipelineContext)~System.Threading.Tasks.Task")]

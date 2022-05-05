@@ -1,7 +1,7 @@
-﻿// <copyright file="IStepActivator.cs" company="Chris Trout">
+﻿// <copyright file="IContextNameBuilder.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,17 @@
 
 namespace MyTrout.Pipelines
 {
-    using MyTrout.Pipelines.Core;
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
-    /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
+    /// Provides the capability of building an <see cref="IPipelineContext.Items"/> context name for a given type name and property name.
     /// </summary>
-    public interface IStepActivator
+    public interface IContextNameBuilder
     {
         /// <summary>
-        /// Gets the list of <see cref="ParameterCreationDelegate"/> that will construct the pipeline steps.
+        /// Builds an <see cref="IPipelineContext.Items"/> context name for a given type name and property name.
         /// </summary>
-        IList<ParameterCreationDelegate> ParameterCreators { get; }
-
-        /// <summary>
-        /// Constructs an instance of step from a <see cref="Type" /> for the pipeline.
-        /// </summary>
-        /// <param name="pipelineStep">The step to be created.</param>
-        /// <param name="nextRequest">The next step to execute.</param>
-        /// <returns>An instance of the step that is constructed.</returns>
-        object? CreateInstance(StepWithContext pipelineStep, IPipelineRequest nextRequest);
+        /// <param name="typeName">The <see cref="System.Type" /> from which this context name is built.</param>
+        /// <param name="propertyName">The property from which this context name is built.</param>
+        /// <returns>A context name for use in <see cref="IPipelineContext.Items"/>.</returns>
+        string BuildContextName(string typeName, string propertyName);
     }
 }

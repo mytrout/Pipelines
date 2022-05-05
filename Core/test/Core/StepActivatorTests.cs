@@ -115,6 +115,39 @@ namespace MyTrout.Pipelines.Core.Tests
         }
 
         [TestMethod]
+        public void Returns_Valid_Step_Instance_From_CreateInstance_When_Options_Uses_FromServices_Attribute()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+
+            var config = new ConfigurationBuilder().AddJsonFile("test-type.json").Build();
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
+            Type stepType = typeof(SampleWithFromServicesAttributeOptionsStep);
+            using (var pipelineRequest = new NoOpStep())
+            {
+                string stepContext = null;
+
+                var source = new StepActivator(logger, serviceProvider);
+
+                // act
+                var result = source.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest);
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOfType(result, stepType);
+
+                var typedResult = result as SampleWithFromServicesAttributeOptionsStep;
+                Assert.IsNotNull(typedResult, "result is not SampleWithFromServicesAttributeOptionsStep.");
+                Assert.IsNotNull(typedResult.Options.Configuration, "Options.IConfiguration is null.");
+                Assert.AreEqual(typedResult.Options.Configuration, config);
+            }
+        }
+
+        [TestMethod]
         public void Returns_Valid_Step_Instance_From_CreateInstance_When_StepWithContext_Containing_ConfigKeys_Is_Used()
         {
             // arrange

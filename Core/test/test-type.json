@@ -1,5 +1,8 @@
 {
   "SampleOptions": {
     "ConnectionString": "sample-options-connection-string"
+  },
+  "SampleWithFromServiceAttributeOptions": {
+    "ConnectionString": "sample-options-connection-string"
   }
 }

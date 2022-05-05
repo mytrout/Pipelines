@@ -24,28 +24,29 @@
 namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
-    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Move the Output Stream to Input Stream in the pipeline.
     /// </summary>
-    public class MoveOutputStreamToInputStreamStep : AbstractCachingPipelineStep<MoveOutputStreamToInputStreamStep>
+    public class MoveOutputStreamToInputStreamStep : RenameContextItemStep
     {
+        private static readonly RenameContextItemOptions DefaultOptions = new()
+        {
+            RenameValues = { { PipelineContextConstants.OUTPUT_STREAM, PipelineContextConstants.INPUT_STREAM } }
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MoveOutputStreamToInputStreamStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         public MoveOutputStreamToInputStreamStep(ILogger<MoveOutputStreamToInputStreamStep> logger, IPipelineRequest next)
-            : base(logger, next)
+            : base(logger, MoveOutputStreamToInputStreamStep.DefaultOptions, next)
         {
             // no op
         }
-
-        /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string> { PipelineContextConstants.OUTPUT_STREAM };
 
         /// <summary>
         /// Executes code before the caching for this step is invoked.
@@ -57,27 +58,6 @@ namespace MyTrout.Pipelines.Steps
             context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
 
             return base.InvokeBeforeCacheAsync(context);
-        }
-
-        /// <summary>
-        /// Copy the Output Stream to Input Stream in the pipeline.
-        /// </summary>
-        /// <param name="context">The pipeline context.</param>
-        /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
-        {
-            try
-            {
-                // InvokeBeforeCacheAsync guarantees that this key will exist and is a Stream.
-                object workingStream = this.CachedItems[PipelineContextConstants.OUTPUT_STREAM];
-                context.Items.Add(PipelineContextConstants.INPUT_STREAM, workingStream);
-
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-            }
-            finally
-            {
-                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-            }
         }
     }
 }
