@@ -119,6 +119,64 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            int errorCount = 0;
+
+            ILogger<RenameContextItemStep> logger = new Mock<ILogger<RenameContextItemStep>>().Object;
+
+            string originalKey1 = "PIPELINE_VALUE_1";
+            string originalKey2 = "PIPELINE_VALUE_2";
+            string originalKey3 = "PIPELINE_VALUE_3";
+
+            string expectedKey1 = "PIPELINE_RENAMED_VALUE_1";
+            string expectedKey2 = "PIPELINE_RENAMED_VALUE_2";
+            string expectedKey3 = "PIPELINE_RENAMED_VALUE_3";
+
+            var options = new RenameContextItemOptions()
+            {
+                RenameValues = new Dictionary<string, string>()
+                {
+                    { originalKey1, expectedKey1 },
+                    { originalKey2, expectedKey2 },
+                    { originalKey3, expectedKey3 }
+                }
+            };
+
+            string expectedValue1 = "Something to believe in.";
+            string expectedValue2 = "Poison";
+
+            var mockRequest = new Mock<IPipelineRequest>();
+            mockRequest.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>()));
+
+            using (IPipelineRequest next = mockRequest.Object)
+            {
+                // act
+                using (var step = new RenameContextItemStep(logger, options, next))
+                {
+                    var context = new PipelineContext();
+                    context.Items.Add(originalKey1, expectedValue1);
+                    context.Items.Add(originalKey2, expectedValue2);
+                    var contextName = Guid.NewGuid().ToString();
+                    var contextValue = Guid.NewGuid();
+                    context.Items.Add(contextName, contextValue);
+
+                    int expectedItemsCount = 3;
+
+                    await step.InvokeAsync(context);
+
+                    // assert
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+
+                    Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                    Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                    Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_Task_From_DisposeAsync()
         {
             // arr

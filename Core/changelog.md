@@ -18,6 +18,7 @@
 - Change MoveOutputStreamToInputStreamStep and MoveInputStreamToOutputStream to use the RenameContextItemStep as the base class, thereby eliminating code.
 - Correct documentation typos on RenameContextItemStep.
 - Add support for .NET 7.0
+- Add unit tests to confirm that PipelineContext is restored to its previous state after InvokeAsync().
 
 ## 3.2.0 - SonarCloud UPDATE ONLY
 - Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages

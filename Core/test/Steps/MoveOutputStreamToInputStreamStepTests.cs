@@ -104,6 +104,48 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            int errorCount = 0;
+            using (var stream = new MemoryStream())
+            {
+                var context = new PipelineContext();
+                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
+                var contextName = Guid.NewGuid().ToString();
+                var contextValue = Guid.NewGuid();
+                context.Items.Add(contextName, contextValue);
+
+                int expectedItemsCount = 2;
+
+                ILogger<MoveOutputStreamToInputStreamStep> logger = new Mock<ILogger<MoveOutputStreamToInputStreamStep>>().Object;
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context))
+                                        .Callback(() => MoveOutputStreamToInputStreamStepTests.Validate_Context(context, stream))
+                                        .Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                using (var source = new MoveOutputStreamToInputStreamStep(logger, next))
+                {
+                    // act
+                    await source.InvokeAsync(context);
+
+                    // assert
+                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OUTPUT_STREAM should exist in the Pipeline context.");
+                    Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM), "INPUT_STREAM should not exist in the Pipeline context.");
+
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
+
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+
+                    Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                    Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                    Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Exception_Is_Thrown_In_Next()
         {
             // arrange

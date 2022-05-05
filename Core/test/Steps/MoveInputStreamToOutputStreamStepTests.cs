@@ -104,13 +104,20 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public async Task Provides_OutputStream_In_InvokeAsync_To_Downstream_Callers()
+        public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
         {
             // arrange
+            int errorCount = 0;
+
             using (var stream = new MemoryStream())
             {
                 var context = new PipelineContext();
                 context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
+                var contextName = Guid.NewGuid().ToString();
+                var contextValue = Guid.NewGuid();
+                context.Items.Add(contextName, contextValue);
+
+                int expectedItemsCount = 2;
 
                 var logger = new Mock<ILogger<MoveInputStreamToOutputStreamStep>>().Object;
                 var mockNext = new Mock<IPipelineRequest>();
@@ -127,8 +134,12 @@ namespace MyTrout.Pipelines.Steps.Tests
                     // assert
                     Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM), "INPUT_STREAM should exist in the Pipeline context.");
                     Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OUTPUT_STREAM should not exist in the Pipeline context.");
-
+                    Assert.AreEqual(errorCount, context.Errors.Count);
                     Assert.AreEqual(stream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+
+                    Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                    Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                    Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
                 }
             }
         }
