@@ -159,7 +159,7 @@ namespace MyTrout.Pipelines.Core
 
                 if (parameterInfo == null)
                 {
-                    // new issue here...Options class must have a setter.
+                    throw new InvalidOperationException(Resources.FROMSERVICES_PROPERTY_MUST_HAVE_SETTER(CultureInfo.CurrentCulture, property.Name, parameter.ParameterType.Name, pipelineStep.StepType.Name));
                 }
                 else
                 {
@@ -167,7 +167,7 @@ namespace MyTrout.Pipelines.Core
 
                     if (injectedResult.Instance == null)
                     {
-                        // injected instance isn't available in Dependency Injection.
+                        throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, parameter.ParameterType.Name, property.Name, pipelineStep.StepType.Name));
                     }
                     else
                     {

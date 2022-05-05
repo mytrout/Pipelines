@@ -7,15 +7,19 @@
 - BREAKING CHANGE: Move ParameterCreationDelegate and ParameterCreationResult to the MyTrout.Pipelines namespace due to IStepActivator.ParameterCreators change to preserve namespace dependencies.
 - BREAKING CHANGE: Alter ParameterCreationDelegate to use ILogger<IStepActivator> instead of ILogger<StepActivator> to preserve namespace dependencies.
 - BREAKING CHANGE: Alter StepActivator delegate methods to use ILogger<IStepActivator> instead of ILogger<StepActivator> to preserve namespace dependencies.
-- Alter ParameterCreators property use ParameterCreationDelegate that injects both IConfiguration and Dependency Injection values.
+- Add new ParameterCreationDelegate that injects both IConfiguration and Dependency Injection values.
+= Alter the behavior of StepActivator.ParameterCreators property to use the newly created CreateParameterFromConfigurationAndDependencyInjection delegate.
 - Uncomment all of the nuget publish steps to allow a new version to be published.
 - Mark the Configuration and IsConfigurationAvailable properties with the Obsolete attribute as the new LoadConfigurationToPipelineContextStep supercedes this functionality.
 - Add CreateUnixEpochStep.
 - Add LoadValuesFromContextObjectToPipelineContextStep<TObject>
-- Add LoadValuesFromCConfigurationToPipelineContextStep.
+- Add LoadValuesFromConfigurationToPipelineContextStep.
+- Add LoadValuesFromContextObjectToPipelineContextStep<TObject>.
+- Add EnumerateItemsinCollectionStep<TParent, TObject>.
+- Refactor LoadValuesFromContextObjectToPipelineContextStep and LoadValuesFromOptionsToPipelineContextStep into AbstractLoadItemToPipelineContextStep<TItem, TOptions>.
 - Add UnixEpochKind to support different epoch configurations in CreateUnixEpochStep.
 - Add INPUT_OBJECT, OUTPUT_OBJECT, and UNIX_EPOCH to PipelineContextConstants.
-- Change MoveOutputStreamToInputStreamStep and MoveInputStreamToOutputStream to use the RenameContextItemStep as the base class, thereby eliminating code.
+- Refactor MoveOutputStreamToInputStreamStep and MoveInputStreamToOutputStream to use the RenameContextItemStep as the base class to eliminate duplicate code.
 - Correct documentation typos on RenameContextItemStep.
 - Add support for .NET 7.0
 - Add unit tests to confirm that PipelineContext is restored to its previous state after InvokeAsync().

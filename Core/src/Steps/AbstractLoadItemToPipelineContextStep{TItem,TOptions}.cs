@@ -75,7 +75,7 @@ namespace MyTrout.Pipelines.Steps
             }
             finally
             {
-                foreach (var itemProperty in typeof(TOptions).GetProperties())
+                foreach (var itemProperty in typeof(TItem).GetProperties())
                 {
                     string contextName = this.Options.BuildContextName(typeof(TItem).Name, itemProperty.Name);
                     context.Items.Remove(contextName);

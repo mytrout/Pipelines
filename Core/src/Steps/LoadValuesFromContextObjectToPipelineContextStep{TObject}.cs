@@ -40,7 +40,7 @@ namespace MyTrout.Pipelines.Steps
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// /// <param name="options">THe options to configure this pipeline.</param>
-        protected LoadValuesFromContextObjectToPipelineContextStep(ILogger<LoadValuesFromContextObjectToPipelineContextStep<TObject>> logger, LoadValuesFromContextObjectToPipelineContextOptions options, IPipelineRequest next)
+        public LoadValuesFromContextObjectToPipelineContextStep(ILogger<LoadValuesFromContextObjectToPipelineContextStep<TObject>> logger, LoadValuesFromContextObjectToPipelineContextOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op

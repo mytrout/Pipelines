@@ -1,4 +1,4 @@
-﻿// <copyright file="SampleWithFromServicesAttributeOptions.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithFromServicesAttributeWithNoSetterStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -24,24 +24,23 @@
 
 namespace MyTrout.Pipelines.Samples.Tests
 {
-    using MyTrout.Pipelines.Core;
-
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithFromServicesAttributeOptions
+    public class SampleWithFromServicesAttributeWithNoSetterStep : SampleStep1
     {
-        public SampleWithFromServicesAttributeOptions(string connectionString)
+        public SampleWithFromServicesAttributeWithNoSetterStep(SampleWithFromServicesAttributeWithNoSetterOptions options, IPipelineRequest next)
+            : base(next)
         {
-            this.ConnectionString = connectionString;
+            this.Options = options;
         }
 
-        private SampleWithFromServicesAttributeOptions()
+        public SampleWithFromServicesAttributeWithNoSetterOptions Options { get; private set; }
+
+        protected override string Key
         {
-            // no op
+            get
+            {
+                return this.Options.ConnectionString;
+            }
         }
-
-        public string ConnectionString { get; set; }
-
-        [FromServices]
-        public IContextNameBuilder ContextNameBuilder { get; set; }
     }
 }

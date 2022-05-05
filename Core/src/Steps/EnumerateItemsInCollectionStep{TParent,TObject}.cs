@@ -51,16 +51,16 @@ namespace MyTrout.Pipelines.Steps
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.InputObjectContextName };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputObjectContextName };
 
         /// <summary>
-        /// Validates that the output object exists before the caching for this step is invoked.
+        /// Validates that the input object exists before the caching for this step is invoked.
         /// </summary>
         /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
         protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<TParent>(this.Options.OutputObjectContextName);
+            context.AssertValueIsValid<TParent>(this.Options.InputObjectContextName);
             return base.InvokeBeforeCacheAsync(context);
         }
 
@@ -71,18 +71,18 @@ namespace MyTrout.Pipelines.Steps
         /// <returns>A <see cref="Task" />.</returns>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            IEnumerable<TObject> collection = (context.Items[this.Options.OutputObjectContextName] as TParent)!;
+            IEnumerable<TObject> collection = (context.Items[this.Options.InputObjectContextName] as TParent)!;
 
             foreach (TObject item in collection)
             {
                 try
                 {
-                    context.Items.Add(this.Options.InputObjectContextName, item);
+                    context.Items.Add(this.Options.OutputObjectContextName, item);
                     await this.Next.InvokeAsync(context).ConfigureAwait(false);
                 }
                 finally
                 {
-                    context.Items.Remove(this.Options.InputObjectContextName);
+                    context.Items.Remove(this.Options.OutputObjectContextName);
                 }
             }
 

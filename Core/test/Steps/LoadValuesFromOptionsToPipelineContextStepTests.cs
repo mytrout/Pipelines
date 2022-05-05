@@ -1,4 +1,4 @@
-﻿// <copyright file="LoadOptionsToPipelineContextStepTests.cs" company="Chris Trout">
+﻿// <copyright file="LoadValuesFromOptionsToPipelineContextStepTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -24,7 +24,6 @@
 
 namespace MyTrout.Pipelines.Steps.Tests
 {
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -57,21 +56,21 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
-        public async Task Provides_Configuration_Value_In_InvokeAsync_To_Downstream_Callers()
+        public async Task Provides_Options_Values_In_InvokeAsync_To_Downstream_Callers()
         {
             // arrange
             var errorCount = 0;
 
             ILogger<LoadValuesFromOptionsToPipelineContextStep<SampleOptions>> logger = new Mock<ILogger<LoadValuesFromOptionsToPipelineContextStep<SampleOptions>>>().Object;
+            var expectedValue = "option1";
 
             SampleOptions options = new()
             {
-                Option1 = "option1"
+                Option1 = expectedValue
             };
 
             var context = new PipelineContext();
             var contextName = $"{typeof(SampleOptions).Name}.Option1";
-            var expectedValue = PipelineContextConstants.INPUT_STREAM;
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))

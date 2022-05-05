@@ -1,7 +1,7 @@
-﻿// <copyright file="SampleWithFromServicesAttributeOptions.cs" company="Chris Trout">
+﻿// <copyright file="SamplePersonEnumerator.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2022 Chris Trout
+// Copyright (c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,25 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Samples.Tests
+namespace MyTrout.Pipelines.Tests
 {
-    using MyTrout.Pipelines.Core;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithFromServicesAttributeOptions
+    public class SamplePersonEnumerator : IEnumerable<SamplePerson>
     {
-        public SampleWithFromServicesAttributeOptions(string connectionString)
+        public List<SamplePerson> Persons { get; set; } = new List<SamplePerson>();
+
+        public IEnumerator<SamplePerson> GetEnumerator()
         {
-            this.ConnectionString = connectionString;
+            return this.Persons.GetEnumerator();
         }
 
-        private SampleWithFromServicesAttributeOptions()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            // no op
+            throw new NotImplementedException();
         }
-
-        public string ConnectionString { get; set; }
-
-        [FromServices]
-        public IContextNameBuilder ContextNameBuilder { get; set; }
     }
 }

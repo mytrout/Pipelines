@@ -1,4 +1,4 @@
-﻿// <copyright file="SampleWithFromServicesAttributeOptions.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithFromServicesAttributeWithNoSetterOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -24,17 +24,18 @@
 
 namespace MyTrout.Pipelines.Samples.Tests
 {
+    using Microsoft.Extensions.Configuration;
     using MyTrout.Pipelines.Core;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithFromServicesAttributeOptions
+    public class SampleWithFromServicesAttributeWithNoSetterOptions
     {
-        public SampleWithFromServicesAttributeOptions(string connectionString)
+        public SampleWithFromServicesAttributeWithNoSetterOptions(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
 
-        private SampleWithFromServicesAttributeOptions()
+        private SampleWithFromServicesAttributeWithNoSetterOptions()
         {
             // no op
         }
@@ -42,6 +43,6 @@ namespace MyTrout.Pipelines.Samples.Tests
         public string ConnectionString { get; set; }
 
         [FromServices]
-        public IContextNameBuilder ContextNameBuilder { get; set; }
+        public IConfiguration Configuration { get; }
     }
 }

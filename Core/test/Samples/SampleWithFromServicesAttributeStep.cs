@@ -25,9 +25,9 @@
 namespace MyTrout.Pipelines.Samples.Tests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithFromServicesAttributeOptionsStep : SampleStep1
+    public class SampleWithFromServicesAttributeStep : SampleStep1
     {
-        public SampleWithFromServicesAttributeOptionsStep(SampleWithFromServicesAttributeOptions options, IPipelineRequest next)
+        public SampleWithFromServicesAttributeStep(SampleWithFromServicesAttributeOptions options, IPipelineRequest next)
             : base(next)
         {
             this.Options = options;

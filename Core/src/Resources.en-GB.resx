@@ -132,6 +132,9 @@
   <data name="CONTEXT_VALUE_NOT_EXPECTED_TYPE" xml:space="preserve">
     <value>'{0}' is not a type of '{1}'.</value>
   </data>
+  <data name="FROMSERVICES_PROPERTY_MUST_HAVE_SETTER" xml:space="preserve">
+    <value>A property named '{0}' on '{1}' with the FromServicesAttribute must have a setter to allow the dependency injection to occur for step '{2}'</value>
+  </data>
   <data name="MISSING_CONFIGKEY" xml:space="preserve">
     <value>ConfigKey '{0}' was not found when loading {1} for {2} for context '{3}'.</value>
   </data>
@@ -145,7 +148,7 @@
     <value>parameterName must be supplied in AssertParameterIsNotNull.</value>
   </data>
   <data name="SERVICEPROVIDER_LACKS_PARAMETER" xml:space="preserve">
-    <value>ServiceProvider does not contain one of the parameters required for '{0}'.</value>
+    <value>ServiceProvider does not contain one of the parameters required for {0}.{1} for '{2}'.</value>
   </data>
   <data name="STEP_CONTEXT_NOT_FOUND" xml:space="preserve">
     <value>'IDictionary&lt;string,{0}&gt;' could not be found in ServiceProvider during the initialization of '{1}' step.</value>

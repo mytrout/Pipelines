@@ -1,7 +1,7 @@
-﻿// <copyright file="SampleWithFromServicesAttributeOptions.cs" company="Chris Trout">
+﻿// <copyright file="SamplePerson.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2022 Chris Trout
+// Copyright (c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,13 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Samples.Tests
-{
-    using MyTrout.Pipelines.Core;
-
+namespace MyTrout.Pipelines.Tests
+{ 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithFromServicesAttributeOptions
+    public class SamplePerson
     {
-        public SampleWithFromServicesAttributeOptions(string connectionString)
-        {
-            this.ConnectionString = connectionString;
-        }
+        public string LastName { get; set; }
 
-        private SampleWithFromServicesAttributeOptions()
-        {
-            // no op
-        }
-
-        public string ConnectionString { get; set; }
-
-        [FromServices]
-        public IContextNameBuilder ContextNameBuilder { get; set; }
+        public string FirstName { get; set; }
     }
 }
