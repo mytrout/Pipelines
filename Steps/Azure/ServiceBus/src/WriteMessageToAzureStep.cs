@@ -94,7 +94,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(this.Options.OutputStreamContextName);
 
             ServiceBusMessage message = await this.ConstructMessageAsync(context).ConfigureAwait(false);
 
@@ -112,17 +112,17 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <returns>An Azure <see cref="ServiceBusMessage" />.</returns>
         private async Task<ServiceBusMessage> ConstructMessageAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<Stream>(this.Options.OutputStreamContextName);
 
-            var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+            var outputStream = context.Items[this.Options.OutputStreamContextName] as Stream;
 
             var messageBody = await BinaryData.FromStreamAsync(outputStream!);
 
             var result = new ServiceBusMessage(messageBody);
 
-            if (context.Items.ContainsKey(MessagingConstants.CORRELATION_ID))
+            if (context.Items.ContainsKey(this.Options.CorrelationIdContextName))
             {
-                result.CorrelationId = context.Items[MessagingConstants.CORRELATION_ID].ToString();
+                result.CorrelationId = context.Items[this.Options.CorrelationIdContextName].ToString();
             }
             else
             {

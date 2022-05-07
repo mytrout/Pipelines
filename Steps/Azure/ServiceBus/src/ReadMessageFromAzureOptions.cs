@@ -52,6 +52,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public int BatchSize { get; set; } = 10;
 
         /// <summary>
+        /// Gets or sets the context name to read a correlation id from <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string CorrelationIdContextName { get; set; } = MessagingConstants.CORRELATION_ID;
+
+        /// <summary>
         /// Gets or sets the number of times a message will be delivered before being dead-lettered.
         /// </summary>
         public int DeliveryAttemptsBeforeDeadLetter { get; set; } = 5;
@@ -61,6 +66,11 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         /// <remarks>Queues should be just the name of the queue. Subscriptions should be in the '{topic}/{subscription}' format using a forward slash between the topic name and the subscription name.</remarks>
         public string EntityPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the context name to create an input <see cref="System.IO.Stream"/> from the message into <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
 
         /// <summary>
         /// Gets a <see cref="ServiceBusReadEntity"/> that represents either a queue or subscription configuration used for reading messages.

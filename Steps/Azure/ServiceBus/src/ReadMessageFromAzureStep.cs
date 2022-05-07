@@ -26,7 +26,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     using global::Azure.Messaging.ServiceBus;
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
     /// <summary>
     /// Reads a batch of messages from an Azure Service Bus queue or subscription and passes them to the next step in the pipeline one at a time.
     /// </summary>
-    public class ReadMessageFromAzureStep : AbstractPipelineStep<ReadMessageFromAzureStep, ReadMessageFromAzureOptions>
+    public class ReadMessageFromAzureStep : AbstractCachingPipelineStep<ReadMessageFromAzureStep, ReadMessageFromAzureOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadMessageFromAzureStep" /> class with the specified parameters.
@@ -82,6 +84,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// </summary>
         public ServiceBusReceiver ServiceBusReceiver { get; init; }
 
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.InputStreamContextName };
+
         /// <summary>
         /// Dispose of any unmanaged resources.
         /// </summary>
@@ -107,45 +112,24 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="context"/> is <see langword="null" />.</exception>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertParameterIsNotNull(nameof(context));
+            DateTimeOffset lastMessageProcessedAt = DateTimeOffset.UtcNow;
 
-            context.Items.TryGetValue(PipelineContextConstants.INPUT_STREAM, out var previousInputStream);
-
-            // Cache the previousInputStream if prior steps created it.
-            if (previousInputStream != null)
+            while (DateTimeOffset.UtcNow.Subtract(lastMessageProcessedAt) <= this.Options.TimeToWaitForNewMessage)
             {
-                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
-            }
+                var messages = await this.ServiceBusReceiver.ReceiveMessagesAsync(this.Options.BatchSize, maxWaitTime: this.Options.TimeToWaitForNewMessage, cancellationToken: context.CancellationToken).ConfigureAwait(false);
 
-            try
-            {
-                DateTimeOffset lastMessageProcessedAt = DateTimeOffset.UtcNow;
-
-                while (DateTimeOffset.UtcNow.Subtract(lastMessageProcessedAt) <= this.Options.TimeToWaitForNewMessage)
+                foreach (var message in messages)
                 {
-                    var messages = await this.ServiceBusReceiver.ReceiveMessagesAsync(this.Options.BatchSize, maxWaitTime: this.Options.TimeToWaitForNewMessage, cancellationToken: context.CancellationToken).ConfigureAwait(false);
-
-                    foreach (var message in messages)
-                    {
-                        await this.ProcessMessageAsync(context, message, context.CancellationToken).ConfigureAwait(false);
-                        lastMessageProcessedAt = DateTimeOffset.UtcNow;
-                    }
-
-                    if (context.CancellationToken.IsCancellationRequested)
-                    {
-                        // Forces to a UTC version of MinValue.
-                        lastMessageProcessedAt = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
-                    }
+                    await this.ProcessMessageAsync(context, message, context.CancellationToken).ConfigureAwait(false);
+                    lastMessageProcessedAt = DateTimeOffset.UtcNow;
                 }
-            }
-            finally
-            {
-                // Restore the previousInputStream if prior steps created it.
-                if (previousInputStream != null)
+
+                if (context.CancellationToken.IsCancellationRequested)
                 {
-                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousInputStream);
+                    // Forces to a UTC version of MinValue.
+                    lastMessageProcessedAt = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
                 }
             }
         }
@@ -206,9 +190,9 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
             bool configuredTheCorrelationId = false;
 
             // Set up the CorrelationId, if it doesn't exist.
-            if (!context.Items.ContainsKey(MessagingConstants.CORRELATION_ID))
+            if (!context.Items.ContainsKey(this.Options.CorrelationIdContextName))
             {
-                context.Items.Add(MessagingConstants.CORRELATION_ID, message.CorrelationId);
+                context.Items.Add(this.Options.CorrelationIdContextName, message.CorrelationId);
                 configuredTheCorrelationId = true;
             }
 
@@ -223,19 +207,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
                 // Load inputStream and pass it into the InvokeAsync().
                 using (var inputStream = message.Body.ToStream())
                 {
-                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+                    context.Items.Add(this.Options.InputStreamContextName, inputStream);
 
                     await this.Next.InvokeAsync(context).ConfigureAwait(false);
                 }
             }
             finally
             {
-                context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
+                context.Items.Remove(this.Options.InputStreamContextName);
 
                 // Remove the CorrelationId if it was configured in this step.
                 if (configuredTheCorrelationId)
                 {
-                    context.Items.Remove(MessagingConstants.CORRELATION_ID);
+                    context.Items.Remove(this.Options.CorrelationIdContextName);
                 }
 
                 // Remove the values in ApplicationProperties from the context.

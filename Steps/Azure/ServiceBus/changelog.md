@@ -1,4 +1,20 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
+
+## 3.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [# 85](https://github.com/mytrout/Pipelines/issues/85)  Update Resources.tt to use NamespaceHint instead of a hard-coded namespace.
+- [# 94](https://github.com/mytrout/Pipelines/issues/94)  Add "if-no-files-found: error" to the nuget publishing step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor ReadMessageFromAzureStep to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing INPUT_STREAM values are restored after execution of this step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ReadMessageFromAzureStep restores PipelineContext.Items to its original state after execution.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ReadMessageFromAzureStep and ReadMessageFromAzureOptions to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor WriteMessageToAzureStep and WriteMessageToAzureOptions to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- Uncomment all of the nuget publish steps to allow a new version to be published.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+
 ## 4.0.0
  - (BREAKING CHANGE) - ReadMessageFromAzureStep will always copy all ApplicationProperties values from a message into PipelineContext.Items with a prefix provided by ReadMessageFromAzureOptions.
  - (BREAKING CHANGE) - ReadMessageFromAzureOptions.ApplicationProperties has been removed permanently.
@@ -27,6 +43,7 @@
  - Add work_dispatch element to allow this library to to built manually in Github.
  - Suppress the CA2254 warning because it doesn't handle Resource files for logging messages.
  - Suppress SA1636 Header Warning because ReadMessageFromAzure.cs and GlobalSuppressions.cs are now copyright 2019-2021.
+
 ##3.0.0
 - Convert from Azure DevOps to Github Actions.
 - Delete azure-pipelines.yml and remove from the solution.
