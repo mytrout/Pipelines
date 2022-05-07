@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadStreamFromBlobStorageOptionsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,6 @@
 namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
@@ -39,17 +36,25 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         {
             // arrange
             var readBlobStorageConnectionString = "connectionString";
-
+            var inputStreamContextName = "INPUT_STREAM";
+            var sourceBlobContextName = "SOURCE_BLOB";
+            var sourceContainerNameContextName = "SOURCE_CONTAINER";
             // act
             var result = new ReadStreamFromBlobStorageOptions
             {
-                ReadBlobStorageConnectionString = readBlobStorageConnectionString
+                InputStreamContextName = inputStreamContextName,
+                ReadBlobStorageConnectionString = readBlobStorageConnectionString,
+                SourceBlobContextName = sourceBlobContextName,
+                SourceContainerNameContextName = sourceContainerNameContextName
             };
 
             // assert
             Assert.IsNotNull(result);
+            Assert.AreEqual(inputStreamContextName, result.InputStreamContextName);
             Assert.AreEqual(readBlobStorageConnectionString, result.ReadBlobStorageConnectionString);
             Assert.AreEqual(readBlobStorageConnectionString, result.RetrieveConnectionStringAsync().Result);
+            Assert.AreEqual(sourceBlobContextName, result.SourceBlobContextName);
+            Assert.AreEqual(sourceContainerNameContextName, result.SourceContainerNameContextName);
         }
     }
 }

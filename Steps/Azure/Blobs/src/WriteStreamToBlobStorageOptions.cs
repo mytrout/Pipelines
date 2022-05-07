@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToBlobStorageOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
     /// </summary>
     public class WriteStreamToBlobStorageOptions
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WriteStreamToBlobStorageOptions"/> class.
         /// </summary>
@@ -43,6 +44,21 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         {
             this.RetrieveConnectionStringAsync = this.RetrieveConnectionStringCoreAsync;
         }
+
+        /// <summary>
+        /// Gets or sets the context name for <see cref="IPipelineContext.Items"/> where the output <see cref="System.IO.Stream"/> will be retrieved.
+        /// </summary>
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the context name for the target blob.
+        /// </summary>
+        public string TargetBlobContextName { get; set; } = BlobConstants.TARGET_BLOB;
+
+        /// <summary>
+        /// /// Gets or sets the context name for container containing the target blob.
+        /// </summary>
+        public string TargetContainerNameContextName { get; set; } = BlobConstants.TARGET_CONTAINER_NAME;
 
         /// <summary>
         /// Gets or sets a value used to connect to Azure Blob Storage.

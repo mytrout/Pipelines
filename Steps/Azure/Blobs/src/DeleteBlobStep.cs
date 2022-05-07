@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteBlobStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -54,14 +54,14 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// <remarks><paramref name="context"/> is guaranteed to not be <see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCoreAsync(IPipelineContext context)
         {
-            if (this.Options.ExecutionTiming.HasFlag(DeleteBlobTimings.Before))
+            if (this.Options.ExecutionTiming.HasFlag(ExecutionTimings.Before))
             {
                 await DeleteBlobStep.DeleteBlobAsync(context, this.Options).ConfigureAwait(false);
             }
 
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            if (this.Options.ExecutionTiming.HasFlag(DeleteBlobTimings.After))
+            if (this.Options.ExecutionTiming.HasFlag(ExecutionTimings.After))
             {
                 await DeleteBlobStep.DeleteBlobAsync(context, this.Options).ConfigureAwait(false);
             }
@@ -69,16 +69,16 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
 
         private static async Task DeleteBlobAsync(IPipelineContext context, DeleteBlobOptions options)
         {
-            context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_CONTAINER_NAME);
-            context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_BLOB);
+            context.AssertStringIsNotWhiteSpace(options.TargetContainerNameContextName);
+            context.AssertStringIsNotWhiteSpace(options.TargetBlobContextName);
 
             string connectionString = await options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 
 #pragma warning disable CS8600 // Assert~ methods guarantee non-null values.
 
-            string targetContainer = context.Items[BlobConstants.TARGET_CONTAINER_NAME] as string;
+            string targetContainer = context.Items[options.TargetContainerNameContextName] as string;
 
-            string targetBlob = context.Items[BlobConstants.TARGET_BLOB] as string;
+            string targetBlob = context.Items[options.TargetBlobContextName] as string;
 
 #pragma warning restore CS8600
 

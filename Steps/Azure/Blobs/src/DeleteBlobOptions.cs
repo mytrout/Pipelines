@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteBlobOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,17 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// <summary>
         /// Gets or sets a value indicating when the blob deletion should be invoked.
         /// </summary>
-        public DeleteBlobTimings ExecutionTiming { get; set; } = DeleteBlobTimings.After;
+        public ExecutionTimings ExecutionTiming { get; set; } = ExecutionTimings.After;
+
+        /// <summary>
+        /// Gets or sets the name of the of blob to delete.
+        /// </summary>
+        public string TargetBlobContextName { get; set; } = BlobConstants.TARGET_BLOB;
+
+        /// <summary>
+        /// Gets or sets the name of the container containing the blob to delete.
+        /// </summary>
+        public string TargetContainerNameContextName { get; set; } = BlobConstants.TARGET_CONTAINER_NAME;
 
         /// <summary>
         /// Gets or sets a caller-defined function to retrieve the Connection String.

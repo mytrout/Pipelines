@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
-                ExecutionTiming = DeleteBlobTimings.After,
+                ExecutionTiming = ExecutionTimings.After,
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 
@@ -129,7 +129,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
 
             DeleteBlobOptions options = new DeleteBlobOptions()
             {
-                ExecutionTiming = DeleteBlobTimings.Before,
+                ExecutionTiming = ExecutionTimings.Before,
                 RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
             };
 

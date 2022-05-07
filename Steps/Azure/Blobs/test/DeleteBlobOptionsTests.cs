@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteBlobOptionsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,13 +39,17 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         {
             // arrange
             var deleteBlobConnectionString = "connectionString";
-            var executionTiming = DeleteBlobTimings.Before;
+            var executionTiming = ExecutionTimings.Before;
+            var targetContainerNameContextName = "BLOB_CONTAINER";
+            var targetBlobContextName = "TARGET_BLOB";
 
             // act
             var result = new DeleteBlobOptions
             {
                 DeleteBlobConnectionString = deleteBlobConnectionString,
-                ExecutionTiming = executionTiming
+                ExecutionTiming = executionTiming,
+                TargetBlobContextName = targetBlobContextName,
+                TargetContainerNameContextName = targetContainerNameContextName
             };
 
             // assert
@@ -53,6 +57,8 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             Assert.AreEqual(deleteBlobConnectionString, result.DeleteBlobConnectionString);
             Assert.AreEqual(deleteBlobConnectionString, result.RetrieveConnectionStringAsync().Result);
             Assert.AreEqual(executionTiming, result.ExecutionTiming);
+            Assert.AreEqual(targetBlobContextName, result.TargetBlobContextName);
+            Assert.AreEqual(targetContainerNameContextName, result.TargetContainerNameContextName);
         }
     }
 }
