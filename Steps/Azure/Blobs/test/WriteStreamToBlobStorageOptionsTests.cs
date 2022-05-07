@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToBlobStorageOptionsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,16 +38,25 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         public void Constructs_WriteStreamToBlobStorageOptions_Successfully()
         {
             // arrange
+            var outputStreamContextName = "OUTPUT_STREAM";
+            var targetContainerNameContextName = "CONTAINER_NAME";
+            var targetBlobContextName = "BLOB_NAME";
             var writeBlobStorageConnectionString = "connectionString";
 
             // act
             var result = new WriteStreamToBlobStorageOptions
             {
+                OutputStreamContextName = outputStreamContextName,
+                TargetBlobContextName = targetBlobContextName,
+                TargetContainerNameContextName = targetContainerNameContextName,
                 WriteBlobStorageConnectionString = writeBlobStorageConnectionString
             };
 
             // assert
             Assert.IsNotNull(result);
+            Assert.AreEqual(outputStreamContextName, result.OutputStreamContextName);
+            Assert.AreEqual(targetBlobContextName, result.TargetBlobContextName);
+            Assert.AreEqual(targetContainerNameContextName, result.TargetContainerNameContextName);
             Assert.AreEqual(writeBlobStorageConnectionString, result.WriteBlobStorageConnectionString);
             Assert.AreEqual(writeBlobStorageConnectionString, result.RetrieveConnectionStringAsync().Result);
         }

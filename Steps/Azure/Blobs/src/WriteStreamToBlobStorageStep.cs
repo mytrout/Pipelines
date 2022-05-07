@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToBlobStorageStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,15 +58,15 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_CONTAINER_NAME);
-            context.AssertStringIsNotWhiteSpace(BlobConstants.TARGET_BLOB);
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertStringIsNotWhiteSpace(this.Options.TargetContainerNameContextName);
+            context.AssertStringIsNotWhiteSpace(this.Options.TargetBlobContextName);
+            context.AssertValueIsValid<Stream>(this.Options.OutputStreamContextName);
 
 #pragma warning disable CS8600 // Assert~ methods guarantees non-null values.
 
-            string targetContainer = context.Items[BlobConstants.TARGET_CONTAINER_NAME] as string;
+            string targetContainer = context.Items[this.Options.TargetContainerNameContextName] as string;
 
-            string targetBlob = context.Items[BlobConstants.TARGET_BLOB] as string;
+            string targetBlob = context.Items[this.Options.TargetBlobContextName] as string;
 
 #pragma warning restore CS8600
 
@@ -84,7 +84,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
             }
             else
             {
-                var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
+                var outputStream = context.Items[this.Options.OutputStreamContextName] as Stream;
                 await blobClient.UploadAsync(outputStream).ConfigureAwait(false);
             }
         }

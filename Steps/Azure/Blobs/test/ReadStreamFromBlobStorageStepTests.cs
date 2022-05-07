@@ -158,62 +158,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_With_InputStream_From_InvokeAsync()
-        {
-            // arrange
-            string blobName = Guid.NewGuid().ToString("N");
-            string blobContainerName = Guid.NewGuid().ToString("N");
-
-            IPipelineContext context = new PipelineContext();
-            context.Items.Add(BlobConstants.SOURCE_BLOB, blobName);
-            context.Items.Add(BlobConstants.SOURCE_CONTAINER_NAME, blobContainerName);
-
-            string contents = "Enough is enough!";
-
-            var logger = new Mock<ILogger<ReadStreamFromBlobStorageStep>>().Object;
-            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(context))
-                                    .Callback(() =>
-                                    {
-                                        var outputArray = (context.Items[PipelineContextConstants.INPUT_STREAM] as Stream).ConvertStreamToByteArrayAsync().Result;
-                                        string result = Encoding.UTF8.GetString(outputArray);
-
-                                        // assert
-                                        Assert.AreEqual(contents, result);
-                                    })
-                                    .Returns(Task.CompletedTask);
-            var next = mockNext.Object;
-
-            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
-            var options = new ReadStreamFromBlobStorageOptions()
-            {
-                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
-            };
-
-            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
-
-            BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
-            await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
-
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
-            {
-                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
-            }
-
-            await source.InvokeAsync(context).ConfigureAwait(false);
-
-            // assert
-            if (context.Errors.Any())
-            {
-                throw context.Errors[0];
-            }
-
-            // cleanup
-            await containerClient.DeleteAsync().ConfigureAwait(false);
-            await source.DisposeAsync().ConfigureAwait(false);
-        }
-
-        [TestMethod]
         public async Task Returns_PipelineContext_Errors_From_InvokeAsync_When_SourceBlob_Does_Not_Exist()
         {
             // arrange
@@ -326,6 +270,115 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
 
             // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_With_InputStream_From_InvokeAsync()
+        {
+            // arrange
+            string blobName = Guid.NewGuid().ToString("N");
+            string blobContainerName = Guid.NewGuid().ToString("N");
+
+            IPipelineContext context = new PipelineContext();
+            context.Items.Add(BlobConstants.SOURCE_BLOB, blobName);
+            context.Items.Add(BlobConstants.SOURCE_CONTAINER_NAME, blobContainerName);
+
+            string contents = "Enough is enough!";
+
+            var logger = new Mock<ILogger<ReadStreamFromBlobStorageStep>>().Object;
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() =>
+                                    {
+                                        var outputArray = (context.Items[PipelineContextConstants.INPUT_STREAM] as Stream).ConvertStreamToByteArrayAsync().Result;
+                                        string result = Encoding.UTF8.GetString(outputArray);
+
+                                        // assert
+                                        Assert.AreEqual(contents, result);
+                                    })
+                                    .Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            var options = new ReadStreamFromBlobStorageOptions()
+            {
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
+
+            BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
+            await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+            {
+                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
+            }
+
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            // cleanup
+            await containerClient.DeleteAsync().ConfigureAwait(false);
+            await source.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            string blobName = Guid.NewGuid().ToString("N");
+            string blobContainerName = Guid.NewGuid().ToString("N");
+
+            IPipelineContext context = new PipelineContext();
+            context.Items.Add(BlobConstants.SOURCE_BLOB, blobName);
+            context.Items.Add(BlobConstants.SOURCE_CONTAINER_NAME, blobContainerName);
+            var expectedItemCount = context.Items.Count;
+
+            string contents = "Enough is enough!";
+
+            var logger = new Mock<ILogger<ReadStreamFromBlobStorageStep>>().Object;
+            Mock<IPipelineRequest> mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+            var options = new ReadStreamFromBlobStorageOptions()
+            {
+                RetrieveConnectionStringAsync = () => { return Task.FromResult(Environment.GetEnvironmentVariable("PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING", environmentVariableTarget)); }
+            };
+
+            var source = new ReadStreamFromBlobStorageStep(logger, options, next);
+
+            BlobContainerClient containerClient = new BlobContainerClient(await options.RetrieveConnectionStringAsync().ConfigureAwait(false), blobContainerName);
+            await containerClient.CreateIfNotExistsAsync().ConfigureAwait(false);
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+            {
+                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
+            }
+
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+            Assert.AreEqual(expectedItemCount, context.Items.Count);
+            Assert.IsTrue(context.Items.ContainsKey(BlobConstants.SOURCE_BLOB), "SOURCE_BLOB does not exist in PipelineContext.Items after execution.");
+            Assert.AreEqual(blobName, context.Items[BlobConstants.SOURCE_BLOB], "SOURCE_BLOB value does not match expected value after execution.");
+            Assert.IsTrue(context.Items.ContainsKey(BlobConstants.SOURCE_CONTAINER_NAME), "SOURCE_CONTAINER_NAME does not exist in PipelineContext.Items after execution.");
+            Assert.AreEqual(blobContainerName, context.Items[BlobConstants.SOURCE_CONTAINER_NAME], "SOURCE_CONTAINER_NAME value does not match expected value after execution.");
+
+            // cleanup
+            await containerClient.DeleteAsync().ConfigureAwait(false);
             await source.DisposeAsync().ConfigureAwait(false);
         }
 

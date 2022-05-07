@@ -1,5 +1,21 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 3.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [# 85](https://github.com/mytrout/Pipelines/issues/85)  Update Resources.tt to use NamespaceHint instead of a hard-coded namespace.
+- [# 94](https://github.com/mytrout/Pipelines/issues/94)  Add "if-no-files-found: error" to the nuget publishing step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor ReadStreamFromBlobStorageStep to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing INPUT_STREAM values are restored after execution of this step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ReadStreamFromBlobStorageStep restores PipelineContext.Items to its original state after execution.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor DeleteBlobStep and DeleteBlobOptions to use user-configurable context names for any value read or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ReadStreamFromBlobStorageStep and ReadStreamFromBlobStorageOptions to use user-configurable context names for any value read or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor WriteStreamToBlobStorageStep and WriteStreamToBlobStorageOptions to use user-configurable context names for any value read or written to IPipelineContext.Items.
+- Uncomment all of the nuget publish steps to allow a new version to be published.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+
 ## 2.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
  - Update C# Language Version from 9.0 to 10.0.

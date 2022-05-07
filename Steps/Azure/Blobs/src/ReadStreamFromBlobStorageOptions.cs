@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadStreamFromBlobStorageOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,11 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         }
 
         /// <summary>
+        /// Gets or sets the context name for <see cref="IPipelineContext.Items"/> where the input <see cref="System.IO.Stream"/> will be loaded.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+
+        /// <summary>
         /// Gets or sets a value used to connect to Azure Blob Storage.
         /// </summary>
         public string ReadBlobStorageConnectionString { get; set; } = string.Empty;
@@ -49,6 +54,16 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         /// Gets or sets a user-defined function to retrieve the Connection String.
         /// </summary>
         public Func<Task<string>> RetrieveConnectionStringAsync { get; set; }
+
+        /// <summary>
+        /// Gets or sets the context name for the source blob.
+        /// </summary>
+        public string SourceBlobContextName { get; set; } = BlobConstants.SOURCE_BLOB;
+
+        /// <summary>
+        /// /// Gets or sets the context name for container containing the source blob.
+        /// </summary>
+        public string SourceContainerNameContextName { get; set; } = BlobConstants.SOURCE_CONTAINER_NAME;
 
         /// <summary>
         /// Retrieves a connection string using a caller-defined methodology.
