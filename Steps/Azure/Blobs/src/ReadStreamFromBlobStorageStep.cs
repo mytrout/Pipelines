@@ -89,11 +89,19 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
                 var blobClient = client.GetBlobClient(sourceBlob);
                 if (await blobClient.ExistsAsync().ConfigureAwait(false))
                 {
-                    using (MemoryStream stream = new MemoryStream())
+                    try
                     {
-                        await blobClient.DownloadToAsync(stream).ConfigureAwait(false);
-                        context.Items.Add(this.Options.InputStreamContextName, stream);
-                        await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                        using (MemoryStream stream = new MemoryStream())
+                        {
+                            await blobClient.DownloadToAsync(stream).ConfigureAwait(false);
+                            context.Items.Add(this.Options.InputStreamContextName, stream);
+                            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                        }
+                    }
+                    finally
+                    {
+                        // Clean-up after this step is completed.
+                        context.Items.Remove(this.Options.InputStreamContextName);
                     }
                 }
                 else
