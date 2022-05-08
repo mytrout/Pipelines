@@ -48,9 +48,19 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
         public string AzureServiceBusConnectionString { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets the context name to read a correlation id from <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string CorrelationIdContextName { get; set; } = MessagingConstants.CORRELATION_ID;
+
+        /// <summary>
         /// Gets or sets the prefix for keys in <see cref="IPipelineContext.Items"/> that should be copied to <see cref="ServiceBusMessage.ApplicationProperties"/>.
         /// </summary>
         public string MessageContextItemsPrefix { get; set; } = "MSG_";
+
+        /// <summary>
+        /// Gets or sets the context name to read an output <see cref="System.IO.Stream"/> from <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
 
         /// <summary>
         /// Gets or sets the Queue or Topic Name to which the message will be written.

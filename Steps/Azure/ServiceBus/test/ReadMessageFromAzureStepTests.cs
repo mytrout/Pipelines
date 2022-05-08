@@ -481,6 +481,68 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus.Tests
         }
 
         [TestMethod]
+        public async Task Returns_PipelineContext_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            ILogger<ReadMessageFromAzureStep> logger = new Mock<ILogger<ReadMessageFromAzureStep>>().Object;
+
+            int keyId = 1;
+            string name = "Name";
+
+            var previousStream = new MemoryStream();
+            var context = new PipelineContext();
+            context.Items.Add(PipelineContextConstants.INPUT_STREAM, previousStream);
+            int expectedItemCount = context.Items.Count;
+
+            string messageValue = "Are you there?";
+            var mockPipelineRequest = new Mock<IPipelineRequest>();
+            mockPipelineRequest.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockPipelineRequest.Object;
+
+            var options = new ReadMessageFromAzureOptions()
+            {
+                AzureServiceBusConnectionString = Tests.TestConstants.AzureServiceBusConnectionString,
+                EntityPath = Tests.TestConstants.QueueName,
+                TimeToWaitBetweenMessageChecks = new TimeSpan(0, 0, 0, 0, 50),
+                TimeToWaitForNewMessage = new TimeSpan(0, 0, 1, 0, 0)
+            };
+
+
+            // sending message to be read.
+            var client = new ServiceBusClient(options.AzureServiceBusConnectionString);
+            var sender = client.CreateSender(options.ReadEntity.QueueName);
+
+            byte[] messageBody = Encoding.UTF8.GetBytes(messageValue);
+
+            var message = new ServiceBusMessage(messageBody);
+            message.ApplicationProperties.Add("KeyId", keyId);
+            message.ApplicationProperties.Add("Name", name);
+
+            await sender.SendMessageAsync(message).ConfigureAwait(false);
+            await sender.CloseAsync().ConfigureAwait(false);
+
+            var source = new ReadMessageFromAzureStep(logger, options, next);
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+            Assert.AreEqual(expectedItemCount, context.Items.Count);
+            Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM), "INPUT_STREAM does not exist in PipelineContext.Items after execution.");
+            Assert.AreEqual(previousStream, context.Items[PipelineContextConstants.INPUT_STREAM], "INPUT_STREAM value does not match expected value after execution.");
+
+            // cleanup
+            await source.DisposeAsync();
+            await client.DisposeAsync();
+            previousStream.Close();
+        }
+
+        [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Is_Null()
         {
             // arrange
