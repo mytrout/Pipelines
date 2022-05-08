@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
-## 3.0.0
+## 5.0.0
 ### BREAKING CHANGES:
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
 - [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
