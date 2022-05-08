@@ -24,6 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Communications.Http
 {
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
@@ -43,7 +44,13 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         /// </summary>
         public IEnumerable<string> HeaderNames { get; set; } = new List<string>();
 
-#pragma warning disable CS8618 // HttpEndpoint should always be set in options.
+#pragma warning disable CS8618 // HttpClient and HttpEndpoint should always be set in options.
+        /// <summary>
+        /// Gets or sets the <see cref="HttpClient"/> used to make an http request.
+        /// </summary>
+        [FromServices]
+        public HttpClient HttpClient { get; set; }
+
         /// <summary>
         /// Gets or sets the HTTP endpoint to which the stream will be uploaded.
         /// </summary>
@@ -51,12 +58,47 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
 #pragma warning restore CS8618
 
         /// <summary>
+        /// Gets or sets the Status Code Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string HttpStatusCodeContextName { get; set; } = HttpCommunicationConstants.HTTP_STATUS_CODE;
+
+        /// <summary>
+        /// Gets or sets the Reason Phrase Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string HttpReasonPhraseContextName { get; set; } = HttpCommunicationConstants.HTTP_REASON_PHRASE;
+
+        /// <summary>
+        /// Gets or sets the Response Headers Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string HttpResponseHeadersContextName { get; set; } = HttpCommunicationConstants.HTTP_RESPONSE_HEADERS;
+
+        /// <summary>
+        /// Gets or sets the Response Trailing Headers Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string HttpResponseTrailingHeadersContextName { get; set; } = HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS;
+
+        /// <summary>
+        /// Gets or sets the Input Stream Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the Is Status Code Successful Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string IsSuccessfulStatusCodeContextName { get; set; } = HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE;
+
+        /// <summary>
         /// Gets or sets the method for the Htto Endpoint call.
         /// </summary>
         public HttpMethod Method { get; set; } = HttpMethod.Post;
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets a value whether the <see cref="PipelineContextConstants.OUTPUT_STREAM" /> contained in <see cref="IPipelineContext.Items"/> should be submitted as <see cref="HttpContent"/> to the <see cref="HttpEndpoint"/>.
+        /// Gets or sets the Output Stream Context Name used for <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets a value whether the <see cref="InputStreamContextName" /> contained in <see cref="IPipelineContext.Items"/> should be submitted as <see cref="HttpContent"/> to the <see cref="HttpEndpoint"/>.
         /// </summary>
         public bool UploadInputStreamAsContent { get; set; } = false;
 

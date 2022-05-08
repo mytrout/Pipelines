@@ -1,5 +1,19 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
+## 2.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor SendHttpRequestStep to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing values are restored after execution of this step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that SendHttpRequestStep restores PipelineContext.Items to its original state after execution.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor SendHttpRequestStep and SendHttpRequestOptions to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Add additional unit test to test that SendHttpRequestOptions ~ContextName values are used when SendHttpRequestStep executes.
+- Uncomment all of the nuget publish steps to allow a new version to be published.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+
 ## 1.1.0 - SonarCloud UPDATE ONLY
  - Removed the null check when returning HttpResponseMessage.Content because it is non-nullable in .NET 5.0 and higher.
  - Suppress SA1636 Copyright Header violations since SendHttpRequestStep.cs is now 2021-2022 Copyright.
