@@ -41,22 +41,24 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         /// Initializes a new instance of the <see cref="SendHttpRequestStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="httpClient">An <see cref="HttpClient"/>.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public SendHttpRequestStep(ILogger<SendHttpRequestStep> logger, HttpClient httpClient, SendHttpRequestOptions options, IPipelineRequest next)
+        public SendHttpRequestStep(ILogger<SendHttpRequestStep> logger, SendHttpRequestOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            this.HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            // no op
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { PipelineContextConstants.INPUT_STREAM };
-
-        /// <summary>
-        /// Gets the <see cref="HttpClient" /> necessary to execute HTTP requests.
-        /// </summary>
-        public HttpClient HttpClient { get; init; }
+        public override IEnumerable<string> CachedItemNames => new List<string>()
+                                                                {
+                                                                    this.Options.HttpStatusCodeContextName,
+                                                                    this.Options.IsSuccessfulStatusCodeContextName,
+                                                                    this.Options.HttpReasonPhraseContextName,
+                                                                    this.Options.HttpResponseHeadersContextName,
+                                                                    this.Options.HttpResponseTrailingHeadersContextName,
+                                                                    this.Options.OutputStreamContextName
+                                                                };
 
         /// <summary>
         /// Send Http Request to an Endpoint with specified Headers, Query Strings,etc.
@@ -71,22 +73,22 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
             {
                 using (var request = this.CreateHttpRequestMessageFromContext(context))
                 {
-                    using (var response = await this.HttpClient.SendAsync(request))
+                    using (var response = await this.Options.HttpClient.SendAsync(request))
                     {
                         using (var responseStream = new MemoryStream())
                         {
-                            context.Items.Add(HttpCommunicationConstants.HTTP_STATUS_CODE, response.StatusCode);
-                            context.Items.Add(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE, response.IsSuccessStatusCode);
-                            context.Items.Add(HttpCommunicationConstants.HTTP_REASON_PHRASE, response.ReasonPhrase ?? string.Empty);
-                            context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS, response.Headers);
-                            context.Items.Add(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS, response.TrailingHeaders);
+                            context.Items.Add(this.Options.HttpStatusCodeContextName, response.StatusCode);
+                            context.Items.Add(this.Options.IsSuccessfulStatusCodeContextName, response.IsSuccessStatusCode);
+                            context.Items.Add(this.Options.HttpReasonPhraseContextName, response.ReasonPhrase ?? string.Empty);
+                            context.Items.Add(this.Options.HttpResponseHeadersContextName, response.Headers);
+                            context.Items.Add(this.Options.HttpResponseTrailingHeadersContextName, response.TrailingHeaders);
 
                             // https://github.com/dotnet/runtime/pull/35910
                             // Removed the response.Content != null check because the upgrade from .NET 3.1 to .NET 5.0 makes
                             // response.Content into a non-null guaranteed value.
                             await response.Content.CopyToAsync(responseStream).ConfigureAwait(false);
                             responseStream.Position = 0;
-                            context.Items.Add(PipelineContextConstants.INPUT_STREAM, responseStream);
+                            context.Items.Add(this.Options.OutputStreamContextName, responseStream);
 
                             await this.Next.InvokeAsync(context).ConfigureAwait(false);
                         }
@@ -95,11 +97,12 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
             }
             finally
             {
-                context.Items.Remove(HttpCommunicationConstants.HTTP_STATUS_CODE);
-                context.Items.Remove(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE);
-                context.Items.Remove(HttpCommunicationConstants.HTTP_REASON_PHRASE);
-                context.Items.Remove(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS);
-                context.Items.Remove(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS);
+                context.Items.Remove(this.Options.HttpStatusCodeContextName);
+                context.Items.Remove(this.Options.IsSuccessfulStatusCodeContextName);
+                context.Items.Remove(this.Options.HttpReasonPhraseContextName);
+                context.Items.Remove(this.Options.HttpResponseHeadersContextName);
+                context.Items.Remove(this.Options.HttpResponseTrailingHeadersContextName);
+                context.Items.Remove(this.Options.OutputStreamContextName);
             }
         }
 
@@ -127,10 +130,10 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
 
             if (this.Options.UploadInputStreamAsContent)
             {
-                context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+                context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
 
                 // Used the null-forgiving operator '!' because context.AssertValueIsValid guarantees it is a non-null value.
-                result.Content = new StreamContent((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!);
+                result.Content = new StreamContent((context.Items[this.Options.InputStreamContextName] as Stream)!);
             }
 
             return result;

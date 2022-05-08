@@ -55,71 +55,70 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
             var options = new SendHttpRequestOptions();
-            var httpClient = new HttpClient();
             
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            using (var result = new SendHttpRequestStep(logger, httpClient, options, next))
+            using (var result = new SendHttpRequestStep(logger, options, next))
             {
                 // assert
                 Assert.IsNotNull(result);
-                Assert.AreEqual(httpClient, result.HttpClient);
                 Assert.AreEqual(logger, result.Logger);
                 Assert.AreEqual(next, result.Next);
                 Assert.AreEqual(options, result.Options);
             }
         }
 
+        
         [TestMethod]
-        public async Task Returns_Successful_Response_From_HTTP_GET_Request_When_Header_Does_Not_Exist()
+        public async Task Returns_Failed_Response_From_Fake_HTTP_GET_Request_When_ReasonPhrase_Is_Null()
         {
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
-            var options = new SendHttpRequestOptions()
+            using (var httpClient = HttpClientFactory.Create(new ReplaceReasonPhraseHandler()))
             {
-                HeaderNames = new List<string>() { "Accepted" },
-                HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                Method = System.Net.Http.HttpMethod.Get
-            };
-
-            string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
-
-            var mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
-            {
-                using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
+                var options = new SendHttpRequestOptions()
                 {
-                    string result = reader.ReadToEnd();
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/"),
+                    Method = System.Net.Http.HttpMethod.Get
+                };
 
-                    // assert
-                    Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
-                    Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
-                    Assert.AreEqual(expectedResult, result);
-                }
-            });
+                string expectedResult = string.Empty;
 
-            var next = mockNext.Object;
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
 
-            var context = new PipelineContext();
-            using (var httpClient = new HttpClient())
-            {
-                context.Items.Add(HttpCommunicationConstants.HTTP_CLIENT, httpClient);
+                        // assert
+                        Assert.AreEqual((HttpStatusCode)999, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE], "HttpStatusCode should be 999.");
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE), "IsSuccessfulStatusCode should have a value in context.Items.");
+                        Assert.IsFalse(((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]), "IsSuccessfulHttpStatusCode should be false.");
+                        Assert.AreEqual(string.Empty, context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE], "ReasonPhrase should match string.Empty.");
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS), "ResponseHeaders should exists in context.Items.");
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS), "TrailingHeaders should exist in context.Items");
+                        Assert.AreEqual(expectedResult, result);
+                    }
+                });
 
-                using (var step = new SendHttpRequestStep(logger, httpClient, options, next))
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+
+                using (var step = new SendHttpRequestStep(logger, options, next))
                 {
                     // act
                     await step.InvokeAsync(context);
                 }
-            }
 
-            // assert - Phase 2
-            if (context.Errors.Count > 0)
-            {
-                throw context.Errors[0];
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
             }
         }
 
@@ -128,97 +127,101 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
         {
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
-            var options = new SendHttpRequestOptions()
-            {
-                HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                Method = System.Net.Http.HttpMethod.Get
-            };
-
-            string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
-
-            var mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
-            {
-                using(var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
-                {
-                    string result = reader.ReadToEnd();
-
-                    // assert
-                    Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
-                    Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
-                    Assert.AreEqual(expectedResult, result);
-                }
-            });
-
-            var next = mockNext.Object;
-
-            var context = new PipelineContext();
             using (var httpClient = new HttpClient())
             {
-                using (var step = new SendHttpRequestStep(logger, httpClient, options, next))
+                var options = new SendHttpRequestOptions()
+                {
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/"),
+                    Method = System.Net.Http.HttpMethod.Get
+                };
+
+                string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
+
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
+                        Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
+                        Assert.AreEqual(expectedResult, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+
+                using (var step = new SendHttpRequestStep(logger, options, next))
                 {
                     // act
                     await step.InvokeAsync(context);
                 }
-            }
 
-            // assert - Phase 2
-            if (context.Errors.Count > 0)
-            {
-                throw context.Errors[0];
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
             }
         }
 
         [TestMethod]
-        public async Task Returns_Failed_Response_From_Fake_HTTP_GET_Request_When_ReasonPhrase_Is_Null()
+        public async Task Returns_Successful_Response_From_HTTP_GET_Request_When_Header_Does_Not_Exist()
         {
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
-            var options = new SendHttpRequestOptions()
+            using (var httpClient = new HttpClient())
             {
-                HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                Method = System.Net.Http.HttpMethod.Get
-            };
-
-            string expectedResult = string.Empty;
-
-            var mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
-            {
-                using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
+                var options = new SendHttpRequestOptions()
                 {
-                    string result = reader.ReadToEnd();
+                    HeaderNames = new List<string>() { "Accepted" },
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/"),
+                    Method = System.Net.Http.HttpMethod.Get
+                };
 
-                    // assert
-                    Assert.AreEqual((HttpStatusCode)999, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE], "HttpStatusCode should be 999.");
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE), "IsSuccessfulStatusCode should have a value in context.Items.");
-                    Assert.IsFalse(((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]), "IsSuccessfulHttpStatusCode should be false.");
-                    Assert.AreEqual(string.Empty, context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE], "ReasonPhrase should match string.Empty.");
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS), "ResponseHeaders should exists in context.Items.");
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS), "TrailingHeaders should exist in context.Items");
-                    Assert.AreEqual(expectedResult, result);
-                }
-            });
+                string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
 
-            var next = mockNext.Object;
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
 
-            var context = new PipelineContext();
-            using (var httpClient = HttpClientFactory.Create( new ReplaceReasonPhraseHandler()))
-            {
-                using (var step = new SendHttpRequestStep(logger, httpClient, options, next))
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
+                        Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
+                        Assert.AreEqual(expectedResult, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+                using (var step = new SendHttpRequestStep(logger, options, next))
                 {
                     // act
                     await step.InvokeAsync(context);
                 }
-            }
-            
-            // assert - Phase 2
-            if (context.Errors.Count > 0)
-            {
-                throw context.Errors[0];
+
+
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
             }
         }
 
@@ -229,133 +232,224 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
             var requestOptions = new HttpRequestOptions();
             requestOptions.TryAdd("Accept", "aaplication/json");
-
-            var options = new SendHttpRequestOptions()
-            {
-                HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                Method = System.Net.Http.HttpMethod.Get,
-                RequestOptions = requestOptions
-            };
-
-            string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
-
-            var mockNext = new Mock<IPipelineRequest>();
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
-            {
-                using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
-                {
-                    string result = reader.ReadToEnd();
-
-                    // assert
-                    Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
-                    Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
-                    Assert.AreEqual(expectedResult, result);
-                }
-            });
-
-            var next = mockNext.Object;
-
-            var context = new PipelineContext();
             using (var httpClient = new HttpClient())
             {
-                context.Items.Add(HttpCommunicationConstants.HTTP_CLIENT, httpClient);
+                var options = new SendHttpRequestOptions()
+                {
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/"),
+                    Method = System.Net.Http.HttpMethod.Get,
+                    RequestOptions = requestOptions
+                };
 
-                using (var step = new SendHttpRequestStep(logger, httpClient, options, next))
+                string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
+
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
+                        Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
+                        Assert.AreEqual(expectedResult, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+
+                using (var step = new SendHttpRequestStep(logger, options, next))
                 {
                     // act
                     await step.InvokeAsync(context);
                 }
-            }
 
-            // assert - Phase 2
-            Assert.AreEqual(0, context.Errors.Count);
+                // assert - Phase 2
+                Assert.AreEqual(0, context.Errors.Count);
+            }
         }
+        
         [TestMethod]
         public async Task Returns_Successful_Response_From_HTTP_POST_Request_When_Authentication_Is_Required()
         {
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
-            var options = new SendHttpRequestOptions()
+            using (var httpClient = new HttpClient())
             {
-                HttpEndpoint = new Uri("https://api.github.com/graphql"),
-                Method = System.Net.Http.HttpMethod.Post,
-                HeaderNames = new List<string>() { "Accept", "Authorization", "User-Agent" },
-                UploadInputStreamAsContent = true
-            };
-
-            var mockNext = new Mock<IPipelineRequest>();
-
-            mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
-            {
-                using (var reader = new StreamReader(context.Items[PipelineContextConstants.INPUT_STREAM] as Stream))
+                var options = new SendHttpRequestOptions()
                 {
-                    string result = reader.ReadToEnd();
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://api.github.com/graphql"),
+                    Method = System.Net.Http.HttpMethod.Post,
+                    HeaderNames = new List<string>() { "Accept", "Authorization", "User-Agent" },
+                    UploadInputStreamAsContent = true
+                };
 
-                    // assert
-                    Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
-                    Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
-                    Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
-                    Assert.AreEqual(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY_RESULT, result);
-                }
-            });
+                var mockNext = new Mock<IPipelineRequest>();
 
-            var next = mockNext.Object;
-
-            var context = new PipelineContext();
-            context.Items.Add("Accept", "application/vnd.github.v4.idl");
-            context.Items.Add("Authorization", $"Bearer {SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_API_TOKEN}");
-            context.Items.Add("User-Agent", "MyTrout.Pipelines.Steps.Communications.Http.v1.1");
-            context.Items.Add("Content-Type", "application/graphql");
-
-
-            using (var stream = new MemoryStream())
-            {
-                stream.Write(Encoding.UTF8.GetBytes(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY));
-                    
-                stream.Position = 0;
-
-                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, stream);
-
-                using (var httpClient = new HttpClient())
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
                 {
-                    using (var step = new SendHttpRequestStep(logger, httpClient, options, next))
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
+
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
+                        Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
+                        Assert.AreEqual(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY_RESULT, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+                context.Items.Add("Accept", "application/vnd.github.v4.idl");
+                context.Items.Add("Authorization", $"Bearer {SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_API_TOKEN}");
+                context.Items.Add("User-Agent", "MyTrout.Pipelines.Steps.Communications.Http.v1.1");
+                context.Items.Add("Content-Type", "application/graphql");
+
+
+                using (var stream = new MemoryStream())
+                {
+                    stream.Write(Encoding.UTF8.GetBytes(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY));
+
+                    stream.Position = 0;
+
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, stream);
+
+
+                    using (var step = new SendHttpRequestStep(logger, options, next))
                     {
                         // act
                         await step.InvokeAsync(context);
                     }
                 }
-            }
 
-            // assert - Phase 2
-            if (context.Errors.Count > 0)
-            {
-                throw context.Errors[0];
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
             }
         }
 
         [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_HttpClient_Is_Null()
+        public async Task Returns_Successful_Response_From_HTTP_POST_Request_When_ContextNames_Are_Changed()
         {
             // arrange
-            ILogger<SendHttpRequestStep> logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
-            var options = new SendHttpRequestOptions();
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            using (var httpClient = null as HttpClient)
+            var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
+            using (var httpClient = new HttpClient())
             {
-                string expectedParamName = nameof(httpClient);
+                var options = new SendHttpRequestOptions()
+                {
+                    HttpClient = httpClient,
+                    HttpReasonPhraseContextName = "TESTING_REASON_PHRASE",
+                    HttpResponseHeadersContextName = "TESTING_RESPONSE_HEADERS",
+                    HttpResponseTrailingHeadersContextName = "TESTING_TRAILING_RESPONSE_HEADERS",
+                    HttpStatusCodeContextName = "TESTING_STATUS_CODE",
+                    HttpEndpoint = new Uri("https://api.github.com/graphql"),
+                    InputStreamContextName = "TESTING_INPUT_STREAM",
+                    IsSuccessfulStatusCodeContextName = "TESTING_IS_SUCCESSFUL_RESPONSE_CODE",
+                    Method = System.Net.Http.HttpMethod.Post,
+                    HeaderNames = new List<string>() { "Accept", "Authorization", "User-Agent" },
+                    OutputStreamContextName = "TESTING_OUTPUT_STREAM",
+                    UploadInputStreamAsContent = true
+                };
 
-                // act
-                var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, httpClient, options, next));
+                var mockNext = new Mock<IPipelineRequest>();
 
-                // assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedParamName, result.ParamName);
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[options.OutputStreamContextName] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
+
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[options.HttpStatusCodeContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.IsSuccessfulStatusCodeContextName) && ((bool)context.Items[options.IsSuccessfulStatusCodeContextName]));
+                        Assert.AreEqual("OK", context.Items[options.HttpReasonPhraseContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.HttpResponseHeadersContextName));
+                        Assert.IsTrue(context.Items.ContainsKey(options.HttpResponseTrailingHeadersContextName));
+                        Assert.AreEqual(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY_RESULT, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+                context.Items.Add("Accept", "application/vnd.github.v4.idl");
+                context.Items.Add("Authorization", $"Bearer {SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_API_TOKEN}");
+                context.Items.Add("User-Agent", "MyTrout.Pipelines.Steps.Communications.Http.v1.1");
+                context.Items.Add("Content-Type", "application/graphql");
+
+
+                using (var stream = new MemoryStream())
+                {
+                    stream.Write(Encoding.UTF8.GetBytes(SendHttpRequestStepTests.PIPELINE_TEST_GITHUB_QUERY));
+
+                    stream.Position = 0;
+
+                    context.Items.Add(options.InputStreamContextName, stream);
+
+
+                    using (var step = new SendHttpRequestStep(logger, options, next))
+                    {
+                        // act
+                        await step.InvokeAsync(context);
+                    }
+                }
+
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_With_No_Alterations_From_InvokeAsync_After_Execution()
+        {
+            // arrange
+            var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
+            using (var httpClient = new HttpClient())
+            {
+                var options = new SendHttpRequestOptions()
+                {
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/"),
+                    Method = System.Net.Http.HttpMethod.Get
+                };
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+                var expectedItemCount = context.Items.Count;
+
+                using (var step = new SendHttpRequestStep(logger, options, next))
+                {
+                    // act
+                    await step.InvokeAsync(context);
+                }
+
+                // assert - Phase 2
+                if (context.Errors.Count > 0)
+                {
+                    throw context.Errors[0];
+                }
+                Assert.AreEqual(expectedItemCount, context.Items.Count, "context.Items was not cleaned up during step execution. It contains {0} items and should contain {1}.", context.Items.Count, expectedItemCount);
             }
         }
 
@@ -369,15 +463,12 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
 
             string expectedParamName = nameof(logger);
 
-            using (var httpClient = new HttpClient())
-            {
-                // act
-                var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, httpClient, options, next));
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, options, next));
 
-                // assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedParamName, result.ParamName);
-            }
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
         [TestMethod]
@@ -391,16 +482,13 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
 
             string expectedParamName = nameof(next);
 
-            using (var httpClient = new HttpClient())
-            {
-                // act
-                var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, httpClient, options, next));
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, options, next));
             
             
-                // assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedParamName, result.ParamName);
-            }
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
 
         [TestMethod]
@@ -413,15 +501,12 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
 
             string expectedParamName = nameof(options);
 
-            using (var httpClient = new HttpClient())
-            {
-                // act
-                var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, httpClient, options, next));
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SendHttpRequestStep(logger, options, next));
 
-                // assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedParamName, result.ParamName);
-            }
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
         }
     }
 }
