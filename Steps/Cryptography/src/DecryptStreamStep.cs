@@ -90,8 +90,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography
                             int read;
                             do
                             {
-                                read = await cryptoStream.ReadAsync(bytes, 0, bytes.Length, context.CancellationToken);
-                                await outputStream.WriteAsync(bytes, 0, read, context.CancellationToken);
+                                read = await cryptoStream.ReadAsync(bytes, context.CancellationToken);
+                                await outputStream.WriteAsync(bytes.AsMemory(0, read), context.CancellationToken);
                             }
                             while (read > 0);
 
