@@ -43,12 +43,6 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Gets or sets the <see cref="Encoding"/> used to decrypt this value.
-        /// </summary>
-        [FromServices]
-        public Encoding DecryptionEncoding { get; set; } = Encoding.UTF8;
-
-        /// <summary>
         /// Gets or sets the context name of the stream to be decrypted.
         /// </summary>
         public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;

@@ -70,29 +70,31 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 
             inputStream.Position = 0;
 
-            using (var inputReader = new StreamReader(inputStream, leaveOpen: true))
+            using (ICryptoTransform decryptor = this.Options.EncryptionAlgorithm.CreateEncryptor())
             {
-                string result = await inputReader.ReadToEndAsync().ConfigureAwait(false);
-                byte[] workingContents = this.Options.EncryptionEncoding.GetBytes(result);
-
-                using (var encryptor = this.Options.EncryptionAlgorithm.CreateEncryptor())
+                using (var outputStream = new MemoryStream())
                 {
-                    using (var outputStream = new MemoryStream())
+                    using (var cryptoStream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Write, leaveOpen: true))
                     {
-                        using (var cryptoStream = new CryptoStream(outputStream, encryptor, CryptoStreamMode.Write, leaveOpen: true))
+                        try
                         {
-                            await cryptoStream.WriteAsync(workingContents);
-
-                            try
+                            // Encrypt the Input Stream in a memory-aware method.
+                            byte[] bytes = new byte[16];
+                            int read;
+                            do
                             {
-                                context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+                                read = await inputStream.ReadAsync(bytes, 0, bytes.Length, context.CancellationToken);
+                                await cryptoStream.WriteAsync(bytes, 0, read, context.CancellationToken);
+                            }
+                            while (read > 0);
 
-                                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                            }
-                            finally
-                            {
-                                context.Items.Remove(this.Options.OutputStreamContextName);
-                            }
+                            context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+
+                            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            context.Items.Remove(this.Options.OutputStreamContextName);
                         }
                     }
                 }

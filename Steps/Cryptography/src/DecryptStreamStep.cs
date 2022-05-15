@@ -73,33 +73,35 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         {
             // InvokeBeforeCache guarantees that tempStream will not be null.
             Stream inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
+
+            // Reset to the starting position to allow readers to read the entire stream.
             inputStream.Position = 0;
 
             using (ICryptoTransform decryptor = this.Options.DecryptionAlgorithm.CreateDecryptor())
             {
-                // Reset to the starting position to allow readers to read the entire stream.
-                inputStream.Position = 0;
-
-                // Decrypt the contents
-                using (var outputCryptoStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
+                using (var cryptoStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
                 {
-                    using (var reader = new StreamReader(outputCryptoStream, this.Options.DecryptionEncoding, false, 1024, leaveOpen: true))
+                    using (var outputStream = new MemoryStream())
                     {
-                        string result = await reader.ReadToEndAsync().ConfigureAwait(false);
-                        byte[] workingResult = this.Options.DecryptionEncoding.GetBytes(result);
-
-                        using (var outputStream = new MemoryStream(workingResult))
+                        try
                         {
-                            try
+                            // Decrypt the Input Stream in a memory-aware method.
+                            byte[] bytes = new byte[16];
+                            int read;
+                            do
                             {
-                                context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+                                read = await cryptoStream.ReadAsync(bytes, 0, bytes.Length, context.CancellationToken);
+                                await outputStream.WriteAsync(bytes, 0, read, context.CancellationToken);
+                            }
+                            while (read > 0);
 
-                                await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                            }
-                            finally
-                            {
-                                context.Items.Remove(this.Options.OutputStreamContextName);
-                            }
+                            context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+
+                            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            context.Items.Remove(this.Options.OutputStreamContextName);
                         }
                     }
                 }
