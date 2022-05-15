@@ -1,7 +1,7 @@
 ﻿// <copyright file="CreateSha256HashStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2020 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,15 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
     using System;
+    using System.IO;
+    using System.Security.Cryptography;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Creates a SHA256 Hash of the pipeline's <see cref="PipelineContextConstants.OUTPUT_STREAM"/>.
     /// </summary>
     [Obsolete("Use CreateHashStep with the default options.")]
-    public class CreateSha256HashStep : CreateHashStep
+    public class CreateSha256HashStep : AbstractPipelineStep<CreateSha256HashStep, CreateSha256HashOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateSha256HashStep" /> class with the specified parameters.
@@ -43,6 +46,53 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             : base(logger, options, next)
         {
             // no op
+        }
+
+        /// <summary>
+        /// Generates a SHA256 Hash of the <see cref="CreateSha256HashOptions.HashStreamKey" />.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
+        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
+        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+
+            context.AssertValueIsValid<Stream>(this.Options.HashStreamKey);
+
+            if (context.Items.ContainsKey(CryptographyConstants.HASH_STREAM))
+            {
+                context.Items.Remove(CryptographyConstants.HASH_STREAM);
+            }
+
+            if (context.Items.ContainsKey(CryptographyConstants.HASH_STRING))
+            {
+                context.Items.Remove(CryptographyConstants.HASH_STRING);
+            }
+
+#pragma warning disable CS8600, CS8602 // context.AssertValueIsValid<Stream> guarantees a non-null value.
+
+            Stream inputStream = context.Items[this.Options.HashStreamKey] as Stream;
+
+            inputStream.Position = 0;
+
+#pragma warning restore CS8600, CS8602
+
+            using (var reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
+            {
+                byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
+
+                // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
+                using (var hashProvider = SHA256.Create())
+                {
+                    byte[] workingHash = hashProvider.ComputeHash(workingResult);
+                    string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
+
+                    context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
+
+                    context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
+                }
+            }
         }
     }
 }

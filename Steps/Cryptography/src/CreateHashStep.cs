@@ -26,13 +26,14 @@ namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Creates a SHA256 Hash of the pipeline's <see cref="PipelineContextConstants.OUTPUT_STREAM"/>.
+    /// Creates a Hash of the pipeline's <see cref="CreateHashOptions.InputStreamContextName" />.
     /// </summary>
-    public class CreateHashStep : AbstractPipelineStep<CreateHashStep, CreateHashOptions>
+    public class CreateHashStep : AbstractCachingPipelineStep<CreateHashStep, CreateHashOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateHashStep" /> class with the specified parameters.
@@ -46,30 +47,26 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             // no op
         }
 
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.HashStreamContextName, this.Options.HashStringContextName };
+
+        /// <inheritdoc />
+        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        {
+            context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
+            return base.InvokeBeforeCacheAsync(context);
+        }
+
         /// <summary>
-        /// Generates a SHA256 Hash of the <see cref="CreateHashOptions.HashStreamKey" />.
+        /// Generates a SHA256 Hash of the <see cref="CreateHashOptions.InputStreamContextName" />.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-            context.AssertValueIsValid<Stream>(this.Options.HashStreamKey);
-
-            if (context.Items.ContainsKey(CryptographyConstants.HASH_STREAM))
-            {
-                context.Items.Remove(CryptographyConstants.HASH_STREAM);
-            }
-
-            if (context.Items.ContainsKey(CryptographyConstants.HASH_STRING))
-            {
-                context.Items.Remove(CryptographyConstants.HASH_STRING);
-            }
-
             // AssertValueIsValid guarantees that this.Options.HashStreamKey is non-null and a Stream.
-            Stream inputStream = (context.Items[this.Options.HashStreamKey] as Stream)!;
+            Stream inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
             inputStream.Position = 0;
 
@@ -77,15 +74,17 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             {
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
-                // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
-                using (var hashProvider = this.Options.HashAlgorithm)
+                var hashProvider = this.Options.HashAlgorithm;
+
+                byte[] workingHash = hashProvider.ComputeHash(workingResult);
+                string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
+
+                context.Items.Add(this.Options.HashStringContextName, hexHash);
+
+                using (var hashStream = new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)))
                 {
-                    byte[] workingHash = hashProvider.ComputeHash(workingResult);
-                    string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
-
-                    context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
-
-                    context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
+                    context.Items.Add(this.Options.HashStreamContextName, hashStream);
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
                 }
             }
         }

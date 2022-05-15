@@ -1,7 +1,7 @@
 ﻿// <copyright file="DecryptStreamWithAes256Step.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Security.Cryptography;
@@ -33,6 +34,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// <summary>
     /// Decrypts the <see cref="PipelineContextConstants.INPUT_STREAM" /> using AES256.
     /// </summary>
+    [Obsolete("Use DecryptStreamStep with default options.")]
     public class DecryptStreamWithAes256Step : AbstractCachingPipelineStep<DecryptStreamWithAes256Step, DecryptStreamWithAes256Options>
     {
         /// <summary>

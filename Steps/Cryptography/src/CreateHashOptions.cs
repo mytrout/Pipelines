@@ -24,6 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
+    using MyTrout.Pipelines.Core;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -32,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
      */
 
     /// <summary>
-    /// Provides caller-configurable options to change the behavior of <see cref="CreateSha256HashOptions"/>.
+    /// Provides caller-configurable options to change the behavior of <see cref="CreateHashStep"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CreateHashOptions
@@ -40,16 +41,28 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <summary>
         /// Gets or sets the <see cref="Encoding"/> used to hash this value.
         /// </summary>
+        [FromServices]
         public Encoding HashEncoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
-        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
+        /// Gets or sets the context name used to load the <see cref="System.IO.Stream"/> from the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
         /// </summary>
-        public string HashStreamKey { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+        public string HashStreamContextName { get; set; } = CryptographyConstants.HASH_STREAM;
+
+        /// <summary>
+        /// Gets or sets the context name used to access the generated Hash as a string.
+        /// </summary>
+        public string HashStringContextName { get; set; } = CryptographyConstants.HASH_STRING;
+
+        /// <summary>
+        /// Gets or sets the context name of the stream to be hashed.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
 
         /// <summary>
         /// Gets or sets the HashAlgorithm used for creating this Hash.
         /// </summary>
+        [FromServices]
         public HashAlgorithm HashAlgorithm { get; set; } = SHA256.Create();
     }
 }

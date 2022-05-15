@@ -1,7 +1,7 @@
 ﻿// <copyright file="DecryptStreamWithAes256Options.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="DecryptStreamWithAes256Step"/>.
     /// </summary>
+    [Obsolete("Use DecryptStreamOptions and DecryptStreamStep.")]
     public class DecryptStreamWithAes256Options
     {
         /// <summary>
