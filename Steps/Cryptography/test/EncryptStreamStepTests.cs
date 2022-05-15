@@ -22,12 +22,14 @@
 // SOFTWARE.
 // </copyright>
 
+#pragma warning disable CA2012 // Use ValueTasks correctly
 namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 {
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
+    using System;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -58,7 +60,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                 Assert.AreEqual(next, result.Next);
             }
         }
-        /*
+
         [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_InputStream_Is_Not_In_Context()
         {
@@ -91,11 +93,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Next_Step_Verifies_Values_Passed_Downstream()
         {
             // arrange
-            int expectedErrorCount = 0;
             string contents = "Hey na, hey na, my boyfriend's back.";
-
             byte[] workingContents = Encoding.UTF8.GetBytes(contents);
-
             using (var inputStream = new MemoryStream(workingContents))
             {
                 using (var cryptoProvider = Aes.Create())
@@ -103,48 +102,63 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                     cryptoProvider.IV = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);
                     cryptoProvider.Key = Encoding.UTF8.GetBytes(TestConstants.Key);
 
-                    // Add Step Here...
-                    var options = new EncryptStreamOptions();
-                    options.EncryptionAlgorithm = cryptoProvider;
+                    var options = new EncryptStreamOptions()
+                    {
+                        EncryptionAlgorithm = cryptoProvider,
+                    };
 
                     var logger = new Mock<ILogger<EncryptStreamStep>>().Object;
+
                     var context = new PipelineContext();
+                    context.Items.Add(options.InputStreamContextName, inputStream);
+
                     var mockNext = new Mock<IPipelineRequest>();
                     mockNext.Setup(x => x.InvokeAsync(context))
                                             .Callback(() =>
                                             {
-                                                using (ICryptoTransform decryptor = cryptoProvider.CreateDecryptor())
+                                                Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
+
+                                                var outputStream = (context.Items[options.OutputStreamContextName] as Stream)!;
+
+                                                outputStream.Position = 0;
+                                                outputStream.Position = 0;
+                                                using var decryptedStream = new MemoryStream();
+                                                using (var decryptTransform = cryptoProvider.CreateDecryptor())
                                                 {
-                                                    Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
-
-                                                    var outputStream = (context.Items[options.OutputStreamContextName] as Stream)!;
-                                                    outputStream.Position = 0;
-
-                                                    // Encrypt the contents.
-                                                    using (var cryptoStream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
+                                                    using (var cryptoStream = new CryptoStream(outputStream, decryptTransform, CryptoStreamMode.Read, leaveOpen: true))
                                                     {
-                                                        using (var outputReader = new StreamReader(cryptoStream, leaveOpen: true))
+                                                        byte[] bytes = new byte[16];
+                                                        int read;
+                                                        do
                                                         {
-                                                            string result = outputReader.ReadToEnd();
+                                                            // stream.Read() and stream.Write() have slightly different behavior than
+                                                            // stream.ReadAsync() and stream.WriteAsync() which causes major problems
+                                                            // when testing this section.
+                                                            // While .GetAwaiter().GetResult() can cause deadlocks, the synchronous versions
+                                                            // of these methods cause data failures.
+                                                            read = cryptoStream.ReadAsync(bytes).GetAwaiter().GetResult();
 
-                                                            Assert.AreEqual(contents, result);
+                                                            decryptedStream.WriteAsync(bytes.AsMemory(0, read)).GetAwaiter().GetResult();
                                                         }
+                                                        while (read > 0);
                                                     }
+                                                }
+
+                                                decryptedStream.Position = 0;
+                                                using (var reader = new StreamReader(decryptedStream))
+                                                {
+                                                    string output = reader.ReadToEndAsync().GetAwaiter().GetResult();
+
+                                                    Assert.AreEqual(contents, output);
                                                 }
                                             })
                                             .Returns(Task.CompletedTask);
                     var next = mockNext.Object;
 
-                    context.Items.Add(options.InputStreamContextName, inputStream);
-
-                    // act
-                    using (var sut = new EncryptStreamStep(logger, options, next))
+                    using (var step = new EncryptStreamStep(logger, options, next))
                     {
-                        await sut.InvokeAsync(context).ConfigureAwait(false);
+                        await step.InvokeAsync(context).ConfigureAwait(false);
                     }
-
-                    // assert - phase 2
-                    Assert.AreEqual(expectedErrorCount, context.Errors.Count, "Step should Encrypt the code without errors:\r\n{0} ", context.Errors.FirstOrDefault());
                 }
             }
         }
@@ -153,12 +167,8 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
         {
             // arrange
-            int expectedErrorCount = 0;
             string contents = "Hey na, hey na, my boyfriend's back.";
-            string contentInBigEndianUnicode = "\0H\0e\0y\0 \0n\0a\0,\0 \0h\0e\0y\0 \0n\0a\0,\0 \0m\0y\0 \0b\0o\0y\0f\0r\0i\0e\0n\0d\0'\0s\0 \0b\0a\0c\0k\0.";
-
-            byte[] workingContents = Encoding.BigEndianUnicode.GetBytes(contents);
-
+            byte[] workingContents = Encoding.UTF8.GetBytes(contents);
             using (var inputStream = new MemoryStream(workingContents))
             {
                 using (var cryptoProvider = Aes.Create())
@@ -166,141 +176,119 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                     cryptoProvider.IV = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);
                     cryptoProvider.Key = Encoding.UTF8.GetBytes(TestConstants.Key);
 
-                    // Add Step Here...
                     var options = new EncryptStreamOptions()
                     {
-                        EncryptionEncoding = Encoding.BigEndianUnicode,
                         EncryptionAlgorithm = cryptoProvider,
-                        InputStreamContextName = "TESTING_INPUT_GOOFY_STREAM",
-                        OutputStreamContextName = "TESTING_OUTPUT_GOOFY_STREAM",
+                        InputStreamContextName = "TESTING_DIFFERENT_INPUT_STREAM",
+                        OutputStreamContextName = "TESTING_DIFFERENT_OUTPUT_STREAM"
                     };
 
                     var logger = new Mock<ILogger<EncryptStreamStep>>().Object;
+
                     var context = new PipelineContext();
+                    context.Items.Add(options.InputStreamContextName, inputStream);
+
                     var mockNext = new Mock<IPipelineRequest>();
                     mockNext.Setup(x => x.InvokeAsync(context))
                                             .Callback(() =>
                                             {
-                                                using (ICryptoTransform encryptor = cryptoProvider.CreateDecryptor())
+                                                Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
+
+                                                var outputStream = (context.Items[options.OutputStreamContextName] as Stream)!;
+
+                                                outputStream.Position = 0;
+                                                outputStream.Position = 0;
+                                                using var decryptedStream = new MemoryStream();
+                                                using (var decryptTransform = cryptoProvider.CreateDecryptor())
                                                 {
-                                                    Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
-
-                                                    var outputStream = (context.Items[options.OutputStreamContextName] as Stream)!;
-
-                                                    // Encrypt the contents.
-                                                    using (var cryptoStream = new CryptoStream(outputStream, encryptor, CryptoStreamMode.Read, leaveOpen: true))
+                                                    using (var cryptoStream = new CryptoStream(outputStream, decryptTransform, CryptoStreamMode.Read, leaveOpen: true))
                                                     {
-                                                        using (var outputReader = new StreamReader(cryptoStream, leaveOpen: true))
+                                                        byte[] bytes = new byte[16];
+                                                        int read;
+                                                        do
                                                         {
-                                                            string result = outputReader.ReadToEnd();
-
-                                                            Assert.AreEqual(contentInBigEndianUnicode, result);
+                                                            // stream.Read() and stream.Write() have slightly different behavior than
+                                                            // stream.ReadAsync() and stream.WriteAsync() which causes major problems
+                                                            // when testing this section.
+                                                            // While .GetAwaiter().GetResult() can cause deadlocks, the synchronous versions
+                                                            // of these methods cause data failures.
+                                                            read = cryptoStream.ReadAsync(bytes).GetAwaiter().GetResult();
+                                                            decryptedStream.WriteAsync(bytes.AsMemory(0, read)).GetAwaiter().GetResult();
                                                         }
+                                                        while (read > 0);
                                                     }
+                                                }
+
+                                                decryptedStream.Position = 0;
+                                                using (var reader = new StreamReader(decryptedStream))
+                                                {
+                                                    string output = reader.ReadToEndAsync().GetAwaiter().GetResult();
+
+                                                    Assert.AreEqual(contents, output);
                                                 }
                                             })
                                             .Returns(Task.CompletedTask);
                     var next = mockNext.Object;
 
-                    context.Items.Add(options.InputStreamContextName, inputStream);
-
-                    // act
-                    using (var sut = new EncryptStreamStep(logger, options, next))
+                    using (var step = new EncryptStreamStep(logger, options, next))
                     {
-                        await sut.InvokeAsync(context).ConfigureAwait(false);
+                        await step.InvokeAsync(context).ConfigureAwait(false);
                     }
-
-                    // assert - phase 2
-                    Assert.AreEqual(expectedErrorCount, context.Errors.Count, "Step should Encrypt the code without errors:\r\n{0} ", context.Errors.FirstOrDefault());
                 }
             }
         }
 
-        [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Step_Restores_Original_Values()
         {
-            // arranges()
-            int expectedErrorCount = 0;
-            int expectedItemCount = 1;
-            string contents = "Hey na, hey na, my boyfriend's back.";
-
-            byte[] workingContents = Encoding.UTF8.GetBytes(contents);
-
-            using (var inputStream = new MemoryStream(workingContents))
-            {
-                using (var cryptoProvider = Aes.Create())
-                {
-                    cryptoProvider.IV = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);
-                    cryptoProvider.Key = Encoding.UTF8.GetBytes(TestConstants.Key);
-
-                    // Add Step Here...
-                    var options = new EncryptStreamOptions();
-                    options.EncryptionAlgorithm = cryptoProvider;
-
-                    var logger = new Mock<ILogger<EncryptStreamStep>>().Object;
-                    var context = new PipelineContext();
-                    var mockNext = new Mock<IPipelineRequest>();
-                    mockNext.Setup(x => x.InvokeAsync(context))
-                                            .Returns(Task.CompletedTask);
-                    var next = mockNext.Object;
-
-                    context.Items.Add(options.InputStreamContextName, inputStream);
-
-                    // act
-                    using (var sut = new EncryptStreamStep(logger, options, next))
-                    {
-                        await sut.InvokeAsync(context).ConfigureAwait(false);
-                    }
-
-                    // assert - phase 2
-                    Assert.AreEqual(expectedItemCount, context.Items.Count, "context.Items should only contain the Options.InputStreamContextName value, but contains more than one value.");
-                    Assert.IsTrue(context.Items.ContainsKey(options.InputStreamContextName));
-                    Assert.AreEqual(context.Items[options.InputStreamContextName], inputStream);
-                    Assert.AreEqual(expectedErrorCount, context.Errors.Count, "Step should Encrypt the code without errors:\r\n{0} ", context.Errors.FirstOrDefault());
-                }
-            }
-        }
-
-        [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_Stream_Is_Encrypted_Successfully()
-        {
             // arrange
-            int expectedErrorCount = 0;
             string contents = "Hey na, hey na, my boyfriend's back.";
-
             byte[] workingContents = Encoding.UTF8.GetBytes(contents);
 
-            using (var inputStream = new MemoryStream(workingContents))
+            using (var outputStream = new MemoryStream())
             {
-                using (var cryptoProvider = Aes.Create())
+                using (var inputStream = new MemoryStream(workingContents))
                 {
-                    cryptoProvider.IV = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);
-                    cryptoProvider.Key = Encoding.UTF8.GetBytes(TestConstants.Key);
-
-                    // Add Step Here...
-                    var options = new EncryptStreamOptions();
-                    options.EncryptionAlgorithm = cryptoProvider;
-
-                    var logger = new Mock<ILogger<EncryptStreamStep>>().Object;
-                    var context = new PipelineContext();
-                    var mockNext = new Mock<IPipelineRequest>();
-                    mockNext.Setup(x => x.InvokeAsync(context))
-                                            .Returns(Task.CompletedTask);
-                    var next = mockNext.Object;
-
-                    context.Items.Add(options.InputStreamContextName, inputStream);
-
-                    // act
-                    using (var sut = new EncryptStreamStep(logger, options, next))
+                    using (var cryptoProvider = Aes.Create())
                     {
-                        await sut.InvokeAsync(context).ConfigureAwait(false);
-                    }
+                        cryptoProvider.IV = Encoding.UTF8.GetBytes(TestConstants.InitializationVector);
+                        cryptoProvider.Key = Encoding.UTF8.GetBytes(TestConstants.Key);
 
-                    // assert - phase 2
-                    Assert.AreEqual(expectedErrorCount, context.Errors.Count, "Step should Encrypt the code without errors:\r\n{0} ", context.Errors.FirstOrDefault());
+                        var options = new EncryptStreamOptions()
+                        {
+                            EncryptionAlgorithm = cryptoProvider,
+                            InputStreamContextName = "TESTING_DIFFERENT_INPUT_STREAM",
+                            OutputStreamContextName = "TESTING_DIFFERENT_OUTPUT_STREAM"
+                        };
+
+                        var logger = new Mock<ILogger<EncryptStreamStep>>().Object;
+
+                        var context = new PipelineContext();
+                        context.Items.Add(options.InputStreamContextName, inputStream);
+
+                        var mockNext = new Mock<IPipelineRequest>();
+                        mockNext.Setup(x => x.InvokeAsync(context))
+                                                .Callback(() =>
+                                                {
+                                                    // assert - phase 1.
+                                                    Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
+                                                    Assert.AreNotEqual(outputStream, context.Items[options.OutputStreamContextName]);
+                                                })
+                                                .Returns(Task.CompletedTask);
+                        var next = mockNext.Object;
+
+                        using (var step = new EncryptStreamStep(logger, options, next))
+                        {
+                            await step.InvokeAsync(context).ConfigureAwait(false);
+                        }
+
+                        // assert - phase 2
+                        Assert.AreEqual(2, context.Items.Count);
+                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName));
+                        Assert.AreEqual(outputStream, context.Items[options.OutputStreamContextName]);
+                    }
                 }
             }
         }
-                    */
     }
 }
+#pragma warning restore CA2012 // Use ValueTasks correctly

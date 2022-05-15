@@ -25,9 +25,11 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Security.Cryptography;
+    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -65,38 +67,34 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            // InvokeBeforeCache guarantees that tempStream will not be null.
-            Stream inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
+            var inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
-            inputStream.Position = 0;
-
-            using (ICryptoTransform decryptor = this.Options.EncryptionAlgorithm.CreateEncryptor())
+            // Encrypt the input stream.
+            using (var outputStream = new MemoryStream())
             {
-                using (var outputStream = new MemoryStream())
+                using (var encryptTransform = this.Options.EncryptionAlgorithm.CreateEncryptor())
                 {
-                    using (var cryptoStream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Write, leaveOpen: true))
+                    using (var cryptoStream = new CryptoStream(outputStream, encryptTransform, CryptoStreamMode.Write, leaveOpen: true))
                     {
-                        try
+                        byte[] bytes = new byte[16];
+                        int read;
+                        do
                         {
-                            // Encrypt the Input Stream in a memory-aware method.
-                            byte[] bytes = new byte[16];
-                            int read;
-                            do
-                            {
-                                read = await inputStream.ReadAsync(bytes, 0, bytes.Length, context.CancellationToken);
-                                await cryptoStream.WriteAsync(bytes, 0, read, context.CancellationToken);
-                            }
-                            while (read > 0);
-
-                            context.Items.Add(this.Options.OutputStreamContextName, outputStream);
-
-                            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                            read = await inputStream.ReadAsync(bytes);
+                            await cryptoStream.WriteAsync(bytes.AsMemory(0, read));
                         }
-                        finally
-                        {
-                            context.Items.Remove(this.Options.OutputStreamContextName);
-                        }
+                        while (read > 0);
                     }
+                }
+
+                try
+                {
+                    context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                }
+                finally
+                {
+                    context.Items.Remove(this.Options.OutputStreamContextName);
                 }
             }
         }
