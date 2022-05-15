@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 {
     using Microsoft.Extensions.Logging;
@@ -43,6 +44,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         {
             // arrange
             var logger = new Mock<ILogger<EncryptStreamWithAes256Step>>().Object;
+
             var options = new EncryptStreamWithAes256Options();
 
             var next = new Mock<IPipelineRequest>().Object;
@@ -146,3 +148,4 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         }
     }
 }
+#pragma warning restore CS0618 // Type or member is obsolete

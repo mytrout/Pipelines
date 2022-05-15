@@ -22,6 +22,7 @@
 // SOFTWARE.
 // </copyright>
 
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,3 +56,4 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         }
     }
 }
+#pragma warning restore CS0618 // Type or member is obsolete
