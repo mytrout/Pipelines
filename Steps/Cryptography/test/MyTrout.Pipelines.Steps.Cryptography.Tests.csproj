@@ -5,14 +5,9 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PropertyGroup>
     <Features>IOperation</Features>
-    <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;SA1636;CA1707;CA2007;VSTHRD200</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Features>IOperation</Features>
-    <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;SA1636;CA1707;CA2007;VSTHRD200</NoWarn>
+    <NoWarn>1701;1702;IDE0063;SA0001;SA1413;SA1600;SA1636;CA1707;CA1822;CA2007;VSTHRD200</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0-preview1.22168.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

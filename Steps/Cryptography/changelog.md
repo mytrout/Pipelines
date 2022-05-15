@@ -1,5 +1,20 @@
 # MyTrout.Pipelines.Steps.Cryptography Change Log
 
+## 4.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [# 94](https://github.com/mytrout/Pipelines/issues/94)  Add "if-no-files-found: error" to the nuget publishing step.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- Mark CreateSha256HashStep, CreateSha256HashOptions, DecryptStreamWithAes256Step, DecryptStreamWithAes256Options, EncryptStreamWithAes256Step and EncryptStreamWithAes256Options with the Obsolete attribute.
+- Create CreateHashStep and CreateHashOptions with Pipelines v4.0 implementation.
+- Create DecryptStreamStep and DecryptStreamOptions with Pipelines v4.0 implementation.
+- Create EncryptStreamStep and EncryptStreamOptions with Pipelines v4.0 implementation.
+- Uncomment all of the nuget publish steps to allow a new version to be published.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+
 ## 3.2.0
  - Add unit test because AltCover shows a branch code coverage discrepancy causing coverage to fall to 96.6%
  - Use the null-forgiving operator to remove known null suppression false positives.

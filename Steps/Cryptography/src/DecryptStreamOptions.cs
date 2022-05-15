@@ -1,7 +1,7 @@
-﻿// <copyright file="CreateSha256HashOptions.cs" company="Chris Trout">
+﻿// <copyright file="DecryptStreamOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,32 @@
 
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
-    using System;
+    using MyTrout.Pipelines.Core;
+    using System.Security.Cryptography;
     using System.Text;
 
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
-     */
-
     /// <summary>
-    /// Provides caller-configurable options to change the behavior of <see cref="CreateSha256HashOptions"/>.
+    /// Provides caller-configurable options to change the behavior of <see cref="DecryptStreamWithAes256Step"/>.
     /// </summary>
-    [Obsolete("Use CreateHashStep and CreateHashOptions.")]
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class CreateSha256HashOptions
+    public class DecryptStreamOptions
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         /// <summary>
-        /// Gets or sets the <see cref="Encoding"/> used to hash this value.
+        /// Gets or sets the algorithm with Initialization Vector and Key already set.
         /// </summary>
-        public Encoding HashEncoding { get; set; } = Encoding.UTF8;
+        [FromServices]
+        public SymmetricAlgorithm DecryptionAlgorithm { get; set; }
+
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Gets or sets the key used to load the <see cref="System.IO.Stream"/> from the <see cref="MyTrout.Pipelines.Core.PipelineContext"/>.
+        /// Gets or sets the context name of the stream to be decrypted.
         /// </summary>
-        public string HashStreamKey { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the context name of the stream of the decrypted output stream.
+        /// </summary>
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
     }
 }

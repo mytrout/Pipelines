@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Cryptography
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.IO;
     using System.Security.Cryptography;
     using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     /// <summary>
     /// Encrypts the <see cref="PipelineContextConstants.OUTPUT_STREAM" /> using AES256.
     /// </summary>
+    [Obsolete("Use EncryptStreamStep with default options.")]
     public class EncryptStreamWithAes256Step : AbstractPipelineStep<EncryptStreamWithAes256Step, EncryptStreamWithAes256Options>
     {
         /// <summary>

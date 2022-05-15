@@ -58,7 +58,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_OutputStream_Is_Not_In_Context()
+        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_InputStream_Is_Not_In_Context()
         {
             // arrange
             int errorCount = 1;
@@ -74,7 +74,7 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
 
             using (var source = new CreateHashStep(logger, options, next))
             {
-                var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+                var expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM);
 
                 // act
                 await source.InvokeAsync(context);
@@ -90,16 +90,15 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
         {
             // arrange
             string contents = "Hey na, hey na, my boyfriend's back.";
-            string expectedHash = "8F54BD082762BA536EF10CAB44C1B6CBFCC95648F15ACD5AB77BF193BB1EBBCF";
             string previousHashString = "1ed507463ae3051f28aa79751aa042d2ff872498dca98d0a593ad83f62781947";
 
-            using (var previousHash = new MemoryStream())
+            using (var previousHash = new MemoryStream(Encoding.UTF8.GetBytes(previousHashString)))
             {
-                using (var outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+                using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
                 {
-                    outputStream.Position = 0;
+                    inputStream.Position = 0;
                     var context = new PipelineContext();
-                    context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
+                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
                     context.Items.Add(CryptographyConstants.HASH_STREAM, previousHash);
                     context.Items.Add(CryptographyConstants.HASH_STRING, previousHashString);
 
@@ -122,43 +121,48 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                             throw context.Errors[0];
                         }
 
-                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
-                        Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                        Assert.IsTrue(outputStream.CanRead, "Stream should not be closed.");
-
-                        using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
-                        {
-                            using (var reader = new StreamReader(hashStream, leaveOpen: true))
-                            {
-                                var actualHash = await reader.ReadToEndAsync();
-                                Assert.AreEqual(expectedHash, actualHash);
-                            }
-                        }
-
-                        Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
+                        Assert.AreEqual(0, context.Errors.Count, "Errors were thrown.");
                     }
                 }
             }
         }
 
         [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_When_No_Previous_Hash_Exists()
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Next_Step_Verifies_Values_Passed_Downstream()
         {
             // arrange
             string contents = "Hey na, hey na, my boyfriend's back.";
             string expectedHash = "8F54BD082762BA536EF10CAB44C1B6CBFCC95648F15ACD5AB77BF193BB1EBBCF";
 
-            using (var outputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+            using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
             {
-                outputStream.Position = 0;
+                inputStream.Position = 0;
                 var context = new PipelineContext();
-                context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
+                context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
 
                 var logger = new Mock<ILogger<CreateHashStep>>().Object;
                 var options = new CreateHashOptions();
 
                 var nextMock = new Mock<IPipelineRequest>();
                 nextMock.Setup(x => x.InvokeAsync(context))
+                                        .Callback(() =>
+                                        {
+                                            // assert
+                                            Assert.IsTrue(context.Items.ContainsKey(CryptographyConstants.HASH_STREAM), "context does not contain HASH_STREAM.");
+                                            Assert.IsTrue(inputStream.CanRead, "Stream should not be closed.");
+
+                                            using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
+                                            {
+                                                hashStream.Position = 0;
+                                                using (var reader = new StreamReader(hashStream, Encoding.UTF8, leaveOpen: true))
+                                                {
+                                                    var actualHash = reader.ReadToEnd();
+                                                    Assert.AreEqual(expectedHash, actualHash);
+                                                }
+                                            }
+
+                                            Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
+                                        })
                                         .Returns(Task.CompletedTask);
                 var next = nextMock.Object;
 
@@ -167,26 +171,124 @@ namespace MyTrout.Pipelines.Steps.Cryptography.Tests
                     // act
                     await source.InvokeAsync(context);
 
-                    // assert
+                    // assert - phase 2
                     if (context.Errors.Any())
                     {
                         throw context.Errors[0];
                     }
+                }
+            }
+        }
 
-                    Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM));
-                    Assert.AreEqual(outputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                    Assert.IsTrue(outputStream.CanRead, "Stream should not be closed.");
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_With_Previously_Configured_Values_Restored()
+        {
+            // arrange
+            string contents = "Hey na, hey na, my boyfriend's back.";
+            string previousHashString = "1ed507463ae3051f28aa79751aa042d2ff872498dca98d0a593ad83f62781947";
+            var options = new CreateHashOptions();
 
-                    using (var hashStream = context.Items[CryptographyConstants.HASH_STREAM] as Stream)
+            using (var previousHash = new MemoryStream(Encoding.UTF8.GetBytes(previousHashString)))
+            {
+                using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+                {
+                    inputStream.Position = 0;
+                    var context = new PipelineContext();
+                    context.Items.Add(options.InputStreamContextName, inputStream);
+                    context.Items.Add(options.HashStreamContextName, previousHash);
+                    context.Items.Add(options.HashStringContextName, previousHashString);
+
+                    var logger = new Mock<ILogger<CreateHashStep>>().Object;
+
+                    var nextMock = new Mock<IPipelineRequest>();
+                    nextMock.Setup(x => x.InvokeAsync(context))
+                                            .Returns(Task.CompletedTask);
+                    var next = nextMock.Object;
+
+                    using (var source = new CreateHashStep(logger, options, next))
                     {
-                        using (var reader = new StreamReader(hashStream, leaveOpen: true))
-                        {
-                            var actualHash = await reader.ReadToEndAsync();
-                            Assert.AreEqual(expectedHash, actualHash);
-                        }
-                    }
+                        // act
+                        await source.InvokeAsync(context);
 
-                    Assert.AreEqual(expectedHash, context.Items[CryptographyConstants.HASH_STRING]);
+                        // assert
+                        if (context.Errors.Any())
+                        {
+                            throw context.Errors[0];
+                        }
+
+                        Assert.AreEqual(previousHash, context.Items[options.HashStreamContextName]);
+                        Assert.AreEqual(previousHashString, context.Items[options.HashStringContextName]);
+                        Assert.AreEqual(inputStream, context.Items[options.InputStreamContextName]);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
+        {
+            // arrange
+            string contents = "Hey na, hey na, my boyfriend's back.";
+            string previousHashString = "1ed507463ae3051f28aa79751aa042d2ff872498dca98d0a593ad83f62781947";
+            string expectedHash = "8F54BD082762BA536EF10CAB44C1B6CBFCC95648F15ACD5AB77BF193BB1EBBCF";
+
+            var options = new CreateHashOptions()
+            {
+                InputStreamContextName = "NOT_INPUT_STREAM",
+                HashStreamContextName = "NOT_HASH_STREAM",
+                HashStringContextName = "NOT_HASH_STRING",
+            };
+
+            using (var previousHash = new MemoryStream(Encoding.UTF8.GetBytes(previousHashString)))
+            {
+                using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+                {
+                    inputStream.Position = 0;
+                    var context = new PipelineContext();
+                    context.Items.Add(options.InputStreamContextName, inputStream);
+                    context.Items.Add(options.HashStreamContextName, previousHash);
+                    context.Items.Add(options.HashStringContextName, previousHashString);
+
+                    var logger = new Mock<ILogger<CreateHashStep>>().Object;
+
+                    var nextMock = new Mock<IPipelineRequest>();
+                    nextMock.Setup(x => x.InvokeAsync(context))
+                                            .Callback(() =>
+                                            {
+                                                // assert
+                                                Assert.IsTrue(context.Items.ContainsKey(options.HashStreamContextName), "context does not contain HASH_STREAM.");
+                                                Assert.IsTrue(inputStream.CanRead, "Stream should not be closed.");
+
+                                                using (var hashStream = context.Items[options.HashStreamContextName] as Stream)
+                                                {
+                                                    hashStream.Position = 0;
+                                                    using (var reader = new StreamReader(hashStream, Encoding.UTF8, leaveOpen: true))
+                                                    {
+                                                        var actualHash = reader.ReadToEnd();
+                                                        Assert.AreEqual(expectedHash, actualHash);
+                                                    }
+                                                }
+
+                                                Assert.AreEqual(expectedHash, context.Items[options.HashStringContextName]);
+                                            })
+                                            .Returns(Task.CompletedTask);
+                    var next = nextMock.Object;
+
+                    using (var source = new CreateHashStep(logger, options, next))
+                    {
+                        // act
+                        await source.InvokeAsync(context);
+
+                        // assert - phase 2
+                        if (context.Errors.Any())
+                        {
+                            throw context.Errors[0];
+                        }
+
+                        Assert.AreEqual(previousHash, context.Items[options.HashStreamContextName]);
+                        Assert.AreEqual(previousHashString, context.Items[options.HashStringContextName]);
+                        Assert.AreEqual(inputStream, context.Items[options.InputStreamContextName]);
+                    }
                 }
             }
         }

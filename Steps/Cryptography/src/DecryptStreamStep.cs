@@ -1,7 +1,7 @@
-﻿// <copyright file="DecryptStreamWithAes256Step.cs" company="Chris Trout">
+﻿// <copyright file="DecryptStreamStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,83 +32,78 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Decrypts the <see cref="PipelineContextConstants.INPUT_STREAM" /> using AES256.
+    /// Decrypts the <see cref="PipelineContextConstants.INPUT_STREAM" /> using the specified options.
     /// </summary>
-    [Obsolete("Use DecryptStreamStep with default options.")]
-    public class DecryptStreamWithAes256Step : AbstractCachingPipelineStep<DecryptStreamWithAes256Step, DecryptStreamWithAes256Options>
+    public class DecryptStreamStep : AbstractCachingPipelineStep<DecryptStreamStep, DecryptStreamOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DecryptStreamWithAes256Step" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="DecryptStreamStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public DecryptStreamWithAes256Step(ILogger<DecryptStreamWithAes256Step> logger, DecryptStreamWithAes256Options options, IPipelineRequest next)
+        public DecryptStreamStep(ILogger<DecryptStreamStep> logger, DecryptStreamOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { PipelineContextConstants.INPUT_STREAM };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputStreamContextName };
 
         /// <summary>
-        /// Guarantees that <see cref="PipelineContextConstants.INPUT_STREAM"/> exists and is non-null from <paramref name="context"/>.
+        /// Guarantees that <see cref="DecryptStreamOptions.InputStreamContextName"/> exists and is non-null from <paramref name="context"/>.
         /// </summary>
         /// <param name="context">PipelineContext.</param>
         /// <returns>A completed <see cref="Task"/>.</returns>
         protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
+            context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
 
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Decrypts the context <see cref="Stream"/> named <see cref="PipelineContextConstants.INPUT_STREAM"/>.
+        /// Decrypts the context <see cref="Stream"/> named <see cref="DecryptStreamOptions.InputStreamContextName"/>.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" />- by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            _ = this.CachedItems.TryGetValue(PipelineContextConstants.INPUT_STREAM, out var tempStream);
-
             // InvokeBeforeCache guarantees that tempStream will not be null.
-            Stream encryptedStream = (tempStream as Stream)!;
+            Stream inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
-            // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
-            var cryptoProvider = Aes.Create();
+            // Reset to the starting position to allow readers to read the entire stream.
+            inputStream.Position = 0;
 
-            try
+            using (ICryptoTransform decryptor = this.Options.DecryptionAlgorithm.CreateDecryptor())
             {
-                byte[] key = this.Options.DecryptionEncoding.GetBytes(this.Options.RetrieveDecryptionKey());
-                byte[] initializationVector = this.Options.DecryptionEncoding.GetBytes(this.Options.RetrieveDecryptionInitializationVector());
-
-                ICryptoTransform decryptor = cryptoProvider.CreateDecryptor(key, initializationVector);
-
-                using (var cryptoStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
+                using (var cryptoStream = new CryptoStream(inputStream, decryptor, CryptoStreamMode.Read, leaveOpen: true))
                 {
-                    using (var reader = new StreamReader(cryptoStream, this.Options.DecryptionEncoding, false, 1024, true))
+                    using (var outputStream = new MemoryStream())
                     {
-                        byte[] output = this.Options.DecryptionEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
-
-                        using (var outputStream = new MemoryStream(output))
+                        try
                         {
-                            context.Items.Add(PipelineContextConstants.INPUT_STREAM, outputStream);
+                            // Decrypt the Input Stream in a memory-aware method.
+                            byte[] bytes = new byte[16];
+                            int read;
+                            do
+                            {
+                                read = await cryptoStream.ReadAsync(bytes, context.CancellationToken);
+                                await outputStream.WriteAsync(bytes.AsMemory(0, read), context.CancellationToken);
+                            }
+                            while (read > 0);
+
+                            context.Items.Add(this.Options.OutputStreamContextName, outputStream);
 
                             await this.Next.InvokeAsync(context).ConfigureAwait(false);
                         }
+                        finally
+                        {
+                            context.Items.Remove(this.Options.OutputStreamContextName);
+                        }
                     }
-                }
-            }
-            finally
-            {
-                cryptoProvider.Dispose();
-
-                if (context.Items.ContainsKey(PipelineContextConstants.INPUT_STREAM))
-                {
-                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
                 }
             }
         }

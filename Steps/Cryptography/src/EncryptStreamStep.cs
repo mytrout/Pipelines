@@ -1,4 +1,4 @@
-﻿// <copyright file="CreateHashStep.cs" company="Chris Trout">
+﻿// <copyright file="EncryptStreamStep.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -28,27 +28,29 @@ namespace MyTrout.Pipelines.Steps.Cryptography
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Creates a Hash of the pipeline's <see cref="CreateHashOptions.InputStreamContextName" />.
+    /// Encrypts the <see cref="PipelineContextConstants.OUTPUT_STREAM" /> using the specified options.
     /// </summary>
-    public class CreateHashStep : AbstractCachingPipelineStep<CreateHashStep, CreateHashOptions>
+    public class EncryptStreamStep : AbstractCachingPipelineStep<EncryptStreamStep, EncryptStreamOptions>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CreateHashStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="EncryptStreamStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public CreateHashStep(ILogger<CreateHashStep> logger, CreateHashOptions options, IPipelineRequest next)
+        /// <param name="options">Step-specific options for altering behavior.</param>
+        public EncryptStreamStep(ILogger<EncryptStreamStep> logger, EncryptStreamOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.HashStreamContextName, this.Options.HashStringContextName };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputStreamContextName };
 
         /// <inheritdoc />
         protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
@@ -58,33 +60,41 @@ namespace MyTrout.Pipelines.Steps.Cryptography
         }
 
         /// <summary>
-        /// Generates a SHA256 Hash of the <see cref="CreateHashOptions.InputStreamContextName" />.
+        /// Encrypts the context <see cref="Stream"/> named <see cref="EncryptStreamOptions.InputStreamContextName"/>.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            // AssertValueIsValid guarantees that this.Options.HashStreamKey is non-null and a Stream.
-            Stream inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
+            var inputStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
-            inputStream.Position = 0;
-
-            using (var reader = new StreamReader(inputStream, this.Options.HashEncoding, false, 1024, true))
+            // Encrypt the input stream.
+            using (var outputStream = new MemoryStream())
             {
-                byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
-
-                var hashProvider = this.Options.HashAlgorithm;
-
-                byte[] workingHash = hashProvider.ComputeHash(workingResult);
-                string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
-
-                context.Items.Add(this.Options.HashStringContextName, hexHash);
-
-                using (var hashStream = new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)))
+                using (var encryptTransform = this.Options.EncryptionAlgorithm.CreateEncryptor())
                 {
-                    context.Items.Add(this.Options.HashStreamContextName, hashStream);
+                    using (var cryptoStream = new CryptoStream(outputStream, encryptTransform, CryptoStreamMode.Write, leaveOpen: true))
+                    {
+                        byte[] bytes = new byte[16];
+                        int read;
+                        do
+                        {
+                            read = await inputStream.ReadAsync(bytes);
+                            await cryptoStream.WriteAsync(bytes.AsMemory(0, read));
+                        }
+                        while (read > 0);
+                    }
+                }
+
+                try
+                {
+                    context.Items.Add(this.Options.OutputStreamContextName, outputStream);
                     await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                }
+                finally
+                {
+                    context.Items.Remove(this.Options.OutputStreamContextName);
                 }
             }
         }
