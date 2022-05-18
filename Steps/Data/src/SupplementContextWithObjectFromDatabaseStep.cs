@@ -1,7 +1,7 @@
-﻿// <copyright file="SupplementContextWithDatabaseRecordStep.cs" company="Chris Trout">
+﻿// <copyright file="SupplementContextWithObjectFromDatabaseStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,34 +26,26 @@ namespace MyTrout.Pipelines.Steps.Data
 {
     using Dapper;
     using Microsoft.Extensions.Logging;
+    using MyTrout.Pipelines;
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
+    using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
-    /// <summary>
-    /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
-    /// </summary>
-    public class SupplementContextWithDatabaseRecordStep : AbstractPipelineStep<SupplementContextWithDatabaseRecordStep, SupplementContextWithDatabaseRecordOptions>
+    public class SupplementContextWithObjectFromDatabaseStep<TObject> : AbstractCachingPipelineStep<SupplementContextWithObjectFromDatabaseStep<TObject>, SupplementContextWithObjectFromDatabaseOptions>
+        where TObject : class
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SupplementContextWithDatabaseRecordStep"/> class with the specified options.
-        /// </summary>
-        /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
-        /// <param name="options">Step-specific options for altering behavior.</param>
-        public SupplementContextWithDatabaseRecordStep(ILogger<SupplementContextWithDatabaseRecordStep> logger, SupplementContextWithDatabaseRecordOptions options, IPipelineRequest next)
+        public SupplementContextWithObjectFromDatabaseStep(ILogger<SupplementContextWithObjectFromDatabaseStep<TObject>> logger, SupplementContextWithObjectFromDatabaseOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
-        /// <summary>
-        /// Reads one record from the database, supplements the <paramref name="context"/> and restores the original values once downstream processing is completed.
-        /// </summary>
-        /// <param name="context">The pipeline context.</param>
-        /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.InputObjectContextName };
+
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
             var parameters = new DynamicParameters();
 
@@ -77,6 +69,7 @@ namespace MyTrout.Pipelines.Steps.Data
 
                     await connection.OpenAsync().ConfigureAwait(false);
 
+                    connection.QueryAsync()
                     using (var reader = await connection.ExecuteReaderAsync(this.Options.SqlStatement.Statement, param: parameters, commandType: this.Options.SqlStatement.CommandType).ConfigureAwait(false))
                     {
                         if (await reader.ReadAsync().ConfigureAwait(false))
@@ -126,5 +119,6 @@ namespace MyTrout.Pipelines.Steps.Data
 
             await Task.CompletedTask.ConfigureAwait(false);
         }
+    }
     }
 }

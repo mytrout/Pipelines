@@ -48,18 +48,20 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
             DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
-            var options = new SupplementContextWithDatabaseRecordOptions();
+            var options = new SupplementContextWithDatabaseRecordOptions()
+            {
+                DbProviderFactory = providerFactory
+            };
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             // act
-            var result = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var result = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
             Assert.AreEqual(next, result.Next);
             Assert.AreEqual(options, result.Options);
-            Assert.AreEqual(providerFactory, result.ProviderFactory);
         }
 
         [TestMethod]
@@ -75,6 +77,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatement = new SqlStatement()
                 {
                     CommandType = System.Data.CommandType.StoredProcedure,
@@ -93,7 +96,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
             var next = mockNext.Object;
 
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             int expectedErrorCount = 1;
             string expectedMessage = Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture, providerFactory.GetType().Name);
@@ -117,6 +120,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatement = new SqlStatement()
                 {
                     CommandType = System.Data.CommandType.StoredProcedure,
@@ -135,7 +139,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             mockNext.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>())).Throws(new InternalTestFailureException("next.InvokeAsync() should not have been called."));
             var next = mockNext.Object;
 
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -163,6 +167,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatement = new SqlStatement()
                 {
                     CommandType = System.Data.CommandType.StoredProcedure,
@@ -203,7 +208,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 await connection.ExecuteAsync("dbo.CartoonInsert", new { CartoonId = expectedId, Name = expectedName, Description = expectedDescription }, commandType: System.Data.CommandType.StoredProcedure).ConfigureAwait(false);
             }
 
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -248,6 +253,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             var options = new SupplementContextWithDatabaseRecordOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatement = new SqlStatement()
                 {
                     CommandType = System.Data.CommandType.Text,
@@ -288,7 +294,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 await connection.ExecuteAsync("dbo.CartoonInsert", new { CartoonId = expectedId, Name = expectedName, Description = expectedDescription }, commandType: System.Data.CommandType.StoredProcedure).ConfigureAwait(false);
             }
 
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -328,14 +334,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = null;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -347,14 +352,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -366,34 +370,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             SupplementContextWithDatabaseRecordOptions options = null;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedParamName, result.ParamName);
-        }
-
-
-        [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_ProviderFactory_Is_Null()
-        {
-            // arrange
-            ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
-            DbProviderFactory providerFactory = null;
-            var options = new SupplementContextWithDatabaseRecordOptions();
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            string expectedParamName = nameof(providerFactory);
-
-            // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SupplementContextWithDatabaseRecordStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -405,13 +388,12 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SupplementContextWithDatabaseRecordStep> logger = new Mock<ILogger<SupplementContextWithDatabaseRecordStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SupplementContextWithDatabaseRecordOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             IPipelineContext context = null;
 
-            var sut = new SupplementContextWithDatabaseRecordStep(logger, providerFactory, options, next);
+            var sut = new SupplementContextWithDatabaseRecordStep(logger, options, next);
 
             var expectedParamName = nameof(context);
             // act
