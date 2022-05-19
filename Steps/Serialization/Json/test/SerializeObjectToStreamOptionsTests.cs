@@ -29,7 +29,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class SerializeObjectFromStreamOptionsTests
+    public class SerializeObjectToStreamOptionsTests
     {
         [TestMethod]
         public void Constructs_SerializeStreamFromObjectOptions_Successfully()

@@ -45,7 +45,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
                 InputStreamContextName = inputStreamContextName,
                 JsonSerializerOptions = jsonSerializerOptions,
                 OutputObjectContextName = outputObjectContextName
-
             };
 
             // assert

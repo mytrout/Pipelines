@@ -48,7 +48,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             // act
             var result = new DeserializeObjectFromStreamStep<object>(logger, options, next);
-            
+
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
@@ -81,7 +81,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
-
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Next_Step_Verifies_Values_Passed_Downstream()
         {
@@ -111,7 +110,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             var expectedInputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
 
-            
             context.Items.Add(options.InputStreamContextName, expectedInputStream);
 
             var expectedErrorCount = 0;
@@ -163,7 +161,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             string contents = "{ \"ConnectionString\": \"value\" }";
 
             var expectedInputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
-
 
             context.Items.Add(options.InputStreamContextName, expectedInputStream);
 
@@ -223,7 +220,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             var options = new DeserializeObjectFromStreamOptions();
             var next = new Mock<IPipelineRequest>().Object;
             string contents = "{ \"ConnectionString\": \"value\" }";
-
 
             var expectedInputStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
             var expectedOutputObject = new object();
