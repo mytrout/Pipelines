@@ -28,6 +28,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public record SampleItem
     {
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
     }
 }
