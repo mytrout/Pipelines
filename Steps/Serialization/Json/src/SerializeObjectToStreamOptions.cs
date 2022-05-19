@@ -27,6 +27,9 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
     using MyTrout.Pipelines.Core;
     using System.Text.Json;
 
+    /// <summary>
+    /// Provides user-configuration options to alter the behavior of the <see cref="SerializeObjectToStreamStep{TObject}"/>.
+    /// </summary>
     public class SerializeObjectToStreamOptions
     {
         /// <summary>

@@ -25,16 +25,22 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
 {
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
+    using MyTrout.Pipelines.Core;
     using System.Collections.Generic;
     using System.IO;
     using System.Text.Json;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Serializes a <typeparamref name="TObject"/> to a <see cref="Stream"/> added to <see cref="PipelineContext.Items"/>.
+    /// </summary>
+    /// <typeparam name="TObject">The target object for deserialization.
+    /// </typeparam>
     public class SerializeObjectToStreamStep<TObject> : AbstractCachingPipelineStep<SerializeObjectToStreamStep<TObject>, SerializeObjectToStreamOptions>
         where TObject : class
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializeObjectToStreamStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="SerializeObjectToStreamStep{TObject}" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
@@ -48,7 +54,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
         /// <inheritdoc />
         public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputStreamContextName };
 
-
         /// <summary>
         /// Guarantees that <see cref="SerializeObjectToStreamOptions.InputObjectContextName"/> exists and is non-null from <paramref name="context"/>.
         /// </summary>
@@ -60,6 +65,12 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
             return base.InvokeBeforeCacheAsync(context);
         }
 
+        /// <summary>
+        /// Serializes a <typeparamref name="TObject"/> into a <see cref="Stream"/> and add it to <see cref="PipelineContext.Items"/>.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
+        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
             var inputObject = (context.Items[this.Options.InputObjectContextName] as TObject)!;

@@ -48,7 +48,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             // act
             var result = new SerializeObjectToStreamStep<object>(logger, options, next);
-            
+
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
@@ -109,7 +109,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
                                                    string contents = reader.ReadToEnd();
                                                    Assert.AreEqual(expectedContents, contents);
                                                }
-                                           }                                            
+                                           }
                                        })
                                        .Returns(Task.CompletedTask);
 
@@ -133,7 +133,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
         }
-        
+
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
         {
@@ -166,7 +166,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
                                                    string contents = reader.ReadToEnd();
                                                    Assert.AreEqual(expectedContents, contents);
                                                }
-                                           }                                            
+                                           }
                                        })
                                        .Returns(Task.CompletedTask);
 
@@ -190,7 +190,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
         }
-        
 
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Stream_Is_Serialized_Successfully()
@@ -198,7 +197,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             // arrange
             var context = new PipelineContext();
             var expectedInputObject = new SampleItem() { ConnectionString = "value" };
-            var expectedContents = "{\"ConnectionString\":\"value\"}";
 
             var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
             var options = new SerializeObjectToStreamOptions();
@@ -226,8 +224,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
         }
-        
-        
+
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_With_Previously_Configured_Values_Restored()
         {

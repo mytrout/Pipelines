@@ -41,7 +41,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
         where TObject : class
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeserializeObjectFromStreamStep" /> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="DeserializeObjectFromStreamStep{TObject}" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
@@ -66,6 +66,12 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
             return base.InvokeBeforeCacheAsync(context);
         }
 
+        /// <summary>
+        /// Deserializes a <see cref="Stream"/> into a <typeparamref name="TObject"/> and add it to <see cref="PipelineContext.Items"/>.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
+        /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
             try
@@ -77,7 +83,6 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
                 context.Items.Add(this.Options.OutputObjectContextName, result!);
 
                 await this.Next.InvokeAsync(context);
-
             }
             finally
             {
