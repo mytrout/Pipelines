@@ -30,7 +30,7 @@ jobs:
         # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
         SONAR_PROJECT_NAME: 'Pipelines.Steps.Serialization.Json'
         WORKING_DIRECTORY: ${{ github.workspace }}/Steps/Serialization/Json
-        SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Serialzation.Json.sln'
+        SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Serialization.Json.sln'
         
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: '1.0.0'
