@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32427.441
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTrout.Pipelines.Steps.Json.Microsoft", "MyTrout.Pipelines.Steps.Json.Microsoft.csproj", "{A45A571C-3D6D-4A77-A3C1-2BA5451AFA8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A45A571C-3D6D-4A77-A3C1-2BA5451AFA8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A45A571C-3D6D-4A77-A3C1-2BA5451AFA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A45A571C-3D6D-4A77-A3C1-2BA5451AFA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A45A571C-3D6D-4A77-A3C1-2BA5451AFA8F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {43CAA856-793C-47AA-BC81-1664F94FDF76}
+	EndGlobalSection
+EndGlobal

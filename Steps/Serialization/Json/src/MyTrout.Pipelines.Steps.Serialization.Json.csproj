@@ -1,16 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>Chris Trout</Authors>
+        <Copyright>Copyright 2022 Chris Trout. All Rights Reserved.</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Version>0.1.0-beta</Version>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+        <FileVersion>0.1.0.0</FileVersion>
+        <Description>Provides Pipeline steps to serialize and deserialize between JSON and streams.</Description>
+        <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="..\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
+    <PropertyGroup>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+        <ErrorReport>prompt</ErrorReport>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <NoWarn>1701;1702;IDE0063;SA1413;SA1636;S4792</NoWarn>
+        <DebugType>full</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MyTrout.Pipelines" Version="4.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0-preview1.22168.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MyTrout.Pipelines" Version="[4,5)" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.33.0.40503">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.376">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
 
 </Project>
+
