@@ -6,13 +6,13 @@ on:
       - master
     paths:
       - '.github/workflows/build-pipelines-steps-serialization-json.yaml'
-      - '**/Pipelines/Steps/Serialization/Json/**/*.*'
+      - 'Steps/Serialization/Json/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
   pull_request:
     paths:
       - '.github/workflows/build-pipelines-steps-serialization-json.yaml'
-      - '**/Pipelines/Steps/Serialization/Json/**/*.*'
+      - 'Steps/Serialization/Json/**/*.*'
       - '!**/*.md'
       - '!**/*.json'
   workflow_dispatch:
