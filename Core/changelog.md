@@ -8,7 +8,7 @@
 - BREAKING CHANGE: Alter ParameterCreationDelegate to use ILogger&lt;IStepActivator&gt; instead of ILogger&lt;StepActivator&gt; to preserve namespace dependencies.
 - BREAKING CHANGE: Alter StepActivator delegate methods to use ILogger&lt;IStepActivator&gt; instead of ILogger&lt;StepActivator&gt; to preserve namespace dependencies.
 - Add new ParameterCreationDelegate that injects both IConfiguration and Dependency Injection values.
-= Alter the behavior of StepActivator.ParameterCreators property to use the newly created CreateParameterFromConfigurationAndDependencyInjection delegate.
+- Alter the behavior of StepActivator.ParameterCreators property to use the newly created CreateParameterFromConfigurationAndDependencyInjection delegate.
 - Uncomment all of the nuget publish steps to allow a new version to be published.
 - Mark the Configuration and IsConfigurationAvailable properties with the Obsolete attribute as the new LoadConfigurationToPipelineContextStep supercedes this functionality.
 - Add CreateUnixEpochStep.
