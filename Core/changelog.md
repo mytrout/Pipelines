@@ -1,7 +1,7 @@
 # MyTrout.Pipelines.Core Change Log
 
 
-## 4.0.0 = BREAKING CHANGES
+## 4.0.0 - BREAKING CHANGES
 - Alter IStepActivator interface to include the ParameterCreators property to allow developers to reconfigure the parameter creation behavior.
 - BREAKING CHANGE: Remove support for .NET 5.0.
 - BREAKING CHANGE: Move ParameterCreationDelegate and ParameterCreationResult to the MyTrout.Pipelines namespace due to IStepActivator.ParameterCreators change to preserve namespace dependencies.
