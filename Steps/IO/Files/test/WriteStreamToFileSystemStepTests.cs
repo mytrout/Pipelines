@@ -1,7 +1,7 @@
 // <copyright file="WriteStreamToFileSystemStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             };
 
             // act
-            var result = new WriteStreamToFileSystemStep(logger, next, options);
+            var result = new WriteStreamToFileSystemStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -102,7 +102,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -147,7 +147,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -155,6 +155,54 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 // assert
                 Assert.IsTrue(File.Exists(fullPathAndFileName));
                 Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "The stream should be open.");
+                Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
+
+                // cleanup
+                await source.DisposeAsync().ConfigureAwait(false);
+                File.Delete(fullPathAndFileName);
+            }
+        }
+
+        [TestMethod]
+        public async Task Writes_File_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
+        {
+            // arrange
+            string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string contents = "What is the text here?";
+            byte[] body = Encoding.UTF8.GetBytes(contents);
+            string outputStreamContextName = "OUTPUT_STREAM_CONTEXT_NAME_DIFFERENT";
+            string targetFileContextName = "TARGET_FILE_CONTEXT_NAME_DIFFERENT";
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullPathAndFileName = outputFilePath + fileName;
+
+            using (var stream = new MemoryStream(body))
+            {
+                var context = new PipelineContext();
+                context.Items.Add(targetFileContextName, fileName);
+                context.Items.Add(outputStreamContextName, stream);
+
+                var logger = new Mock<ILogger<WriteStreamToFileSystemStep>>().Object;
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                var options = new WriteStreamToFileSystemOptions()
+                {
+                    OutputStreamContextName = outputStreamContextName,
+                    TargetFileContextName = targetFileContextName,
+                    WriteFileBaseDirectory = outputFilePath
+                };
+
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
+
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                Assert.IsTrue(File.Exists(fullPathAndFileName));
+                Assert.IsTrue((context.Items[outputStreamContextName] as Stream).CanRead, "The stream should be open.");
                 Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
 
                 // cleanup
@@ -187,7 +235,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -231,7 +279,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -279,7 +327,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = $"\\\\argonaut.com\\unavailable-file-share\\{Guid.NewGuid()}\\"
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -324,7 +372,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -368,7 +416,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 WriteFileBaseDirectory = outputFilePath
             };
 
-            var source = new WriteStreamToFileSystemStep(logger, next, options);
+            var source = new WriteStreamToFileSystemStep(logger, options, next);
 
             int errorCount = 1;
 
@@ -416,7 +464,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     WriteFileBaseDirectory = outputFilePath
                 };
 
-                var source = new WriteStreamToFileSystemStep(logger, next, options);
+                var source = new WriteStreamToFileSystemStep(logger, options, next);
 
                 int errorCount = 1;
 

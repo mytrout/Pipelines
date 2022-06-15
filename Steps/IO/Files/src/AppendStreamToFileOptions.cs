@@ -35,13 +35,23 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     public class AppendStreamToFileOptions
     {
         /// <summary>
+        /// Gets or sets the base directory to which the application should write the file.
+        /// </summary>
+        public string AppendFileBaseDirectory { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the timing of when the <see cref="AppendStreamToFileStep"/> will be executed.
         /// </summary>
         public ExecutionTimings ExecutionTimings { get; set; } = ExecutionTimings.After;
 
         /// <summary>
-        /// Gets or sets the base directory to which the application should write the file.
+        /// Gets or sets the name used for the writing to the output stream in the Pipeline Context.
         /// </summary>
-        public string AppendFileBaseDirectory { get; set; } = string.Empty;
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the name used to which to write the file from the Pipeline Context.
+        /// </summary>
+        public string TargetFileContextName { get; set; } = FileConstants.TARGET_FILE;
     }
 }

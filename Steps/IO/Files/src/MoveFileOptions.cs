@@ -1,7 +1,7 @@
 ﻿// <copyright file="MoveFileOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,5 +48,15 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Gets or sets a base directory for the target file name.
         /// </summary>
         public string MoveTargetFileBaseDirectory { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name used to read the file from the Pipeline Context.
+        /// </summary>
+        public string SourceFileContextName { get; set; } = FileConstants.SOURCE_FILE;
+
+        /// <summary>
+        /// Gets or sets the name used to which to write the file from the Pipeline Context.
+        /// </summary>
+        public string TargetFileContextName { get; set; } = FileConstants.TARGET_FILE;
     }
 }

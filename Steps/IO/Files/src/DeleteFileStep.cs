@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteFileStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Initializes a new instance of the <see cref="DeleteFileStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public DeleteFileStep(ILogger<DeleteFileStep> logger, IPipelineRequest next, DeleteFileOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public DeleteFileStep(ILogger<DeleteFileStep> logger, DeleteFileOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -68,9 +68,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
         private static Task DeleteFileAsync(IPipelineContext context, DeleteFileOptions options)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.DeleteFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(options.TargetFileContextName, options.DeleteFileBaseDirectory);
 
-            string targetFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
+            string targetFile = (context.Items[options.TargetFileContextName] as string)!;
 
             targetFile = targetFile.GetFullyQualifiedPath(options.DeleteFileBaseDirectory);
 
