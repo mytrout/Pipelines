@@ -1,9 +1,27 @@
 # MyTrout.Pipelines.Steps.IO.Files Change Log
 
+## 4.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+- [#169](https://github.com/mytrout/Pipelines/issues/169) Refactor all steps to conform to the ILogger<T>, ~Options, IPipelineRequest parameter order on constructors.
+### NON-BREAKING CHANGES:
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ReadStreamFromFileSystemStep restores PipelineContext.Items to its original state after execution.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor AppendStreamToFileStep, DeleteFileStep, MoveFileStep, ReadStreamFromFileSystemStep, WriteStreamToFileSystemStep and ~Options to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Add additional unit test to test that ContextName values are used when Steps executes.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.VisualStudio.ThreadingAnalyzers to 17.2.32
+- Upgrade SonarAnalyzer.CSharp 8.40.0.48530
+- Upgrade StyleCop.Analyzers to 1.2.0-beta.435
+- Update all markdown files to use &amp;lt; and &amp;gt; in lieu of &lt; and &gt;
+
 ## 3.2.0
 - Change from suppressions to null-forgiving operators to handle known false positive null warnings.
 - Add AppendStreamToFileStep and ~Options to allow a stream to be appended to an new or existing file.
-- Change the underlying base type for ReadStreamFromFileSystemStep to use the AbstractCachingPipelineStep<TService, TOptions> instead of implementing caching in this class.
+- Change the underlying base type for ReadStreamFromFileSystemStep to use the AbstractCachingPipelineStep&lt;TService, TOptions&gt; instead of implementing caching in this class.
 - Uncomment the nuget publishing to allow version 3.2.0 to be published.
 - Suppress SA1636 to allow for variation in the copyright headers for 2022 and range from 2019-2022.
 - Add if-no-files-found to the nuget publish step in build.

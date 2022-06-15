@@ -40,28 +40,28 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Initializes a new instance of the <see cref="ReadStreamFromFileSystemStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public ReadStreamFromFileSystemStep(ILogger<ReadStreamFromFileSystemStep> logger, IPipelineRequest next, ReadStreamFromFileSystemOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public ReadStreamFromFileSystemStep(ILogger<ReadStreamFromFileSystemStep> logger, ReadStreamFromFileSystemOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { PipelineContextConstants.INPUT_STREAM };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.InputStreamContextName };
 
         /// <summary>
-        /// Reads a file from the configured file system and puts it into the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> named <see cref="PipelineContextConstants.INPUT_STREAM" />.
+        /// Reads a file from the configured file system and puts it into the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> named <see cref="ReadStreamFromFileSystemOptions.SourceFileContextName" />.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         /// <remarks><paramref name="context"/> is guaranteed to not be -<see langword="null" /> by the base class.</remarks>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, this.Options.ReadFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(this.Options.SourceFileContextName, this.Options.ReadFileBaseDirectory);
 
-            string workingFile = (context.Items[FileConstants.SOURCE_FILE] as string)!;
+            string workingFile = (context.Items[this.Options.SourceFileContextName] as string)!;
 
             workingFile = workingFile.GetFullyQualifiedPath(this.Options.ReadFileBaseDirectory);
 
@@ -72,7 +72,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
             using (var inputStream = File.OpenRead(workingFile))
             {
-                context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+                context.Items.Add(this.Options.InputStreamContextName, inputStream);
 
                 try
                 {
@@ -81,7 +81,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 finally
                 {
                     // Guarantees that INPUT_STREAM is removed prior to returning from this function, even when an exception is thrown in this.Next.InvokeAsync().
-                    context.Items.Remove(PipelineContextConstants.INPUT_STREAM);
+                    context.Items.Remove(this.Options.InputStreamContextName);
                 }
             }
         }

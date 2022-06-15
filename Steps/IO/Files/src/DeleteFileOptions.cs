@@ -1,7 +1,7 @@
 ﻿// <copyright file="DeleteFileOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,5 +43,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Gets or sets a base directory for the source file name.
         /// </summary>
         public string DeleteFileBaseDirectory { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name used to which to write the file from the Pipeline Context.
+        /// </summary>
+        public string TargetFileContextName { get; set; } = FileConstants.TARGET_FILE;
     }
 }

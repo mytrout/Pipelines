@@ -1,7 +1,7 @@
 ﻿// <copyright file="MoveFileStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Initializes a new instance of the <see cref="MoveFileStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public MoveFileStep(ILogger<MoveFileStep> logger, IPipelineRequest next, MoveFileOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public MoveFileStep(ILogger<MoveFileStep> logger, MoveFileOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -70,10 +70,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
         private static Task MoveFileAsync(IPipelineContext context, MoveFileOptions options)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.SOURCE_FILE, options.MoveSourceFileBaseDirectory);
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.MoveTargetFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(options.SourceFileContextName, options.MoveSourceFileBaseDirectory);
+            context.AssertFileNameParameterIsValid(options.TargetFileContextName, options.MoveTargetFileBaseDirectory);
 
-            string sourceFile = (context.Items[FileConstants.SOURCE_FILE] as string)!;
+            string sourceFile = (context.Items[options.SourceFileContextName] as string)!;
 
             sourceFile = sourceFile.GetFullyQualifiedPath(options.MoveSourceFileBaseDirectory);
 
@@ -82,7 +82,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 throw new InvalidOperationException(Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, sourceFile));
             }
 
-            string targetFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
+            string targetFile = (context.Items[options.TargetFileContextName] as string)!;
             targetFile = targetFile.GetFullyQualifiedPath(options.MoveTargetFileBaseDirectory);
 
             if (File.Exists(targetFile))
@@ -90,7 +90,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 throw new InvalidOperationException(Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, targetFile));
             }
 
-            string workingPath = Path.GetDirectoryName(targetFile);
+            string workingPath = Path.GetDirectoryName(targetFile)!;
 
             if (!Directory.Exists(workingPath))
             {

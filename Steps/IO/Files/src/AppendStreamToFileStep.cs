@@ -37,9 +37,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Initializes a new instance of the <see cref="AppendStreamToFileStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public AppendStreamToFileStep(ILogger<AppendStreamToFileStep> logger, IPipelineRequest next, AppendStreamToFileOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public AppendStreamToFileStep(ILogger<AppendStreamToFileStep> logger, AppendStreamToFileOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -68,14 +68,14 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
         private static async Task AppendStreamToFileAsync(IPipelineContext context, AppendStreamToFileOptions options)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.AppendFileBaseDirectory);
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertFileNameParameterIsValid(options.TargetFileContextName, options.AppendFileBaseDirectory);
+            context.AssertValueIsValid<Stream>(options.OutputStreamContextName);
 
-            string workingFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
+            string workingFile = (context.Items[options.TargetFileContextName] as string)!;
 
             workingFile = workingFile.GetFullyQualifiedPath(options.AppendFileBaseDirectory);
 
-            Stream workingStream = (context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!;
+            Stream workingStream = (context.Items[options.OutputStreamContextName] as Stream)!;
 
             using (StreamReader reader = new StreamReader(workingStream, leaveOpen: true))
             {

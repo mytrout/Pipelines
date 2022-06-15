@@ -55,7 +55,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             };
 
             // act
-            var result = new DeleteFileStep(logger, next, options);
+            var result = new DeleteFileStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -97,7 +97,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 DeleteFileBaseDirectory = targetFilePath
             };
 
-            var source = new DeleteFileStep(logger, next, options);
+            var source = new DeleteFileStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -146,7 +146,56 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 ExecutionTimings = ExecutionTimings.Before
             };
 
-            var source = new DeleteFileStep(logger, next, options);
+            var source = new DeleteFileStep(logger, options, next);
+
+            // act
+            await source.InvokeAsync(context).ConfigureAwait(false);
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            Assert.IsFalse(File.Exists(fullTargetPathAndFileName));
+
+            // cleanup
+            await source.DisposeAsync().ConfigureAwait(false);
+            File.Delete(fullTargetPathAndFileName);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
+        {
+            // arrange
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            string contents = "Et tu, Brute?";
+            File.WriteAllText(fullTargetPathAndFileName, contents);
+
+            var options = new DeleteFileOptions()
+            {
+                DeleteFileBaseDirectory = targetFilePath,
+                TargetFileContextName = "TARGET_FILE_CONTEXT_NAME_TESTING"
+            };
+
+            var context = new PipelineContext();
+            context.Items.Add(options.TargetFileContextName, fileName);
+
+            var logger = new Mock<ILogger<DeleteFileStep>>().Object;
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() => Assert.IsTrue(File.Exists(fullTargetPathAndFileName), "File does not exist during the InvokeAsync callback and should."))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            var source = new DeleteFileStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -190,7 +239,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 DeleteFileBaseDirectory = targetFilePath
             };
 
-            var source = new DeleteFileStep(logger, next, options);
+            var source = new DeleteFileStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -244,7 +293,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 DeleteFileBaseDirectory = deleteFilePathTraversalDirectory
             };
 
-            var source = new DeleteFileStep(logger, next, options);
+            var source = new DeleteFileStep(logger, options, next);
 
             string expectedMessage = Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, options.DeleteFileBaseDirectory, fullTargetPathAndFileName);
 
