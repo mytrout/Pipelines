@@ -448,5 +448,55 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 }
             }
         }
+
+        [TestMethod]
+        public async Task Throws_InvalidOperationException_From_InvokeAsync_When_ZipArchiveEntryName_Does_Not_Exist()
+        {
+            // arrange
+            var context = new PipelineContext();
+
+            ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+
+            var options = new UpdateZipArchiveEntryOptions();
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            string entryName = "Disney.txt.json";
+            string entryContents = "Why are you still whining?";
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+            int errorCount = 1;
+            string expectedMessage = Resources.ZIP_ARCHIVE_ENTRY_NOT_FOUND(CultureInfo.CurrentCulture, entryName);
+
+            using (var zipStream = new MemoryStream())
+            {
+                using (var fileStream = File.OpenRead(zipFilePath))
+                {
+                    await fileStream.CopyToAsync(zipStream).ConfigureAwait(false);
+                }
+
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
+                {
+                    using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
+                    {
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
+
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
+                        {
+                            // act
+                            await source.InvokeAsync(context).ConfigureAwait(false);
+                        }
+
+                        // assert
+                        Assert.AreEqual(errorCount, context.Errors.Count);
+                        Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+                        Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+                    }
+                }
+            }
+        }
     }
 }

@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Globalization;
     using System.IO;
     using System.IO.Compression;
@@ -71,7 +72,11 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             var archiveEntry = zipArchive.GetEntry(zipEntryFileName);
 
-            if (archiveEntry != null)
+            if (archiveEntry == null)
+            {
+                throw new InvalidOperationException(Resources.ZIP_ARCHIVE_ENTRY_NOT_FOUND(CultureInfo.CurrentCulture, zipEntryFileName));
+            }
+            else
             {
                 using (var archiveStream = archiveEntry.Open())
                 {
