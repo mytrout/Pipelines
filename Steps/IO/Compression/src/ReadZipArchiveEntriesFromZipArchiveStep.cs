@@ -51,17 +51,27 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputStreamContextName, this.Options.ZipArchiveEntryNameContextName };
 
         /// <summary>
+        /// Guarantees that <see cref="ReadZipArchiveEntriesFromZipArchiveOptions.ZipArchiveEntryNameContextName"/> exists and is readable.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
+        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        {
+            context.AssertZipArchiveIsReadable(this.Options.ZipArchiveContextName);
+
+            this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
+
+            return base.InvokeBeforeCacheAsync(context);
+        }
+
+        /// <summary>
         /// Read <see cref="ZipArchiveEntry"/> values contains within the <see cref="ZipArchive"/> provided to this step.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertZipArchiveIsReadable(this.Options.ZipArchiveContextName);
-
-            this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
-
-            // Null-forgiving operator at the end of this line because context.AssertZipArchiveIsReadable ensures non-null ZipArchive-typed value.
+            // Null-forgiving operator at the end of this line because InvokeBeforeCacheAsync validates all required values.
             ZipArchive zipArchive = (context.Items[this.Options.ZipArchiveContextName] as ZipArchive)!;
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));

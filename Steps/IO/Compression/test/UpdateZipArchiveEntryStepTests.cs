@@ -390,7 +390,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             // arrange
             ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
             UpdateZipArchiveEntryOptions options = null;
-            IPipelineRequest next = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(options);
 

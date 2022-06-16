@@ -60,16 +60,24 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             using (var outputStream = new MemoryStream())
             {
-                using (ZipArchive zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create, leaveOpen: true))
+                using (var zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create, leaveOpen: true))
                 {
-                    this.Logger.LogInformation(Resources.ZIP_ARCHIVE_OPENED(CultureInfo.CurrentCulture, nameof(CreateNewZipArchiveStep)));
+                    try
+                    {
+                        this.Logger.LogInformation(Resources.ZIP_ARCHIVE_OPENED(CultureInfo.CurrentCulture, nameof(CreateNewZipArchiveStep)));
 
-                    context.Items.Add(this.Options.OutputStreamContextName, outputStream);
-                    context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+                        context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
 
-                    this.Logger.LogDebug(Resources.ZIP_ARCHIVE_ADDED_TO_PIPELINE(CultureInfo.CurrentCulture));
+                        this.Logger.LogDebug(Resources.ZIP_ARCHIVE_ADDED_TO_PIPELINE(CultureInfo.CurrentCulture));
 
-                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                        await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        context.Items.Remove(this.Options.OutputStreamContextName);
+                        context.Items.Remove(this.Options.ZipArchiveContextName);
+                    }
                 }
             }
         }

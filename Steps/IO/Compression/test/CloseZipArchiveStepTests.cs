@@ -316,7 +316,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             // arrange
             ILogger<CloseZipArchiveStep> logger = new Mock<ILogger<CloseZipArchiveStep>>().Object;
             CloseZipArchiveOptions options = null;
-            IPipelineRequest next = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(options);
 

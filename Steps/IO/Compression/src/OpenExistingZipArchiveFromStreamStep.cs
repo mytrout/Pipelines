@@ -51,22 +51,38 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.ZipArchiveContextName };
 
         /// <summary>
+        /// Guarantees that <see cref="OpenExistingZipArchiveFromStreamOptions.InputStreamContextName"/> exists and is correctly typed.
+        /// </summary>
+        /// <param name="context">The pipeline context.</param>
+        /// <returns>A completed <see cref="Task" />.</returns>
+        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        {
+            context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
+            return base.InvokeBeforeCacheAsync(context);
+        }
+
+        /// <summary>
         /// Unzips the stream and calls the downstream caller once for each file in the zip archive.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
-
-            // Null-forgiving operator at the end of this line because context.AssertValueIsValid ensures non-null Stream-typed value.
+            // Null-forgiving operator at the end of this line because InvokeBeforeCacheAsync validates the values.
             Stream archiveStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
             using (var zipArchive = new ZipArchive(archiveStream, this.Options.ZipArchiveMode, leaveOpen: true))
             {
-                context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
+                try
+                {
+                    context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
 
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                }
+                finally
+                {
+                    context.Items.Remove(this.Options.ZipArchiveContextName);
+                }
             }
         }
     }

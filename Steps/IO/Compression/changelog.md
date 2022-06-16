@@ -10,6 +10,7 @@
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
 - [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor ~Step to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing INPUT_STREAM values are restored after execution of this step.
 - [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ~Step restores PipelineContext.Items to its original state after execution.
+- Move parameter and PipelineContext.Items validation to the InvokeBeforeCacheAsync() method for classes implementing AbstractCachingPipelineStep&lt;TStep&gt;
 - Add .editorconfig to enforce rules in Visual Studio 2022.
 - Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
 - Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.

@@ -211,7 +211,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             IPipelineRequest next = mockNext.Object;
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
-            int expectedEntryCount = 0;
+            int expectedEntryCount = 1;
 
             string missingEntryName = "Disney.txt.json";
 
@@ -355,7 +355,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             // arrange
             ILogger<RemoveZipArchiveEntryStep> logger = new Mock<ILogger<RemoveZipArchiveEntryStep>>().Object;
             RemoveZipArchiveEntryOptions options = null;
-            IPipelineRequest next = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(options);
 
