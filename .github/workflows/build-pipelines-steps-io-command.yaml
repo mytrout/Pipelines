@@ -42,12 +42,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core SDK 5.0.x and 6.0.x
+      - name: Setup .NET Core SDK 6.0.x and 7.0.x
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
+            7.0.100-preview.3.22179.4
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
       - name: Setup Java 11 for SonarQube.
