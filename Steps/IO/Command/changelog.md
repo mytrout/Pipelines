@@ -1,5 +1,19 @@
 # MyTrout.Pipelines.Steps.IO.Command
 
+## 2.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.VisualStudio.ThreadingAnalyzers to 17.2.32
+- Upgrade SonarAnalyzer.CSharp 8.40.0.48530
+- Upgrade StyleCop.Analyzers to 1.2.0-beta.435
+- Update all markdown files to use &amp;lt; and &amp;gt; in lieu of &lt; and &gt;
+
 ## 1.1.0 - SonarCloud UPDATE ONLY
 - Suppress CA2254 to prevent false positives in SonarCloud.io with culture-aware logging messages
 - Install Roslynator.Analyzers 3.3.0

@@ -150,7 +150,7 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
             };
 
             var context = new PipelineContext();
-            context.Items.Add(FileConstants.TARGET_FILE, options.ExpectedResult);
+            context.Items.Add(options.TargetFileContextName, options.ExpectedResult);
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
@@ -158,18 +158,125 @@ namespace MyTrout.Pipelines.Steps.IO.Command.Tests
 
             var source = new ExecuteCommandStep(logger, options, next);
 
-            var expectedStatus = CommandLineConstants.COMMAND_LINE_SUCCESS;
+            var expectedStatus = options.CommandLineSuccessStatusContextName;
 
             // act
             await source.InvokeAsync(context);
 
             // assert
-            Assert.IsTrue(context.Items.ContainsKey(CommandLineConstants.COMMAND_LINE_STATUS), "PipelineContext does not contain a COMMAND_LINE_STATUS entry.");
-            Assert.AreEqual(expectedStatus, context.Items[CommandLineConstants.COMMAND_LINE_STATUS]);
+            Assert.IsTrue(context.Items.ContainsKey(options.CommandLineStatusContextName), "PipelineContext does not contain a COMMAND_LINE_STATUS entry.");
+            Assert.AreEqual(expectedStatus, context.Items[options.CommandLineStatusContextName]);
+        }
+
+        [TestMethod]
+        public async Task Returns_Succeeded_Status_From_InvokeCoreAsync_When_Options_Has_Different_Context_Names()
+        {
+            // arrange
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            });
+
+            var logger = loggerFactory.CreateLogger<ExecuteCommandStep>();
+
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "{0}";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // IMPORTANT NOTE FOR DEVELOPERS:
+                // https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netcore-3.1#how-do-i-include-literal-braces--and--in-the-result-string.
+                // Due to odd behavior, Microsoft recommends that developers define constants
+                // for opening and closing curly braces with string interpolation.
+                const string openCurly = "{";
+                const string closeCurly = "}";
+
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll {openCurly}0{closeCurly}";
+                commandString = "dotnet";
+            }
+
+            // This test also includes the Arguments replacement for File Systems.
+            var options = new ExecuteCommandOptions()
+            {
+                Arguments = arguments,
+                CommandLineFailedStatusContextName = "COMMAND_LINE_STATUS_FAILED_TESTING",
+                CommandLineSuccessStatusContextName = "COMMAND_LINE_STATUS_SUCCESS_TESTING",
+                CommandLineStatusContextName = "COMMAND_LINE_STATUS_TESTING",
+                CommandString = commandString,
+                ExpectedResult = "Nothing",
+                IncludeFileNameTransformInArguments = true,
+                TargetFileContextName = "TARGET_FILE_TESTING"
+            };
+
+            var context = new PipelineContext();
+            context.Items.Add(options.TargetFileContextName, options.ExpectedResult);
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            var source = new ExecuteCommandStep(logger, options, next);
+
+            var expectedStatus = options.CommandLineSuccessStatusContextName;
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            Assert.IsTrue(context.Items.ContainsKey(options.CommandLineStatusContextName), "PipelineContext does not contain a COMMAND_LINE_STATUS_TESTING entry.");
+            Assert.AreEqual(expectedStatus, context.Items[options.CommandLineStatusContextName]);
         }
 
         [TestMethod]
         public async Task Returns_Failed_Status_From_InvokeCoreAsync_When_ExpectedResult_Does_Not_Match()
+        {
+            // arrange
+            var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
+            var logger = mockLogger.Object;
+
+            // These two values are defaulted to a Windows test runner.
+            var arguments = "Something";
+            var commandString = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.exe";
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                arguments = $"{ExecuteCommandStepTests.RootPath}ExceptionConsole.dll Something";
+                commandString = "dotnet";
+            }
+            var options = new ExecuteCommandOptions()
+            {
+                Arguments = arguments,
+                CommandLineFailedStatusContextName = "COMMAND_LINE_STATUS_FAILED_TESTING",
+                CommandLineSuccessStatusContextName = "COMMAND_LINE_STATUS_SUCCESS_TESTING",
+                CommandLineStatusContextName = "COMMAND_LINE_STATUS_TESTING",
+                CommandString = commandString,
+                ExpectedResult = "Nothing",
+                IncludeFileNameTransformInArguments = false,
+                TargetFileContextName = "TARGET_FILE_TESTING"
+            };
+
+            var context = new PipelineContext();
+            context.Items.Add(FileConstants.SOURCE_FILE, $"{ExecuteCommandStepTests.RootPath}ExecuteCommandStepTests.cs");
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            var source = new ExecuteCommandStep(logger, options, next);
+
+            var expectedStatus = options.CommandLineFailedStatusContextName;
+
+            // act
+            await source.InvokeAsync(context);
+
+            // assert
+            Assert.IsTrue(context.Items.ContainsKey(options.CommandLineStatusContextName), "PipelineContext does not contain a COMMAND_LINE_STATUS entry.");
+            Assert.AreEqual(expectedStatus, context.Items[options.CommandLineStatusContextName]);
+        }
+
+        [TestMethod]
+        public async Task Returns_Failed_Status_From_InvokeCoreAsync_When_Options_Has_Different_Context_Names()
         {
             // arrange
             var mockLogger = new Mock<ILogger<ExecuteCommandStep>>();
