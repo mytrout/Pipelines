@@ -28,7 +28,6 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
-    using MyTrout.Pipelines.Steps;
     using MyTrout.Pipelines.Steps.IO.Compression;
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -47,10 +46,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var options = new CreateNewZipArchiveOptions();
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            await using (var result = new CreateNewZipArchiveStep(logger, next))
+            await using (var result = new CreateNewZipArchiveStep(logger, options, next))
             {
                 // assert
                 Assert.IsNotNull(result);
@@ -64,21 +64,21 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
-
+            var options = new CreateNewZipArchiveOptions();
             var context = new PipelineContext();
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() =>
                                     {
-                                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
-                                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
-                                        Assert.IsInstanceOfType(context.Items[CompressionConstants.ZIP_ARCHIVE], typeof(ZipArchive));
+                                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist.");
+                                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist.");
+                                        Assert.IsInstanceOfType(context.Items[options.ZipArchiveContextName], typeof(ZipArchive));
 
-                                        (context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive).Dispose();
+                                        (context.Items[options.ZipArchiveContextName] as ZipArchive).Dispose();
                                         int expectedEntryCount = 0;
 
-                                        using (var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
+                                        using (var outputStream = context.Items[options.OutputStreamContextName] as Stream)
                                         {
                                             // assert that ZipArchive is usable and the update was accepted.
                                             outputStream.Position = 0;
@@ -91,7 +91,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                                     .Returns(Task.CompletedTask);
             var next = mockNext.Object;
 
-            await using (var source = new CreateNewZipArchiveStep(logger, next))
+            await using (var source = new CreateNewZipArchiveStep(logger, options, next))
             {
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -102,8 +102,60 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                     throw context.Errors[0];
                 }
 
-                Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should not exist.");
-                Assert.IsFalse(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should not exist.");
+                Assert.IsFalse(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should not exist.");
+                Assert.IsFalse(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should not exist.");
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_Completed_Task_From_InvokeAsync_When_Options_Uses_Different_ContextNames()
+        {
+            // arrange
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var options = new CreateNewZipArchiveOptions()
+            {
+                OutputStreamContextName = "OUT_PUT_STREAM_TEST_ING",
+                ZipArchiveContextName = "ZIP_ARCHIVE_TEST_ING",
+            };
+            var context = new PipelineContext();
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Callback(() =>
+                                    {
+                                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist.");
+                                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist.");
+                                        Assert.IsInstanceOfType(context.Items[options.ZipArchiveContextName], typeof(ZipArchive));
+
+                                        (context.Items[options.ZipArchiveContextName] as ZipArchive).Dispose();
+                                        int expectedEntryCount = 0;
+
+                                        using (var outputStream = context.Items[options.OutputStreamContextName] as Stream)
+                                        {
+                                            // assert that ZipArchive is usable and the update was accepted.
+                                            outputStream.Position = 0;
+                                            using (var assertArchive = new ZipArchive(outputStream))
+                                            {
+                                                Assert.AreEqual(expectedEntryCount, assertArchive.Entries.Count);
+                                            }
+                                        }
+                                    })
+                                    .Returns(Task.CompletedTask);
+            var next = mockNext.Object;
+
+            await using (var source = new CreateNewZipArchiveStep(logger, options, next))
+            {
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                if (context.Errors.Any())
+                {
+                    throw context.Errors[0];
+                }
+
+                Assert.IsFalse(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should not exist.");
+                Assert.IsFalse(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should not exist.");
             }
         }
 
@@ -112,7 +164,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
-
+            var options = new CreateNewZipArchiveOptions();
             var context = new PipelineContext();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
@@ -125,14 +177,14 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                     mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() =>
                                     {
-                                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
-                                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
-                                        Assert.IsInstanceOfType(context.Items[CompressionConstants.ZIP_ARCHIVE], typeof(ZipArchive));
+                                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist.");
+                                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist.");
+                                        Assert.IsInstanceOfType(context.Items[options.ZipArchiveContextName], typeof(ZipArchive));
 
-                                        (context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive).Dispose();
+                                        (context.Items[options.ZipArchiveContextName] as ZipArchive).Dispose();
                                         int expectedEntryCount = 0;
 
-                                        using (var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)
+                                        using (var outputStream = context.Items[options.OutputStreamContextName] as Stream)
                                         {
                                             // assert that ZipArchive is usable and the update was accepted.
                                             outputStream.Position = 0;
@@ -145,10 +197,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                                     .Returns(Task.CompletedTask);
                     var next = mockNext.Object;
 
-                    await using (var source = new CreateNewZipArchiveStep(logger, next))
+                    await using (var source = new CreateNewZipArchiveStep(logger, options, next))
                     {
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, previousOutputStream);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, previousZipArchive);
+                        context.Items.Add(options.OutputStreamContextName, previousOutputStream);
+                        context.Items.Add(options.ZipArchiveContextName, previousZipArchive);
 
                         // act
                         await source.InvokeAsync(context).ConfigureAwait(false);
@@ -159,11 +211,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                             throw context.Errors[0];
                         }
 
-                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
+                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist.");
                         Assert.IsTrue(previousOutputStream.CanRead, "OutputStream should NOT be closed.");
-                        Assert.AreEqual(previousOutputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
-                        Assert.AreEqual(previousZipArchive, context.Items[CompressionConstants.ZIP_ARCHIVE]);
+                        Assert.AreEqual(previousOutputStream, context.Items[options.OutputStreamContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist.");
+                        Assert.AreEqual(previousZipArchive, context.Items[options.ZipArchiveContextName]);
                     }
                 }
             }
@@ -174,7 +226,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
-
+            var options = new CreateNewZipArchiveOptions();
             var context = new PipelineContext();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
@@ -183,12 +235,12 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             {
                 using (var previousZipArchive = new ZipArchive(previousOutputStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
-                    var next = new RemoveItemFromContextStep(CompressionConstants.ZIP_ARCHIVE);
+                    var next = new RemoveItemFromContextStep(options.ZipArchiveContextName);
 
-                    await using (var source = new CreateNewZipArchiveStep(logger, next))
+                    await using (var source = new CreateNewZipArchiveStep(logger, options, next))
                     {
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, previousOutputStream);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, previousZipArchive);
+                        context.Items.Add(options.OutputStreamContextName, previousOutputStream);
+                        context.Items.Add(options.ZipArchiveContextName, previousZipArchive);
 
                         // act
                         await source.InvokeAsync(context).ConfigureAwait(false);
@@ -199,11 +251,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                             throw context.Errors[0];
                         }
 
-                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist.");
+                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist.");
                         Assert.IsTrue(previousOutputStream.CanRead, "OutputStream should NOT be closed.");
-                        Assert.AreEqual(previousOutputStream, context.Items[PipelineContextConstants.OUTPUT_STREAM]);
-                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist.");
-                        Assert.AreEqual(previousZipArchive, context.Items[CompressionConstants.ZIP_ARCHIVE]);
+                        Assert.AreEqual(previousOutputStream, context.Items[options.OutputStreamContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist.");
+                        Assert.AreEqual(previousZipArchive, context.Items[options.ZipArchiveContextName]);
                     }
                 }
             }
@@ -214,12 +266,13 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<CreateNewZipArchiveStep> logger = null;
+            var options = new CreateNewZipArchiveOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new CreateNewZipArchiveStep(logger, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new CreateNewZipArchiveStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -231,12 +284,31 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            var options = new CreateNewZipArchiveOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new CreateNewZipArchiveStep(logger, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new CreateNewZipArchiveStep(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Options_Is_Null()
+        {
+            // arrange
+            var logger = new Mock<ILogger<CreateNewZipArchiveStep>>().Object;
+            CreateNewZipArchiveOptions options = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            string expectedParamName = nameof(options);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new CreateNewZipArchiveStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);

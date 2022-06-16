@@ -25,80 +25,63 @@
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
     using Microsoft.Extensions.Logging;
+    using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.IO.Compression;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Read <see cref="ZipArchiveEntry"/> values contains within the <see cref="ZipArchive"/> provided to this step.
     /// </summary>
-    public class ReadZipArchiveEntriesFromZipArchiveStep : AbstractPipelineStep<ReadZipArchiveEntriesFromZipArchiveStep>
+    public class ReadZipArchiveEntriesFromZipArchiveStep : AbstractCachingPipelineStep<ReadZipArchiveEntriesFromZipArchiveStep, ReadZipArchiveEntriesFromZipArchiveOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadZipArchiveEntriesFromZipArchiveStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public ReadZipArchiveEntriesFromZipArchiveStep(ILogger<ReadZipArchiveEntriesFromZipArchiveStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public ReadZipArchiveEntriesFromZipArchiveStep(ILogger<ReadZipArchiveEntriesFromZipArchiveStep> logger, ReadZipArchiveEntriesFromZipArchiveOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
+
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.OutputStreamContextName, this.Options.ZipArchiveEntryNameContextName };
 
         /// <summary>
         /// Read <see cref="ZipArchiveEntry"/> values contains within the <see cref="ZipArchive"/> provided to this step.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertZipArchiveIsReadable(CompressionConstants.ZIP_ARCHIVE);
+            context.AssertZipArchiveIsReadable(this.Options.ZipArchiveContextName);
 
             this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
-#pragma warning disable CS8600, CS8602 // AssertValueIsValid guarantees that this value is not null.
-            ZipArchive zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
+            // Null-forgiving operator at the end of this line because context.AssertZipArchiveIsReadable ensures non-null ZipArchive-typed value.
+            ZipArchive zipArchive = (context.Items[this.Options.ZipArchiveContextName] as ZipArchive)!;
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(ReadZipArchiveEntriesFromZipArchiveStep)));
 
-            if (context.Items.TryGetValue(PipelineContextConstants.OUTPUT_STREAM, out object? previousOutputStream))
+            foreach (var archiveEntry in zipArchive.Entries)
             {
-                context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
-            }
-
-            try
-            {
-                foreach (var archiveEntry in zipArchive.Entries)
-#pragma warning restore CS8600, CS8602
+                using (var outputStream = archiveEntry.Open())
                 {
-                    using (var outputStream = archiveEntry.Open())
+                    try
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, archiveEntry.Name);
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
+                        context.Items.Add(this.Options.ZipArchiveEntryNameContextName, archiveEntry.Name);
+                        context.Items.Add(this.Options.OutputStreamContextName, outputStream);
 
                         await this.Next.InvokeAsync(context).ConfigureAwait(false);
-
-                        context.Items.Remove(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME);
-                        context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
                     }
-                }
-            }
-            finally
-            {
-                if (context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME))
-                {
-                    context.Items.Remove(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME);
-                }
-
-                if (context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM))
-                {
-                    context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
-                }
-
-                if (previousOutputStream != null)
-                {
-                    context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, previousOutputStream);
+                    finally
+                    {
+                        context.Items.Remove(this.Options.ZipArchiveEntryNameContextName);
+                        context.Items.Remove(this.Options.OutputStreamContextName);
+                    }
                 }
             }
         }

@@ -25,7 +25,6 @@
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -35,21 +34,22 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     /// <summary>
     /// Unzips a <see cref="System.IO.Stream"/> and calls downstream once for each file in the zip archive.
     /// </summary>
-    public class CreateNewZipArchiveStep : AbstractCachingPipelineStep<CreateNewZipArchiveStep>
+    public class CreateNewZipArchiveStep : AbstractCachingPipelineStep<CreateNewZipArchiveStep, CreateNewZipArchiveOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateNewZipArchiveStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public CreateNewZipArchiveStep(ILogger<CreateNewZipArchiveStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public CreateNewZipArchiveStep(ILogger<CreateNewZipArchiveStep> logger, CreateNewZipArchiveOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { CompressionConstants.ZIP_ARCHIVE, PipelineContextConstants.OUTPUT_STREAM };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.ZipArchiveContextName, this.Options.OutputStreamContextName };
 
         /// <summary>
         /// Unzips the stream and calls the downstream caller once for each file in the zip archive.
@@ -60,30 +60,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             using (var outputStream = new MemoryStream())
             {
-                try
+                using (ZipArchive zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create, leaveOpen: true))
                 {
-                    using (ZipArchive zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create, leaveOpen: true))
-                    {
-                        this.Logger.LogInformation(Resources.ZIP_ARCHIVE_OPENED(CultureInfo.CurrentCulture, nameof(CreateNewZipArchiveStep)));
+                    this.Logger.LogInformation(Resources.ZIP_ARCHIVE_OPENED(CultureInfo.CurrentCulture, nameof(CreateNewZipArchiveStep)));
 
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, outputStream);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
+                    context.Items.Add(this.Options.OutputStreamContextName, outputStream);
+                    context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
 
-                        this.Logger.LogDebug(Resources.ZIP_ARCHIVE_ADDED_TO_PIPELINE(CultureInfo.CurrentCulture));
+                    this.Logger.LogDebug(Resources.ZIP_ARCHIVE_ADDED_TO_PIPELINE(CultureInfo.CurrentCulture));
 
-                        await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                    }
-                }
-                finally
-                {
-                    // Not logging the removal of output stream.
-                    context.Items.Remove(PipelineContextConstants.OUTPUT_STREAM);
-
-                    if (context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE))
-                    {
-                        context.Items.Remove(CompressionConstants.ZIP_ARCHIVE);
-                        this.Logger.LogDebug(Resources.ZIP_ARCHIVE_REMOVED_FROM_PIPELINE(CultureInfo.CurrentCulture));
-                    }
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
                 }
             }
         }

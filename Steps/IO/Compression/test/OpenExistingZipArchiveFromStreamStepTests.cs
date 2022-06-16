@@ -66,14 +66,12 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var context = new PipelineContext();
-
+            var options = new OpenExistingZipArchiveFromStreamOptions();
             var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
 
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
-
-            var options = new OpenExistingZipArchiveFromStreamOptions();
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
@@ -86,7 +84,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
                 await using (var source = new OpenExistingZipArchiveFromStreamStep(logger, options, next))
                 {
-                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+                    context.Items.Add(options.InputStreamContextName, inputStream);
 
                     // act
                     await source.InvokeAsync(context).ConfigureAwait(false);
@@ -97,10 +95,56 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                         throw context.Errors[0];
                     }
 
-                    Assert.IsFalse(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should not exist.");
-                    Assert.IsNotNull(context.Items[PipelineContextConstants.INPUT_STREAM]);
-                    Assert.IsInstanceOfType(context.Items[PipelineContextConstants.INPUT_STREAM], typeof(Stream));
-                    Assert.AreEqual(inputStream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                    Assert.IsFalse(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should not exist.");
+                    Assert.IsNotNull(context.Items[options.InputStreamContextName]);
+                    Assert.IsInstanceOfType(context.Items[options.InputStreamContextName], typeof(Stream));
+                    Assert.AreEqual(inputStream, context.Items[options.InputStreamContextName]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_InputStream_From_InvokeAsync_When_Options_Uses_Different_ContextNames()
+        {
+            // arrange
+            var context = new PipelineContext();
+            var options = new OpenExistingZipArchiveFromStreamOptions()
+            {
+                InputStreamContextName = "INPUT_STREAM_TESTING",
+                ZipArchiveContextName = "ZIP_ARCHIVE_TESTING"
+            };
+            var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+
+            using (var inputStream = new MemoryStream())
+            {
+                using (var fileStream = File.OpenRead(zipFilePath))
+                {
+                    fileStream.CopyTo(inputStream);
+                }
+
+                await using (var source = new OpenExistingZipArchiveFromStreamStep(logger, options, next))
+                {
+                    context.Items.Add(options.InputStreamContextName, inputStream);
+
+                    // act
+                    await source.InvokeAsync(context).ConfigureAwait(false);
+
+                    // assert
+                    if (context.Errors.Any())
+                    {
+                        throw context.Errors[0];
+                    }
+
+                    Assert.IsFalse(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should not exist.");
+                    Assert.IsNotNull(context.Items[options.InputStreamContextName]);
+                    Assert.IsInstanceOfType(context.Items[options.InputStreamContextName], typeof(Stream));
+                    Assert.AreEqual(inputStream, context.Items[options.InputStreamContextName]);
                 }
             }
         }
@@ -110,12 +154,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var context = new PipelineContext();
-
+            var options = new OpenExistingZipArchiveFromStreamOptions();
             var logger = new Mock<ILogger<OpenExistingZipArchiveFromStreamStep>>().Object;
 
-            IPipelineRequest next = new RemoveItemFromContextStep(new string[1] { CompressionConstants.ZIP_ARCHIVE });
-
-            var options = new OpenExistingZipArchiveFromStreamOptions();
+            IPipelineRequest next = new RemoveItemFromContextStep(new string[1] { options.ZipArchiveContextName });
 
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
@@ -128,7 +170,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
                 await using (var source = new OpenExistingZipArchiveFromStreamStep(logger, options, next))
                 {
-                    context.Items.Add(PipelineContextConstants.INPUT_STREAM, inputStream);
+                    context.Items.Add(options.InputStreamContextName, inputStream);
 
                     // act
                     await source.InvokeAsync(context).ConfigureAwait(false);
@@ -139,10 +181,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                         throw context.Errors[0];
                     }
 
-                    Assert.IsFalse(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should not exist.");
-                    Assert.IsNotNull(context.Items[PipelineContextConstants.INPUT_STREAM]);
-                    Assert.IsInstanceOfType(context.Items[PipelineContextConstants.INPUT_STREAM], typeof(Stream));
-                    Assert.AreEqual(inputStream, context.Items[PipelineContextConstants.INPUT_STREAM]);
+                    Assert.IsFalse(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should not exist.");
+                    Assert.IsNotNull(context.Items[options.InputStreamContextName]);
+                    Assert.IsInstanceOfType(context.Items[options.InputStreamContextName], typeof(Stream));
+                    Assert.AreEqual(inputStream, context.Items[options.InputStreamContextName]);
                 }
             }
         }
@@ -162,7 +204,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             var options = new OpenExistingZipArchiveFromStreamOptions();
 
             int errorCount = 1;
-            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_STREAM);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, options.InputStreamContextName);
 
             await using (var source = new OpenExistingZipArchiveFromStreamStep(logger, options, next))
             {

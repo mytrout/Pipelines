@@ -33,15 +33,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     /// <summary>
     /// Unzips a <see cref="System.IO.Stream"/> and calls downstream once for each file in the zip archive.
     /// </summary>
-    public class CloseZipArchiveStep : AbstractPipelineStep<CloseZipArchiveStep>
+    public class CloseZipArchiveStep : AbstractPipelineStep<CloseZipArchiveStep, CloseZipArchiveOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CloseZipArchiveStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public CloseZipArchiveStep(ILogger<CloseZipArchiveStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public CloseZipArchiveStep(ILogger<CloseZipArchiveStep> logger, CloseZipArchiveOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
@@ -55,10 +56,10 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             await this.Next.InvokeAsync(context);
 
-            context.AssertValueIsValid<ZipArchive>(CompressionConstants.ZIP_ARCHIVE);
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertValueIsValid<ZipArchive>(this.Options.ZipArchiveContextName);
+            context.AssertValueIsValid<Stream>(this.Options.OutputStreamContextName);
 
-            (context.Items[CompressionConstants.ZIP_ARCHIVE] as IDisposable)!.Dispose();
+            (context.Items[this.Options.ZipArchiveContextName] as IDisposable)!.Dispose();
 
             await Task.CompletedTask;
         }

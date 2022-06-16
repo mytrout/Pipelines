@@ -25,7 +25,7 @@
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
     using Microsoft.Extensions.Logging;
-    using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.IO.Compression;
     using System.Threading.Tasks;
@@ -33,7 +33,7 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     /// <summary>
     /// Unzips a <see cref="Stream"/> and calls downstream once for each file in the zip archive.
     /// </summary>
-    public class OpenExistingZipArchiveFromStreamStep : AbstractPipelineStep<OpenExistingZipArchiveFromStreamStep, OpenExistingZipArchiveFromStreamOptions>
+    public class OpenExistingZipArchiveFromStreamStep : AbstractCachingPipelineStep<OpenExistingZipArchiveFromStreamStep, OpenExistingZipArchiveFromStreamOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenExistingZipArchiveFromStreamStep" /> class with the specified parameters.
@@ -47,33 +47,26 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
             // no op
         }
 
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.ZipArchiveContextName };
+
         /// <summary>
         /// Unzips the stream and calls the downstream caller once for each file in the zip archive.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.INPUT_STREAM);
+            context.AssertValueIsValid<Stream>(this.Options.InputStreamContextName);
 
             // Null-forgiving operator at the end of this line because context.AssertValueIsValid ensures non-null Stream-typed value.
-            Stream archiveStream = (context.Items[PipelineContextConstants.INPUT_STREAM] as Stream)!;
+            Stream archiveStream = (context.Items[this.Options.InputStreamContextName] as Stream)!;
 
-            try
+            using (var zipArchive = new ZipArchive(archiveStream, this.Options.ZipArchiveMode, leaveOpen: true))
             {
-                using (var zipArchive = new ZipArchive(archiveStream, this.Options.ZipArchiveMode, leaveOpen: true))
-                {
-                    context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
+                context.Items.Add(this.Options.ZipArchiveContextName, zipArchive);
 
-                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
-                }
-            }
-            finally
-            {
-                if (context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE))
-                {
-                    context.Items.Remove(CompressionConstants.ZIP_ARCHIVE);
-                }
+                await this.Next.InvokeAsync(context).ConfigureAwait(false);
             }
         }
     }

@@ -1,7 +1,27 @@
 # MyTrout.Pipelines.Steps.IO.Compression
 
+## 6.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor all ~Step and ~Options to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Add additional unit test to test that ContextName values are used when Steps executes.
+### NON-BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor ~Step to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing INPUT_STREAM values are restored after execution of this step.
+- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ~Step restores PipelineContext.Items to its original state after execution.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.VisualStudio.ThreadingAnalyzers to 17.2.32
+- Upgrade SonarAnalyzer.CSharp 8.40.0.48530
+- Upgrade StyleCop.Analyzers to 1.2.0-beta.435
+- Remove pramga lines in favor of null-forgiving operators and an explanation comment.
+
 ## 5.0.0
-- (BREAKING CHANGE) On OpenExistingZipArchiveFromStreamStep, INPUT_STREAM is no longer copied to OUTPUT_STREAM on the response side.
+### BREAKING CHANGES:
+- On OpenExistingZipArchiveFromStreamStep, INPUT_STREAM is no longer copied to OUTPUT_STREAM on the response side.
+### NON-BREAKING CHANGES:
 - Suppress SA1636 because three file headers have copyrights changed to 2020 - 2022.
 - Alter the build.yaml to include the new version and uncomment the Upload Nuget step.
 - Update Resources.tt to use the new NamespaceHint code so that the Resources.tt can be copied into any project.
@@ -33,7 +53,9 @@
   - Add work_dispatch element to allow this library to to built manually in Github.
 
 ## 3.0.0
+### BREAKING CHANGES:
 - Upgrade to MyTrout.Pipelines v3.0.1
+### NON-BREAKING CHANGES:
 - Change Resources.tt from .NET Standard 2.1 to .NET 5.0 in the comments.
 - Change the nuget PackageURL and RepositoryURL from Azure DevOps to GitHub.
 - Change Build Status badge from Azure DevOps to GitHub Actions.
@@ -53,7 +75,9 @@
 - Update azure-pipelines.xml to add artifactPublishEnabled property.
 
 ## 1.0.0
+### BREAKING CHANGES:
 - Upgrade to MyTrout.Pipelines.Steps v1.0.0 (including MyTrout.Pipelines v1.1.0)
+### NON-BREAKING CHANGES:
 - Generate and publish to Azure DevOps Artifacts the snupkg file for symbols.
 - Implement nullable reference types.
 - Suppress SonarQube S5042 security warnings as they are false positives - 'this may be a problem' rather than 'this *IS* a problem'.
