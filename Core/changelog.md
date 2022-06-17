@@ -1,22 +1,22 @@
 # MyTrout.Pipelines.Core Change Log
 
 
-## 4.0.0 = BREAKING CHANGES
+## 4.0.0 - BREAKING CHANGES
 - Alter IStepActivator interface to include the ParameterCreators property to allow developers to reconfigure the parameter creation behavior.
 - BREAKING CHANGE: Remove support for .NET 5.0.
 - BREAKING CHANGE: Move ParameterCreationDelegate and ParameterCreationResult to the MyTrout.Pipelines namespace due to IStepActivator.ParameterCreators change to preserve namespace dependencies.
-- BREAKING CHANGE: Alter ParameterCreationDelegate to use ILogger<IStepActivator> instead of ILogger<StepActivator> to preserve namespace dependencies.
-- BREAKING CHANGE: Alter StepActivator delegate methods to use ILogger<IStepActivator> instead of ILogger<StepActivator> to preserve namespace dependencies.
+- BREAKING CHANGE: Alter ParameterCreationDelegate to use ILogger&lt;IStepActivator&gt; instead of ILogger&lt;StepActivator&gt; to preserve namespace dependencies.
+- BREAKING CHANGE: Alter StepActivator delegate methods to use ILogger&lt;IStepActivator&gt; instead of ILogger&lt;StepActivator&gt; to preserve namespace dependencies.
 - Add new ParameterCreationDelegate that injects both IConfiguration and Dependency Injection values.
-= Alter the behavior of StepActivator.ParameterCreators property to use the newly created CreateParameterFromConfigurationAndDependencyInjection delegate.
+- Alter the behavior of StepActivator.ParameterCreators property to use the newly created CreateParameterFromConfigurationAndDependencyInjection delegate.
 - Uncomment all of the nuget publish steps to allow a new version to be published.
 - Mark the Configuration and IsConfigurationAvailable properties with the Obsolete attribute as the new LoadConfigurationToPipelineContextStep supercedes this functionality.
 - Add CreateUnixEpochStep.
-- Add LoadValuesFromContextObjectToPipelineContextStep<TObject>
+- Add LoadValuesFromContextObjectToPipelineContextStep&lt;TObject&gt;
 - Add LoadValuesFromConfigurationToPipelineContextStep.
-- Add LoadValuesFromContextObjectToPipelineContextStep<TObject>.
-- Add EnumerateItemsinCollectionStep<TParent, TObject>.
-- Refactor LoadValuesFromContextObjectToPipelineContextStep and LoadValuesFromOptionsToPipelineContextStep into AbstractLoadItemToPipelineContextStep<TItem, TOptions>.
+- Add LoadValuesFromContextObjectToPipelineContextStep&lt;TObject&gt;.
+- Add EnumerateItemsinCollectionStep&lt;TParent, TObject&gt;.
+- Refactor LoadValuesFromContextObjectToPipelineContextStep and LoadValuesFromOptionsToPipelineContextStep into AbstractLoadItemToPipelineContextStep&lt;TItem, TOptions&gt;.
 - Add UnixEpochKind to support different epoch configurations in CreateUnixEpochStep.
 - Add INPUT_OBJECT, OUTPUT_OBJECT, and UNIX_EPOCH to PipelineContextConstants.
 - Refactor MoveOutputStreamToInputStreamStep and MoveInputStreamToOutputStream to use the RenameContextItemStep as the base class to eliminate duplicate code.

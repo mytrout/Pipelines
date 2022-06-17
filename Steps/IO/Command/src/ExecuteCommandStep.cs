@@ -1,7 +1,7 @@
 ﻿// <copyright file="ExecuteCommandStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ namespace MyTrout.Pipelines.Steps.IO.Command
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
     using MyTrout.Pipelines.Steps;
-    using MyTrout.Pipelines.Steps.IO.Files;
     using System;
     using System.Diagnostics;
     using System.Globalization;
@@ -61,13 +60,13 @@ namespace MyTrout.Pipelines.Steps.IO.Command
 
             if (this.Options.IncludeFileNameTransformInArguments)
             {
-                context.AssertStringIsNotWhiteSpace(FileConstants.TARGET_FILE);
+                context.AssertStringIsNotWhiteSpace(this.Options.TargetFileContextName);
 
-                var fileName = context.Items[FileConstants.TARGET_FILE] as string;
+                var fileName = context.Items[this.Options.TargetFileContextName] as string;
                 arguments = string.Format(CultureInfo.CurrentCulture, this.Options.Arguments, fileName);
             }
 
-            using (Process process = new Process())
+            using (var process = new Process())
             {
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -91,8 +90,8 @@ namespace MyTrout.Pipelines.Steps.IO.Command
                 else
                 {
                     this.Logger.LogInformation(output);
-                    var status = output.Contains(this.Options.ExpectedResult) ? CommandLineConstants.COMMAND_LINE_SUCCESS : CommandLineConstants.COMMAND_LINE_FAILED;
-                    context.Items.Add(CommandLineConstants.COMMAND_LINE_STATUS, status);
+                    var status = output.Contains(this.Options.ExpectedResult) ? this.Options.CommandLineSuccessStatusContextName : this.Options.CommandLineFailedStatusContextName;
+                    context.Items.Add(this.Options.CommandLineStatusContextName, status);
                 }
             }
 

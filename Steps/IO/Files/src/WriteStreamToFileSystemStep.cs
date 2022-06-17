@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToFileSystemStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,9 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Initializes a new instance of the <see cref="WriteStreamToFileSystemStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public WriteStreamToFileSystemStep(ILogger<WriteStreamToFileSystemStep> logger, IPipelineRequest next, WriteStreamToFileSystemOptions options)
+        /// <param name="next">The next step in the pipeline.</param>
+        public WriteStreamToFileSystemStep(ILogger<WriteStreamToFileSystemStep> logger, WriteStreamToFileSystemOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
             // no op
@@ -70,10 +70,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
 
         private static async Task WriteStreamToFileSystemAsync(IPipelineContext context, WriteStreamToFileSystemOptions options)
         {
-            context.AssertFileNameParameterIsValid(FileConstants.TARGET_FILE, options.WriteFileBaseDirectory);
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
+            context.AssertFileNameParameterIsValid(options.TargetFileContextName, options.WriteFileBaseDirectory);
+            context.AssertValueIsValid<Stream>(options.OutputStreamContextName);
 
-            string workingFile = (context.Items[FileConstants.TARGET_FILE] as string)!;
+            string workingFile = (context.Items[options.TargetFileContextName] as string)!;
 
             workingFile = workingFile.GetFullyQualifiedPath(options.WriteFileBaseDirectory);
 
@@ -82,7 +82,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files
                 throw new InvalidOperationException(Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, workingFile));
             }
 
-            Stream workingStream = (context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream)!;
+            Stream workingStream = (context.Items[options.OutputStreamContextName] as Stream)!;
 
             using (FileStream outputStream = File.OpenWrite(workingFile))
             {

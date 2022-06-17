@@ -33,6 +33,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     public class OpenExistingZipArchiveFromStreamOptions
     {
         /// <summary>
+        /// Gets or sets the name used for the reading from the input stream from <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the name used for loading the zip archive from <see cref="IPipelineContext.Items"/>.
+        /// </summary>
+        public string ZipArchiveContextName { get; set; } = CompressionConstants.ZIP_ARCHIVE;
+
+        /// <summary>
         /// Gets or sets the mode under which the <see cref="ZipArchive"/> will operate.
         /// </summary>
         public ZipArchiveMode ZipArchiveMode { get; set; } = ZipArchiveMode.Read;

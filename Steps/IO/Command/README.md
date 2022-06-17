@@ -16,7 +16,7 @@
 
 MyTrout.Pipelines.Steps.IO.Command provides a Pipeline Step to execute a command line utility.
 
-MyTrout.Pipelines.Steps.IO.Command targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
+MyTrout.Pipelines.Steps.IO.Command targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) and [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0).
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
@@ -30,7 +30,7 @@ For a list of available steps, see [Available Steps](../README.md)
 
 ## Software dependencies
 
-    1. MyTrout.Pipelines.Steps.IO.Files 3.1.0 minimum.
+    1. MyTrout.Pipelines.Steps.IO.Files 4.0.0 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

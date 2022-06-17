@@ -1,7 +1,7 @@
 ﻿// <copyright file="WriteStreamToFileSystemOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,16 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Gets or sets the timing of when the <see cref="WriteStreamToFileSystemStep"/> will be executed.
         /// </summary>
         public ExecutionTimings ExecutionTimings { get; set; } = ExecutionTimings.After;
+
+        /// <summary>
+        /// Gets or sets the name used for the writing to the output stream in the Pipeline Context.
+        /// </summary>
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+
+        /// <summary>
+        /// Gets or sets the name used to which to write the file from the Pipeline Context.
+        /// </summary>
+        public string TargetFileContextName { get; set; } = FileConstants.TARGET_FILE;
 
         /// <summary>
         /// Gets or sets the base directory to which the application should write the file.

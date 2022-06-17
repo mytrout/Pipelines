@@ -1,7 +1,7 @@
 ﻿// <copyright file="ReadStreamFromFileSystemOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,18 @@ namespace MyTrout.Pipelines.Steps.IO.Files
     public class ReadStreamFromFileSystemOptions
     {
         /// <summary>
+        /// Gets or sets the name used for the reading from the input stream in the Pipeline Context.
+        /// </summary>
+        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+
+        /// <summary>
         /// Gets or sets the base directory from where files are read.
         /// </summary>
         public string ReadFileBaseDirectory { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the name used to read the file from the Pipeline Context.
+        /// </summary>
+        public string SourceFileContextName { get; set; } = FileConstants.SOURCE_FILE;
     }
 }

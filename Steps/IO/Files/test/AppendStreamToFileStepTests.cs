@@ -54,7 +54,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             };
 
             // act
-            var result = new AppendStreamToFileStep(logger, next, options);
+            var result = new AppendStreamToFileStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -102,7 +102,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -149,7 +149,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 int errorCount = 0;
 
@@ -197,7 +197,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -205,6 +205,53 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 // assert
                 Assert.IsTrue(File.Exists(fullPathAndFileName));
                 Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "The stream should be open.");
+                Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
+
+                // cleanup
+                await source.DisposeAsync().ConfigureAwait(false);
+                File.Delete(fullPathAndFileName);
+            }
+        }
+
+        [TestMethod]
+        public async Task Appends_Data_To_File_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
+        {
+            // arrange
+            string outputFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string contents = "What is the text here?";
+            byte[] body = Encoding.UTF8.GetBytes(contents);
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullPathAndFileName = outputFilePath + fileName;
+
+            using (var stream = new MemoryStream(body))
+            {
+                var options = new AppendStreamToFileOptions()
+                {
+                    AppendFileBaseDirectory = outputFilePath,
+                    OutputStreamContextName = "OUTPUT_STREAM_CONTEXT_NAME_TESTING",
+                    TargetFileContextName = "TARGET_FILE_CONTEXT_NAME_TESTING"
+                };
+
+                var context = new PipelineContext();
+                context.Items.Add(options.TargetFileContextName, fileName);
+                context.Items.Add(options.OutputStreamContextName, stream);
+
+                var logger = new Mock<ILogger<AppendStreamToFileStep>>().Object;
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+                var next = mockNext.Object;
+
+                var source = new AppendStreamToFileStep(logger, options, next);
+
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                Assert.IsTrue(File.Exists(fullPathAndFileName));
+                Assert.IsTrue((context.Items[options.OutputStreamContextName] as Stream).CanRead, "The stream should be open.");
                 Assert.AreEqual(contents, File.ReadAllText(fullPathAndFileName));
 
                 // cleanup
@@ -237,7 +284,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -281,7 +328,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -329,7 +376,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = $"\\\\argonaut.com\\unavailable-file-share\\{Guid.NewGuid()}\\"
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -374,7 +421,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                     AppendFileBaseDirectory = outputFilePath
                 };
 
-                var source = new AppendStreamToFileStep(logger, next, options);
+                var source = new AppendStreamToFileStep(logger, options, next);
 
                 int errorCount = 1;
 
@@ -418,7 +465,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 AppendFileBaseDirectory = outputFilePath
             };
 
-            var source = new AppendStreamToFileStep(logger, next, options);
+            var source = new AppendStreamToFileStep(logger, options, next);
 
             int errorCount = 1;
 

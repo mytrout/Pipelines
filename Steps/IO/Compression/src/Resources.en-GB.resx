@@ -129,6 +129,9 @@
   <data name="ZIP_ARCHIVE_ENTRY_CREATED" xml:space="preserve">
     <value>An zip archive entry named '{0}' has been created.</value>
   </data>
+  <data name="ZIP_ARCHIVE_ENTRY_NOT_FOUND" xml:space="preserve">
+    <value>An zip archive entry named '{0}' was not found in the current Zip Archive.</value>
+  </data>
   <data name="ZIP_ARCHIVE_ENTRY_REMOVED" xml:space="preserve">
     <value>An zip archive entry named '{0}' has been removed.</value>
   </data>

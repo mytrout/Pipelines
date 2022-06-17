@@ -60,7 +60,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             };
 
             // act
-            var result = new MoveFileStep(logger, next, options);
+            var result = new MoveFileStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
@@ -105,7 +105,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            using (var source = new MoveFileStep(logger, next, options))
+            using (var source = new MoveFileStep(logger, options, next))
             {
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -162,7 +162,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            using (var source = new MoveFileStep(logger, next, options))
+            using (var source = new MoveFileStep(logger, options, next))
             {
                 // act
                 await source.InvokeAsync(context).ConfigureAwait(false);
@@ -223,7 +223,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            var source = new MoveFileStep(logger, next, options);
+            var source = new MoveFileStep(logger, options, next);
 
             // act
             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -242,6 +242,62 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             await source.DisposeAsync().ConfigureAwait(false);
             File.Delete(fullTargetPathAndFileName);
             Directory.Delete(targetFilePath);
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Options_Uses_Different_Context_Names()
+        {
+            // arrange
+            string sourceFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
+            string targetFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}{Guid.NewGuid()}{Path.DirectorySeparatorChar}";
+
+            string fileName = $"{Guid.NewGuid()}.txt";
+
+            string fullSourcePathAndFileName = sourceFilePath + fileName;
+            string fullTargetPathAndFileName = targetFilePath + fileName;
+
+            string contents = "Et tu, Brute?";
+            File.WriteAllText(fullSourcePathAndFileName, contents);
+
+            var options = new MoveFileOptions()
+            {
+                MoveSourceFileBaseDirectory = sourceFilePath,
+                MoveTargetFileBaseDirectory = targetFilePath,
+                SourceFileContextName = "SOURCE_FILE_CONTEXT_NAME_TESTING",
+                TargetFileContextName = "TARGET_FILE_CONTEXT_NAME_TESTING"
+            };
+
+            var context = new PipelineContext();
+            context.Items.Add(options.SourceFileContextName, fileName);
+            context.Items.Add(options.TargetFileContextName, fileName);
+
+            var logger = new Mock<ILogger<MoveFileStep>>().Object;
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            using (var source = new MoveFileStep(logger, options, next))
+            {
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+
+                // assert
+                if (context.Errors.Any())
+                {
+                    throw context.Errors[0];
+                }
+
+                Assert.IsFalse(File.Exists(fullSourcePathAndFileName));
+                Assert.IsTrue(File.Exists(fullTargetPathAndFileName));
+                Assert.AreEqual(contents, File.ReadAllText(fullTargetPathAndFileName));
+
+                // cleanup
+                File.Delete(fullTargetPathAndFileName);
+                Directory.Delete(targetFilePath);
+            }
         }
 
         [TestMethod]
@@ -273,7 +329,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            var source = new MoveFileStep(logger, next, options);
+            var source = new MoveFileStep(logger, options, next);
 
             int errorCount = 1;
             var expectedMessage = Resources.FILE_DOES_NOT_EXIST(CultureInfo.CurrentCulture, fullSourcePathAndFileName);
@@ -326,7 +382,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            var source = new MoveFileStep(logger, next, options);
+            var source = new MoveFileStep(logger, options, next);
 
             int errorCount = 1;
             var expectedMessage = Resources.FILE_ALREADY_EXISTS(CultureInfo.CurrentCulture, fullTargetPathAndFileName);
@@ -387,7 +443,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
                 MoveTargetFileBaseDirectory = targetFilePath
             };
 
-            using (var source = new MoveFileStep(logger, next, options))
+            using (var source = new MoveFileStep(logger, options, next))
             {
                 string expectedMessage = Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, sourceFilePath, fullSourcePathAndFileName);
 
@@ -438,7 +494,7 @@ namespace MyTrout.Pipelines.Steps.IO.Files.Tests
             Directory.CreateDirectory(fullTargetPath);
             File.WriteAllText($"{fullTargetPath}{fileName}", "Et Tu, Brute?");
 
-            var source = new MoveFileStep(logger, next, options);
+            var source = new MoveFileStep(logger, options, next);
 
             string expectedMessage = Resources.PATH_TRAVERSAL_ISSUE(CultureInfo.CurrentCulture, targetFilePath, $"{fullTargetPath}{fileName}");
 

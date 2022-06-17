@@ -1,7 +1,7 @@
 ﻿// <copyright file="AddZipArchiveEntryStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,15 +34,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     /// <summary>
     /// Adds a <see cref="ZipArchiveEntry"/> to the <see cref="ZipArchive"/> provided by a previous step.
     /// </summary>
-    public class AddZipArchiveEntryStep : AbstractPipelineStep<AddZipArchiveEntryStep>
+    public class AddZipArchiveEntryStep : AbstractPipelineStep<AddZipArchiveEntryStep, AddZipArchiveEntryOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddZipArchiveEntryStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public AddZipArchiveEntryStep(ILogger<AddZipArchiveEntryStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public AddZipArchiveEntryStep(ILogger<AddZipArchiveEntryStep> logger, AddZipArchiveEntryOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
@@ -56,17 +57,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertValueIsValid<Stream>(PipelineContextConstants.OUTPUT_STREAM);
-            context.AssertValueIsValid<ZipArchive>(CompressionConstants.ZIP_ARCHIVE);
-            context.AssertStringIsNotWhiteSpace(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME);
+            context.AssertValueIsValid<Stream>(this.Options.OutputStreamContextName);
+            context.AssertValueIsValid<ZipArchive>(this.Options.ZipArchiveContextName);
+            context.AssertStringIsNotWhiteSpace(this.Options.ZipArchiveEntryNameContextName);
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(AddZipArchiveEntryStep)));
 
-            var outputStream = context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream;
-            var zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
+            var outputStream = (context.Items[this.Options.OutputStreamContextName] as Stream)!;
+            var zipArchive = (context.Items[this.Options.ZipArchiveContextName] as ZipArchive)!;
 
-#pragma warning disable CS8600, CS8602, CS8604 // AssertStringIsNotWhiteSpace guarantees that this value is not null.
-            string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
+            string zipEntryFileName = (context.Items[this.Options.ZipArchiveEntryNameContextName] as string)!;
 
             if (zipArchive.Mode == ZipArchiveMode.Read)
             {
@@ -82,7 +82,6 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
             using (var entryStream = archiveEntry.Open())
             {
                 await outputStream.CopyToAsync(entryStream).ConfigureAwait(false);
-#pragma warning restore CS8600, CS8602, CS8604
             }
         }
     }
