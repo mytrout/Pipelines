@@ -1,7 +1,7 @@
 ﻿// <copyright file="RemoveZipArchiveEntryStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
     /// <summary>
     /// Removes a <see cref="ZipArchiveEntry"/> from the <see cref="ZipArchive"/> opened by a previous step.
     /// </summary>
-    public class RemoveZipArchiveEntryStep : AbstractPipelineStep<RemoveZipArchiveEntryStep>
+    public class RemoveZipArchiveEntryStep : AbstractPipelineStep<RemoveZipArchiveEntryStep, RemoveZipArchiveEntryOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveZipArchiveEntryStep" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">Step-specific options for altering behavior.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        public RemoveZipArchiveEntryStep(ILogger<RemoveZipArchiveEntryStep> logger, IPipelineRequest next)
-            : base(logger, next)
+        public RemoveZipArchiveEntryStep(ILogger<RemoveZipArchiveEntryStep> logger, RemoveZipArchiveEntryOptions options, IPipelineRequest next)
+            : base(logger, options, next)
         {
             // no op
         }
@@ -54,15 +55,16 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
 
-            context.AssertZipArchiveIsUpdatable(CompressionConstants.ZIP_ARCHIVE);
-            context.AssertStringIsNotWhiteSpace(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME);
+            context.AssertZipArchiveIsUpdatable(this.Options.ZipArchiveContextName);
+            context.AssertStringIsNotWhiteSpace(this.Options.ZipArchiveEntryNameContextName);
 
             this.Logger.LogDebug(Resources.INFO_VALIDATED(CultureInfo.CurrentCulture, nameof(RemoveZipArchiveEntryStep)));
 
-#pragma warning disable CS8600, CS8602, CS8604 // AssertValueIsValid guarantees that this value is not null.
-            var zipArchive = context.Items[CompressionConstants.ZIP_ARCHIVE] as ZipArchive;
+            // AssertZipArchiveIsUpdatable guarantees that this value is not null.
+            var zipArchive = (context.Items[this.Options.ZipArchiveContextName] as ZipArchive)!;
 
-            string zipEntryFileName = context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME] as string;
+            // AssertStringIsNotWhiteSpace guarantees that this value is not null.
+            string zipEntryFileName = (context.Items[this.Options.ZipArchiveEntryNameContextName] as string)!;
 
             this.Logger.LogDebug(Resources.INFO_LOADED(CultureInfo.CurrentCulture, nameof(RemoveZipArchiveEntryStep), zipEntryFileName));
 
@@ -70,8 +72,7 @@ namespace MyTrout.Pipelines.Steps.IO.Compression
 
             this.Logger.LogInformation(Resources.ZIP_ARCHIVE_ENTRY_REMOVED(CultureInfo.CurrentCulture, zipEntryFileName));
 
-            archiveEntry.Delete();
-#pragma warning restore CS8600, CS8602, CS8604
+            archiveEntry?.Delete();
         }
     }
 }

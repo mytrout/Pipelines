@@ -49,10 +49,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             var logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             var next = new Mock<IPipelineRequest>().Object;
 
             // act
-            await using (var result = new UpdateZipArchiveEntryStep(logger, next))
+            await using (var result = new UpdateZipArchiveEntryStep(logger, options, next))
             {
                 // assert
                 Assert.IsNotNull(result);
@@ -68,6 +69,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             var context = new PipelineContext();
 
             var logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             var next = new Mock<IPipelineRequest>().Object;
 
             string entryName = "Disney.txt";
@@ -75,7 +77,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
             int expectedErrorCount = 1;
-            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.OUTPUT_STREAM);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, options.OutputStreamContextName);
 
             using (var zipStream = new MemoryStream())
             {
@@ -88,10 +90,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 {
                     using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, entryName);
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
 
-                        await using (var source = new UpdateZipArchiveEntryStep(logger, next))
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
                         {
                             // act
                             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -113,6 +115,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             var context = new PipelineContext();
 
             var logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             var next = new Mock<IPipelineRequest>().Object;
 
             string entryName = "Disney.txt";
@@ -120,7 +123,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
             int expectedErrorCount = 1;
-            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, CompressionConstants.ZIP_ARCHIVE);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, options.ZipArchiveContextName);
 
             using (var zipStream = new MemoryStream())
             {
@@ -133,10 +136,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 {
                     using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, entryName);
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, entryStream);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
 
-                        await using (var source = new UpdateZipArchiveEntryStep(logger, next))
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
                         {
                             // act
                             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -158,13 +161,14 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
             var context = new PipelineContext();
 
             var logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             var next = new Mock<IPipelineRequest>().Object;
 
             string entryContents = "Why are you still whining?";
             string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
 
             int expectedErrorCount = 1;
-            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME);
+            string expectedMessage = Pipelines.Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, options.ZipArchiveEntryNameContextName);
 
             using (var zipStream = new MemoryStream())
             {
@@ -177,10 +181,10 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 {
                     using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, entryStream);
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
 
-                        await using (var source = new UpdateZipArchiveEntryStep(logger, next))
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
                         {
                             // act
                             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -203,6 +207,8 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
 
             ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
 
+            var options = new UpdateZipArchiveEntryOptions();
+
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
             IPipelineRequest next = mockNext.Object;
@@ -223,11 +229,11 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 {
                     using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, entryName);
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, entryStream);
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
 
-                        await using (var source = new UpdateZipArchiveEntryStep(logger, next))
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
                         {
                             // act
                             await source.InvokeAsync(context).ConfigureAwait(false);
@@ -239,12 +245,89 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                             throw context.Errors[0];
                         }
 
-                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE), "ZipArchive should exist in context.");
-                        Assert.AreEqual(zipArchive, context.Items[CompressionConstants.ZIP_ARCHIVE]);
-                        Assert.IsTrue(context.Items.ContainsKey(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME), "ZipArchiveEntryName should exist in context.");
-                        Assert.AreEqual(entryName, context.Items[CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME]);
-                        Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_STREAM), "OutputStream should exist in context.");
-                        Assert.IsTrue((context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream).CanRead, "OutputStream should not be closed.");
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist in context.");
+                        Assert.AreEqual(zipArchive, context.Items[options.ZipArchiveContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveEntryNameContextName), "ZipArchiveEntryName should exist in context.");
+                        Assert.AreEqual(entryName, context.Items[options.ZipArchiveEntryNameContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist in context.");
+                        Assert.IsTrue((context.Items[options.OutputStreamContextName] as Stream).CanRead, "OutputStream should not be closed.");
+                    }
+                }
+
+                // assert that ZipArchive is usable and the update was accepted.
+                zipStream.Position = 0;
+                using (var assertArchive = new ZipArchive(zipStream))
+                {
+                    Assert.AreEqual(expectedEntryCount, assertArchive.Entries.Count);
+                    var assertEntry = assertArchive.GetEntry(entryName);
+                    using (var assertEntryStream = assertEntry.Open())
+                    {
+                        using (var reader = new StreamReader(assertEntryStream, leaveOpen: true))
+                        {
+                            Assert.AreEqual(entryContents, await reader.ReadToEndAsync().ConfigureAwait(false));
+                        }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_ZipArchive_From_InvokeAsync_When_Options_Uses_Different_ContextNames()
+        {
+            // arrange
+            var context = new PipelineContext();
+
+            ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+
+            var options = new UpdateZipArchiveEntryOptions()
+            {
+                OutputStreamContextName = "OUTPUT_STREAM_TESTING",
+                ZipArchiveContextName = "ZIP_ARCHIVE_TESTING",
+                ZipArchiveEntryNameContextName = "ZIP_ARCHIVE_ENTRY_NAME"
+            };
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            string entryName = "Disney.txt";
+            string entryContents = "Why are you still whining?";
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+            int expectedEntryCount = 1;
+
+            using (var zipStream = new MemoryStream())
+            {
+                using (var fileStream = File.OpenRead(zipFilePath))
+                {
+                    await fileStream.CopyToAsync(zipStream).ConfigureAwait(false);
+                }
+
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
+                {
+                    using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
+                    {
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
+
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
+                        {
+                            // act
+                            await source.InvokeAsync(context).ConfigureAwait(false);
+                        }
+
+                        // assert
+                        if (context.Errors.Any())
+                        {
+                            throw context.Errors[0];
+                        }
+
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveContextName), "ZipArchive should exist in context.");
+                        Assert.AreEqual(zipArchive, context.Items[options.ZipArchiveContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.ZipArchiveEntryNameContextName), "ZipArchiveEntryName should exist in context.");
+                        Assert.AreEqual(entryName, context.Items[options.ZipArchiveEntryNameContextName]);
+                        Assert.IsTrue(context.Items.ContainsKey(options.OutputStreamContextName), "OutputStream should exist in context.");
+                        Assert.IsTrue((context.Items[options.OutputStreamContextName] as Stream).CanRead, "OutputStream should not be closed.");
                     }
                 }
 
@@ -270,12 +353,13 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<UpdateZipArchiveEntryStep> logger = null;
+            var options = new UpdateZipArchiveEntryOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new UpdateZipArchiveEntryStep(logger, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new UpdateZipArchiveEntryStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -287,12 +371,31 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new UpdateZipArchiveEntryStep(logger, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new UpdateZipArchiveEntryStep(logger, options, next));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedParamName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_ArgumentNullException_From_Constructor_When_Options_Is_Null()
+        {
+            // arrange
+            ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            UpdateZipArchiveEntryOptions options = null;
+            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+
+            string expectedParamName = nameof(options);
+
+            // act
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new UpdateZipArchiveEntryStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -304,6 +407,7 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
         {
             // arrange
             ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+            var options = new UpdateZipArchiveEntryOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             var context = new PipelineContext();
@@ -326,11 +430,61 @@ namespace MyTrout.Pipelines.IO.Compression.Tests
                 {
                     using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
                     {
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE, zipArchive);
-                        context.Items.Add(CompressionConstants.ZIP_ARCHIVE_ENTRY_NAME, entryName);
-                        context.Items.Add(PipelineContextConstants.OUTPUT_STREAM, entryStream);
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
 
-                        await using (var source = new UpdateZipArchiveEntryStep(logger, next))
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
+                        {
+                            // act
+                            await source.InvokeAsync(context).ConfigureAwait(false);
+                        }
+
+                        // assert
+                        Assert.AreEqual(errorCount, context.Errors.Count);
+                        Assert.IsInstanceOfType(context.Errors[0], typeof(InvalidOperationException));
+                        Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Throws_InvalidOperationException_From_InvokeAsync_When_ZipArchiveEntryName_Does_Not_Exist()
+        {
+            // arrange
+            var context = new PipelineContext();
+
+            ILogger<UpdateZipArchiveEntryStep> logger = new Mock<ILogger<UpdateZipArchiveEntryStep>>().Object;
+
+            var options = new UpdateZipArchiveEntryOptions();
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            string entryName = "Disney.txt.json";
+            string entryContents = "Why are you still whining?";
+            string zipFilePath = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}Disney.zip";
+            int errorCount = 1;
+            string expectedMessage = Resources.ZIP_ARCHIVE_ENTRY_NOT_FOUND(CultureInfo.CurrentCulture, entryName);
+
+            using (var zipStream = new MemoryStream())
+            {
+                using (var fileStream = File.OpenRead(zipFilePath))
+                {
+                    await fileStream.CopyToAsync(zipStream).ConfigureAwait(false);
+                }
+
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
+                {
+                    using (var entryStream = new MemoryStream(Encoding.UTF8.GetBytes(entryContents)))
+                    {
+                        context.Items.Add(options.ZipArchiveContextName, zipArchive);
+                        context.Items.Add(options.ZipArchiveEntryNameContextName, entryName);
+                        context.Items.Add(options.OutputStreamContextName, entryStream);
+
+                        await using (var source = new UpdateZipArchiveEntryStep(logger, options, next))
                         {
                             // act
                             await source.InvokeAsync(context).ConfigureAwait(false);

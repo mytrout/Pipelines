@@ -1,7 +1,7 @@
-﻿// <copyright file="OpenExistingZipArchiveFromStreamOptions.cs" company="Chris Trout">
+﻿// <copyright file="AbstractZipOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,26 @@
 
 namespace MyTrout.Pipelines.Steps.IO.Compression
 {
-    using System.IO.Compression;
+    /*
+     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+     *
+     *  TO DEVELOPERS: This class is used to define this set of properties once.  Several Steps use the same set.
+     */
 
     /// <summary>
-    /// Provides the user-configurable options for the <see cref="OpenExistingZipArchiveFromStreamStep"/> step.
+    /// Provides caller-configurable options to change the behavior of <see cref="AddZipArchiveEntryStep"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class OpenExistingZipArchiveFromStreamOptions
+    public abstract class AbstractZipOptions
     {
         /// <summary>
-        /// Gets or sets the name used for the reading from the input stream from <see cref="IPipelineContext.Items"/>.
+        /// Gets or sets the name used for the writing to the output stream from <see cref="IPipelineContext.Items"/>.
         /// </summary>
-        public string InputStreamContextName { get; set; } = PipelineContextConstants.INPUT_STREAM;
+        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
 
         /// <summary>
         /// Gets or sets the name used for loading the zip archive from <see cref="IPipelineContext.Items"/>.
         /// </summary>
         public string ZipArchiveContextName { get; set; } = CompressionConstants.ZIP_ARCHIVE;
-
-        /// <summary>
-        /// Gets or sets the mode under which the <see cref="ZipArchive"/> will operate.
-        /// </summary>
-        public ZipArchiveMode ZipArchiveMode { get; set; } = ZipArchiveMode.Read;
     }
 }
