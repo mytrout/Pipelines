@@ -7,13 +7,15 @@
 ### NON-BREAKING CHANGES:
 - [# 85](https://github.com/mytrout/Pipelines/issues/85)  Update Resources.tt to use NamespaceHint instead of a hard-coded namespace.
 - [# 94](https://github.com/mytrout/Pipelines/issues/94)  Add "if-no-files-found: error" to the nuget publishing step.
-- [#148](https://github.com/mytrout/Pipelines/issues/148) Refactor ? to use AbstractCachingPipelineStep<TStep, TOptions> to guarantee that existing INPUT_STREAM values are restored after execution of this step.
-- [#148](https://github.com/mytrout/Pipelines/issues/148) Add additional unit test to ensure that ReadMessageFromAzureStep restores PipelineContext.Items to its original state after execution.
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
-- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ? and ReadMessageFromAzureOptions to use user-configurable context names for any value read from or written to IPipelineContext.Items.
-- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ? and WriteMessageToAzureOptions to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ~Steps and ~Options to use user-configurable context names for any value read from or written to IPipelineContext.Items.
 - Uncomment all of the nuget publish steps to allow a new version to be published.
 - Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.VisualStudio.ThreadingAnalyzers to 17.2.32
+- Upgrade SonarAnalyzer.CSharp 8.40.0.48530
+- Upgrade StyleCop.Analyzers to 1.2.0-beta.435
 
 ## 2.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.

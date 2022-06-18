@@ -32,7 +32,7 @@ namespace MyTrout.Pipelines.Steps.Data
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Adds additiona data to <see cref="IPipelineContext"/> from a query run against a database.
+    /// Adds additional data to <see cref="IPipelineContext.Items"/> from a query run against a database.
     /// </summary>
     public class SupplementContextWithDatabaseRecordStep : AbstractPipelineStep<SupplementContextWithDatabaseRecordStep, SupplementContextWithDatabaseRecordOptions>
     {

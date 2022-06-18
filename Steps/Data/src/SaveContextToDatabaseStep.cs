@@ -41,19 +41,13 @@ namespace MyTrout.Pipelines.Steps.Data
         /// Initializes a new instance of the <see cref="SaveContextToDatabaseStep"/> class with the specified options.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="providerFactory">An <see cref="DbProviderFactory"/> instance.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public SaveContextToDatabaseStep(ILogger<SaveContextToDatabaseStep> logger, DbProviderFactory providerFactory, SaveContextToDatabaseOptions options, IPipelineRequest next)
+        public SaveContextToDatabaseStep(ILogger<SaveContextToDatabaseStep> logger, SaveContextToDatabaseOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            this.ProviderFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
+            // no op
         }
-
-        /// <summary>
-        /// Gets a <see cref="DbProviderFactory"/> instance.
-        /// </summary>
-        public DbProviderFactory ProviderFactory { get; }
 
         /// <summary>
         /// When downstream processing is completed, writes any context values that are configured to be written to the database.
@@ -74,7 +68,7 @@ namespace MyTrout.Pipelines.Steps.Data
 
             sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
 
-            DynamicParameters parameters = new DynamicParameters();
+            var parameters = new DynamicParameters();
 
             // Use the null-forgiving operator because AssertValueIsNotNull guarantees that the value of sql variable is not null.
             foreach (var parameterName in sql!.ParameterNames)
@@ -84,11 +78,11 @@ namespace MyTrout.Pipelines.Steps.Data
 
             try
             {
-                using (var connection = this.ProviderFactory.CreateConnection())
+                using (var connection = this.Options.DbProviderFactory.CreateConnection())
                 {
                     if (connection is null)
                     {
-                        throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                        throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.Options.DbProviderFactory.GetType().Name));
                     }
 
                     connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);

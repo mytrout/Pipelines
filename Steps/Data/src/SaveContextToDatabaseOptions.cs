@@ -39,7 +39,6 @@ namespace MyTrout.Pipelines.Steps.Data
         /// <summary>
         /// Initializes a new instance of the <see cref="SaveContextToDatabaseOptions"/> class.
         /// </summary>
-
         public SaveContextToDatabaseOptions()
         {
             this.RetrieveConnectionStringAsync = this.RetrieveConnectionStringCoreAsync;

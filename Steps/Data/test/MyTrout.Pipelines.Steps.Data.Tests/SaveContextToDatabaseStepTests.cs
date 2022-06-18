@@ -47,19 +47,17 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            var providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             // act
-            var result = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var result = new SaveContextToDatabaseStep(logger, options, next);
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(logger, result.Logger);
             Assert.AreEqual(next, result.Next);
             Assert.AreEqual(options, result.Options);
-            Assert.AreEqual(providerFactory, result.ProviderFactory);
         }
 
         [TestMethod]
@@ -75,6 +73,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             var options = new SaveContextToDatabaseOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
@@ -94,7 +93,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             int expectedErrorCount = 1;
             string expectedMessage = Resources.CONNECTION_IS_NULL(CultureInfo.CurrentCulture, providerFactory.GetType().Name);
@@ -121,6 +120,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             var options = new SaveContextToDatabaseOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
@@ -140,7 +140,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             int expectedErrorCount = 1;
 
@@ -161,6 +161,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new SaveContextToDatabaseOptions()
             {
+                DbProviderFactory = providerFactory,    
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
@@ -186,7 +187,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             int expectedErrorCount = 1;
             string expectedMessage = "Could not find stored procedure 'UPDATE dbo.Cartoon SET Description = 'Nom, nom, nom' WHERE CartoonId > 1'.";
@@ -203,9 +204,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             finally
             {
                 // cleanup
-#pragma warning disable IDE0063 // Use simple 'using' statement
                 using (var connection = providerFactory.CreateConnection())
-#pragma warning restore IDE0063 // Use simple 'using' statement
                 {
                     connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
                     await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = 2 }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
@@ -223,6 +222,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new SaveContextToDatabaseOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
@@ -243,7 +243,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             int expectedErrorCount = 1;
             string expectedMessage = Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, missingStatementName);
@@ -265,6 +265,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new SaveContextToDatabaseOptions()
             {
+                DbProviderFactory = providerFactory,
                 SqlStatements = new List<SqlStatement>()
                 {
                     new SqlStatement()
@@ -291,7 +292,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             int expectedAffectedRecords = 2;
 
@@ -313,9 +314,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             finally
             {
                 // cleanup
-#pragma warning disable IDE0063 // Use simple 'using' statement
                 using (var connection = providerFactory.CreateConnection())
-#pragma warning restore IDE0063 // Use simple 'using' statement
                 {
                     connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
                     await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = 2 }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
@@ -329,14 +328,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SaveContextToDatabaseStep> logger = null;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(logger);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -348,14 +346,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = null;
 
             string expectedParamName = nameof(next);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -367,34 +364,13 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             SaveContextToDatabaseOptions options = null;
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             string expectedParamName = nameof(options);
 
             // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, providerFactory, options, next));
-
-            // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedParamName, result.ParamName);
-        }
-
-
-        [TestMethod]
-        public void Throws_ArgumentNullException_From_Constructor_When_ProviderFactory_Is_Null()
-        {
-            // arrange
-            ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            DbProviderFactory providerFactory = null;
-            var options = new SaveContextToDatabaseOptions();
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
-
-            string expectedParamName = nameof(providerFactory);
-
-            // act
-            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, providerFactory, options, next));
+            var result = Assert.ThrowsException<ArgumentNullException>(() => new SaveContextToDatabaseStep(logger, options, next));
 
             // assert
             Assert.IsNotNull(result);
@@ -406,13 +382,12 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
         {
             // arrange
             ILogger<SaveContextToDatabaseStep> logger = new Mock<ILogger<SaveContextToDatabaseStep>>().Object;
-            DbProviderFactory providerFactory = new Mock<DbProviderFactory>().Object;
             var options = new SaveContextToDatabaseOptions();
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
             IPipelineContext context = null;
 
-            var sut = new SaveContextToDatabaseStep(logger, providerFactory, options, next);
+            var sut = new SaveContextToDatabaseStep(logger, options, next);
 
             var expectedParamName = nameof(context);
             // act
