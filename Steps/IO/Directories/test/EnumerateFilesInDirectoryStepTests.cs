@@ -98,8 +98,6 @@ namespace MyTrout.Pipelines.Steps.IO.Directories.Tests
             string fileSearchPattern = "*.*";
             string fullTargetPathAndDirectoryName = sourceDirectoryPath + directoryName;
 
-            var fileNames = new string[3] { $"A{Guid.NewGuid()}.txt", $"B{Guid.NewGuid()}.txt", $"C{Guid.NewGuid()}.txt" };
-
             Directory.CreateDirectory(fullTargetPathAndDirectoryName);
 
             File.Create(BASE_FILE_NAMES[0]);
@@ -143,6 +141,56 @@ namespace MyTrout.Pipelines.Steps.IO.Directories.Tests
             {
                 throw context.Errors[0];
             }
+
+            // Assembly Cleanup handles the file/directory cleanup because threads are still locking the files.
+        }
+
+        [TestMethod]
+        public async Task Returns_PipelineContext_From_InvokeAsync_When_Previous_Values_Are_Restored_After_Execution()
+        {
+            // arrange
+            string sourceDirectoryPath = EnumerateFilesInDirectoryStepTests.BASE_DIRECTORY_PATH;
+
+            string directoryName = BASE_DIRECTORY_NAME;
+            string fileSearchPattern = "*.*";
+            string fullTargetPathAndDirectoryName = sourceDirectoryPath + directoryName;
+
+            string targetDirectoryName = $"C:\\{Guid.NewGuid()}";
+            string targetFileName = "something.wicked.this.way.comes.txt";
+
+            var options = new EnumerateFilesInDirectoryOptions();
+
+            var context = new PipelineContext();
+            context.Items.Add(options.FileSearchPatternContextName, fileSearchPattern);
+            context.Items.Add(options.SourceBaseDirectoryPathContextName, sourceDirectoryPath);
+            context.Items.Add(options.SourceDirectoryContextName, directoryName);
+            context.Items.Add(options.TargetBaseDirectoryPathContextName, targetDirectoryName);
+            context.Items.Add(options.TargetFileContextName, targetFileName);
+
+            var logger = new Mock<ILogger<EnumerateFilesInDirectoryStep>>().Object;
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                    .Returns(Task.CompletedTask);
+
+            var next = mockNext.Object;
+
+            using (var source = new EnumerateFilesInDirectoryStep(logger, options, next))
+            {
+                // act
+                await source.InvokeAsync(context).ConfigureAwait(false);
+            }
+
+            // assert
+            if (context.Errors.Any())
+            {
+                throw context.Errors[0];
+            }
+
+            Assert.IsTrue(context.Items.ContainsKey(options.TargetBaseDirectoryPathContextName), $"{options.TargetBaseDirectoryPathContextName} value should exist in IPipelineContext.");
+            Assert.AreEqual(targetDirectoryName, context.Items[options.TargetBaseDirectoryPathContextName]);
+            Assert.IsTrue(context.Items.ContainsKey(options.TargetFileContextName), $"{options.TargetFileContextName} value should exist in IPipelineContext.");
+            Assert.AreEqual(targetFileName, context.Items[options.TargetFileContextName]);
 
             // Assembly Cleanup handles the file/directory cleanup because threads are still locking the files.
         }

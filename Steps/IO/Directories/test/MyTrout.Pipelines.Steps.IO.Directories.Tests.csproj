@@ -8,7 +8,7 @@
     
     <PropertyGroup>
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <NoWarn>1701;1702;SA1310;SA1413;SA1600</NoWarn>
+        <NoWarn>1701;1702;SA0001;SA1310;SA1413;SA1600</NoWarn>
     </PropertyGroup>
     
   <ItemGroup>
