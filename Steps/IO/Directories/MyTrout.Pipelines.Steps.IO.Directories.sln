@@ -19,6 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Directories.Tests", "test\MyTrout.Pipelines.Steps.IO.Directories.Tests.csproj", "{8EC67727-8838-4C67-9B7E-1A5D73A9A151}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{9874C07D-4F7D-4132-A471-7BD5CFA6E8F9}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-io-directories.yaml = ..\..\..\.github\workflows\build-pipelines-steps-io-directories.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
