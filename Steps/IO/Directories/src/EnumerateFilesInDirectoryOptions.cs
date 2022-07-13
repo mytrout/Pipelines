@@ -24,12 +24,6 @@
 
 namespace MyTrout.Pipelines.Steps.IO.Directories
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     /*
      *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
      */
