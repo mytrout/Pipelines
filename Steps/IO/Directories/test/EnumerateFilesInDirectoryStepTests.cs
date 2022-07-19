@@ -49,8 +49,7 @@ namespace MyTrout.Pipelines.Steps.IO.Directories.Tests
                 $"{BASE_DIRECTORY_PATH}{Path.DirectorySeparatorChar}{BASE_DIRECTORY_NAME}{Path.DirectorySeparatorChar}B{Guid.NewGuid()}.txt",
                 $"{BASE_DIRECTORY_PATH}{Path.DirectorySeparatorChar}{BASE_DIRECTORY_NAME}{Path.DirectorySeparatorChar}C{Guid.NewGuid()}.txt"
             };
-        
-#if DEBUG
+
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
@@ -67,8 +66,7 @@ namespace MyTrout.Pipelines.Steps.IO.Directories.Tests
                 Directory.Delete(path);
             }
         }
-#endif
-    
+
         [TestMethod]
         public async Task Constructs_EnumerateFilesInDirectoryStep_Successfully()
         {
