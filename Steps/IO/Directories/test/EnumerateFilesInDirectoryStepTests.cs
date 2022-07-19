@@ -113,18 +113,12 @@ namespace MyTrout.Pipelines.Steps.IO.Directories.Tests
 
             var logger = new Mock<ILogger<EnumerateFilesInDirectoryStep>>().Object;
 
-            int x = 0;
-
             var mockNext = new Mock<IPipelineRequest>();
             mockNext.Setup(x => x.InvokeAsync(context))
                                     .Callback(() =>
                                     {
-                                        string currentFileName = Path.GetFileName(BASE_FILE_NAMES[x]);
-
                                         Assert.AreEqual(fullTargetPathAndDirectoryName, context.Items[options.TargetBaseDirectoryPathContextName]);
-                                        Assert.AreEqual(currentFileName, context.Items[options.TargetFileContextName]);
-
-                                        x++;
+                                        Assert.IsTrue(BASE_FILE_NAMES.Any(x => context.Items[options.TargetFileContextName].Equals(Path.GetFileName(x))), $"{context.Items[options.TargetFileContextName]} is not in BASE_FILE_NAMES.");
                                     })
                                     .Returns(Task.CompletedTask);
 
