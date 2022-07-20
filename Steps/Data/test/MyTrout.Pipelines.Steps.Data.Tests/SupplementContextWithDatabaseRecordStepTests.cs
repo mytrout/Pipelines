@@ -317,9 +317,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             finally
             {
                 // cleanup
-#pragma warning disable IDE0063 // Use simple 'using' statement
                 using (var connection = providerFactory.CreateConnection())
-#pragma warning restore IDE0063 // Use simple 'using' statement
                 {
                     connection.ConnectionString = options.RetrieveConnectionStringAsync.Invoke().Result;
                     await connection.ExecuteAsync("DELETE FROM dbo.Cartoon WHERE CartoonId = @CartoonId;", new { CartoonId = expectedId }, commandType: System.Data.CommandType.Text).ConfigureAwait(false);
