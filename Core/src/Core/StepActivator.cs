@@ -58,6 +58,7 @@ namespace MyTrout.Pipelines.Core
         public IList<ParameterCreationDelegate> ParameterCreators { get; }
             = new List<ParameterCreationDelegate>()
                 {
+                    StepActivator.CreateParameterForExecutionPredicates,
                     StepActivator.CreateParameterFromStepFactory,
                     StepActivator.CreateParameterFromStepInstance,
                     StepActivator.CreateParameterFromDependencyInjectionInstance,
@@ -204,7 +205,30 @@ namespace MyTrout.Pipelines.Core
         }
 
         /// <summary>
-        /// Retrieve a parameter from the <see cref="IConfiguration"/>.
+        /// Retrieve a parameter from <see cref="StepWithContext.Predicates"/>.
+        /// </summary>
+        /// <param name="logger">A logger for debug logging.</param>
+        /// <param name="services">An injected dependency service that provides some parameters.</param>
+        /// <param name="pipelineStep">The step being configured.</param>
+        /// <param name="parameter">The constructor parameter being built.</param>
+        /// <returns>A fully-constructed parameter for the constructor.</returns>
+        public static ParameterCreationResult CreateParameterForExecutionPredicates(ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
+        {
+            pipelineStep.AssertParameterIsNotNull(nameof(pipelineStep));
+
+            if (parameter.ParameterType == typeof(ExecutionPredicates)
+                || (parameter.ParameterType.IsGenericType
+                    && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                    && parameter.ParameterType.GetGenericArguments()[0] == typeof(ExecutionPredicates)))
+            {
+                return new ParameterCreationResult(pipelineStep.Predicates, true);
+            }
+
+            return new ParameterCreationResult(null, false);
+        }
+
+        /// <summary>
+        /// Retrieve a parameter from the <paramref name="next"/>.
         /// </summary>
         /// <param name="next">The next pipeline step instance.</param>
         /// <param name="logger">A logger for debug logging.</param>
@@ -212,7 +236,6 @@ namespace MyTrout.Pipelines.Core
         /// <param name="pipelineStep">The step being configured.</param>
         /// <param name="parameter">The constructor parameter being built.</param>
         /// <returns>A fully-constructed parameter for the constructor.</returns>
-        /// <remarks>This method always returns <see langword="true" /> for the <see cref="ParameterCreationResult.SkipRemainingCreators"/>.</remarks>
         public static ParameterCreationResult CreateParameterForNextPipelineRequest(IPipelineRequest next, ILogger<IStepActivator> logger, IServiceProvider services, StepWithContext pipelineStep, ParameterInfo parameter)
         {
             next.AssertParameterIsNotNull(nameof(next));

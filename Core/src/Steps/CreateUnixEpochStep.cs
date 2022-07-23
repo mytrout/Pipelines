@@ -51,12 +51,26 @@ namespace MyTrout.Pipelines.Steps
         public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.UnixEpochContextName };
 
         /// <summary>
-        /// Create a unix epoch in <see cref="IPipelineContext.Items"/> values and then execute the pipeline step.
+        /// Removes the a unix epoch from <see cref="IPipelineContext.Items"/>.
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
+        protected override async Task AfterNextStepAsync(IPipelineContext context)
         {
+            context.Items.Remove(this.Options.UnixEpochContextName);
+
+            await base.AfterNextStepAsync(context);
+        }
+
+        /// <summary>
+        /// Create a unix epoch in <see cref="IPipelineContext.Items"/> values.
+        /// </summary>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        protected override async Task BeforeNextStepAsync(IPipelineContext context)
+        {
+            await base.BeforeNextStepAsync(context).ConfigureAwait(false);
+
             var unixEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             if (this.Options.EpochKind == UnixEpochKind.InMilliseconds)
@@ -64,18 +78,23 @@ namespace MyTrout.Pipelines.Steps
                 unixEpoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
 
-            try
-            {
-                context.Items.Add(this.Options.UnixEpochContextName, unixEpoch);
-
-                await this.Next.InvokeAsync(context);
-            }
-            finally
-            {
-                context.Items.Remove(this.Options.UnixEpochContextName);
-            }
+            context.Items.Add(this.Options.UnixEpochContextName, unixEpoch);
 
             await Task.CompletedTask.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Force the call to the next step.
+        /// </summary>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        /// <remarks>
+        /// TO FUTURE DEVELOPERS:
+        /// When the next breaking change is executed, remove this method.
+        /// </remarks>
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
+        {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
         }
     }
 }

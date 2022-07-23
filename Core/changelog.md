@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.1.0 
+### NON-BREAKING CHANGES
+- Alter AbstractPipelineStep{TStep} to support BeforeNextStepAsync and AfterNextStepAsync methods and predicates to allow more run-time execution control on each step.
 
 ## 4.0.0 - BREAKING CHANGES
 - Alter IStepActivator interface to include the ParameterCreators property to allow developers to reconfigure the parameter creation behavior.

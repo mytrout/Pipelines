@@ -58,7 +58,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_Items_From_Enumerator_In_InvokeAsync_To_Downstream_Callers()
         {
             // arrange
-            SamplePersonEnumerator parent = new SamplePersonEnumerator();
+            var parent = new SamplePersonEnumerator();
             parent.Persons.Add(new SamplePerson() { LastName = "GoesThere", FirstName = "Who" });
             parent.Persons.Add(new SamplePerson() { LastName = "Name", FirstName = "Whatsher" });
 
@@ -100,7 +100,7 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_Context_With_No_Alterations_From_InvokeAsync_After_Execution()
         {
             // arrange
-            SamplePersonEnumerator parent = new SamplePersonEnumerator();
+            var parent = new SamplePersonEnumerator();
             parent.Persons.Add(new SamplePerson() { LastName = "GoesThere", FirstName = "Who" });
             parent.Persons.Add(new SamplePerson() { LastName = "Name", FirstName = "Whatsher" });
 

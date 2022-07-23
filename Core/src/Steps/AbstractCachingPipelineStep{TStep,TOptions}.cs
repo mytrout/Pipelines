@@ -1,7 +1,7 @@
 ﻿// <copyright file="AbstractCachingPipelineStep{TStep,TOptions}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,9 @@ namespace MyTrout.Pipelines.Steps
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">THe options to configure this pipeline step.</param>
-        protected AbstractCachingPipelineStep(ILogger<TStep> logger, TOptions options, IPipelineRequest next)
-            : base(logger, next)
+        /// <param name="predicates">The predicate that is evaluated by the step.</param>
+        protected AbstractCachingPipelineStep(ILogger<TStep> logger, TOptions options, IPipelineRequest next, ExecutionPredicates? predicates = null)
+            : base(logger, next, predicates)
         {
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
         }

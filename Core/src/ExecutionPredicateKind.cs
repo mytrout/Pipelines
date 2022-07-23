@@ -1,7 +1,7 @@
-﻿// <copyright file="SampleWithOptionsStep.cs" company="Chris Trout">
+﻿// <copyright file="ExecutionPredicateKind.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,28 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Steps.Tests
+namespace MyTrout.Pipelines
 {
-    using Microsoft.Extensions.Logging;
-    using System.Threading.Tasks;
+    using System;
 
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SampleWithOptionsStep : AbstractPipelineStep<SampleWithOptionsStep, SampleOptions>
+    /// <summary>
+    /// Provides the kinds of <see cref="System.Predicate{IPipelineContext}"/> that are being provided to the Step.
+    /// </summary>
+    public enum ExecutionPredicateKind
     {
-        public SampleWithOptionsStep(ILogger<SampleWithOptionsStep> logger, SampleOptions options, IPipelineRequest next, ExecutionPredicates predicates = null)
-            : base(logger, options, next, predicates)
-        {
-            // no op
-        }
+        /// <summary>
+        /// Execution Predicate which determins if the current step's BeforeNextStepAsync is executed.
+        /// </summary>
+        BeforeNextStep = 1,
 
-        public IPipelineRequest NextItem
-        {
-            get
-            {
-                return this.Next;
-            }
-        }
+        /// <summary>
+        /// Execution Predicate which determines if the pipeline runs the Next step.
+        /// </summary>
+        NextStep = 2,
+
+        /// <summary>
+        /// Execution Predicate which determins if the current step's AfterNextStepAsync is executed.
+        /// </summary>
+        AfterNextStep = 4
     }
 }

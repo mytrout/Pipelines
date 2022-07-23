@@ -41,10 +41,11 @@ namespace MyTrout.Pipelines.Steps
         /// Initializes a new instance of the <see cref="AbstractLoadItemToPipelineContextStep{TItem,TOptions}" /> class with the specified parameters.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
+        /// <param name="options">THe options to configure this pipeline.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        /// /// <param name="options">THe options to configure this pipeline.</param>
-        protected AbstractLoadItemToPipelineContextStep(ILogger<AbstractLoadItemToPipelineContextStep<TItem, TOptions>> logger, TOptions options, IPipelineRequest next)
-            : base(logger, options, next)
+        /// <param name="predicates">The predicate that is evaluated by the step.</param>
+        protected AbstractLoadItemToPipelineContextStep(ILogger<AbstractLoadItemToPipelineContextStep<TItem, TOptions>> logger, TOptions options, IPipelineRequest next, ExecutionPredicates? predicates = null)
+            : base(logger, options, next, predicates)
         {
             // no op
         }

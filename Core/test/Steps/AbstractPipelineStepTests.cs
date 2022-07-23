@@ -61,15 +61,22 @@ namespace MyTrout.Pipelines.Steps.Tests
             using (IPipelineRequest next = new NoOpStep())
             {
                 var options = new SampleOptions();
+                ExecutionPredicates predicates = new ExecutionPredicates()
+                                                        .Add(ExecutionPredicateKind.AfterNextStep, this.NeverExecutePredicate)
+                                                        .Add(ExecutionPredicateKind.BeforeNextStep, this.SometimesExecutePredicate)
+                                                        .Add(ExecutionPredicateKind.NextStep, this.AlwaysExecutePredicate);
 
                 // act
-                using (var result = new SampleWithOptionsStep(logger, options, next))
+                using (var result = new SampleWithOptionsStep(logger, options, next, predicates))
                 {
                     // assert
                     Assert.IsNotNull(result);
                     Assert.AreEqual(logger, result.Logger);
                     Assert.AreEqual(next, result.NextItem);
                     Assert.AreEqual(options, result.Options);
+                    Assert.AreEqual(this.NeverExecutePredicate, result.Predicates[ExecutionPredicateKind.AfterNextStep]);
+                    Assert.AreEqual(this.SometimesExecutePredicate, result.Predicates[ExecutionPredicateKind.BeforeNextStep]);
+                    Assert.AreEqual(this.AlwaysExecutePredicate, result.Predicates[ExecutionPredicateKind.NextStep]);
                 }
             }
         }
@@ -168,6 +175,28 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Returns_Without_Error_From_InvokeAsyn_From_AbstractPipelineStep()
+        {
+            // arrange
+            int errorCount = 0;
+            ILogger<SampleWithOptionsStep> logger = new Mock<ILogger<SampleWithOptionsStep>>().Object;
+            using (IPipelineRequest next = new NoOpStep())
+            {
+                var options = new SampleOptions();
+                var context = new PipelineContext();
+
+                using (var step = new SampleWithOptionsStep(logger, options, next))
+                {
+                    // act
+                    await step.InvokeAsync(context);
+
+                    // assert
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Parameter_Is_Null()
         {
             // arrange
@@ -241,6 +270,21 @@ namespace MyTrout.Pipelines.Steps.Tests
                     Assert.AreEqual(expectedParamName, result.ParamName);
                 }
             }
+        }
+
+        private bool AlwaysExecutePredicate(IPipelineContext context)
+        {
+            return true;
+        }
+
+        private bool NeverExecutePredicate(IPipelineContext context)
+        {
+            return false;
+        }
+
+        private bool SometimesExecutePredicate(IPipelineContext context)
+        {
+            return (context.Items.Count % 2) == 0;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿// <copyright file="StepWithContext.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,15 @@ namespace MyTrout.Pipelines
         /// </summary>
         /// <param name="stepType">The type to be constructed.</param>
         /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
-        public StepWithContext(Type stepType, string? stepContext = null)
-            : this(stepType, null, stepContext)
+        /// <param name="predicates">These predicates are evaluated by the step.</param>
+        public StepWithContext(Type stepType, string? stepContext = null, ExecutionPredicates? predicates = null)
+            : this(stepType, null, stepContext, predicates)
         {
             // no op
         }
+
+        // NOTE TO FUTURE DEVELOPERS:
+        // Because params string[] cannot be converted to null
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
@@ -48,11 +52,11 @@ namespace MyTrout.Pipelines
         /// <param name="stepType">The type to be constructed.</param>
         /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
         /// <param name="stepDependencyType">The type to be used as the step's dependency.</param>
-        public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null)
+        /// <param name="predicates">These predicates are evaluated by the step.</param>
+        public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null, ExecutionPredicates? predicates = null)
+            : this(stepType, stepDependencyType, stepContext, predicates, null)
         {
-            this.StepType = stepType ?? throw new ArgumentNullException(nameof(stepType));
-            this.StepDependencyType = stepDependencyType;
-            this.StepContext = stepContext;
+
         }
 
         /// <summary>
@@ -63,8 +67,25 @@ namespace MyTrout.Pipelines
         /// <param name="stepDependencyType">The type to be used as the step's dependency.</param>
         /// <param name="configKeys">Additional configuration keys that can be used to bind step dependency information from <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.</param>
         public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null, params string[] configKeys)
-            : this(stepType, stepDependencyType, stepContext)
+            : this(stepType, stepDependencyType, stepContext, new ExecutionPredicates(), configKeys)
         {
+            // no op
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StepWithContext" /> class with the requested parameters.
+        /// </summary>
+        /// <param name="stepType">The type to be constructed.</param>
+        /// <param name="stepContext">The context used if multiple steps of the same type are specified. stepContext is ignored if the value is <see langword="null"/>.</param>
+        /// <param name="predicates">These predicates are evaluated by the step.</param>
+        /// <param name="stepDependencyType">The type to be used as the step's dependency.</param>
+        /// <param name="configKeys">Additional configuration keys that can be used to bind step dependency information from <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.</param>
+        public StepWithContext(Type stepType, Type? stepDependencyType = null, string? stepContext = null, ExecutionPredicates? predicates = null, params string[]? configKeys)
+        {
+            this.StepType = stepType ?? throw new ArgumentNullException(nameof(stepType));
+            this.StepDependencyType = stepDependencyType;
+            this.StepContext = stepContext;
+            this.Predicates = predicates ?? new ExecutionPredicates();
             this.ConfigKeys = configKeys;
         }
 
@@ -72,6 +93,11 @@ namespace MyTrout.Pipelines
         /// Gets the additional configuration keys that will be used to load the <see cref="StepDependencyType"/>.
         /// </summary>
         public string[]? ConfigKeys { get; init; } = null;
+
+        /// <summary>
+        /// Gets the predicates to provide to steps to determine at runtime which parts of the code will execute.
+        /// </summary>
+        public ExecutionPredicates Predicates { get; init; }
 
         /// <summary>
         /// Gets the step to be configured multiple times.

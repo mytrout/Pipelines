@@ -1,7 +1,7 @@
 ﻿// <copyright file="AbstractPipelineStep{TStep}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -40,21 +40,28 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
         /// <param name="next">The next step in the pipeline.</param>
-        protected AbstractPipelineStep(ILogger<TStep> logger, IPipelineRequest next)
+        /// <param name="predicates">The predicate that is evaluated by the step.</param>
+        protected AbstractPipelineStep(ILogger<TStep> logger, IPipelineRequest next, ExecutionPredicates? predicates = null)
         {
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.Next = next ?? throw new ArgumentNullException(nameof(next));
+            this.Predicates = predicates ?? new ExecutionPredicates();
         }
 
         /// <summary>
         /// Gets the logger for this step in the pipeline.
         /// </summary>
-        public ILogger<TStep> Logger { get; }
+        public ILogger<TStep> Logger { get; init; }
 
         /// <summary>
         /// Gets the next step in the pipeline.
         /// </summary>
-        public IPipelineRequest Next { get; }
+        public IPipelineRequest Next { get; init; }
+
+        /// <summary>
+        /// Gets the predicates which determine which parts of the step are executed at runtime.
+        /// </summary>
+        public ExecutionPredicates Predicates { get; init; }
 
         /// <inheritdoc />
         public void Dispose()
@@ -92,13 +99,44 @@ namespace MyTrout.Pipelines.Steps
 
             try
             {
-                await this.InvokeCoreAsync(context).ConfigureAwait(false);
+                if (this.Predicates[ExecutionPredicateKind.BeforeNextStep].Invoke(context))
+                {
+                    await this.BeforeNextStepAsync(context).ConfigureAwait(false);
+                }
+
+                if (this.Predicates[ExecutionPredicateKind.NextStep].Invoke(context))
+                {
+                    await this.InvokeCoreAsync(context).ConfigureAwait(false);
+                }
             }
             catch (Exception exc)
             {
                 context.Errors.Add(exc);
             }
+            finally
+            {
+                if (this.Predicates[ExecutionPredicateKind.AfterNextStep].Invoke(context))
+                {
+                    await this.AfterNextStepAsync(context).ConfigureAwait(false);
+                }
+            }
         }
+
+        /// <summary>
+        /// Provides the implementation for this step.
+        /// </summary>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        /// <remarks>To provide backwards-compatibility, this method returns <see cref="Task.CompletedTask"/> by default.</remarks>
+        protected virtual Task AfterNextStepAsync(IPipelineContext context) => Task.CompletedTask;
+
+        /// <summary>
+        /// Provides the implementation for this step.
+        /// </summary>
+        /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
+        /// <returns>A <see cref="Task" />.</returns>
+        /// <remarks>To provide backwards-compatibility, this method returns <see cref="Task.CompletedTask"/> by default.</remarks>
+        protected virtual Task BeforeNextStepAsync(IPipelineContext context) => Task.CompletedTask;
 
         /// <summary>
         /// Disposes of any disposable resources for this instance.
@@ -123,6 +161,10 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="context">The <see cref="IPipelineContext">context</see> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        protected abstract Task InvokeCoreAsync(IPipelineContext context);
+        /// <remarks>To provide forwards-compatibility, tnis method changed from abstract to virtual with the default implementation of invoking the next step.</remarks>
+        protected virtual async Task InvokeCoreAsync(IPipelineContext context)
+        {
+            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+        }
     }
 }
