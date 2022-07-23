@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32427.441
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{653E3D37-C021-4A6D-A9A2-D061C9E5A7DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{48EB7878-CC8F-42B3-977E-665842BAC39F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{52AEF7B6-674C-400A-A94C-DB5FE2CBEF29}"
+	ProjectSection(SolutionItems) = preProject
+		changelog.md = changelog.md
+		License.md = License.md
+		README.md = README.md
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Directories", "src\MyTrout.Pipelines.Steps.IO.Directories.csproj", "{D03E21E8-C659-4EA5-A0E9-9C93850B9B46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.IO.Directories.Tests", "test\MyTrout.Pipelines.Steps.IO.Directories.Tests.csproj", "{8EC67727-8838-4C67-9B7E-1A5D73A9A151}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{9874C07D-4F7D-4132-A471-7BD5CFA6E8F9}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-io-directories.yaml = ..\..\..\.github\workflows\build-pipelines-steps-io-directories.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D03E21E8-C659-4EA5-A0E9-9C93850B9B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03E21E8-C659-4EA5-A0E9-9C93850B9B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03E21E8-C659-4EA5-A0E9-9C93850B9B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03E21E8-C659-4EA5-A0E9-9C93850B9B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC67727-8838-4C67-9B7E-1A5D73A9A151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC67727-8838-4C67-9B7E-1A5D73A9A151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC67727-8838-4C67-9B7E-1A5D73A9A151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC67727-8838-4C67-9B7E-1A5D73A9A151}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D03E21E8-C659-4EA5-A0E9-9C93850B9B46} = {653E3D37-C021-4A6D-A9A2-D061C9E5A7DE}
+		{8EC67727-8838-4C67-9B7E-1A5D73A9A151} = {48EB7878-CC8F-42B3-977E-665842BAC39F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36AAADFD-2544-425D-B3EF-52AF2F51D06D}
+	EndGlobalSection
+EndGlobal
