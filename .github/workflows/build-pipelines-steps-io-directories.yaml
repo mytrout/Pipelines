@@ -33,7 +33,7 @@ jobs:
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.IO.Directories.sln'
         
         # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '1.0.0'
+        PROJECT_VERSION: '2.0.0'
         
     steps:
       - name: Checkout the Source

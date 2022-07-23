@@ -38,5 +38,10 @@ namespace MyTrout.Pipelines.Steps.IO.Files
         /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the file name used as the destination (or target) file for delete, move, or write operations.
         /// </summary>
         public const string TARGET_FILE = "PIPELINE_TARGET_FILE_NAME";
+
+        /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the file name used as the destination (or target) file without extension for delete, move, or write operations.
+        /// </summary>
+        public const string TARGET_FILE_WO_EXTENSION = "PIPELINE_TARGET_FILE_NAME_WO_EXTENSION";
     }
 }

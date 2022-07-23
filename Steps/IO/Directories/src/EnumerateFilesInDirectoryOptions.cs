@@ -50,13 +50,23 @@ namespace MyTrout.Pipelines.Steps.IO.Directories
         public string SourceDirectoryContextName { get; set; } = DirectoryConstants.SOURCE_DIRECTORY_NAME;
 
         /// <summary>
-        /// Gets or sets a base directory used to prevent directory-based path traversal issues.
+        /// Gets or sets the base directory of the target file.
         /// </summary>
-        public string TargetBaseDirectoryPathContextName { get; set; } = DirectoryConstants.TARGET_BASE_DIRECTORY;
+        public string TargetDirectoryContextName { get; set; } = DirectoryConstants.TARGET_BASE_DIRECTORY;
 
         /// <summary>
-        /// Gets or sets a base directory used to prevent directory-based path traversal issues.
+        /// Gets or sets the full path and file name of the target file.
         /// </summary>
         public string TargetFileContextName { get; set; } = Files.FileConstants.TARGET_FILE;
+
+        /// <summary>
+        /// Gets or sets the file name of the target file with the file extension.
+        /// </summary>
+        public string TargetFileNameWithExtensionContextName { get; set; } = DirectoryConstants.TARGET_FILE_NAME_WITH_EXTENSION;
+
+        /// <summary>
+        /// Gets or sets the file name of the target file without the file extension.
+        /// </summary>
+        public string TargetFileNameWithoutExtensionContextName { get; set; } = DirectoryConstants.TARGET_FILE_NAME_WO_EXTENSION;
     }
 }

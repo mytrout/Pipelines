@@ -63,5 +63,15 @@ namespace MyTrout.Pipelines.Steps.IO.Directories
         /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the target directory for any directory operations.
         /// </summary>
         public const string TARGET_DIRECTORY_NAME = "PIPELINE_TARGET_DIRECTORY_NAME";
+
+        /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the target file name with extension for enumerate operations.
+        /// </summary>
+        public const string TARGET_FILE_NAME_WITH_EXTENSION = "PIPELINE_TARGET_FILE_WITH_EXTENSION";
+
+        /// <summary>
+        /// Indicates that this <see cref="MyTrout.Pipelines.Core.PipelineContext" /> item is the target file name without extension for enumerate operations.
+        /// </summary>
+        public const string TARGET_FILE_NAME_WO_EXTENSION = "PIPELINE_TARGET_FILE_WO_EXTENSION";
     }
 }

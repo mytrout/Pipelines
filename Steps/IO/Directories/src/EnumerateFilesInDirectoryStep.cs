@@ -47,7 +47,7 @@ namespace MyTrout.Pipelines.Steps.IO.Directories
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.TargetBaseDirectoryPathContextName, this.Options.TargetFileContextName };
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.TargetDirectoryContextName, this.Options.TargetFileContextName };
 
         /// <summary>
         /// Guarantees that all Context Names are valid prior to execution of caching.
@@ -83,14 +83,18 @@ namespace MyTrout.Pipelines.Steps.IO.Directories
 
                 try
                 {
-                    context.Items.Add(this.Options.TargetBaseDirectoryPathContextName, Path.GetDirectoryName(fileName)!);
-                    context.Items.Add(this.Options.TargetFileContextName, Path.GetFileName(fileName)!);
+                    context.Items.Add(this.Options.TargetDirectoryContextName, Path.GetDirectoryName(fileName)!);
+                    context.Items.Add(this.Options.TargetFileContextName, fileName);
+                    context.Items.Add(this.Options.TargetFileNameWithExtensionContextName, Path.GetFileName(fileName)!);
+                    context.Items.Add(this.Options.TargetFileNameWithoutExtensionContextName, Path.GetFileNameWithoutExtension(fileName)!);
                     await this.Next.InvokeAsync(context);
                 }
                 finally
                 {
-                    context.Items.Remove(this.Options.TargetBaseDirectoryPathContextName);
+                    context.Items.Remove(this.Options.TargetDirectoryContextName);
                     context.Items.Remove(this.Options.TargetFileContextName);
+                    context.Items.Remove(this.Options.TargetFileNameWithExtensionContextName);
+                    context.Items.Remove(this.Options.TargetFileNameWithoutExtensionContextName);
                 }
             }
         }
