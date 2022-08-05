@@ -67,6 +67,8 @@ namespace MyTrout.Pipelines.Steps.Data
 
             try
             {
+                var hasReadOneRecord = false;
+
                 using (var connection = this.Options.DbProviderFactory.CreateConnection())
                 {
                     connection.AssertValueIsNotNull(() => Resources.CONNECTION_IS_NULL(this.Options.DbProviderFactory.GetType().Name));
@@ -81,6 +83,7 @@ namespace MyTrout.Pipelines.Steps.Data
                     {
                         if (await reader.ReadAsync().ConfigureAwait(false))
                         {
+                            hasReadOneRecord = true;
                             for (int index = 0; index < reader.FieldCount; index++)
                             {
                                 string fieldName = reader.GetName(index);
@@ -97,17 +100,20 @@ namespace MyTrout.Pipelines.Steps.Data
                                 addedFields.Add(fieldName);
                             }
                         }
-                        else
-                        {
-                            context.Errors.Add(new InvalidOperationException(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep))));
-                        }
                     }
 
 #pragma warning restore CS8602 // AssertValueIsNotNull guarantees a non-null value here.
 
                 } // Closed the connection to prevent any resource leakage into later steps.
 
-                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                if (hasReadOneRecord)
+                {
+                    await this.Next.InvokeAsync(context).ConfigureAwait(false);
+                }
+                else
+                {
+                    context.Errors.Add(new InvalidOperationException(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep))));
+                }
             }
             finally
             {

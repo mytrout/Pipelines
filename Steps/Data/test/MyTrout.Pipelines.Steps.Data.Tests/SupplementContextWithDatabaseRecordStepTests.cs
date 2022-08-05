@@ -111,7 +111,6 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
-        // TODO: BROKEN TEST!
         [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Record_Is_Not_Returned()
         {
@@ -146,8 +145,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
 
-            // assert
-            if (context.Errors.Count > 1)
+            // help with debugging, if needed.
+            if(context.Errors.Count > 1)
             {
                 // Help with debuggging what is going wrong with this test.
                 foreach (var error in context.Errors)
@@ -156,6 +155,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 }
             }
 
+            // assert
             Assert.AreEqual(1, context.Errors.Count);
             Assert.AreEqual(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep)), context.Errors[0].Message);
 
