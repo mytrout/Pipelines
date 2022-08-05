@@ -256,6 +256,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
+        // TODO: BROKEN TEST!
         [TestMethod]
         public async Task Returns_DatabaseRecordsAffected_From_InvokeAsync_When_Multiple_Records_Are_Changed()
         {
@@ -308,8 +309,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 }
 
                 // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
-                Assert.IsTrue(context.Items.ContainsKey(DatabaseConstants.DATABASE_ROWS_AFFECTED));
-                Assert.AreEqual(expectedAffectedRecords, context.Items[DatabaseConstants.DATABASE_ROWS_AFFECTED]);
+                Assert.IsTrue(context.Items.ContainsKey(options.DatabaseRowsAffectedContextName));
+                Assert.AreEqual(expectedAffectedRecords, context.Items[options.DatabaseRowsAffectedContextName]);
             }
             finally
             {

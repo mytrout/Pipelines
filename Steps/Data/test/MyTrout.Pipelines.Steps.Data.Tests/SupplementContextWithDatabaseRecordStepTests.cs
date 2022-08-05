@@ -33,6 +33,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -110,6 +111,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
+        // TODO: BROKEN TEST!
         [TestMethod]
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Record_Is_Not_Returned()
         {
@@ -145,6 +147,15 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             await sut.InvokeAsync(context).ConfigureAwait(false);
 
             // assert
+            if (context.Errors.Count > 1)
+            {
+                // Help with debuggging what is going wrong with this test.
+                foreach (var error in context.Errors)
+                {
+                    Trace.WriteLine(error.ToString());
+                }
+            }
+
             Assert.AreEqual(1, context.Errors.Count);
             Assert.AreEqual(Resources.NO_DATA_FOUND(CultureInfo.CurrentCulture, nameof(SupplementContextWithDatabaseRecordStep)), context.Errors[0].Message);
 
