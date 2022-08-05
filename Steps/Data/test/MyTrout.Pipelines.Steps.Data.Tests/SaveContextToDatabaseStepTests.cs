@@ -89,7 +89,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             };
 
             var context = new PipelineContext();
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+            context.Items.Add(options.DatabaseStatementNameContextName, "StatementName");
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
@@ -136,7 +136,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             };
 
             var context = new PipelineContext();
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+            context.Items.Add(options.DatabaseStatementNameContextName, "StatementName");
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
@@ -161,6 +161,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new SaveContextToDatabaseOptions()
             {
+                DatabaseStatementNameContextName = "DATABASE_STATEMENT_NAME_SOMETHING_ELSE",
                 DbProviderFactory = providerFactory,    
                 SqlStatements = new List<SqlStatement>()
                 {
@@ -183,7 +184,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             }
 
             var context = new PipelineContext();
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+            context.Items.Add(options.DatabaseStatementNameContextName, "StatementName");
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
@@ -239,7 +240,7 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
 
             string missingStatementName = "OASODUJAFPIIO09asd09uoiufhojkshdf";
             var context = new PipelineContext();
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, missingStatementName);
+            context.Items.Add(options.DatabaseStatementNameContextName, missingStatementName);
 
             IPipelineRequest next = new Mock<IPipelineRequest>().Object;
 
@@ -256,7 +257,6 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             Assert.AreEqual(expectedMessage, context.Errors[0].Message);
         }
 
-        // TODO: BROKEN TEST!
         [TestMethod]
         public async Task Returns_DatabaseRecordsAffected_From_InvokeAsync_When_Multiple_Records_Are_Changed()
         {
@@ -266,6 +266,8 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
             var environmentVariableTarget = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
             var options = new SaveContextToDatabaseOptions()
             {
+                DatabaseRowsAffectedContextName = "ROWS_AFFECTED_HARD_METAL",
+                DatabaseStatementNameContextName = "DATABASE_STATEMENT_NAME_HARD_METAL",
                 DbProviderFactory = providerFactory,
                 SqlStatements = new List<SqlStatement>()
                 {
@@ -287,15 +289,29 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 await connection.ExecuteAsync("dbo.CartoonInsert", new { CartoonId = 3, Name = "Wile E. Coyote", Description = null as string }, commandType: System.Data.CommandType.StoredProcedure).ConfigureAwait(false);
             }
 
+            var originalAffectedRecordsCount = 1;
+
             var context = new PipelineContext();
             context.Items.Add("CartoonId", 1);
-            context.Items.Add(DatabaseConstants.DATABASE_STATEMENT_NAME, "StatementName");
+            context.Items.Add(options.DatabaseStatementNameContextName, "StatementName");
+            context.Items.Add(options.DatabaseRowsAffectedContextName, originalAffectedRecordsCount);
 
-            IPipelineRequest next = new Mock<IPipelineRequest>().Object;
+            int expectedAffectedRecords = 2;
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                                .Callback((IPipelineContext context) =>
+                                {
+                                    // assert in the middle.
+                                    // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
+                                    Assert.IsTrue(context.Items.ContainsKey(options.DatabaseRowsAffectedContextName), $"{options.DatabaseRowsAffectedContextName} does not exist in the next's IPipelineContext value.");
+                                    Assert.AreEqual(expectedAffectedRecords, context.Items[options.DatabaseRowsAffectedContextName], $"{options.DatabaseRowsAffectedContextName} does not have the correct AffectedValue in the next's IPipelineContext value.");
+                                })
+                                .Returns(Task.CompletedTask);
+            var next = mockNext.Object;
 
             var sut = new SaveContextToDatabaseStep(logger, options, next);
 
-            int expectedAffectedRecords = 2;
+
 
             // act
             await sut.InvokeAsync(context).ConfigureAwait(false);
@@ -309,8 +325,9 @@ namespace MyTrout.Pipelines.Steps.Data.Tests
                 }
 
                 // Checking to make sure that the Context was restored to its original state after the Step execution is completed.
-                Assert.IsTrue(context.Items.ContainsKey(options.DatabaseRowsAffectedContextName));
-                Assert.AreEqual(expectedAffectedRecords, context.Items[options.DatabaseRowsAffectedContextName]);
+                Assert.IsTrue(context.Items.ContainsKey(options.DatabaseRowsAffectedContextName), $"{options.DatabaseRowsAffectedContextName} does not exist in the next's IPipelineContext value.");
+                Assert.AreEqual(originalAffectedRecordsCount, context.Items[options.DatabaseRowsAffectedContextName], $"{options.DatabaseRowsAffectedContextName} does not have the correct originalAffectedValue in the next's IPipelineContext value.");
+
             }
             finally
             {
