@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 3.1.0
+- Upgrade Azure.Storage.Blobs from 12.10.0 to 12.13.0 to address security vulnerability.
+
 ## 3.0.0
 ### BREAKING CHANGES:
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
