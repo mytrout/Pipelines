@@ -2,6 +2,7 @@
 
 ## 3.1.1
 - Correct 9 SonarQube issues.
+- Update SonarQube Analyzer from 1.2.0-beta.376  to 1.2.0-beta.435 to remove faulty SA1009 warnings. (see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3098)
 
 ## 3.1.0
 - Upgrade Azure.Storage.Blobs from 12.10.0 to 12.13.0 to address security vulnerability.
