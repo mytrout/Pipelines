@@ -49,7 +49,8 @@ namespace MyTrout.Pipelines.Steps.Data
             // no op
         }
 
-        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.DatabaseRowsAffectedContextName}
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.DatabaseRowsAffectedContextName };
 
         /// <summary>
         /// When downstream processing is completed, writes any context values that are configured to be written to the database.
