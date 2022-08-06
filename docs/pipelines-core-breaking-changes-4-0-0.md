@@ -34,8 +34,7 @@ Ergo, ParameterCreationDelegate moved to the MyTrout.Pipelines namespace.
 
 ParameterCreationDelegate also relied on the class ParameterCreationResult, so that class moved with ParameterCreationDelegate to the MyTrout.Pipelines namespace.
 
-The logger parameter of ParameterCreationDelegate was defined in terms of ILogger<StepActivator>.  StepActivator was located in the MyTrout.Pipelines.Core which again
-required a change. ParameterCreationDelegate's logger parameter was altered from ILogger<StepActivator> to ILogger<IStepActivator>.
+The logger parameter of ParameterCreationDelegate was defined in terms of ILogger&lt;StepActivator&gt;StepActivator was located in the MyTrout.Pipelines.Core which again required a change. ParameterCreationDelegate's logger parameter was altered from ILogger&lt;StepActivator&gt; to ILogger&lt;IStepActivator&gt;.
   
 Once the ParameterCreationDelegate's parameters were changed, all of the currently implemented methods that matched the ParameterCreationDelegates parameter list
 were changed:
