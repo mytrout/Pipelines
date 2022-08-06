@@ -11,9 +11,9 @@ If three steps named M1, M2, and M3 were added to the Pipeline, here is the exec
 
 The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
 
-## BREAKING CHANGES INTRODUCED WITH 3.0.0
+## BREAKING CHANGES INTRODUCED WITH 4.0.0
 
-See [Breaking Changes for 3.0.0](./docs/pipelines-core-breaking-changes-3-0-0.md)
+See [Breaking Changes for 4.0.0](./docs/pipelines-core-breaking-changes-4-0-0.md)
 
 ## Installing via NuGet
 
