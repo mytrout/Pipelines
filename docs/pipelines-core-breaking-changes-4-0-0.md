@@ -8,11 +8,11 @@ As each .NET version reaches end-of-life, the project will release a major versi
 At most, three .NET versions will be supported simultaneously.
 
 .NET 8.0 will release in NOVEMBER 2023.
-The libraries should be upgraded (with a Minor Release) to include .NET 8.0 in NOVEMBER/DECEMBER 2023.
+The libraries should be upgraded with a MINOR Release to include .NET 8.0 in NOVEMBER/DECEMBER 2023.
 This Minor Release will support .NET 6.0, .NET 7.0, and .NET 8.0
 
 .NET 7.0 will end-of-life in MAY 2024.
-The libraries should be upgraded (with a Minor Release) to remove .NET in MAY 2024.
+The libraries should be upgraded with a MINOR Release to remove .NET 7.0 in MAY 2024.
 This Minor Release will support .NET 6.0 and .NET 8.0.
 
 .NET 6.0 will end-of-life in NOVEMBER 2024
@@ -21,7 +21,7 @@ The libraries will be upgraded with a MAJOR release to remove .NET 6.0 and add .
 This MAJOR release will support .NET 8.0 and .NET 9.0
 
 .NET 10 will release in NOVEMBER 2025.
-The libraries should be upgraded (with a Minor Release) to include .NET 10.0 in NOVEMBER/DECEMBER 2025.
+The libraries should be upgraded with a MINOR Release to include .NET 10.0 in NOVEMBER/DECEMBER 2025.
 This Minor Release will support .NET 8.0, .NET 9.0, and .NET 10.0
 
 
