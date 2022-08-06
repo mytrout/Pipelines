@@ -74,13 +74,9 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         {
             string connectionString = await this.Options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 
-#pragma warning disable CS8600 // Assert~ methods guarantee non-null values.
+            string sourceContainer = (context.Items[this.Options.SourceContainerNameContextName] as string)!;
 
-            string sourceContainer = context.Items[this.Options.SourceContainerNameContextName] as string;
-
-            string sourceBlob = context.Items[this.Options.SourceBlobContextName] as string;
-
-#pragma warning restore CS8600
+            string sourceBlob = (context.Items[this.Options.SourceBlobContextName] as string)!;
 
             var client = new BlobContainerClient(connectionString, sourceContainer);
 
@@ -116,6 +112,5 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
 
             await Task.CompletedTask.ConfigureAwait(false);
         }
-
     }
 }

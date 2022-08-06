@@ -39,6 +39,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             var inputStreamContextName = "INPUT_STREAM";
             var sourceBlobContextName = "SOURCE_BLOB";
             var sourceContainerNameContextName = "SOURCE_CONTAINER";
+
             // act
             var result = new ReadStreamFromBlobStorageOptions
             {
