@@ -27,7 +27,7 @@ namespace MyTrout.Pipelines.Steps.Data
     using Dapper;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Data.Common;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -35,7 +35,7 @@ namespace MyTrout.Pipelines.Steps.Data
     /// <summary>
     ///  Saves data from the <see cref="IPipelineContext"/> to the database after downstream processing is completed.
     /// </summary>
-    public class SaveContextToDatabaseStep : AbstractPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
+    public class SaveContextToDatabaseStep : AbstractCachingPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SaveContextToDatabaseStep"/> class with the specified options.
@@ -49,12 +49,14 @@ namespace MyTrout.Pipelines.Steps.Data
             // no op
         }
 
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.DatabaseRowsAffectedContextName}
+
         /// <summary>
         /// When downstream processing is completed, writes any context values that are configured to be written to the database.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
             context.AssertStringIsNotWhiteSpace(this.Options.DatabaseStatementNameContextName);
 
