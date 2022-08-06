@@ -16,7 +16,7 @@
 ## Introduction
 MyTrout.Pipelines.Steps.Data provides Pipeline steps to persist data to a database from the IPipelineContext and read data from a database and put it in the IPipelineContext.
 
-MyTrout.Pipelines.Steps.Data targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
+MyTrout.Pipelines.Steps.Data targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) and [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0).
 
 For more details on Pipelines, see [Pipelines.Core](../../Core/README.md)
 
@@ -34,8 +34,8 @@ For a list of available steps, see [Available Steps](../README.md)
 
 ## Software dependencies
 
-    1. Dapper - 2.0.78 or higher, but lower than 3.0.0
-    2. MyTrout.Pipelines - 3.0.1 or higher, but lower than 3.1
+    1. Dapper - 2.0.123 or higher, but lower than 3.0.0
+    2. MyTrout.Pipelines - 4.0.0 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

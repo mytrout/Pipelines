@@ -24,10 +24,13 @@
 
 namespace MyTrout.Pipelines.Steps.Data
 {
+    using MyTrout.Pipelines.Core;
     using System;
     using System.Collections.Generic;
+    using System.Data.Common;
     using System.Threading.Tasks;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     /// <summary>
     /// Provides user-configurable options for the <see cref="SaveContextToDatabaseStep" /> step.
     /// </summary>
@@ -45,6 +48,22 @@ namespace MyTrout.Pipelines.Steps.Data
         /// Gets or sets the connection string used to connect to the database.
         /// </summary>
         public string DatabaseConnectionString { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Database statement context name.
+        /// </summary>
+        public string DatabaseStatementNameContextName { get; set; } = DatabaseConstants.DATABASE_STATEMENT_NAME;
+
+        /// <summary>
+        /// Gets or sets the context name used to record the number of rows affected.
+        /// </summary>
+        public string DatabaseRowsAffectedContextName { get; set; } = DatabaseConstants.DATABASE_ROWS_AFFECTED;
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbProviderFactory"/> used by this step.
+        /// </summary>
+        [FromServices]
+        public DbProviderFactory DbProviderFactory { get; set; }
 
         /// <summary>
         /// Gets or sets the Sql Statements that can be executed by this step.
@@ -65,4 +84,5 @@ namespace MyTrout.Pipelines.Steps.Data
             return Task.FromResult(this.DatabaseConnectionString);
         }
     }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
