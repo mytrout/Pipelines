@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32427.441
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BF0C7AEF-C080-49F6-88EC-0D61EE871C8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3E8984C5-2F33-4E58-942D-2AFEC3CAA2C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Serialization.Core", "src\MyTrout.Pipelines.Steps.Serialization.Core.csproj", "{A443FF92-4E4B-4360-A254-EB77EC76B660}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{328A3271-EBAD-407E-B4E4-6A9DEE6D0504}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-serialization-core.yaml = ..\..\..\.github\workflows\build-pipelines-steps-serialization-core.yaml
+		changelog.md = changelog.md
+		License.md = License.md
+		README.md = README.md
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Serialization.Core.Tests", "test\MyTrout.Pipelines.Steps.Serialization.Core.Tests.csproj", "{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A443FF92-4E4B-4360-A254-EB77EC76B660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A443FF92-4E4B-4360-A254-EB77EC76B660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A443FF92-4E4B-4360-A254-EB77EC76B660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A443FF92-4E4B-4360-A254-EB77EC76B660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A443FF92-4E4B-4360-A254-EB77EC76B660} = {BF0C7AEF-C080-49F6-88EC-0D61EE871C8E}
+		{63BA885A-04AD-4EBB-BE4E-DD8EE4E4307E} = {3E8984C5-2F33-4E58-942D-2AFEC3CAA2C7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8915243B-CB0A-4E86-BF47-B60696475816}
+	EndGlobalSection
+EndGlobal
