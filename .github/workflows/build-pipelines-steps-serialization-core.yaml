@@ -82,7 +82,7 @@ jobs:
       - name: End Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
-        if: ${{ github.ref == 'refs/heads/master' && github.actor != 'dependabot[bot]' }}
+        if: ${{ github.actor != 'dependabot[bot]' }}
 
       - name: Upload nupkg
         uses: actions/upload-artifact@v2
@@ -93,9 +93,9 @@ jobs:
         if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
         
       - name: Publish the package to nuget.org.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.Core"
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
         if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to GitHub.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.Core"
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
         if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
