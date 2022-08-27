@@ -1,6 +1,6 @@
 # MyTrout.Pipelines.Steps.Serialization.Json
 
-[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-communications-http.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-communications-http.yaml)
+[![Build Status](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-serialization-json.yaml/badge.svg)](https://github.com/mytrout/Pipelines/actions/workflows/build-pipelines-steps-serialization-json.yaml)
 [![nuget](https://buildstats.info/nuget/MyTrout.Pipelines.Steps.Serialization.Json?includePreReleases=true)](https://www.nuget.org/packages/MyTrout.Pipelines.Steps.Serialization.Json/)
 [![GitHub stars](https://img.shields.io/github/stars/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/mytrout/Pipelines.svg)](https://github.com/mytrout/Pipelines/network)
@@ -31,5 +31,6 @@ For a list of available steps, see [Available Steps](../../README.md)
 ## Software dependencies
 
     1. MyTrout.Pipelines 4.0.0 minimum
+    2. MyTrout.Pipelines.Steps.Serialization.Core 1.0.0 minimum.
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
