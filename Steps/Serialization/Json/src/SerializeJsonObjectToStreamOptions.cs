@@ -1,4 +1,4 @@
-﻿// <copyright file="SerializeObjectToStreamOptions.cs" company="Chris Trout">
+﻿// <copyright file="SerializeJsonObjectToStreamOptions.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -25,29 +25,28 @@
 namespace MyTrout.Pipelines.Steps.Serialization.Json
 {
     using MyTrout.Pipelines.Core;
-    using System;
+    using System.IO;
     using System.Text.Json;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Provides user-configuration options to alter the behavior of the <see cref="SerializeObjectToStreamStep{TObject}"/>.
     /// </summary>
-    [Obsolete("Use the MyTrout.Pipelines.Steps.Serialization.Core library containing SerializeObjectToStreamStep<TObject> and the SerializeJsonObjectToStreamOptions from this library.")]
-    public class SerializeObjectToStreamOptions
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SerializeJsonObjectToStreamOptions : AbstractSerializeObjectToStreamOptions
     {
-        /// <summary>
-        /// Gets or sets the name that intput object will be read from the <see cref="PipelineContext.Items"/>.
-        /// </summary>
-        public string InputObjectContextName { get; set; } = PipelineContextConstants.INPUT_OBJECT;
-
         /// <summary>
         /// Gets or sets the options used by <see cref="JsonSerializer"/>.
         /// </summary>
         [FromServices]
         public JsonSerializerOptions JsonSerializerOptions { get; set; } = new JsonSerializerOptions();
 
-        /// <summary>
-        /// Gets or sets the name that output stream will be added tog the <see cref="PipelineContext.Items"/>.
-        /// </summary>
-        public string OutputStreamContextName { get; set; } = PipelineContextConstants.OUTPUT_STREAM;
+        /// <inheritdoc />
+        public async override Task SerializeAsync<TObject>(Stream outputStream, TObject inputObject, CancellationToken cancellationToken)
+            where TObject : class
+        {
+            await JsonSerializer.SerializeAsync(outputStream, inputObject, this.JsonSerializerOptions, cancellationToken);
+        }
     }
 }

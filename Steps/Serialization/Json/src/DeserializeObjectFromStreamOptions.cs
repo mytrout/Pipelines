@@ -25,11 +25,13 @@
 namespace MyTrout.Pipelines.Steps.Serialization.Json
 {
     using MyTrout.Pipelines.Core;
+    using System;
     using System.Text.Json;
 
     /// <summary>
     /// Provides user-configuration options to alter the behavior of <see cref="DeserializeObjectFromStreamStep{TObject}"/>.
     /// </summary>
+    [Obsolete("Use the MyTrout.Pipelines.Steps.Serialization.Core library containing DeserializeObjectToStreamStep<TObject> and the DeserializeJsonObjectFromStreamOptions from this library.")]
     public class DeserializeObjectFromStreamOptions
     {
         /// <summary>

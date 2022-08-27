@@ -27,6 +27,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
     using MyTrout.Pipelines.Core;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text.Json;
@@ -37,6 +38,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json
     /// </summary>
     /// <typeparam name="TObject">The target object for deserialization.
     /// </typeparam>
+    [Obsolete("Use the MyTrout.Pipelines.Steps.Serialization.Core library containing DeserializeObjectToStreamStep<TObject> and the DeserializeJsonObjectFromStreamOptions from this library.")]
     public class DeserializeObjectFromStreamStep<TObject> : AbstractCachingPipelineStep<DeserializeObjectFromStreamStep<TObject>, DeserializeObjectFromStreamOptions>
         where TObject : class
     {

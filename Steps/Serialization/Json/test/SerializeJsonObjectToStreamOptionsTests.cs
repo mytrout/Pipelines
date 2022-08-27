@@ -1,4 +1,4 @@
-// <copyright file="SerializeObjectToStreamStepTests.cs" company="Chris Trout">
+﻿// <copyright file="SerializeJsonObjectToStreamOptionsTests.cs" company="Chris Trout">
 // MIT License
 //
 // Copyright(c) 2022 Chris Trout
@@ -28,70 +28,39 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using MyTrout.Pipelines.Core;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
+    using CORE = MyTrout.Pipelines.Steps.Serialization;
 
-#pragma warning disable CS0618
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class SerializeObjectToStreamStepTests
+    public class SerializeJsonObjectToStreamOptionsTests
     {
         [TestMethod]
-        public void Constructs_SerializeObjectToStreamStep_Successfully()
+        public void Constructs_SerializeJsonObjectToStreamOptions_Successfully()
         {
             // arrange
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<object>>>().Object;
-            var options = new SerializeObjectToStreamOptions();
-            var next = new Mock<IPipelineRequest>().Object;
+            var options = new System.Text.Json.JsonSerializerOptions();
 
             // act
-            var result = new SerializeObjectToStreamStep<object>(logger, options, next);
+            var sut = new SerializeJsonObjectToStreamOptions() { JsonSerializerOptions = options };
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(logger, result.Logger);
-            Assert.AreEqual(options, result.Options);
-            Assert.AreEqual(next, result.Next);
-        }
-
-        [TestMethod]
-        public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_InputObject_Is_Not_In_Context()
-        {
-            // arrange
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<object>>>().Object;
-            var options = new SerializeObjectToStreamOptions();
-            var next = new Mock<IPipelineRequest>().Object;
-
-            var context = new PipelineContext();
-
-            var expectedErrorCount = 1;
-
-            var expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, PipelineContextConstants.INPUT_OBJECT);
-
-            using (var sut = new SerializeObjectToStreamStep<object>(logger, options, next))
-            {
-                // act
-                await sut.InvokeAsync(context);
-            }
-
-            // assert
-            Assert.AreEqual(expectedErrorCount, context.Errors.Count);
-            Assert.AreEqual(expectedMessage, context.Errors[0].Message);
+            Assert.IsNotNull(sut);
+            Assert.AreEqual(options, sut.JsonSerializerOptions);
         }
 
         [TestMethod]
         public async Task Returns_PipelineContext_From_InvokeAsync_When_Next_Step_Verifies_Values_Passed_Downstream()
         {
-                // arrange
+            // arrange
             var context = new PipelineContext();
             var expectedInputObject = new SampleItem() { ConnectionString = "value" };
             var expectedContents = "{\"ConnectionString\":\"value\"}";
 
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
-            var options = new SerializeObjectToStreamOptions();
+            var logger = new Mock<ILogger<CORE.SerializeObjectToStreamStep<SampleItem>>>().Object;
+            var options = new SerializeJsonObjectToStreamOptions();
 
             var nextMock = new Mock<IPipelineRequest>();
             nextMock.Setup(x => x.InvokeAsync(context))
@@ -120,7 +89,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             var expectedErrorCount = 0;
 
-            using (var sut = new SerializeObjectToStreamStep<SampleItem>(logger, options, next))
+            using (var sut = new CORE.SerializeObjectToStreamStep<SampleItem>(logger, options, next))
             {
                 // act
                 await sut.InvokeAsync(context);
@@ -143,8 +112,8 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             var expectedInputObject = new SampleItem() { ConnectionString = "value" };
             var expectedContents = "{\"ConnectionString\":\"value\"}";
 
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
-            var options = new SerializeObjectToStreamOptions()
+            var logger = new Mock<ILogger<CORE.SerializeObjectToStreamStep<SampleItem>>>().Object;
+            var options = new SerializeJsonObjectToStreamOptions()
             {
                 InputObjectContextName = "TESTING_OTHER_INPUT_OBJECT",
                 OutputStreamContextName = "TESTING_OTHER_OUTPUT_STREAM"
@@ -177,7 +146,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             var expectedErrorCount = 0;
 
-            using (var sut = new SerializeObjectToStreamStep<SampleItem>(logger, options, next))
+            using (var sut = new CORE.SerializeObjectToStreamStep<SampleItem>(logger, options, next))
             {
                 // act
                 await sut.InvokeAsync(context);
@@ -199,8 +168,8 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             var context = new PipelineContext();
             var expectedInputObject = new SampleItem() { ConnectionString = "value" };
 
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
-            var options = new SerializeObjectToStreamOptions();
+            var logger = new Mock<ILogger<CORE.SerializeObjectToStreamStep<SampleItem>>>().Object;
+            var options = new SerializeJsonObjectToStreamOptions();
 
             var nextMock = new Mock<IPipelineRequest>();
             nextMock.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
@@ -211,7 +180,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             var expectedErrorCount = 0;
 
-            using (var sut = new SerializeObjectToStreamStep<SampleItem>(logger, options, next))
+            using (var sut = new CORE.SerializeObjectToStreamStep<SampleItem>(logger, options, next))
             {
                 // act
                 await sut.InvokeAsync(context);
@@ -225,37 +194,5 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
 
             Assert.AreEqual(expectedErrorCount, context.Errors.Count);
         }
-
-        [TestMethod]
-        public async Task Returns_PipelineContext_From_InvokeAsync_With_Previously_Configured_Values_Restored()
-        {
-            // arrange
-            var context = new PipelineContext();
-            var inputObject = new SampleItem() { ConnectionString = "value" };
-
-            var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
-            var options = new SerializeObjectToStreamOptions();
-
-            var nextMock = new Mock<IPipelineRequest>();
-            nextMock.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
-
-            var next = nextMock.Object;
-
-            context.Items.Add(options.InputObjectContextName, inputObject);
-
-            var expectedItemCount = context.Items.Count;
-
-            using (var sut = new SerializeObjectToStreamStep<SampleItem>(logger, options, next))
-            {
-                // act
-                await sut.InvokeAsync(context);
-            }
-
-            // assert
-            Assert.AreEqual(expectedItemCount, context.Items.Count);
-            Assert.IsTrue(context.Items.ContainsKey(options.InputObjectContextName));
-            Assert.AreEqual(inputObject, context.Items[options.InputObjectContextName]);
-        }
     }
-#pragma warning restore CS0618
 }
