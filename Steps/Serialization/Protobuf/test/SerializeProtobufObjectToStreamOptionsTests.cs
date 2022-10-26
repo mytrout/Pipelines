@@ -96,7 +96,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Protobuf.Tests
             // arrange
             var context = new PipelineContext();
             var expectedInputObject = new SampleItem() { ConnectionString = "value", CreatedDate = DateTime.MinValue, CreatedById = 1000 };
-            
+
             var expectedContents = "CgV2YWx1ZRIECAEQDxjoBw==";
 
             var logger = new Mock<ILogger<SerializeObjectToStreamStep<SampleItem>>>().Object;
