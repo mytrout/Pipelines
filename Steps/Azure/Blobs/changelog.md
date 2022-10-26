@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 3.1.2
+- Suppress remaining 2 SonarQube issues.
+
 ## 3.1.1
 - Correct 9 SonarQube issues.
 - Update SonarQube Analyzer from 1.2.0-beta.376  to 1.2.0-beta.435 to remove faulty SA1009 warnings. (see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3098)
