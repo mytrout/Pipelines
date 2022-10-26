@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 3.1.3
+- Suppress remaining 4 SonarQube issues.
+
 ## 3.1.2
 - Suppress remaining 2 SonarQube issues.
 
