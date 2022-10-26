@@ -74,11 +74,11 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         {
             string connectionString = await this.Options.RetrieveConnectionStringAsync().ConfigureAwait(false);
 
-#pragma disable SA1009
+#pragma warning disable SA1009
             string sourceContainer = (context.Items[this.Options.SourceContainerNameContextName] as string)!;
 
             string sourceBlob = (context.Items[this.Options.SourceBlobContextName] as string)!;
-#pragma restore SA1009
+#pragma warning restore SA1009
 
             var client = new BlobContainerClient(connectionString, sourceContainer);
 
