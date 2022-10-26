@@ -92,7 +92,7 @@ jobs:
           path: ${{ env.WORKING_DIRECTORY }}/**/coverage.xml
           
       - name: Upload nupkg
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
