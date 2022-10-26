@@ -1,7 +1,7 @@
 // <copyright file="ReadStreamFromBlobStorageStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -371,6 +371,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs.Tests
             {
                 throw context.Errors[0];
             }
+
             Assert.AreEqual(expectedItemCount, context.Items.Count);
             Assert.IsTrue(context.Items.ContainsKey(BlobConstants.SOURCE_BLOB), "SOURCE_BLOB does not exist in PipelineContext.Items after execution.");
             Assert.AreEqual(blobName, context.Items[BlobConstants.SOURCE_BLOB], "SOURCE_BLOB value does not match expected value after execution.");

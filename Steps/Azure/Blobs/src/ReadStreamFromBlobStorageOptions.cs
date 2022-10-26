@@ -61,7 +61,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         public string SourceBlobContextName { get; set; } = BlobConstants.SOURCE_BLOB;
 
         /// <summary>
-        /// /// Gets or sets the context name for container containing the source blob.
+        /// Gets or sets the context name for container containing the source blob.
         /// </summary>
         public string SourceContainerNameContextName { get; set; } = BlobConstants.SOURCE_CONTAINER_NAME;
 

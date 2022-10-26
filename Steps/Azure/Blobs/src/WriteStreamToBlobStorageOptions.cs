@@ -36,7 +36,6 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
     /// </summary>
     public class WriteStreamToBlobStorageOptions
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WriteStreamToBlobStorageOptions"/> class.
         /// </summary>
@@ -56,7 +55,7 @@ namespace MyTrout.Pipelines.Steps.Azure.Blobs
         public string TargetBlobContextName { get; set; } = BlobConstants.TARGET_BLOB;
 
         /// <summary>
-        /// /// Gets or sets the context name for container containing the target blob.
+        /// Gets or sets the context name for container containing the target blob.
         /// </summary>
         public string TargetContainerNameContextName { get; set; } = BlobConstants.TARGET_CONTAINER_NAME;
 
