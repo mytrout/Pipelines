@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup .NET Core SDK 6.0.x and 7.0.x
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3.0.2
         with:
           dotnet-version: |
             6.0.x
@@ -60,7 +60,7 @@ jobs:
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
       - name: Install Sonar global tool
         run: dotnet tool install --global dotnet-sonarscanner
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: Begin Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -83,7 +83,7 @@ jobs:
       - name: End Sonar scan
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
-        if: ${{ github.actor != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: Upload nupkg
         uses: actions/upload-artifact@v3
