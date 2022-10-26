@@ -117,7 +117,7 @@ jobs:
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
-          credentials: ${{ secrets.MYTROUT_AZURE_TOKEN }}
+          creds: ${{ secrets.MYTROUT_AZURE_TOKEN }}
         
       - name: 'Deploy Azure Resource Group'
         uses: Azure/arm-deploy@v1
