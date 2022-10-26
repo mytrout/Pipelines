@@ -1,0 +1,9 @@
+1. Open Azure Active Directory in Azure Portal UI.
+2. In the Manage section on the left side Navigation, select App Registrations.
+3. Select the "GITHUB_ACTIONS_2023" App Registration.
+4. In the Manage section on the left side Navigation, select Certificates and Secrets.
+5. Click + Add New Client Secret.
+6. Enter a new secret name with a long expiration date.
+7. Click the Add Button.
+8. Copy the value from the screen.
+9. 
