@@ -1,5 +1,9 @@
 # MyTrout.Pipelines.Steps.IO.Directories Change Log
 
+## 1.0.2
+- Update SonarCloud with latest statistics.
+- This version will NOT be uploaded to nuget or the github internal nuget package repository.
+
 ## 1.0.1
 - Correct the v1.0.0 changelog text.
 - Remove the Microsoft.Extensions.Logging.Abstractions v7.0.0-preview.5.22301.12 reference to remove build warning and because it is unused.
