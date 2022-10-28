@@ -162,6 +162,7 @@ jobs:
         with:
           path: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/net5.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}Password=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD}};
+          action: 'publish'
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
   azure-post-processing:
