@@ -1,5 +1,10 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.0.2 - SONARCLOUD UPDATE ONLY
+- Rebuild with a new version number after renaming the master branch in SonarCloud.
+- Prevent the publish to nuget.org as it isn't necessary.
+- NOTE TO DEVELOPERS: Developers must reverse the removal of nuget and github publishing when the next version is ready to be released.
+
 ## 4.0.1
 - Add PipelineContextValidationExtension to check object existence without casting it.
 - Add new step MoveInputObjectToOutputObjectStep to perform default renaming easily.
