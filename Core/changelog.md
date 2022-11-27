@@ -2,6 +2,7 @@
 
 ## 4.0.2
 - SonarQube ignored the ExcludeFromCodeCoverage on the FromServicesAttribute, so unit tests were delivered.
+- Change the push branch in the build yaml from master to main.
 
 ## 4.0.1
 - Add PipelineContextValidationExtension to check object existence without casting it.
