@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.0.2
+- SonarQube ignored the ExcludeFromCodeCoverage on the FromServicesAttribute, so unit tests were delivered.
+
 ## 4.0.1
 - Add PipelineContextValidationExtension to check object existence without casting it.
 - Add new step MoveInputObjectToOutputObjectStep to perform default renaming easily.
