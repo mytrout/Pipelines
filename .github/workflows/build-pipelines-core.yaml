@@ -3,7 +3,7 @@ name: MyTrout.Pipelines
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '.github/workflows/build-pipelines-core.yaml'
       - '**/Pipelines/Core/**/*.*'
