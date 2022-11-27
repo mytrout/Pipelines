@@ -1,7 +1,7 @@
 ﻿// <copyright file="RenameContextItemStepTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -246,6 +246,66 @@ namespace MyTrout.Pipelines.Steps.Tests
         }
 
         [TestMethod]
+        public async Task Returns_Without_Error_When_Collision_Prevention_Is_On_And_Value_Would_Collide()
+        {
+            // arrange
+            int errorCount = 0;
+
+            ILogger<RenameContextItemStep> logger = new Mock<ILogger<RenameContextItemStep>>().Object;
+
+            string originalKey1 = "PIPELINE_VALUE_1";
+            string originalKey2 = "PIPELINE_VALUE_2";
+            string originalKey3 = "PIPELINE_VALUE_3";
+
+            string expectedKey1 = "PIPELINE_RENAMED_VALUE_1";
+            string expectedKey2 = "PIPELINE_RENAMED_VALUE_2";
+            string expectedKey3 = "PIPELINE_RENAMED_VALUE_3";
+
+            var options = new RenameContextItemOptions()
+            {
+                // Guarantees that the pipeline variable name doesn't exist.
+                RenameValues = new Dictionary<string, string>()
+                {
+                    { originalKey1, expectedKey1 },
+                    { originalKey2, expectedKey2 },
+                    { originalKey3, expectedKey3 }
+                }
+            };
+
+            string expectedValue1 = "Something to believe in.";
+            string expectedValue2 = "Poison";
+
+            var mockRequest = new Mock<IPipelineRequest>();
+            mockRequest.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>()));
+
+            using (IPipelineRequest next = mockRequest.Object)
+            {
+                // act
+                using (var step = new RenameContextItemStep(logger, options, next))
+                {
+                    var context = new PipelineContext();
+                    context.Items.Add(originalKey1, expectedValue1);
+                    context.Items.Add(originalKey2, expectedValue2);
+                    context.Items.Add(expectedKey1, expectedValue1);
+                    var contextName = Guid.NewGuid().ToString();
+                    var contextValue = Guid.NewGuid();
+                    context.Items.Add(contextName, contextValue);
+
+                    int expectedItemsCount = 4;
+
+                    await step.InvokeAsync(context);
+
+                    // assert
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+
+                    Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                    Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                    Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Throws_ArgumentNullException_From_Constructor_When_Logger_Parameter_Is_Null()
         {
             // arrange
@@ -322,6 +382,66 @@ namespace MyTrout.Pipelines.Steps.Tests
                     // assert
                     Assert.IsNotNull(result);
                     Assert.AreEqual(expectedParamName, result.ParamName);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Throws_ArgumentException_When_Collision_Prevention_Is_Off_And_Value_Collides()
+        {
+            // arrange
+            int errorCount = 1;
+
+            ILogger<RenameContextItemStep> logger = new Mock<ILogger<RenameContextItemStep>>().Object;
+
+            string originalKey1 = "PIPELINE_VALUE_1";
+            string originalKey2 = "PIPELINE_VALUE_2";
+            string originalKey3 = "PIPELINE_VALUE_3";
+
+            string expectedKey1 = "PIPELINE_RENAMED_VALUE_1";
+            string expectedKey2 = "PIPELINE_RENAMED_VALUE_2";
+            string expectedKey3 = "PIPELINE_RENAMED_VALUE_3";
+
+            var options = new RenameContextItemOptions()
+            {
+                // Guarantees that the pipeline variable name doesn't exist.
+                PreventCollisionsWithRenamedValueNamesEnvironmentVariableName = Guid.NewGuid().ToString(),
+                RenameValues = new Dictionary<string, string>()
+                {
+                    { originalKey1, expectedKey1 },
+                    { originalKey2, expectedKey2 },
+                    { originalKey3, expectedKey3 }
+                }
+            };
+
+            string expectedValue1 = "Something to believe in.";
+            string expectedValue2 = "Poison";
+
+            var mockRequest = new Mock<IPipelineRequest>();
+            mockRequest.Setup(x => x.InvokeAsync(It.IsAny<IPipelineContext>()));
+
+            using (IPipelineRequest next = mockRequest.Object)
+            {
+                // act
+                using (var step = new RenameContextItemStep(logger, options, next))
+                {
+                    var context = new PipelineContext();
+                    context.Items.Add(originalKey1, expectedValue1);
+                    context.Items.Add(originalKey2, expectedValue2);
+                    context.Items.Add(expectedKey1, expectedValue1);
+                    var contextName = Guid.NewGuid().ToString();
+                    var contextValue = Guid.NewGuid();
+                    context.Items.Add(contextName, contextValue);
+
+                    int expectedItemsCount = 4;
+
+                    await step.InvokeAsync(context);
+
+                    // assert
+                    Assert.AreEqual(errorCount, context.Errors.Count);
+
+                    Assert.IsInstanceOfType(context.Errors[0], typeof(ArgumentException));
+                    Assert.AreEqual("An item with the same key has already been added. Key: PIPELINE_RENAMED_VALUE_1", context.Errors[0].Message);
                 }
             }
         }

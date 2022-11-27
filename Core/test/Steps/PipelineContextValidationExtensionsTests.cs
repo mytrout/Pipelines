@@ -1,7 +1,7 @@
 // <copyright file="PipelineContextValidationExtensionsTests.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,24 @@ namespace MyTrout.Pipelines.Steps.Tests
             context.AssertStringIsNotWhiteSpace(key);
 
             // assert - No assertions are necessary.  If no exception is thrown, the parameter is not null.
+        }
+
+        [TestMethod]
+        public void Returns_From_AssertValueExists_When_ExpectedValue_Exists()
+        {
+            // arrange
+            PipelineContext context = new PipelineContext();
+            using (Stream expectedValue = new MemoryStream())
+            {
+                string key = "key";
+
+                context.Items.Add(key, expectedValue);
+
+                // act
+                context.AssertValueExists(key);
+
+                // assert - No assertions are necessary.  If no exception is thrown, the parameter is not null.
+            }
         }
 
         [TestMethod]
@@ -194,6 +212,22 @@ namespace MyTrout.Pipelines.Steps.Tests
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedParamName, result.ParamName);
+        }
+
+        [TestMethod]
+        public void Throws_InvalidOperationException_From_AssertValueExists_When_Key_Does_Not_Exist_In_Context()
+        {
+            // arrange
+            PipelineContext source = new PipelineContext();
+            string key = "key";
+            string expectedMessage = Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, key);
+
+            // act
+            var result = Assert.ThrowsException<InvalidOperationException>(() => source.AssertValueExists(key));
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedMessage, result.Message);
         }
 
         [TestMethod]

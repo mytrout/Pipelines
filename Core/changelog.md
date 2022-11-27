@@ -1,5 +1,12 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.0.1
+- Add PipelineContextValidationExtension to check object existence without casting it.
+- Add new step MoveInputObjectToOutputObjectStep to perform default renaming easily.
+- Add new step MoveOutputObjectToInputObjectStep to perform default renaming easily.
+- Add an Environment Variable named 'PIPELINES_PreventCollisionsWithRenamedValueNames' to control default behavior for MoveInput~ToOutput~Steps.  
+
+See [Documentation around 4.0.1](../docs/pipelines-core-4-0.1.md) for more information.
 
 ## 4.0.0 - BREAKING CHANGES
 - Alter IStepActivator interface to include the ParameterCreators property to allow developers to reconfigure the parameter creation behavior.
