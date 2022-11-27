@@ -77,15 +77,15 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Provides_InputObject_In_InvokeAsync_To_DownObject_Callers()
         {
             // arrange
-            using (var Object = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 var context = new PipelineContext();
-                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, Object);
+                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, stream);
 
                 ILogger<MoveOutputObjectToInputObjectStep> logger = new Mock<ILogger<MoveOutputObjectToInputObjectStep>>().Object;
                 var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context))
-                                        .Callback(() => MoveOutputObjectToInputObjectStepTests.Validate_Context(context, Object))
+                                        .Callback(() => MoveOutputObjectToInputObjectStepTests.Validate_Context(context, stream))
                                         .Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
@@ -98,7 +98,7 @@ namespace MyTrout.Pipelines.Steps.Tests
                     Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_OBJECT), "OUTPUT_OBJECT should exist in the Pipeline context.");
                     Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "INPUT_OBJECT should not exist in the Pipeline context.");
 
-                    Assert.AreEqual(Object, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
                 }
             }
         }
@@ -108,10 +108,10 @@ namespace MyTrout.Pipelines.Steps.Tests
         {
             // arrange
             int errorCount = 0;
-            using (var Object = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 var context = new PipelineContext();
-                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, Object);
+                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, stream);
                 var contextName = Guid.NewGuid().ToString();
                 var contextValue = Guid.NewGuid();
                 context.Items.Add(contextName, contextValue);
@@ -121,7 +121,7 @@ namespace MyTrout.Pipelines.Steps.Tests
                 ILogger<MoveOutputObjectToInputObjectStep> logger = new Mock<ILogger<MoveOutputObjectToInputObjectStep>>().Object;
                 var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(context))
-                                        .Callback(() => MoveOutputObjectToInputObjectStepTests.Validate_Context(context, Object))
+                                        .Callback(() => MoveOutputObjectToInputObjectStepTests.Validate_Context(context, stream))
                                         .Returns(Task.CompletedTask);
                 var next = mockNext.Object;
 
@@ -134,7 +134,7 @@ namespace MyTrout.Pipelines.Steps.Tests
                     Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_OBJECT), "OUTPUT_OBJECT should exist in the Pipeline context.");
                     Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "INPUT_OBJECT should not exist in the Pipeline context.");
 
-                    Assert.AreEqual(Object, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
 
                     Assert.AreEqual(errorCount, context.Errors.Count);
 
@@ -149,10 +149,10 @@ namespace MyTrout.Pipelines.Steps.Tests
         public async Task Returns_PipelineContext_Error_From_InvokeAsync_When_Exception_Is_Thrown_In_Next()
         {
             // arrange
-            using (var Object = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 var context = new PipelineContext();
-                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, Object);
+                context.Items.Add(PipelineContextConstants.OUTPUT_OBJECT, stream);
 
                 var exception = new InvalidTimeZoneException();
 
@@ -176,7 +176,7 @@ namespace MyTrout.Pipelines.Steps.Tests
                     Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_OBJECT), "OUTPUT_OBJECT should exist in the Pipeline context.");
                     Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "INPUT_OBJECT should not exist in the Pipeline context.");
 
-                    Assert.AreEqual(Object, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
+                    Assert.AreEqual(stream, context.Items[PipelineContextConstants.OUTPUT_OBJECT]);
                 }
             }
         }
@@ -263,12 +263,12 @@ namespace MyTrout.Pipelines.Steps.Tests
             }
         }
 
-        private static void Validate_Context(PipelineContext context, Object Object)
+        private static void Validate_Context(PipelineContext context, object target)
         {
             Assert.IsFalse(context.Items.ContainsKey(PipelineContextConstants.OUTPUT_OBJECT), "OUTPUT_OBJECT should not exist in the Pipeline context.");
             Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "INPUT_OBJECT should exist in the Pipeline context.");
 
-            Assert.AreEqual(Object, context.Items[PipelineContextConstants.INPUT_OBJECT]);
+            Assert.AreEqual(target, context.Items[PipelineContextConstants.INPUT_OBJECT]);
         }
     }
 }

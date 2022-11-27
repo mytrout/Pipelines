@@ -433,8 +433,6 @@ namespace MyTrout.Pipelines.Steps.Tests
                     var contextValue = Guid.NewGuid();
                     context.Items.Add(contextName, contextValue);
 
-                    int expectedItemsCount = 4;
-
                     await step.InvokeAsync(context);
 
                     // assert

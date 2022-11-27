@@ -71,7 +71,7 @@ namespace MyTrout.Pipelines.Steps
         /// <remarks>
         /// The original implementation using only RenameValues.Keys failed because sometimes the destination name
         /// also existed in the <see cref="IPipelineContext"/>.
-        /// Unpredictable behavior 
+        /// Key exists exceptions would be thrown, if the RenameValues.Keys and RenameValues.Values is not used.
         /// </remarks>
         public override IEnumerable<string> CachedItemNames => this.cachedItemsPrivate;
 

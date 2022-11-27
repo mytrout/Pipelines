@@ -37,7 +37,6 @@ namespace MyTrout.Pipelines.Steps
         private static readonly RenameContextItemOptions DefaultOptions = new()
         {
             RenameValues = { { PipelineContextConstants.INPUT_OBJECT, PipelineContextConstants.OUTPUT_OBJECT } },
-
         };
 
         /// <summary>
