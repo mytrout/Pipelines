@@ -24,9 +24,11 @@
 
 namespace MyTrout.Pipelines.Steps.Communications.Http
 {
+    using Microsoft.Extensions.Configuration;
     using MyTrout.Pipelines.Core;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Net.Http;
 
     /*
@@ -42,7 +44,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         /// <summary>
         /// Gets or sets the HTTP Headers from <see cref="IPipelineContext.Items"/> that need to be set for the <see cref="HttpEndpoint" /> to work.
         /// </summary>
-        public IEnumerable<string> HeaderNames { get; set; } = new List<string>();
+        public List<string> HeaderNames { get; set; } = new List<string>();
 
 #pragma warning disable CS8618 // HttpClient and HttpEndpoint should always be set in options.
         /// <summary>
@@ -88,9 +90,9 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         public string IsSuccessfulStatusCodeContextName { get; set; } = HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE;
 
         /// <summary>
-        /// Gets or sets the method for the Htto Endpoint call.
+        /// Gets the HTTP Method value from <see cref="IConfiguration"/>.
         /// </summary>
-        public HttpMethod Method { get; set; } = HttpMethod.Post;
+        public string HttpMethod { get; set; }
 
         /// <summary>
         /// Gets or sets the Output Stream Context Name used for <see cref="IPipelineContext.Items"/>.

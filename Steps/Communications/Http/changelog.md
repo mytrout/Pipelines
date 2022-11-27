@@ -1,5 +1,9 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
+## 2.1.0
+### NON-BREAKING CHANGES:
+- [#198](https://github.com/mytrout/Pipelines/issues/198) Allow context values to be injected dynamically into the HttpEndpoint to allow GET verbs to use query string values.
+
 ## 2.0.0
 ### BREAKING CHANGES:
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
