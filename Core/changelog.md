@@ -7,8 +7,6 @@
 - Add an Environment Variable named 'PIPELINES_PreventCollisionsWithRenamedValueNames' to control default behavior for MoveInput~ToOutput~Steps.  
 - SonarQube ignored the ExcludeFromCodeCoverage on the FromServicesAttribute, so unit tests were delivered.
 - Change the push branch in the build yaml from master to main.
-- Change the publish branch in the build.yaml from master to main.
-- Changed back to 4.0.1 for the last two changes because they were never published to nuget.
 
 See [Documentation around 4.0.1](../docs/pipelines-core-4-0.1.md) for more information.
 
