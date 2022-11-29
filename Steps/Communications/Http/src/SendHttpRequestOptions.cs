@@ -1,7 +1,7 @@
 ﻿// <copyright file="SendHttpRequestOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 namespace MyTrout.Pipelines.Steps.Communications.Http
 {
+    using Microsoft.Extensions.Configuration;
     using MyTrout.Pipelines.Core;
     using System;
     using System.Collections.Generic;
@@ -40,9 +41,14 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
     public class SendHttpRequestOptions
     {
         /// <summary>
+        /// Gets or sets the HTTP Content-Type Content Header that is specified when <see cref="UploadInputStreamAsContent"/> is <see langword="true"/>.
+        /// </summary>
+        public string ContentTypeHeaderValue { get; set; } = "application/json";
+
+        /// <summary>
         /// Gets or sets the HTTP Headers from <see cref="IPipelineContext.Items"/> that need to be set for the <see cref="HttpEndpoint" /> to work.
         /// </summary>
-        public IEnumerable<string> HeaderNames { get; set; } = new List<string>();
+        public List<string> HeaderNames { get; set; } = new List<string>();
 
 #pragma warning disable CS8618 // HttpClient and HttpEndpoint should always be set in options.
         /// <summary>
@@ -88,9 +94,14 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
         public string IsSuccessfulStatusCodeContextName { get; set; } = HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE;
 
         /// <summary>
-        /// Gets or sets the method for the Htto Endpoint call.
+        /// Gets or sets the HTTP Method value from <see cref="IConfiguration"/>.
         /// </summary>
-        public HttpMethod Method { get; set; } = HttpMethod.Post;
+        public string HttpMethod { get; set; } = "POST";
+
+        /// <summary>
+        /// Gets or sets a list of values that will be replaced in the <see cref="HttpEndpoint"/> from the <see cref="IPipelineContext"/>.
+        /// </summary>
+        public List<string> HttpEndpointReplacementKeys { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the Output Stream Context Name used for <see cref="IPipelineContext.Items"/>.
