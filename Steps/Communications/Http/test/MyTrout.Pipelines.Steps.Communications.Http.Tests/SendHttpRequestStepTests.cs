@@ -81,7 +81,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                 {
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                    Method = System.Net.Http.HttpMethod.Get
+                    HttpMethod = "GET"
                 };
 
                 string expectedResult = string.Empty;
@@ -133,7 +133,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                 {
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                    Method = System.Net.Http.HttpMethod.Get
+                    HttpMethod = "GET"
                 };
 
                 string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
@@ -185,7 +185,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                     HeaderNames = new List<string>() { "Accepted" },
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                    Method = System.Net.Http.HttpMethod.Get
+                    HttpMethod = "GET"
                 };
 
                 string expectedResult = "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
@@ -231,14 +231,14 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             // arrange
             var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
             var requestOptions = new HttpRequestOptions();
-            requestOptions.TryAdd("Accept", "aaplication/json");
+            requestOptions.TryAdd("Accept", "application/json");
             using (var httpClient = new HttpClient())
             {
                 var options = new SendHttpRequestOptions()
                 {
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                    Method = System.Net.Http.HttpMethod.Get,
+                    HttpMethod = "GET",
                     RequestOptions = requestOptions
                 };
 
@@ -275,7 +275,60 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                 Assert.AreEqual(0, context.Errors.Count);
             }
         }
-        
+
+        [TestMethod]
+        public async Task Returns_Successful_Response_From_HTTP_GET_Request_When_HttpEndpointReplacementKeys_Are_Set()
+        {
+            // arrange
+            var logger = new Mock<ILogger<SendHttpRequestStep>>().Object;
+            var requestOptions = new HttpRequestOptions();
+            requestOptions.TryAdd("Accept", "application/json");
+            using (var httpClient = new HttpClient())
+            {
+                var options = new SendHttpRequestOptions()
+                {
+                    HttpClient = httpClient,
+                    HttpEndpoint = new Uri("https://swapi.dev/api/people/peopleId/"),
+                    HttpEndpointReplacementKeys = new List<string>() { "peopleId" },
+                    HttpMethod = "GET",
+                    RequestOptions = requestOptions
+                };
+
+                string expectedResult = "{\r\n\t\"name\": \"Luke Skywalker\",";
+
+                var mockNext = new Mock<IPipelineRequest>();
+                mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
+                {
+                    using (var reader = new StreamReader(context.Items[PipelineContextConstants.OUTPUT_STREAM] as Stream))
+                    {
+                        string result = reader.ReadToEnd();
+
+                        // assert
+                        Assert.AreEqual(HttpStatusCode.OK, context.Items[HttpCommunicationConstants.HTTP_STATUS_CODE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE) && ((bool)context.Items[HttpCommunicationConstants.HTTP_IS_SUCCESSFUL_STATUS_CODE]));
+                        Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
+                        Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
+                        StringAssert.StartsWith(expectedResult, result);
+                    }
+                });
+
+                var next = mockNext.Object;
+
+                var context = new PipelineContext();
+                context.Items.Add("peopleId", 1);
+
+                using (var step = new SendHttpRequestStep(logger, options, next))
+                {
+                    // act
+                    await step.InvokeAsync(context);
+                }
+
+                // assert - Phase 2
+                Assert.AreEqual(0, context.Errors.Count);
+            }
+        }
+        //GET 
         [TestMethod]
         public async Task Returns_Successful_Response_From_HTTP_POST_Request_When_Authentication_Is_Required()
         {
@@ -285,9 +338,10 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             {
                 var options = new SendHttpRequestOptions()
                 {
+                    ContentTypeHeaderValue = "application/graphql",
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://api.github.com/graphql"),
-                    Method = System.Net.Http.HttpMethod.Post,
+                    HttpMethod = "POST",
                     HeaderNames = new List<string>() { "Accept", "Authorization", "User-Agent" },
                     UploadInputStreamAsContent = true
                 };
@@ -352,6 +406,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
             {
                 var options = new SendHttpRequestOptions()
                 {
+                    ContentTypeHeaderValue = "application/graphql",
                     HttpClient = httpClient,
                     HttpReasonPhraseContextName = "TESTING_REASON_PHRASE",
                     HttpResponseHeadersContextName = "TESTING_RESPONSE_HEADERS",
@@ -360,7 +415,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                     HttpEndpoint = new Uri("https://api.github.com/graphql"),
                     InputStreamContextName = "TESTING_INPUT_STREAM",
                     IsSuccessfulStatusCodeContextName = "TESTING_IS_SUCCESSFUL_RESPONSE_CODE",
-                    Method = System.Net.Http.HttpMethod.Post,
+                    HttpMethod = "POST",
                     HeaderNames = new List<string>() { "Accept", "Authorization", "User-Agent" },
                     OutputStreamContextName = "TESTING_OUTPUT_STREAM",
                     UploadInputStreamAsContent = true
@@ -428,7 +483,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                 {
                     HttpClient = httpClient,
                     HttpEndpoint = new Uri("https://swapi.dev/api/"),
-                    Method = System.Net.Http.HttpMethod.Get
+                    HttpMethod = "GET"
                 };
 
                 var mockNext = new Mock<IPipelineRequest>();

@@ -25,6 +25,7 @@
 namespace MyTrout.Pipelines.Steps.Communications.Http
 {
     using Microsoft.Extensions.Logging;
+    using Microsoft.VisualBasic;
     using MyTrout.Pipelines;
     using System;
     using System.Collections.Generic;
@@ -109,7 +110,16 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
 
         private HttpRequestMessage CreateHttpRequestMessageFromContext(IPipelineContext context)
         {
-            var result = new HttpRequestMessage(new HttpMethod(this.Options.HttpMethod), this.Options.HttpEndpoint);
+            // Replace any parameters that are marked for replacement values.
+            string uriString = this.Options.HttpEndpoint.AbsoluteUri;
+
+            foreach (var key in this.Options.HttpEndpointReplacementKeys)
+            {
+                context.AssertValueExists(key);
+                uriString = uriString.Replace(key, context.Items[key].ToString());
+            }
+
+            var result = new HttpRequestMessage(new HttpMethod(this.Options.HttpMethod), new Uri(uriString));
 
             // Add any headers from Pipeline Context to the HTTP Request to allow security headers or anything required to be able to be processed.
             foreach (var headerName in this.Options.HeaderNames)
@@ -135,10 +145,10 @@ namespace MyTrout.Pipelines.Steps.Communications.Http
 
                 // Used the null-forgiving operator '!' because context.AssertValueIsValid guarantees it is a non-null value.
                 result.Content = new StreamContent((context.Items[this.Options.InputStreamContextName] as Stream)!);
-                result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue(this.Options.ContentTypeHeaderValue);
             }
 
-            result.Headers.Add("Accept", "application/json");
             return result;
         }
     }

@@ -1,7 +1,15 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
-## 2.1.0
+## 3.0.0
+- The SendHttpRequestStep did not work properly for Microsoft .NET 6.0 delivered C# websites prior to this change.
+### BREAKING CHANGES:
+- Change the type on SendHttpRequestOptions.HttpMethod from HttpMethod to string to allow IConfiguration to set the value.
+- Change unit tests to reflect the change in HttpMethod.
 ### NON-BREAKING CHANGES:
+- Change the push branch in the build yaml from master to main.
+- Upgrade to MyTrout.Pipelines 4.0.1
+- Add Content-Type header value on the HttpRequestMessage.Content element when uploading content.
+- Set a default value of "POST" on SendHttpRequestOptions.HttpMethod
 - [#198](https://github.com/mytrout/Pipelines/issues/198) Allow context values to be injected dynamically into the HttpEndpoint to allow GET verbs to use query string values.
 
 ## 2.0.0
