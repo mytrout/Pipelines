@@ -4,7 +4,7 @@ name: MyTrout.Pipelines.Steps.Communications.Http
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '.github/workflows/build-pipelines-steps-communications-http.yaml'
       - '**/Pipelines/Steps/Communications/Http/**/*.*'
@@ -34,7 +34,7 @@ jobs:
         SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Communications.Http.sln'
         
         # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '2.0.0'
+        PROJECT_VERSION: '3.0.0'
         
         # These values are used for unit and integration testing
         PIPELINE_TEST_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,12 +96,12 @@ jobs:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
           if-no-files-found: error
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
         
       - name: Publish the package to nuget.org.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to GitHub.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
