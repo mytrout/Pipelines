@@ -294,7 +294,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                     RequestOptions = requestOptions
                 };
 
-                string expectedResult = "{\r\n\t\"name\": \"Luke Skywalker\",";
+                string expectedResult = "{\"name\":\"Luke Skywalker\",";
 
                 var mockNext = new Mock<IPipelineRequest>();
                 mockNext.Setup(x => x.InvokeAsync(It.IsAny<PipelineContext>())).Callback((IPipelineContext context) =>
@@ -309,7 +309,7 @@ namespace MyTrout.Pipelines.Steps.Communications.Http.Tests
                         Assert.AreEqual("OK", context.Items[HttpCommunicationConstants.HTTP_REASON_PHRASE]);
                         Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_HEADERS));
                         Assert.IsTrue(context.Items.ContainsKey(HttpCommunicationConstants.HTTP_RESPONSE_TRAILING_HEADERS));
-                        StringAssert.StartsWith(expectedResult, result);
+                        StringAssert.StartsWith(result, expectedResult);
                     }
                 });
 
