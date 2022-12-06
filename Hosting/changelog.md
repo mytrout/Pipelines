@@ -1,6 +1,7 @@
 # MyTrout.Pipelines.Hosting Change Log
 
 ## 4.1.0
+- Change default branch from master to main.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
 - Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
 - Standardize the NoWarn options within the src csproj files across all src projects.
