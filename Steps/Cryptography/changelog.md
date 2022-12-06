@@ -1,6 +1,9 @@
 # MyTrout.Pipelines.Steps.Cryptography Change Log
 
-## 4.0.3 
+## 4.1.1
+- Correct Code Smell CA1850 on CreateSha256HashStep.
+
+## 4.1.0
 - Update default branch from master to main.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
 - Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.

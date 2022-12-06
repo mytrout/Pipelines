@@ -82,16 +82,13 @@ namespace MyTrout.Pipelines.Steps.Cryptography
             {
                 byte[] workingResult = this.Options.HashEncoding.GetBytes(await reader.ReadToEndAsync().ConfigureAwait(false));
 
-                // Creates a FIPS-compliant hashProvider, if FIPS-compliance is on.  Otherwise, creates the ~Cng version.
-                using (var hashProvider = SHA256.Create())
-                {
-                    byte[] workingHash = hashProvider.ComputeHash(workingResult);
-                    string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
+                byte[] workingHash = SHA256.HashData(workingResult);
 
-                    context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
+                string hexHash = BitConverter.ToString(workingHash).Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase);
 
-                    context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
-                }
+                context.Items.Add(CryptographyConstants.HASH_STRING, hexHash);
+
+                context.Items.Add(CryptographyConstants.HASH_STREAM, new MemoryStream(this.Options.HashEncoding.GetBytes(hexHash)));
             }
         }
     }
