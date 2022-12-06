@@ -156,13 +156,13 @@ jobs:
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
              
       - name: Apply DACPAC to Azure SQL Server
-        uses: azure/sql-action@v1
+        uses: azure/sql-action@v2
         env:
           AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
-          server-name: ${{ env.AZURE_SV_NAME }}.database.windows.net
-          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/obj/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}Password=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD}};
+          path: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/obj/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+          action: 'publish'          
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
   azure-post-processing:
