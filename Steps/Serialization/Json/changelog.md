@@ -9,7 +9,7 @@
 - Standardize the Copyright to include 2022 across all src projects.
 - Standardize all .editorconfig file inclusion across all src projects.
 - Standardize inclusion of README.md file across all src projects.
-- Force upgrade to MyTrout.Pipelines.Steps.Serialization.Core v1.2.0 minimum.
+- Force upgrade to MyTrout.Pipelines.Steps.Serialization.Core v1.1.0 minimum.
 
 ## 1.1.1
 - Correct 1 SonarQube issue.

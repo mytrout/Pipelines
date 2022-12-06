@@ -53,7 +53,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MyTrout.Pipelines.Steps.Serialization.Core" Version="[1.2.0,2)" />
+        <PackageReference Include="MyTrout.Pipelines.Steps.Serialization.Core" Version="[1.1.0,2)" />
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.44.0.52574">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
