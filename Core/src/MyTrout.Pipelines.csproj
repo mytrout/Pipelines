@@ -6,10 +6,10 @@
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2019-2022 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.0.0</Version>
+    <Version>4.0.3</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <AssemblyVersion>4.0.3.0</AssemblyVersion>
+    <FileVersion>4.0.3.0</FileVersion>
     <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
