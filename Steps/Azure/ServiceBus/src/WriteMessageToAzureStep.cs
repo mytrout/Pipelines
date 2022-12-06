@@ -120,14 +120,20 @@ namespace MyTrout.Pipelines.Steps.Azure.ServiceBus
 
             var result = new ServiceBusMessage(messageBody);
 
-            if (context.Items.ContainsKey(this.Options.CorrelationIdContextName))
+#pragma warning disable CS8600
+
+            // workingCorrelationId can be null, if TryGetValue returns false.
+            // The if statement handles it, so this is a false positive on CS8600.
+            if (context.Items.TryGetValue(this.Options.CorrelationIdContextName, out object workingCorrelationId))
             {
-                result.CorrelationId = context.Items[this.Options.CorrelationIdContextName].ToString();
+                result.CorrelationId = workingCorrelationId.ToString();
             }
             else
             {
                 result.CorrelationId = context.CorrelationId.ToString();
             }
+
+#pragma warning restore CS8600
 
             // Sets UserProperties aka Filter Values on the Message, if they are available in the context.
             foreach (var userProperty in context.Items.Keys.Where(x => x.StartsWith(this.Options.MessageContextItemsPrefix)))

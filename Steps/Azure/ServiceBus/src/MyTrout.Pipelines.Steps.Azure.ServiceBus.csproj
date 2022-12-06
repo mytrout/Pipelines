@@ -6,10 +6,10 @@
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2019-2022 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>5.1.0</Version>
+    <Version>5.1.1</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>5.1.0.0</AssemblyVersion>
-    <FileVersion>5.1.0.0</FileVersion>
+    <AssemblyVersion>5.1.1.0</AssemblyVersion>
+    <FileVersion>5.1.1.0</FileVersion>
     <Description>Provides Pipeline steps to receive and send messages to Azure Service Bus.</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/tree/master/Steps/Azure/ServiceBus</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>

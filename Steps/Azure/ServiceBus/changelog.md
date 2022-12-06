@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Steps.Azure.ServiceBus Change Log
 
+## 5.1.1
+- Correct SonarQube Code Smell with Dictionary index access guarded by a ContainsKey rather than TryGetValue.
+
 ## 5.1.0
 - Change default branch from master to main.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
