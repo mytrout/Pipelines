@@ -9,7 +9,7 @@
 - Standardize the Copyright to include 2022 across all src projects.
 - Standardize all .editorconfig file inclusion across all src projects.
 - Standardize inclusion of README.md file across all src projects.
-- Force upgrade to MyTrout.Pipelines v4.0.3 minimum.
+- Force upgrade to MyTrout.Pipelines.Steps.IO.Files v4.1.0 minimum.
 
 ## 2.0.0
 ### BREAKING CHANGES:
