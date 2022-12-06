@@ -1,5 +1,15 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 4.0.1
+- Add nuget symbols package to aid with debugging.
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Upgrade to MyTrout.Pipelines v4.0.3 minimum.
+
 ## 4.0.0 - BREAKING CHANGES
 - BREAKING CHANGE: Upgrade Hosting to MyTrout.Pipelines 4.x
 - BREAKING CHANGE: Remove support for .NET 5.0.
