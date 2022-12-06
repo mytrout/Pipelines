@@ -4,7 +4,7 @@ name: MyTrout.Pipelines.Steps.Data
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '.github/workflows/build-pipelines-steps-data.yaml'
       - '**/Pipelines/Steps/Data/**/*.*'
@@ -29,7 +29,7 @@ env:
   SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Data.sln'
         
   # This value should change on each deployable version of this solution.
-  PROJECT_VERSION: '3.0.0'  
+  PROJECT_VERSION: '3.1.0'  
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
@@ -102,15 +102,15 @@ jobs:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
           if-no-files-found: error
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to nuget.org.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to GitHub.
         run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]'
    
   azure-pre-processing:
     runs-on: windows-2019
@@ -156,12 +156,12 @@ jobs:
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
              
       - name: Apply DACPAC to Azure SQL Server
-        uses: azure/sql-action@v2
+        uses: azure/sql-action@v1
         env:
           AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
           server-name: ${{ env.AZURE_SV_NAME }}.database.windows.net
-          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/bin/Release/net5.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
+          dacpac-package: ${{ env.WORKING_DIRECTORY }}/test/MyTrout.Pipelines.Steps.Data.Database/obj/Release/netstandard2.0/MyTrout.Pipelines.Steps.Data.Database.Ubuntu.dacpac
           connection-string:  ${{ steps.sqlserver.outputs.ConnectionString }}Password=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD}};
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
   
