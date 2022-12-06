@@ -36,7 +36,7 @@ jobs:
         PIPELINE_PreventCollisionsWithRenamedValueNames: "true"
         
         # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '4.0.3'
+        PROJECT_VERSION: '4.0.4'
         
     steps:
       - name: Checkout the Source
@@ -98,15 +98,15 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: nupkg
-          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
+          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.*pkg
           if-no-files-found: error
         if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
         
-      #- name: Publish the package to nuget.org
-      #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
-      #  if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+      - name: Publish the package to nuget.org
+        run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.*pkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
-      #- name: Publish the package to GitHub.
-      #  run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
-      #  if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+      - name: Publish the package to GitHub.
+        run: dotnet nuget push "../Pipelines/Core/src/bin/Release/*.*pkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
  

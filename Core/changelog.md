@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.0.4
+- Add nuget symbols package to aid with debugging. - 2nd attempt.
+
 ## 4.0.3 
 - Add nuget symbols package to aid with debugging.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
