@@ -6,35 +6,41 @@
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2020-2022 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.5.0-beta</Version>
+    <Version>3.2.0</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.51.0.0</FileVersion>
+    <AssemblyVersion>3.2.0.0</AssemblyVersion>
+    <FileVersion>3.2.0.0</FileVersion>
     <Description>Provides Pipeline steps to read, write, and delete blobs in Azure Blob Storage.</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;IDE0063;SA1413;SA1636;S4792</NoWarn>
+    <NoWarn>1701;1702;IDE0057;IDE0063;CA2254;S4792;SA1413;SA1636</NoWarn>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
+    <ItemGroup>
+      <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
+      <None Include="..\..\..\..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
@@ -48,7 +54,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyTrout.Pipelines" Version="[4,5)" />
+    <PackageReference Include="MyTrout.Pipelines" Version="[4.0.3,5)" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
