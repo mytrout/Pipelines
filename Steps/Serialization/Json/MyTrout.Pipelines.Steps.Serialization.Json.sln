@@ -11,7 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Ser
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{328A3271-EBAD-407E-B4E4-6A9DEE6D0504}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\.github\workflows\build-pipelines-steps-serialization-json.yaml = ..\..\..\.github\workflows\build-pipelines-steps-serialization-json.yaml
 		changelog.md = changelog.md
 		License.md = License.md
 		README.md = README.md
@@ -19,6 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTrout.Pipelines.Steps.Serialization.Json.Tests", "test\MyTrout.Pipelines.Steps.Serialization.Json.Tests.csproj", "{5806287F-DDEB-469A-B2A9-1B7013391C28}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{A47D96E5-CD9F-4AD9-AB02-F43653A52C71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{16BB0D50-CF29-4EAC-ADC8-BAE17A766772}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\.github\workflows\build-pipelines-steps-serialization-json.yaml = ..\..\..\.github\workflows\build-pipelines-steps-serialization-json.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +47,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A443FF92-4E4B-4360-A254-EB77EC76B660} = {BF0C7AEF-C080-49F6-88EC-0D61EE871C8E}
 		{5806287F-DDEB-469A-B2A9-1B7013391C28} = {3E8984C5-2F33-4E58-942D-2AFEC3CAA2C7}
+		{16BB0D50-CF29-4EAC-ADC8-BAE17A766772} = {A47D96E5-CD9F-4AD9-AB02-F43653A52C71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8915243B-CB0A-4E86-BF47-B60696475816}
