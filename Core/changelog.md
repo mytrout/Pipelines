@@ -7,6 +7,7 @@
 - Standardize the Neutral Language options to en-US across all src projects.
 - Standardize the Copyright to include 2022 across all src projects.
 - Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
 
 ## 4.0.2 - SONARCLOUD UPDATE ONLY
 - Rebuild with a new version number after renaming the master branch in SonarCloud.

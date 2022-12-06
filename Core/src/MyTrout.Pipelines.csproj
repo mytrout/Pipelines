@@ -12,6 +12,7 @@
     <FileVersion>4.0.3.0</FileVersion>
     <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <LangVersion>10.0</LangVersion>
@@ -34,7 +35,11 @@
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-	
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+    
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
