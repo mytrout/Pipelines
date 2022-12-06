@@ -1,5 +1,15 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
+## 3.1.0
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
+- Force upgrade to MyTrout.Pipelines v4.0.3 minimum.
+
 ## 3.0.0
 - The SendHttpRequestStep did not work properly for Microsoft .NET 6.0 delivered C# websites prior to this change.
 ### BREAKING CHANGES:
