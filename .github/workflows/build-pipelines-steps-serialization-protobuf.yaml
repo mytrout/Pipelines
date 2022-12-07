@@ -76,7 +76,7 @@ jobs:
       - name: Test
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run:
-          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" /p:AltCoverLocalSource=true /p:AltCoverAssemblyFilter=protobuf-net.Core /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage --configuration Release --no-build --no-restore --verbosity normal
+          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" /p:AltCoverLocalSource=true /p:AltCoverAssemblyFilter=Protobuf /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage --configuration Release --no-build --no-restore --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         
       - name: End Sonar scan
