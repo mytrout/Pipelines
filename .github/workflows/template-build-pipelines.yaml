@@ -15,6 +15,10 @@ on:
       project-version:
         required: true
         type: string
+      prevent-rename-collision:
+        required: false
+        type: string
+        default: 'true'
     secrets:
       MYTROUT_SONARQUBE_HOST_URL:
         required: true
@@ -40,6 +44,9 @@ jobs:
         WORKING_DIRECTORY: ${{ github.workspace }}${{ inputs.working-directory }}
         SOLUTION_NAME: ${{ inputs.solution-name }}
        
+        # This value is to turn on rename step value collisions
+        PIPELINE_PreventCollisionsWithRenamedValueNames: ${{ inputs.prevent-rename-collision }}
+        
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: ${{ inputs.project-version }}
         
