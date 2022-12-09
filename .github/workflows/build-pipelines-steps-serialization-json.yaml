@@ -16,86 +16,13 @@ on:
       - '!**/*.md'
       - '!**/*.json'
   workflow_dispatch:
-  
+
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-    
-    env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
-        SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
-        
-        # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
-        SONAR_PROJECT_NAME: 'Pipelines.Steps.Serialization.Json'
-        WORKING_DIRECTORY: ${{ github.workspace }}/Steps/Serialization/Json
-        SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Serialization.Json.sln'
-        
-        # This value should change on each deployable version of this solution.
-        PROJECT_VERSION: '1.2.0'
-        
-    steps:
-      - name: Checkout the Source
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET Core SDK 6.0.x and 7.0.x
-        uses: actions/setup-dotnet@v3.0.3
-        with:
-          dotnet-version: |
-            6.0.x
-            7.0.100-preview.3.22179.4
-      
-      # "dotnet sonarscanner end" now requires Java 11 to be installed.
-      - name: Setup Java 11 for SonarQube.
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        
-      # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
-      - name: Install Sonar global tool
-        run: dotnet tool install --global dotnet-sonarscanner
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-
-      - name: Begin Sonar scan
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: dotnet sonarscanner begin /k:${{ env.SONAR_PROJECT_NAME }} /d:sonar.host.url=${{ secrets.MYTROUT_SONARQUBE_HOST_URL }} /o:${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }} /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }} /v:${{ env.PROJECT_VERSION }} /d:sonar.cs.opencover.reportsPaths=**/coverage.xml
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-
-      - name: Build
-        env:
-          PROJECT_FULL_VERSION: ${{ env.PROJECT_VERSION }}.${{ github.run_number }}
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration Release -p:Version=${{ env.PROJECT_VERSION }};AssemblyVersion=${{ env.PROJECT_FULL_VERSION }};FileVersion=${{ env.PROJECT_FULL_VERSION }};SourceRevisionId=${{ env.PROJECT_VERSION }}+${{ env.GITHUB_SHA }}
-
-        # Skip the Unit and Integration Tests when running under Dependabot. 
-      - name: Test
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run:
-          dotnet test /p:AltCover="true" /p:CopyLocalLockFileAssemblies="true" /p:AltCoverLocalSource=true /p:AltCoverAttributeFilter=ExcludeFromCodeCoverage --configuration Release --no-build --no-restore --verbosity normal
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
-        
-      - name: End Sonar scan
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: dotnet sonarscanner end /d:sonar.login=${{ secrets.MYTROUT_SONARQUBE_API_KEY }}      
-        if: ${{ github.ref == 'refs/heads/main' && github.actor != 'dependabot[bot]' }}
-
-      - name: Upload nupkg
-        uses: actions/upload-artifact@v3
-        with:
-          name: nupkg
-          path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
-          if-no-files-found: error
-        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
-        
-      - name: Publish the package to nuget.org.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
-        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
-
-      - name: Publish the package to GitHub.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
-        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+    uses: './.github/workflows/template-build-pipelines.yaml'
+    with:
+      sonar-project-name: 'Pipelines.Steps.Serialization.Json'
+      working-directory: '/Steps/Serialization/Json'
+      solution-name: 'MyTrout.Pipelines.Steps.Serialization.Json.sln'
+      project-version: '1.2.0'
+    secrets: inherit
