@@ -28,7 +28,7 @@ jobs:
         
         # These values should be changed for each individual solution.
         SONAR_PROJECT_NAME: ${{ inputs.sonar-project-name }}
-        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        WORKING_DIRECTORY: ${{ github.workspace }}/${{ inputs.working-directory }}
         SOLUTION_NAME: ${{ inputs.solution-name }}
        
         # This value should change on each deployable version of this solution.
