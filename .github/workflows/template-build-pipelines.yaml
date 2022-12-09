@@ -8,17 +8,29 @@ on:
         type: string
       working-directory:
         required: true
-	type: string
+        type: string
       solution-name:
-	required: true
-	type: string
+        required: true
+        type: string
       project-version:
-	required: true
-	type: string
-    secrets: inherit
+        required: true
+        type: string
+      prevent-rename-collision:
+        required: false
+        type: string
+        default: 'true'
+    secrets:
+      MYTROUT_SONARQUBE_HOST_URL:
+        required: true
+      MYTROUT_SONARQUBE_ORGANIZATION:
+        required: true
+      MYTROUT_SONARQUBE_API_KEY:
+        required: true
+      MYTROUT_NUGET_API_KEY:
+        required: true
  
 jobs:
-  reusable-workflow-job:
+  standard-build-job:
 
     runs-on: ubuntu-latest
     
@@ -29,9 +41,12 @@ jobs:
         
         # These values should be changed for each individual solution.
         SONAR_PROJECT_NAME: ${{ inputs.sonar-project-name }}
-        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        WORKING_DIRECTORY: ${{ github.workspace }}${{ inputs.working-directory }}
         SOLUTION_NAME: ${{ inputs.solution-name }}
        
+        # This value is to turn on rename step value collisions
+        PIPELINE_PreventCollisionsWithRenamedValueNames: ${{ inputs.prevent-rename-collision }}
+        
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: ${{ inputs.project-version }}
         
