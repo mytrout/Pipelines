@@ -3,19 +3,11 @@ name: MyTrout.Pipelines.Build.Template
 on:
   workflow_call:
     inputs:
-      sonar-project-name:
-        required: true
+      username:
+        description: 'A username passed from the caller workflow'
+        default: 'john-doe'
+        required: false
         type: string
-      working-directory:
-        required: true
-	type: string
-      solution-name:
-	required: true
-	type: string
-      project-version:
-	required: true
-	type: string
-    secrets: inherit
  
 jobs:
   reusable-workflow-job:
