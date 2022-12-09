@@ -22,6 +22,6 @@ jobs:
     uses: './.github/workflows/template-build-pipelines.yaml'
     with:
       sonar-project-name: 'Pipelines.Core'
-      working-directory: ${{ github.workspace }}/Core
+      working-directory: '/Core'
       solution-name: 'MyTrout.Pipelines.Core.sln'
       project-version: '4.0.3'
