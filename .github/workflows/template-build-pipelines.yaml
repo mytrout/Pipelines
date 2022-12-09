@@ -16,8 +16,6 @@ on:
         required: true
         type: string
     secrets:
-      GITHUB_TOKEN:
-        required: true
       MYTROUT_SONARQUBE_HOST_URL:
         required: true
       MYTROUT_SONARQUBE_ORGANIZATION:
