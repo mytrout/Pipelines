@@ -3,7 +3,7 @@ name: MyTrout.Pipelines.Build.Template
 on:
   workflow_call:
     inputs:
-      username:
+      user-name:
         description: 'A username passed from the caller workflow'
         default: 'john-doe'
         required: false
