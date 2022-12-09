@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+        G_NAME: 'TryAgain'
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
         SONAR_HOST_URL: 'https://sonarcloud.io/'
@@ -98,6 +99,7 @@ jobs:
           export CopyLocalLockFileAssemblies=true
           export AltCoverLocalSource=true
           export AltCoverAttributeFilter=ExcludeFromCodeCoverage
+          export ${{ env.G_NAME }}=${{ env.GITHUB_TOKEN }}
           dotnet test --configuration Release --no-build --no-restore --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         
