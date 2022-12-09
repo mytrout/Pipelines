@@ -6,6 +6,15 @@ on:
       sonar-project-name:
         required: true
         type: string
+      working-directory:
+        required: true
+        type: string
+      solution-name:
+        required: true
+        type: string
+      project-version:
+        required: true
+        type: string
  
 jobs:
   reusable-workflow-job:
