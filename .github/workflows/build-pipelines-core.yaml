@@ -25,8 +25,5 @@ jobs:
       working-directory: '/Core'
       solution-name: 'MyTrout.Pipelines.Core.sln'
       project-version: '4.0.3'
-    secrets:
-      MYTROUT_SONARQUBE_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
-      MYTROUT_SONARQUBE_ORGANIZATION: ${{ secrets.MYTROUT_SONARQUBE_ORGANIZATION }}
-      MYTROUT_SONARQUBE_API_KEY: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
-      MYTROUT_NUGET_API_KEY: ${{ secrets.MYTROUT_NUGET_API_KEY }}
+    secrets: inherit
+    
