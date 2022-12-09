@@ -19,7 +19,7 @@ on:
 
 jobs:
   build:
-    uses: '.github/workflows/template-build-pipelines.yaml@v1'
+    uses: './.github/workflows/template-build-pipelines.yaml@v1'
     with:
       sonar-project-name: 'Pipelines.Core'
       working-directory: ${{ github.workspace }}/Core
