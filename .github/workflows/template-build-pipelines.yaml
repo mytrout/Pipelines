@@ -19,6 +19,16 @@ on:
         required: false
         type: string
         default: 'true'
+      test-name-1:
+        required: false
+        type: string
+        default: 'Try-Another-Name'
+        description: 'Name of the Environment Variable configured for dotnet test step'
+      test-value-1:
+        required: false
+        type: string
+        default: 'Try-Another-Value'
+        description: 'Value of the Environment Variable configured for dotnet test step'
     secrets:
       MYTROUT_SONARQUBE_HOST_URL:
         required: true
@@ -46,7 +56,8 @@ jobs:
        
         # This value is to turn on rename step value collisions
         PIPELINE_PreventCollisionsWithRenamedValueNames: ${{ inputs.prevent-rename-collision }}
-        
+        TEST_NAME_1: ${{ inputs.test-name-1 }}
+        TEST_VALUE_1: ${{ inputs.test-value-1 }}
         # This value should change on each deployable version of this solution.
         PROJECT_VERSION: ${{ inputs.project-version }}
         
@@ -98,6 +109,7 @@ jobs:
           export CopyLocalLockFileAssemblies=true
           export AltCoverLocalSource=true
           export AltCoverAttributeFilter=ExcludeFromCodeCoverage
+          export ${{ env.TEST_NAME_1 }}=${{ env.TEST_VALUE_1 }}
           dotnet test --configuration Release --no-build --no-restore --verbosity normal
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
         
