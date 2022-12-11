@@ -22,10 +22,10 @@ env:
   SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
   SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
         
-  SONAR_PROJECT_NAME: ${{ jobs.build.env.sonar-project-name }}
-  WORKING_DIRECTORY: ${{ jobs.build.env.working-directory }}
-  SOLUTION_NAME: ${{ jobs.build.env.solution-name }}
-  PROJECT_VERSION: ${{ jobs.build.env.project-version }}
+  SONAR_PROJECT_NAME: ${{ needs.build.inputs.sonar-project-name }}
+  WORKING_DIRECTORY: ${{ needs.build.inputs.working-directory }}
+  SOLUTION_NAME: ${{ needs.build.inputs.solution-name }}
+  PROJECT_VERSION: ${{ needs.build.inputs.project-version }}
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
