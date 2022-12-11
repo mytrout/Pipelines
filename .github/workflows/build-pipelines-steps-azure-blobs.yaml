@@ -22,13 +22,10 @@ env:
   SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
   SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
         
-  # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
-  SONAR_PROJECT_NAME: 'Pipelines.Steps.Azure.Blobs'
-  WORKING_DIRECTORY: '/Steps/Azure/Blobs'
-  SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Azure.Blobs.sln'
-        
-  # This value should change on each deployable version of this solution.
-  PROJECT_VERSION: '3.2.0'  
+  SONAR_PROJECT_NAME: ${{ jobs.build.env.sonar-project-name }}
+  WORKING_DIRECTORY: ${{ jobs.build.env.working-directory }}
+  SOLUTION_NAME: ${{ jobs.build.env.solution-name }}
+  PROJECT_VERSION: ${{ jobs.build.env.project-version }}
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
@@ -39,10 +36,12 @@ jobs:
     needs: azure-pre-processing
     uses: './.github/workflows/template-build-pipelines.yaml'
     with:
-      sonar-project-name: ${{ env.SONAR_PROJECT_NAME }}
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-      solution-name: ${{ env.SOLUTION_NAME }}
-      project-version: ${{ env.PROJECT_VERSION }}
+      # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
+      sonar-project-name: 'Pipelines.Steps.Azure.Blobs'
+      working-directory: '/Steps/Azure/Blobs'
+      solution-name: 'MyTrout.Pipelines.Steps.Azure.Blobs.sln'
+      # This value should change on each deployable version of this solution.
+      project-version: '3.2.0'
       test-name-1: 'PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING'
       test-value-1: ${{ needs.azure-pre-processing.outputs.connection-string }}
     secrets: inherit
