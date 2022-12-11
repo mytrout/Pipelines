@@ -21,13 +21,16 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SONAR_TOKEN: ${{ secrets.MYTROUT_SONARQUBE_API_KEY }}
   SONAR_HOST_URL: ${{ secrets.MYTROUT_SONARQUBE_HOST_URL }}
-        
-  SONAR_PROJECT_NAME: ${{ needs.build.inputs.sonar-project-name }}
-  WORKING_DIRECTORY: ${{ needs.build.inputs.working-directory }}
-  SOLUTION_NAME: ${{ needs.build.inputs.solution-name }}
-  PROJECT_VERSION: ${{ needs.build.inputs.project-version }}
 
-  # These values are used for creating an Azure SQL Server Database
+  # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
+  SONAR_PROJECT_NAME: 'Pipelines.Steps.Azure.Blobs'
+  WORKING_DIRECTORY: '/Steps/Azure/Blobs'
+  SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Azure.Blobs.sln'
+  
+  # This value should change on each deployable version of this solution.
+  PROJECT_VERSION: '3.2.0'
+      
+  # These values are used for creating an Azure Blob Storage Container
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
   AZURE_SERVER_NAME: 'pipelines-steps-azure-blobs'
 
@@ -37,11 +40,10 @@ jobs:
     uses: './.github/workflows/template-build-pipelines.yaml'
     with:
       # These values should be changed for each individual solution. Don't forget to change the name element and paths elements. 
-      sonar-project-name: 'Pipelines.Steps.Azure.Blobs'
-      working-directory: '/Steps/Azure/Blobs'
-      solution-name: 'MyTrout.Pipelines.Steps.Azure.Blobs.sln'
-      # This value should change on each deployable version of this solution.
-      project-version: '3.2.0'
+      sonar-project-name: ${{ needs.azure-pre-processing.outputs.sonar-project-name }}
+      working-directory: ${{ needs.azure-pre-processing.outputs.working-directory }}
+      solution-name: ${{ needs.azure-pre-processing.outputs.solution-name}}
+      project-version: ${{ needs.azure-pre-processing.outputs.project-version }}
       test-name-1: 'PIPELINE_TEST_AZURE_BLOB_CONNECTION_STRING'
       test-value-1: ${{ needs.azure-pre-processing.outputs.connection-string }}
     secrets: inherit
@@ -50,6 +52,10 @@ jobs:
     runs-on: windows-latest
     outputs:
       connection-string: ${{ steps.azureblob.outputs.ConnectionString }}
+      sonar-project-name: ${{ env.SONAR_PROJECT_NAME }}
+      working-directory: ${{ env.WORKING_DIRECTORY }}
+      solution-name: ${{ env.SOLUTION_NAME }}
+      project-version: ${{ env.PROJECT_VERSION }}
 
     steps:
       - name: Checkout the Source
