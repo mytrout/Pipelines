@@ -61,7 +61,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
-            7.0.100-preview.3.22179.4
+            7.0.x
       
       # "dotnet sonarscanner end" now requires Java 11 to be installed.
       - name: Setup Java 11 for SonarQube.
