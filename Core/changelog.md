@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.1.0
+- Upgrade from preview release of .NET 7.0 to official release.
+
 ## 4.0.3 
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
 - Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
