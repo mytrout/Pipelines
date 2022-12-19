@@ -23,22 +23,39 @@
 // </copyright>
 namespace MyTrout.Pipelines.Steps
 {
+    using MyTrout.Pipelines.Core;
     using System;
 
-    /*
-     *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
+    /* NOTE TO DEVELOPERS:
+     *
+     * All unit tests for this class are handled by the LoadValuesFromContextObjectToPipelineContextStep unit tests.
+     *
      */
 
     /// <summary>
     /// Provides caller-configurable options to change the behavior of <see cref="LoadValuesFromContextObjectToPipelineContextStep{TObject}"/>.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class LoadValuesFromContextObjectToPipelineContextOptions : IContextNameBuilder
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="LoadValuesFromContextObjectToPipelineContextOptions"/> class.
+        /// </summary>
+        public LoadValuesFromContextObjectToPipelineContextOptions()
+        {
+            this.ContextNameBuilder = this;
+        }
+
+        /// <summary>
         /// Gets or sets a function to build the <see cref="IPipelineContext.Items"/> context name from the type name and property name.
         /// </summary>
+        [Obsolete("Use the ContextNameBuilder property which allows dependency injection and uses an interface in lieu of BuildContextName")]
         public Func<string, string, string> BuildContextNameFunction { get; set; } = LoadValuesFromContextObjectToPipelineContextOptions.BuildDefaultName;
+
+        /// <summary>
+        /// Gets or sets a function to build the <see cref="IPipelineContext.Items"/> context name from the type name and property name.
+        /// </summary>
+        [FromServices]
+        public IContextNameBuilder ContextNameBuilder { get; set; }
 
         /// <summary>
         /// Gets or sets the input object context name to convert into property values in <see cref="IPipelineContext.Items"/>.
@@ -56,10 +73,24 @@ namespace MyTrout.Pipelines.Steps
             return $"{typeName}.{propertyName}";
         }
 
+#pragma warning disable CS0618
         /// <inheritdoc />
         public string BuildContextName(string typeName, string propertyName)
         {
-            return this.BuildContextNameFunction.Invoke(typeName, propertyName);
+            // This check allows the Obsolete BuildContextNameFunction to continue to take precedence over the
+            // built-in function BuildDefaultName.  This check prevents this change from breaking existing clients.
+            if (this.BuildContextNameFunction != LoadValuesFromContextObjectToPipelineContextOptions.BuildDefaultName)
+            {
+                return this.BuildContextNameFunction.Invoke(typeName, propertyName);
+            }
+
+            if (this.ContextNameBuilder != this)
+            {
+                return this.ContextNameBuilder.BuildContextName(typeName, propertyName);
+            }
+
+            return LoadValuesFromContextObjectToPipelineContextOptions.BuildDefaultName(typeName, propertyName);
         }
+#pragma warning restore CS0618
     }
 }

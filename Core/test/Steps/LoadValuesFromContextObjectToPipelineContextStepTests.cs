@@ -24,7 +24,6 @@
 
 namespace MyTrout.Pipelines.Steps.Tests
 {
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -141,6 +140,152 @@ namespace MyTrout.Pipelines.Steps.Tests
                 Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
                 Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "context does contain a key named '{0}'.", PipelineContextConstants.INPUT_OBJECT);
                 Assert.AreEqual(inputObject, context.Items[PipelineContextConstants.INPUT_OBJECT], "context does contain a key named '{0}' with a value of '{1}'.", PipelineContextConstants.INPUT_OBJECT, inputObject);
+            }
+        }
+
+#pragma warning disable CS0618
+        [TestMethod]
+        public async Task Provides_Context_Object_Values_In_InvokeAsync_When_BuildContextNameFunction_Is_Configured_Differently()
+        {
+            // arrange
+            var errorCount = 0;
+
+            ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>> logger = new Mock<ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>>>().Object;
+
+            LoadValuesFromContextObjectToPipelineContextOptions options = new()
+            {
+                BuildContextNameFunction = (string typeName, string propertyName) => { return $"{propertyName}.{typeName}"; }
+            };
+
+            SamplePerson inputObject = new SamplePerson()
+            {
+                LastName = "Dooray",
+                FirstName = "Sunny"
+            };
+            var context = new PipelineContext();
+            context.Items.Add(PipelineContextConstants.INPUT_OBJECT, inputObject);
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                        .Callback(() =>
+                        {
+                            // assertion here ensures that the expectedValue passed to downstream callers.
+                            Assert.AreEqual(inputObject.LastName, context.Items["LastName.SamplePerson"]);
+                            Assert.AreEqual(inputObject.FirstName, context.Items["FirstName.SamplePerson"]);
+                        })
+                        .Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockNext.Object;
+            using (var source = new LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>(logger, options, next))
+            {
+                var expectedItemsCount = 1;
+
+                // act
+                await source.InvokeAsync(context);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "context does contain a key named '{0}'.", PipelineContextConstants.INPUT_OBJECT);
+                Assert.AreEqual(inputObject, context.Items[PipelineContextConstants.INPUT_OBJECT], "context does contain a key named '{0}' with a value of '{1}'.", PipelineContextConstants.INPUT_OBJECT, inputObject);
+            }
+        }
+#pragma warning restore CS0618
+
+        [TestMethod]
+        public async Task Provides_Context_Object_Values_In_InvokeAsync_When_ContextNameBuilder_Is_Configured_Differently()
+        {
+            // arrange
+            var errorCount = 0;
+
+            ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>> logger = new Mock<ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>>>().Object;
+
+            Mock<IContextNameBuilder> mockContextNameBuilder = new Mock<IContextNameBuilder>();
+            mockContextNameBuilder.Setup(x => x.BuildContextName(nameof(SamplePerson), It.IsAny<string>()))
+                                                .Returns((string typeName, string propertyName) => { return $"{propertyName}.{typeName}"; });
+
+            LoadValuesFromContextObjectToPipelineContextOptions options = new()
+            {
+                ContextNameBuilder = mockContextNameBuilder.Object
+            };
+
+            SamplePerson inputObject = new SamplePerson()
+            {
+                LastName = "Dooray",
+                FirstName = "Sunny"
+            };
+            var context = new PipelineContext();
+            context.Items.Add(PipelineContextConstants.INPUT_OBJECT, inputObject);
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context))
+                        .Callback(() =>
+                        {
+                            // assertion here ensures that the expectedValue passed to downstream callers.
+                            Assert.AreEqual(inputObject.LastName, context.Items["LastName.SamplePerson"]);
+                            Assert.AreEqual(inputObject.FirstName, context.Items["FirstName.SamplePerson"]);
+                        })
+                        .Returns(Task.CompletedTask);
+
+            IPipelineRequest next = mockNext.Object;
+            using (var source = new LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>(logger, options, next))
+            {
+                var expectedItemsCount = 1;
+
+                // act
+                await source.InvokeAsync(context);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                Assert.IsTrue(context.Items.ContainsKey(PipelineContextConstants.INPUT_OBJECT), "context does contain a key named '{0}'.", PipelineContextConstants.INPUT_OBJECT);
+                Assert.AreEqual(inputObject, context.Items[PipelineContextConstants.INPUT_OBJECT], "context does contain a key named '{0}' with a value of '{1}'.", PipelineContextConstants.INPUT_OBJECT, inputObject);
+            }
+        }
+
+        [TestMethod]
+        public async Task Returns_Context_From_Invoke_Async_When_InputObjectContextName_Is_Configured_Differently()
+        {
+            // arrange
+            var errorCount = 0;
+            ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>> logger = new Mock<ILogger<LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>>>().Object;
+
+            var differentInputObjectContextName = "TESTING_DIFFERENT_CONTEXT_NAME";
+            LoadValuesFromContextObjectToPipelineContextOptions options = new()
+            {
+                InputObjectContextName = differentInputObjectContextName
+            };
+
+            SamplePerson inputObject = new SamplePerson()
+            {
+                LastName = "Dooray",
+                FirstName = "Sunny"
+            };
+            var context = new PipelineContext();
+            var contextName = Guid.NewGuid().ToString();
+            var contextValue = Guid.NewGuid();
+
+            var mockNext = new Mock<IPipelineRequest>();
+            mockNext.Setup(x => x.InvokeAsync(context)).Returns(Task.CompletedTask);
+            IPipelineRequest next = mockNext.Object;
+
+            using (var source = new LoadValuesFromContextObjectToPipelineContextStep<SamplePerson>(logger, options, next))
+            {
+                context.Items.Add(contextName, contextValue);
+                context.Items.Add(differentInputObjectContextName, inputObject);
+
+                var expectedItemsCount = 2;
+
+                // act
+                await source.InvokeAsync(context);
+
+                // assert
+                Assert.AreEqual(errorCount, context.Errors.Count);
+                Assert.AreEqual(expectedItemsCount, context.Items.Count);
+                Assert.IsTrue(context.Items.ContainsKey(contextName), "context does contain a key named '{0}'.", contextName);
+                Assert.AreEqual(contextValue, context.Items[contextName], "context does contain a key named '{0}' with a value of '{1}'.", contextName, contextValue);
+                Assert.IsTrue(context.Items.ContainsKey(differentInputObjectContextName), "context does contain a key named '{0}'.", differentInputObjectContextName);
+                Assert.AreEqual(inputObject, context.Items[differentInputObjectContextName], "context does contain a key named '{0}' with a value of '{1}'.", differentInputObjectContextName, inputObject);
             }
         }
 

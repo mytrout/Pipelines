@@ -2,9 +2,14 @@
 
 ## 4.2.0
 - Move some readme.md documentation to the root readme.md.
+- Remove README.md and stylecop.json from the Solution Items collection.
 - Correct the links to the readme.md documentation.
 - Add documemtation on the root readme.md to on how to perform git remote prune origin automatically in Visual Studio.
 - Implement the Optional [FromServicesAttribute] capability when a property has a default value.
+- Use the Optional [FromServicesAttribute] capability on LoadValuesFromContextObjectToPipelineContextOptions for IContextNameBuilder.
+- Mark obsolete the LoadValuesFromContextObjectToPipelineContextOptions.BuildContextNameFunction in favor of new ContextNameBuilder property.
+- To prevent a breaking change on LoadValuesFromContextObjectToPipelineContextOptions, override the usage of ContextNameBuilder in the BuildContextName method.
+- Remove ExcludeFromCodeCoverageAttribute from LoadValuesFromContextObjectToPipelineContextOptions because it was incorrectly marked.
 
 ## 4.1.0
 - Upgrade from preview release of .NET 7.0 to official release.
