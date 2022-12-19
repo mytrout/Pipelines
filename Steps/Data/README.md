@@ -112,12 +112,12 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
         {
             public static async Task Main(string[] args)
             {
-                // IMPORTANT NOTE FOR DEVELOPERS !
-                // 
-                // Step Dependencies with context must be defined BEFORE UsePipelines() to load the dependencies correctly.
-                //
-
                 var host = Host.CreateDefaultBuilder(args)
+                                    .ConfigureServices(services =>
+                                    {
+                                        ...
+                                        services.AddSingleton<DbProviderFactory>(new OracleClientFactory()) ;
+                                    }
                                     .UsePipeline(builder => 
                                     {
                                         builder
@@ -151,6 +151,32 @@ If Step1 prints the Step1Options value with a trailing space to the Console when
     }
 }
 ```
+
+This example code leaves out other services and configuration that may be required for complete operation of this application.
+The service "OracleClientFactory" allows queries to be run against an Oracle database.
+A Microsoft Sql Server database would require SqlClientFactory.
+
+
+## How to configure the SqlStatements for SaveContextToDatabaseOptions:
+In the appSettings.json file, use the following entry:
+
+```json
+  "SaveContextToDatabaseOptions": {
+    "SqlStatements": [
+      {
+        "Name": "Insert-Into-Table1",
+        "CommandType": 4,
+        "ParameterNames": [ "iID" ],
+        "Statement": "TABLE1_ADD"
+      }
+    ]
+  }
+```
+The values above represent an Oracle Stored Procedure named "TABLE1_ADD" with one parameter named "iID".
+INSERT, UPDATE, and DELETE statements all return a "ORA-00933 sql command not properly ended" when used in SqlStatements.Statement.
+One must use Stored Procedures to execute these types of queries.
+
+NOTE: Microsoft SQL Server does not have the same limitation as Oracle.
 
 ## Build the software locally.
     1. Clone the software from the Pipelines repository.
