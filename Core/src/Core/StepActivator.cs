@@ -167,7 +167,13 @@ namespace MyTrout.Pipelines.Core
 
                     if (injectedResult.Instance == null)
                     {
-                        throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, parameter.ParameterType.Name, property.Name, pipelineStep.StepType.Name));
+                        // Create an instance of the class to see if this property has a default value.
+                        var optionsInstance = Activator.CreateInstance(parameter.ParameterType, nonPublic: true);
+
+                        if (property.GetValue(optionsInstance, null) is null)
+                        {
+                            throw new InvalidOperationException(Resources.SERVICEPROVIDER_LACKS_PARAMETER(CultureInfo.CurrentCulture, parameter.ParameterType.Name, property.Name, pipelineStep.StepType.Name));
+                        }
                     }
                     else
                     {

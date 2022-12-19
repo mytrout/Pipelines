@@ -1,7 +1,7 @@
-﻿// <copyright file="FromServicesAttributeTests.cs" company="Chris Trout">
+﻿// <copyright file="SampleWithFromServicesAttributeAndDefaultPropertyValueOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright © 2022 Chris Trout
+// Copyright(c) 2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,27 @@
 // SOFTWARE.
 // </copyright>
 
-namespace MyTrout.Pipelines.Core.Tests
+namespace MyTrout.Pipelines.Samples.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Diagnostics.CodeAnalysis;
+    using Moq;
+    using MyTrout.Pipelines.Core;
 
-    [ExcludeFromCodeCoverage]
-    [TestClass]
-    public class FromServicesAttributeTests
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public class SampleWithFromServicesAttributeAndDefaultPropertyValueOptions
     {
-        [TestMethod]
-        public void Constructs_FromServicesAttribute_Successfully()
+        public SampleWithFromServicesAttributeAndDefaultPropertyValueOptions(string connectionString)
         {
-            // arrange
-            // act
-            var result = new FromServicesAttribute();
-
-            // assert
-            Assert.IsNotNull(result);
+            this.ConnectionString = connectionString;
         }
+
+        private SampleWithFromServicesAttributeAndDefaultPropertyValueOptions()
+        {
+            // no op
+        }
+
+        public string ConnectionString { get; set; }
+
+        [FromServices]
+        public IContextNameBuilder ContextNameBuilder { get; set; } = new Mock<IContextNameBuilder>().Object;
     }
 }

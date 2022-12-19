@@ -189,9 +189,6 @@ Please refer to the [Pipeline.Steps.Core](../Steps/Core/README.md) for more deta
 
 ## More Documentation!
 
-* [Non-breaking Changes for 4.0.1](./pipelines-core-nonbreaking-changes-4-0-1.md)
-* [Breaking Changes for 4.0.0](./pipelines-core-breaking-changes-4-0-0.md)
-* [Repairing DACPAC in March 2022](./repairing-dacpac-build-after-march-2022-failures.md)
-* [OpenCover is Dead!  Long Live AltCover](./opencover-is-dead-long-live-altcover.md)
-* [Breaking Changes for 3.0.0](./pipelines-core-breaking-changes-3-0-0.md)
-* [Github Actions and .NET 5.0](./github-actions-and-net-5.0.md)
+* [Non-breaking Changes for 4.0.1](../docs/pipelines-core-nonbreaking-changes-4-0-1.md)
+* [Breaking Changes for 4.0.0](../docs/pipelines-core-breaking-changes-4-0-0.md)
+* [Breaking Changes for 3.0.0](../docs/pipelines-core-breaking-changes-3-0-0.md)

@@ -1,5 +1,11 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.2.0
+- Move some readme.md documentation to the root readme.md.
+- Correct the links to the readme.md documentation.
+- Add documemtation on the root readme.md to on how to perform git remote prune origin automatically in Visual Studio.
+- Implement the Optional [FromServicesAttribute] capability when a property has a default value.
+
 ## 4.1.0
 - Upgrade from preview release of .NET 7.0 to official release.
 
