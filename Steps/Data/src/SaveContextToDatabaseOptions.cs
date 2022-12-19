@@ -1,7 +1,7 @@
 ﻿// <copyright file="SaveContextToDatabaseOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ namespace MyTrout.Pipelines.Steps.Data
         /// <summary>
         /// Gets or sets the Sql Statements that can be executed by this step.
         /// </summary>
-        public IEnumerable<SqlStatement> SqlStatements { get; set; } = new List<SqlStatement>();
+        public List<SqlStatement> SqlStatements { get; set; } = new List<SqlStatement>();
 
         /// <summary>
         /// Gets or sets a user-defined function to retrieve the Connection String.
