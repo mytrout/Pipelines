@@ -1,7 +1,7 @@
 ﻿// <copyright file="RenameContextItemOptions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021 Chris Trout
+// Copyright(c) 2021-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,9 @@
 
 namespace MyTrout.Pipelines.Steps
 {
+    using System;
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
 
     /*
      *  IMPORTANT NOTE: As long as this class only contains compiler-generated functionality, it requires no unit tests.
@@ -36,6 +38,26 @@ namespace MyTrout.Pipelines.Steps
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class RenameContextItemOptions
     {
+        /// <summary>
+        /// Gets or sets whether the OS System is Windows or *nix so the correct <see cref="EnvironmentVariableTarget"/> can be used.
+        /// </summary>
+        /// <remarks>
+        /// While this is not strictly "compiler-generated" functionality,
+        /// it is a framework-level check which is extremely unlikely to fail.
+        /// Anyone who can force this to fail without doing stupid ILDASM tricks, please contact me.
+        /// </remarks>
+        public EnvironmentVariableTarget EnvironmentVariableTarget { get; set; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.Process;
+
+        /// <summary>
+        /// Gets or sets the Environment Variable Name for the PreventCollisionsWithRenamedValueNames.
+        /// </summary>
+        /// <remarks>
+        /// <para>This property is used for testing the Prevent Collisions with Renamed Values by changing the name
+        /// of the Environment Variable prevent unit test threading race conditions.</para>
+        /// <para>It can be used to redefine the name of the environment variable, but it is not recommended.</para>
+        /// </remarks>
+        public string PreventCollisionsWithRenamedValueNamesEnvironmentVariableName { get; set; } = "PIPELINE_PreventCollisionsWithRenamedValueNames";
+
         /// <summary>
         /// Gets or sets a list of names to be renamed in <see cref="IPipelineContext.Items"/>.
         /// </summary>

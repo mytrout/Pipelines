@@ -33,6 +33,7 @@ namespace MyTrout.Pipelines.Core.Tests
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Security.Cryptography.X509Certificates;
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
@@ -127,6 +128,7 @@ namespace MyTrout.Pipelines.Core.Tests
             var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
             mockServiceProvider.Setup(x => x.GetService(typeof(IContextNameBuilder))).Returns(contextNameBuilder);
+
             IServiceProvider serviceProvider = mockServiceProvider.Object;
 
             Type stepType = typeof(SampleWithFromServicesAttributeStep);
@@ -146,7 +148,38 @@ namespace MyTrout.Pipelines.Core.Tests
                 var typedResult = result as SampleWithFromServicesAttributeStep;
                 Assert.IsNotNull(typedResult, "result is not SampleWithFromServicesAttributeOptionsStep.");
                 Assert.IsNotNull(typedResult.Options.ContextNameBuilder, "Options.ContextNameBuilder is null.");
-                Assert.AreEqual(typedResult.Options.ContextNameBuilder, contextNameBuilder);
+            }
+        }
+
+        [TestMethod]
+        public void Returns_Valid_Step_Instance_From_CreateInstance_When_Options_Uses_FromServices_Attribute_And_Default_Property_Value_Is_Supplied()
+        {
+            // arrange
+            ILogger<StepActivator> logger = new Mock<ILogger<StepActivator>>().Object;
+
+            var config = new ConfigurationBuilder().AddJsonFile("test-type.json").Build();
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider.Setup(x => x.GetService(typeof(IConfiguration))).Returns(config);
+            IServiceProvider serviceProvider = mockServiceProvider.Object;
+
+            Type stepType = typeof(SampleWithFromServicesAttributeAndDefaultPropertyValueStep);
+            using (var pipelineRequest = new NoOpStep())
+            {
+                string stepContext = null;
+
+                var source = new StepActivator(logger, serviceProvider);
+
+                // act
+                var result = source.CreateInstance(new StepWithContext(stepType, stepContext), pipelineRequest);
+
+                // assert
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOfType(result, stepType);
+
+                var typedResult = result as SampleWithFromServicesAttributeAndDefaultPropertyValueStep;
+                Assert.IsNotNull(typedResult, "result is not SampleWithFromServicesAttributeAndDefaultPropertyValueStep.");
+                Assert.IsNotNull(typedResult.Options.ContextNameBuilder, "Options.ContextNameBuilder is null.");
             }
         }
 

@@ -1,0 +1,28 @@
+name: MyTrout.Pipelines.Steps.Serialization.Protobuf
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-pipelines-steps-serialization-protobuf.yaml'
+      - 'Steps/Serialization/Protobuf/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  pull_request:
+    paths:
+      - '.github/workflows/build-pipelines-steps-serialization-protobuf.yaml'
+      - 'Steps/Serialization/Protobuf/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  workflow_dispatch:
+  
+jobs:
+  build:
+    uses: './.github/workflows/template-build-pipelines.yaml'
+    with:
+      sonar-project-name: 'Pipelines.Steps.Serialization.Protobuf'
+      working-directory: '/Steps/Serialization/Protobuf'
+      solution-name: 'MyTrout.Pipelines.Steps.Serialization.Protobuf.sln'
+      project-version: '1.1.0'
+    secrets: inherit

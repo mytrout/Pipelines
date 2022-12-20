@@ -6,24 +6,22 @@
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2019-2022 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>3.0.0</Version>
+    <Version>4.0.3</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <AssemblyVersion>4.0.3.0</AssemblyVersion>
+    <FileVersion>4.0.3.0</FileVersion>
     <Description>Provides a non-HTTP pipeline similar to the ASP.NET Core Request pipeline</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <NoWarn>1701;1702;SA1100;SA1413;CA2254;SA1636;S4792</NoWarn>
+    <NoWarn>1701;1702;IDE0057;IDE0063;CA2254;S4792;SA1413;SA1636</NoWarn>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <IncludeSymbols>true</IncludeSymbols>
@@ -34,6 +32,14 @@
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+    
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
@@ -83,10 +89,6 @@
   
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include=".editorconfig" />
   </ItemGroup>
   
 </Project>

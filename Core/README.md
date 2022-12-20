@@ -40,9 +40,13 @@ For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../H
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 
-## BREAKING CHANGES INTRODUCED WITH 3.0.0
+## NON-BREAKING CHANGES INTRODUCED WITH 4.0.1
 
-See [Breaking Changes for 3.0.0](./breaking-changes-3-0-0.md)
+See [Non-breaking Changes for 4.0.1](./pipelines-core-nonbreaking-changes-4-0-1.md)
+
+## BREAKING CHANGES INTRODUCED WITH 4.0.0
+
+See [Breaking Changes for 4.0.0](./pipelines-core-breaking-changes-4-0-0.md)
 
 ## How do I use Pipelines?
 
@@ -182,3 +186,9 @@ Please refer to the [Pipeline.Steps.Core](../Steps/Core/README.md) for more deta
     3. In Visual Studio, run all tests.  All of the should pass.
     4. If you have Visual Studio Enterprise 2019, analyze the code coverage; it should be 100%.
 
+
+## More Documentation!
+
+* [Non-breaking Changes for 4.0.1](../docs/pipelines-core-nonbreaking-changes-4-0-1.md)
+* [Breaking Changes for 4.0.0](../docs/pipelines-core-breaking-changes-4-0-0.md)
+* [Breaking Changes for 3.0.0](../docs/pipelines-core-breaking-changes-3-0-0.md)

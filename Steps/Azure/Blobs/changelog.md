@@ -1,5 +1,29 @@
 # MyTrout.Pipelines.Steps.Azure.Blobs Change Log
 
+## 3.2.0
+- Update default branch from master to main.
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
+- Force update to MyTrout.Pipelines v4.0.3.
+
+## 3.1.3
+- Suppress remaining 4 SonarQube issues.
+
+## 3.1.2
+- Suppress remaining 2 SonarQube issues.
+
+## 3.1.1
+- Correct 9 SonarQube issues.
+- Update SonarQube Analyzer from 1.2.0-beta.376  to 1.2.0-beta.435 to remove faulty SA1009 warnings. (see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3098)
+
+## 3.1.0
+- Upgrade Azure.Storage.Blobs from 12.10.0 to 12.13.0 to address security vulnerability.
+
 ## 3.0.0
 ### BREAKING CHANGES:
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 

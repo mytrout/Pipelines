@@ -1,7 +1,7 @@
 ﻿// <copyright file="PipelineContextValidationExtensions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2020 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,22 @@ namespace MyTrout.Pipelines.Steps
             if (string.IsNullOrWhiteSpace(source.Items[key] as string))
             {
                 throw new InvalidOperationException(Resources.CONTEXT_VALUE_IS_WHITESPACE(CultureInfo.CurrentCulture, key));
+            }
+        }
+
+        /// <summary>
+        /// Asserts that the <see cref="MyTrout.Pipelines.Core.PipelineContext"/> contains an item for <paramref name="key"/>.
+        /// </summary>
+        /// <param name="source">The <see cref="MyTrout.Pipelines.Core.PipelineContext"/> being tested.</param>
+        /// <param name="key">The name of the <see cref="Stream"/> value to test.</param>
+        public static void AssertValueExists(this IPipelineContext source, string key)
+        {
+            source.AssertParameterIsNotNull(nameof(source));
+            key.AssertParameterIsNotWhiteSpace(nameof(key));
+
+            if (!source.Items.ContainsKey(key))
+            {
+                throw new InvalidOperationException(Resources.NO_KEY_IN_CONTEXT(CultureInfo.CurrentCulture, key));
             }
         }
 

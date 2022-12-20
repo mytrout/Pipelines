@@ -34,6 +34,7 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
     using System.Text;
     using System.Threading.Tasks;
 
+#pragma warning disable CS0618
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     public class SerializeObjectToStreamStepTests
@@ -256,4 +257,5 @@ namespace MyTrout.Pipelines.Steps.Serialization.Json.Tests
             Assert.AreEqual(inputObject, context.Items[options.InputObjectContextName]);
         }
     }
+#pragma warning restore CS0618
 }

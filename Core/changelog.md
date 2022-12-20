@@ -1,8 +1,42 @@
 # MyTrout.Pipelines.Core Change Log
 
-## 4.1.0 
-### NON-BREAKING CHANGES
-- Alter AbstractPipelineStep{TStep} to support BeforeNextStepAsync and AfterNextStepAsync methods and predicates to allow more run-time execution control on each step.
+## 4.2.0
+- Move some readme.md documentation to the root readme.md.
+- Remove README.md and stylecop.json from the Solution Items collection.
+- Correct the links to the readme.md documentation.
+- Add documemtation on the root readme.md to on how to perform git remote prune origin automatically in Visual Studio.
+- Implement the Optional [FromServicesAttribute] capability when a property has a default value.
+- Use the Optional [FromServicesAttribute] capability on LoadValuesFromContextObjectToPipelineContextOptions for IContextNameBuilder.
+- Mark obsolete the LoadValuesFromContextObjectToPipelineContextOptions.BuildContextNameFunction in favor of new ContextNameBuilder property.
+- To prevent a breaking change on LoadValuesFromContextObjectToPipelineContextOptions, override the usage of ContextNameBuilder in the BuildContextName method.
+- Remove ExcludeFromCodeCoverageAttribute from LoadValuesFromContextObjectToPipelineContextOptions because it was incorrectly marked.
+
+## 4.1.0
+- Upgrade from preview release of .NET 7.0 to official release.
+
+## 4.0.3 
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
+
+## 4.0.2 - SONARCLOUD UPDATE ONLY
+- Rebuild with a new version number after renaming the master branch in SonarCloud.
+- Prevent the publish to nuget.org as it isn't necessary.
+- NOTE TO DEVELOPERS: Developers must reverse the removal of nuget and github publishing when the next version is ready to be released.
+
+## 4.0.1
+- Add PipelineContextValidationExtension to check object existence without casting it.
+- Add new step MoveInputObjectToOutputObjectStep to perform default renaming easily.
+- Add new step MoveOutputObjectToInputObjectStep to perform default renaming easily.
+- Add an Environment Variable named 'PIPELINES_PreventCollisionsWithRenamedValueNames' to control default behavior for MoveInput~ToOutput~Steps.  
+- SonarQube ignored the ExcludeFromCodeCoverage on the FromServicesAttribute, so unit tests were delivered.
+- Change the push branch in the build yaml from master to main.
+
+See [Documentation around 4.0.1](../docs/pipelines-core-4-0.1.md) for more information.
 
 ## 4.0.0 - BREAKING CHANGES
 - Alter IStepActivator interface to include the ParameterCreators property to allow developers to reconfigure the parameter creation behavior.

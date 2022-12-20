@@ -11,9 +11,9 @@ If three steps named M1, M2, and M3 were added to the Pipeline, here is the exec
 
 The Pipeline automatically adds the NoOpStep as the last step in the Pipeline.
 
-## BREAKING CHANGES INTRODUCED WITH 3.0.0
+## BREAKING CHANGES INTRODUCED WITH 4.0.0
 
-See [Breaking Changes for 3.0.0](./docs/pipelines-core-breaking-changes-3-0-0.md)
+See [Breaking Changes for 4.0.0](./docs/pipelines-core-breaking-changes-4-0-0.md)
 
 ## Installing via NuGet
 
@@ -44,3 +44,13 @@ Please refer to the [Pipeline.Hosting](./Hosting/README.md) for more details on 
 
 ## Build the software in Github
     TODO ->
+
+## More Documentation!
+
+* [Non-breaking Changes for 4.0.1](./docs/pipelines-core-nonbreaking-changes-4-0-1.md)
+* [Breaking Changes for 4.0.0](./docs/pipelines-core-breaking-changes-4-0-0.md)
+* [Repairing DACPAC in March 2022](./docs/repairing-dacpac-build-after-march-2022-failures.md)
+* [OpenCover is Dead!  Long Live AltCover](./docs/opencover-is-dead-long-live-altcover.md)
+* [Breaking Changes for 3.0.0](./docs/pipelines-core-breaking-changes-3-0-0.md)
+* [Github Actions and .NET 5.0](./docs/github-actions-and-net-5.0.md)
+* [Git Prune Automatically in Visual Studio](./docs/why-does-visualstudio-retain-deleted-remote-branches.md)

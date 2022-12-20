@@ -1,5 +1,33 @@
 # MyTrout.Pipelines.Steps.Data Change Log
 
+## 3.1.0
+- Change default branch from master to main.
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
+- Force upgrade to MyTrout.Pipelines v4.0.3 minimum.
+
+## 3.0.0
+### BREAKING CHANGES:
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 
+- [#162](https://github.com/mytrout/Pipelines/issues/162) Upgrade to MyTrout.Pipelines 4.0.0 
+### NON-BREAKING CHANGES:
+- [# 85](https://github.com/mytrout/Pipelines/issues/85)  Update Resources.tt to use NamespaceHint instead of a hard-coded namespace.
+- [# 94](https://github.com/mytrout/Pipelines/issues/94)  Add "if-no-files-found: error" to the nuget publishing step.
+- [#160](https://github.com/mytrout/Pipelines/issues/160) Add support for .NET 7.0
+- [#161](https://github.com/mytrout/Pipelines/issues/161) Refactor ~Steps and ~Options to use user-configurable context names for any value read from or written to IPipelineContext.Items.
+- Uncomment all of the nuget publish steps to allow a new version to be published.
+- Add .editorconfig to enforce rules in Visual Studio 2022.
+- Update Microsoft.CodeAnalysis.NetAnalyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.CodeAnalysis.Analyzers to .NET 7.0 preview version to eliminate build warnings.
+- Update Microsoft.VisualStudio.ThreadingAnalyzers to 17.2.32
+- Upgrade SonarAnalyzer.CSharp 8.40.0.48530
+- Upgrade StyleCop.Analyzers to 1.2.0-beta.435
+
 ## 2.1.0
  - Upgrade to .NET 6.0 while maintaining 5.0 support.
  - Update Resources.tt to reflect .NET 6.0 instead of .NET 5.0

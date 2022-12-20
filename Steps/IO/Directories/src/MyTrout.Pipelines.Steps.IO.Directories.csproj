@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
@@ -6,24 +6,22 @@
         <Authors>Chris Trout</Authors>
         <Copyright>Copyright 2022 Chris Trout. All Rights Reserved.</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Version>0.5.0-beta</Version>
+        <Version>1.1.0</Version>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <FileVersion>0.51.0.0</FileVersion>
+        <AssemblyVersion>1.1.0.0</AssemblyVersion>
+        <FileVersion>1.1.0.0</FileVersion>
         <Description>Provides Pipeline steps to create, delete, move, and rename directories and enumerate files in directories on the file system.</Description>
         <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
-
-    <PropertyGroup>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
         <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
         <ErrorReport>prompt</ErrorReport>
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <NoWarn>1701;1702;SA1310</NoWarn>
+        <NoWarn>1701;1702;IDE0057;IDE0063;CA2254;S4792;SA1413;SA1636</NoWarn>
         <DebugType>full</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <IncludeSymbols>true</IncludeSymbols>
@@ -35,6 +33,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\..\..\..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4-beta1.22274.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -43,17 +49,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0-preview.5.22301.12" />
         <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Moq" Version="4.18.1" />
-        <PackageReference Include="Moq.Analyzers" Version="0.0.9">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="MyTrout.Pipelines.Steps.IO.Files" Version="4.0.0" />
+        <PackageReference Include="MyTrout.Pipelines.Steps.IO.Files" Version="[4.1.0, 5)" />
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -3,7 +3,7 @@ name: MyTrout.Pipelines.Steps.Azure.ServiceBus
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - '.github/workflows/build-pipelines-steps-azure-servicebus.yaml'
       - 'Steps/Azure/ServiceBus/**/*.*'
@@ -28,7 +28,7 @@ env:
   SOLUTION_NAME: 'MyTrout.Pipelines.Steps.Azure.ServiceBus.sln'
         
   # This value should change on each deployable version of this solution.
-  PROJECT_VERSION: '5.0.0'  
+  PROJECT_VERSION: '5.1.1'  
 
   # These values are used for creating an Azure SQL Server Database
   # Azure Servers cannot have periods, underscores, or upper case letters in the name.
@@ -47,7 +47,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup .NET Core SDK 6.0.x and 7.0.x
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: |
             6.0.x
@@ -90,20 +90,20 @@ jobs:
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
 
       - name: Upload nupkg
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nupkg
           path: ${{ env.WORKING_DIRECTORY }}/**/bin/Release/*.nupkg
           if-no-files-found: error
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to nuget.org.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json"
-        if: "github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.MYTROUT_NUGET_API_KEY }} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+        if: "github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.push.commits.*.author,  'dependabot[bot]')"
 
       - name: Publish the package to GitHub.
-        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json"
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.user.login != 'dependabot[bot]'
+        run: dotnet nuget push "${{ env.WORKING_DIRECTORY }}/src/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/mytrout/index.json" --skip-duplicate
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.user.login != 'dependabot[bot]'
    
   azure-pre-processing:
     runs-on: windows-latest

@@ -1,5 +1,27 @@
 # MyTrout.Pipelines.Steps.Communications.Http Change Log
 
+## 3.1.0
+- Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
+- Standardize the first &lt;Property Group&gt; section in the src csproj files across all src projects.
+- Standardize the NoWarn options within the src csproj files across all src projects.
+- Standardize the Neutral Language options to en-US across all src projects.
+- Standardize the Copyright to include 2022 across all src projects.
+- Standardize all .editorconfig file inclusion across all src projects.
+- Standardize inclusion of README.md file across all src projects.
+- Force upgrade to MyTrout.Pipelines v4.0.3 minimum.
+
+## 3.0.0
+- The SendHttpRequestStep did not work properly for Microsoft .NET 6.0 delivered C# websites prior to this change.
+### BREAKING CHANGES:
+- Change the type on SendHttpRequestOptions.HttpMethod from HttpMethod to string to allow IConfiguration to set the value.
+- Change unit tests to reflect the change in HttpMethod.
+### NON-BREAKING CHANGES:
+- Change the push branch in the build yaml from master to main.
+- Upgrade to MyTrout.Pipelines 4.0.1
+- Add Content-Type header value on the HttpRequestMessage.Content element when uploading content.
+- Set a default value of "POST" on SendHttpRequestOptions.HttpMethod
+- [#198](https://github.com/mytrout/Pipelines/issues/198) Allow context values to be injected dynamically into the HttpEndpoint to allow GET verbs to use query string values.
+
 ## 2.0.0
 ### BREAKING CHANGES:
 - [#160](https://github.com/mytrout/Pipelines/issues/160) Remove support for .NET 5.0. 

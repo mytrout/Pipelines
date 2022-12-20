@@ -25,8 +25,10 @@
 namespace MyTrout.Pipelines.Steps
 {
     using Microsoft.Extensions.Logging;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -34,6 +36,11 @@ namespace MyTrout.Pipelines.Steps
     /// </summary>
     public class RenameContextItemStep : AbstractCachingPipelineStep<RenameContextItemStep, RenameContextItemOptions>
     {
+        /// <summary>
+        /// Gets the item names that need to be cached.
+        /// </summary>
+        private readonly IEnumerable<string> cachedItemsPrivate;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RenameContextItemStep" /> class with the requested parameters.
         /// </summary>
@@ -43,11 +50,30 @@ namespace MyTrout.Pipelines.Steps
         public RenameContextItemStep(ILogger<RenameContextItemStep> logger, RenameContextItemOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            // no op
+            // Determines if the collision avoidance capabilities are turned on.
+            if (string.Compare(
+                    Environment.GetEnvironmentVariable(
+                                options.PreventCollisionsWithRenamedValueNamesEnvironmentVariableName,
+                                options.EnvironmentVariableTarget),
+                    "true",
+                    true) == 0)
+            {
+                // Provides a unique list of the combination of keys and values.
+                this.cachedItemsPrivate = this.Options.RenameValues.Keys.Union(this.Options.RenameValues.Values);
+            }
+            else
+            {
+                this.cachedItemsPrivate = this.Options.RenameValues.Keys;
+            }
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> CachedItemNames => this.Options.RenameValues.Keys;
+        /// <remarks>
+        /// The original implementation using only RenameValues.Keys failed because sometimes the destination name
+        /// also existed in the <see cref="IPipelineContext"/>.
+        /// Key exists exceptions would be thrown, if the RenameValues.Keys and RenameValues.Values is not used.
+        /// </remarks>
+        public override IEnumerable<string> CachedItemNames => this.cachedItemsPrivate;
 
         /// <summary>
         /// Rename <see cref="IPipelineContext.Items"/> values and then execute the pipeline step.

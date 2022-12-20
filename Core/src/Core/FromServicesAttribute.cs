@@ -42,7 +42,6 @@ namespace MyTrout.Pipelines.Core
     /// }
     /// </code>
     /// </example>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public sealed class FromServicesAttribute : Attribute
     {
@@ -50,6 +49,7 @@ namespace MyTrout.Pipelines.Core
         /// Initializes a new instance of the <see cref="FromServicesAttribute"/> class.
         /// </summary>
         public FromServicesAttribute()
+            : base()
         {
             // no op
         }

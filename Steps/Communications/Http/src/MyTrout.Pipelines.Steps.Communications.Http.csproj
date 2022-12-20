@@ -1,23 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Chris Trout</Authors>
     <Copyright>Copyright 2021-2022 Chris Trout. All Rights Reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.1.0-beta</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>3.1.0</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>3.1.0.0</AssemblyVersion>
+    <FileVersion>3.1.0.0</FileVersion>
     <Description>Provides Pipeline steps to upload and download streams to HTTP endpoints.</Description>
     <PackageProjectUrl>https://github.com/mytrout/Pipelines/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mytrout/Pipelines.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
@@ -34,6 +32,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -46,7 +52,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyTrout.Pipelines" Version="[4,5)" />
+    <PackageReference Include="MyTrout.Pipelines" Version="[4.0.3,5)" />
     <PackageReference Include="Roslynator.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

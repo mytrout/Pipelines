@@ -1,7 +1,7 @@
 ﻿// <copyright file="SaveContextToDatabaseStep.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ namespace MyTrout.Pipelines.Steps.Data
     using Dapper;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Data.Common;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -35,38 +35,33 @@ namespace MyTrout.Pipelines.Steps.Data
     /// <summary>
     ///  Saves data from the <see cref="IPipelineContext"/> to the database after downstream processing is completed.
     /// </summary>
-    public class SaveContextToDatabaseStep : AbstractPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
+    public class SaveContextToDatabaseStep : AbstractCachingPipelineStep<SaveContextToDatabaseStep, SaveContextToDatabaseOptions>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SaveContextToDatabaseStep"/> class with the specified options.
         /// </summary>
         /// <param name="logger">The logger for this step.</param>
-        /// <param name="providerFactory">An <see cref="DbProviderFactory"/> instance.</param>
         /// <param name="next">The next step in the pipeline.</param>
         /// <param name="options">Step-specific options for altering behavior.</param>
-        public SaveContextToDatabaseStep(ILogger<SaveContextToDatabaseStep> logger, DbProviderFactory providerFactory, SaveContextToDatabaseOptions options, IPipelineRequest next)
+        public SaveContextToDatabaseStep(ILogger<SaveContextToDatabaseStep> logger, SaveContextToDatabaseOptions options, IPipelineRequest next)
             : base(logger, options, next)
         {
-            this.ProviderFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
+            // no op
         }
 
-        /// <summary>
-        /// Gets a <see cref="DbProviderFactory"/> instance.
-        /// </summary>
-        public DbProviderFactory ProviderFactory { get; }
+        /// <inheritdoc />
+        public override IEnumerable<string> CachedItemNames => new List<string>() { this.Options.DatabaseRowsAffectedContextName };
 
         /// <summary>
         /// When downstream processing is completed, writes any context values that are configured to be written to the database.
         /// </summary>
         /// <param name="context">The pipeline context.</param>
         /// <returns>A completed <see cref="Task" />.</returns>
-        protected override async Task InvokeCoreAsync(IPipelineContext context)
+        protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
-            await this.Next.InvokeAsync(context).ConfigureAwait(false);
+            context.AssertStringIsNotWhiteSpace(this.Options.DatabaseStatementNameContextName);
 
-            context.AssertStringIsNotWhiteSpace(DatabaseConstants.DATABASE_STATEMENT_NAME);
-
-            var sqlName = context.Items[DatabaseConstants.DATABASE_STATEMENT_NAME] as string;
+            var sqlName = context.Items[this.Options.DatabaseStatementNameContextName] as string;
             var sql = this.Options.SqlStatements.FirstOrDefault(x => x.Name == sqlName);
 
             if (sql is null)
@@ -76,7 +71,7 @@ namespace MyTrout.Pipelines.Steps.Data
 
             sql.AssertValueIsNotNull(() => Resources.SQL_STATEMENT_NOT_FOUND(CultureInfo.CurrentCulture, sqlName));
 
-            DynamicParameters parameters = new DynamicParameters();
+            var parameters = new DynamicParameters();
 
             // Use the null-forgiving operator because AssertValueIsNotNull guarantees that the value of sql variable is not null.
             foreach (var parameterName in sql!.ParameterNames)
@@ -84,20 +79,29 @@ namespace MyTrout.Pipelines.Steps.Data
                 parameters.Add(parameterName, context.Items[parameterName]);
             }
 
-            using (var connection = this.ProviderFactory.CreateConnection())
+            try
             {
-                if (connection is null)
+                using (var connection = this.Options.DbProviderFactory.CreateConnection())
                 {
-                    throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.ProviderFactory.GetType().Name));
+                    if (connection is null)
+                    {
+                        throw new InvalidOperationException(Resources.CONNECTION_IS_NULL(this.Options.DbProviderFactory.GetType().Name));
+                    }
+
+                    connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
+
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
+
+                    context.Items.Add(this.Options.DatabaseRowsAffectedContextName, result);
                 }
 
-                connection.ConnectionString = await this.Options.RetrieveConnectionStringAsync.Invoke().ConfigureAwait(false);
-
-                await connection.OpenAsync().ConfigureAwait(false);
-
-                int result = await connection.ExecuteAsync(sql.Statement, param: parameters, commandType: sql.CommandType).ConfigureAwait(false);
-
-                context.Items.Add(DatabaseConstants.DATABASE_ROWS_AFFECTED, result);
+                await this.Next.InvokeAsync(context).ConfigureAwait(false);
+            }
+            finally
+            {
+                context.Items.Remove(this.Options.DatabaseRowsAffectedContextName);
             }
 
             await Task.CompletedTask.ConfigureAwait(false);

@@ -1,0 +1,28 @@
+name: MyTrout.Pipelines.Steps.Serialization.Core
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/build-pipelines-steps-serialization-core.yaml'
+      - 'Steps/Serialization/Core/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  pull_request:
+    paths:
+      - '.github/workflows/build-pipelines-steps-serialization-core.yaml'
+      - 'Steps/Serialization/Core/**/*.*'
+      - '!**/*.md'
+      - '!**/*.json'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: './.github/workflows/template-build-pipelines.yaml'
+    with:
+      sonar-project-name: 'Pipelines.Steps.Serialization.Core'
+      working-directory: '/Steps/Serialization/Core'
+      solution-name: 'MyTrout.Pipelines.Steps.Serialization.Core.sln'
+      project-version: '1.1.0'
+    secrets: inherit
