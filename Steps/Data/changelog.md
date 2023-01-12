@@ -1,5 +1,13 @@
 # MyTrout.Pipelines.Steps.Data Change Log
 
+## 3.2.0
+- Update documentation on SqlStatement.CommandType to reflect how the value should be loaded from Configuration.
+- Change SqlStatement.Parameters from an IEnumerable&lt;string&gt; to a List&lt;string&gt; to enable the value to be loaded from Configuration.
+- Remove link to README.md and stylecop.json from Solution Items [#236]
+- Upgrade .NET 7.0 from preview to fully supported version.
+- IMPORTANT NOTE: All versions of this library prior to this one will have problems loading any SqlStatement from Configuration.
+- IMPORTANT NOTE: All versions of this library prior to 2.1.0 will be marked deprecated in nuget.org due to unsupported .NET versions.
+
 ## 3.1.0
 - Change default branch from master to main.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.
@@ -43,7 +51,7 @@
  - Upgrade SonarAnalyzer.CSharp from 8.16.0.25740 to 8.33.0.40503
  - Upgrade StyleCop.Analyzers from 1.1.118 to 1.2.0-beta.376
  - Upgrade all Test dependencies to ensure Unit Tests continue to operate.
-  - Add work_dispatch element to allow this library to to built manually in Github.
+ - Add work_dispatch element to allow this library to to built manually in Github.
 
 ## 2.0.0
 - Upgrade to MyTrout.Pipelines v3.0.1
@@ -75,5 +83,5 @@
 - Create Azure ARM Template for SQL Server deployment for integration testing.
 - Update azure-pipelines.yml to use appropriate ARM templates.
 - Create tests/MyTrout.Pipelines.Steps.Data.Database project to allow creation of DACPAC for use with integration testing database.
-- Nullable reference types will not be implenented due to warning suppression noise.
+- Nullable reference types will not be implemented due to warning suppression noise.
 - Add Resources to enable localization and suppress analyzer warnings.

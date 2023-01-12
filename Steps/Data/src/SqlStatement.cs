@@ -1,7 +1,7 @@
 ﻿// <copyright file="SqlStatement.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2020-2021 Chris Trout
+// Copyright(c) 2020-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,16 @@ namespace MyTrout.Pipelines.Steps.Data
     public class SqlStatement
     {
         /// <summary>
-        /// Gets or sets the Command Type of the <see cref="SqlStatement"/>.
+        /// Gets or sets the <see cref="CommandType"/> to be used for the Step.
         /// </summary>
-        public CommandType CommandType { get; set; } = CommandType.StoredProcedure;
+        /// <remarks>
+        /// When attempting to load this value from <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>,
+        /// please use the numeric value representing the <see cref="CommandType"/> as follows:<br />
+        /// <see cref="CommandType.Text"/> is 1.<br />
+        /// <see cref="CommandType.StoredProcedure"/> is 4.<br />
+        /// <see cref="CommandType.TableDirect"/> is 512.<br />
+        /// </remarks>
+        public CommandType CommandType { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the statement.
@@ -45,7 +52,7 @@ namespace MyTrout.Pipelines.Steps.Data
         /// <summary>
         /// Gets or sets that parameter names required by <see cref="SqlStatement"/>.
         /// </summary>
-        public IEnumerable<string> ParameterNames { get; set; } = new List<string>();
+        public List<string> ParameterNames { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the SQL Statement that should be executed by this step.
