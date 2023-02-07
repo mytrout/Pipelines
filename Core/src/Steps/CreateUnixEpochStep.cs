@@ -83,6 +83,7 @@ namespace MyTrout.Pipelines.Steps
             await Task.CompletedTask.ConfigureAwait(false);
         }
 
+#pragma warning disable CS0672
         /// <summary>
         /// Force the call to the next step.
         /// </summary>
@@ -96,5 +97,6 @@ namespace MyTrout.Pipelines.Steps
         {
             await this.Next.InvokeAsync(context).ConfigureAwait(false);
         }
+#pragma warning restore CS0672
     }
 }

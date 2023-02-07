@@ -1,7 +1,7 @@
 ﻿// <copyright file="AbstractPipelineStep{TStep}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2022 Chris Trout
+// Copyright(c) 2019-2023 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -103,11 +103,20 @@ namespace MyTrout.Pipelines.Steps
                 {
                     await this.BeforeNextStepAsync(context).ConfigureAwait(false);
                 }
+                else
+                {
+                    this.Logger.LogDebug("BeforeNextStep predicate skipped the BeforeNextStep(context) call.");
+                }
 
                 if (this.Predicates[ExecutionPredicateKind.NextStep].Invoke(context))
                 {
                     await this.InvokeCoreAsync(context).ConfigureAwait(false);
                 }
+                else
+                {
+                    this.Logger.LogDebug("BeforeNextStep predicate skipped the NextStep(context) call.");
+                }
+
             }
             catch (Exception exc)
             {
@@ -118,6 +127,10 @@ namespace MyTrout.Pipelines.Steps
                 if (this.Predicates[ExecutionPredicateKind.AfterNextStep].Invoke(context))
                 {
                     await this.AfterNextStepAsync(context).ConfigureAwait(false);
+                }
+                else
+                {
+                    this.Logger.LogDebug("BeforeNextStep predicate skipped the AfterNextStep(context) call.");
                 }
             }
         }

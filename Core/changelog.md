@@ -11,6 +11,7 @@
 - To prevent a breaking change on LoadValuesFromContextObjectToPipelineContextOptions, override the usage of ContextNameBuilder in the BuildContextName method.
 - Remove ExcludeFromCodeCoverageAttribute from LoadValuesFromContextObjectToPipelineContextOptions because it was incorrectly marked.
 - Alter AbstractPipelineStep{TStep} to support BeforeNextStepAsync and AfterNextStepAsync methods and predicates to allow more run-time execution control on each step.
+- Adding PipelineName back to the PipelineContext to enable downstream callers to log the PipelineName.
 
 ## 4.1.0
 - Upgrade from preview release of .NET 7.0 to official release.

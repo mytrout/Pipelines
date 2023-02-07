@@ -1,7 +1,7 @@
 ﻿// <copyright file="IPipelineContext.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2022 Chris Trout
+// Copyright(c) 2019-2023 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,6 +65,12 @@ namespace MyTrout.Pipelines
         /// Gets context items which are passed between step instances during execution.
         /// </summary>
         IDictionary<string, object> Items { get; }
+
+        /// <summary>
+        /// Gets the name of the Pipeline to be used for logging.
+        /// </summary>
+        /// <remarks>If the name cannot be read from the EntryAssembly, the value is defaulted to "Name Not Available".</remarks>
+        public string PipelineName { get; init; }
 
         /// <summary>
         /// Gets a UTC timestamp representing when this pipeline started its execution.

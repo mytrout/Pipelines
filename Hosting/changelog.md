@@ -1,5 +1,13 @@
 # MyTrout.Pipelines.Hosting Change Log
 
+## 4.2.0
+- Add additional debug logging to ensure Production support can be performed on this application by altering logging level.
+- Set the PipelineContext.PipelineName from the HostingContext to ensure a standardized value is set.
+- Add PipelineContext.PipelineName to the "generic" "Pipeline did x" logging messages to make it easier to read in external logs.
+- Update "generic" log messages to include the PipelineContext.PipelineName.
+- Ensure that successful execution logging message is written to the logger prior to exiting.
+- Ensure that end execution logging message is written in the finally block prior to exiting.
+- Change from IHosting
 ## 4.1.0
 - Change default branch from master to main.
 - Upgrade C# Language Version from 9.0 to 10.0 across all src projects.

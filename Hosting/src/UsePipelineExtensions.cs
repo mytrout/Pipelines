@@ -1,7 +1,7 @@
 ﻿// <copyright file="UsePipelineExtensions.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2019-2021 Chris Trout
+// Copyright(c) 2019-2022 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -81,7 +81,7 @@ namespace MyTrout.Pipelines.Hosting
                                 services.AddSingleton(builder);
                                 services.TryAdd(new ServiceDescriptor(typeof(IStepActivator), typeof(TStepActivator), ServiceLifetime.Transient));
                                 services.AddHostedService<PipelineHostedService>();
-                                services.AddSingleton(new PipelineContext());
+                                services.AddSingleton(new PipelineContext() { PipelineName = hostContext.HostingEnvironment.ApplicationName });
                             })
                             .UseConsoleLifetime(options => options.SuppressStatusMessages = true);
 

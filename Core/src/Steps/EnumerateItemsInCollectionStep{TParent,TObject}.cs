@@ -1,7 +1,7 @@
 ﻿// <copyright file="EnumerateItemsInCollectionStep{TParent,TObject}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2022 Chris Trout
+// Copyright(c) 2022-2023 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ namespace MyTrout.Pipelines.Steps
     using Microsoft.Extensions.Logging;
     using MyTrout.Pipelines;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -58,12 +59,20 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
-        protected override Task InvokeBeforeCacheAsync(IPipelineContext context)
+        protected async override Task BeforeNextStepAsync(IPipelineContext context)
         {
+            await base.BeforeNextStepAsync(context).ConfigureAwait(false);
+
+            // TO FUTURE DEVELOPERS: Remove this call after the next breaking change when the obsolete methods are removed.
+#pragma warning disable CS0618
+            await this.InvokeBeforeCacheAsync(context).ConfigureAwait(false);
+#pragma warning restore CS0618
+
             context.AssertValueIsValid<TParent>(this.Options.InputObjectContextName);
-            return base.InvokeBeforeCacheAsync(context);
         }
 
+        // TO FUTURE DEVELOPERS: When the obsolete methods are removed, this method name changes to InvokeCoreAsync().
+#pragma warning disable CS0672
         /// <summary>
         /// Loads a <typeparamref name="TObject"/> into <see cref="IPipelineContext.Items"/> from <typeparamref name="TParent"/>.
         /// </summary>
@@ -72,6 +81,8 @@ namespace MyTrout.Pipelines.Steps
         protected override async Task InvokeCachedCoreAsync(IPipelineContext context)
         {
             IEnumerable<TObject> collection = (context.Items[this.Options.InputObjectContextName] as TParent)!;
+
+            this.Logger.LogDebug("Found {count} objects in the {InputObjectContextName} collection.", collection.Count(), this.Options.InputObjectContextName);
 
             foreach (TObject item in collection)
             {
@@ -88,5 +99,6 @@ namespace MyTrout.Pipelines.Steps
 
             await Task.CompletedTask.ConfigureAwait(false);
         }
+#pragma warning restore CS0672
     }
 }

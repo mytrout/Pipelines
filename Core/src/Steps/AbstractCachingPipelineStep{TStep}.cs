@@ -1,7 +1,7 @@
 ﻿// <copyright file="AbstractCachingPipelineStep{TStep}.cs" company="Chris Trout">
 // MIT License
 //
-// Copyright(c) 2021-2022 Chris Trout
+// Copyright(c) 2021-2023 Chris Trout
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,8 @@
 
 namespace MyTrout.Pipelines.Steps
 {
+// TO FUTURE DEVELOPERS: Remove this warning disable when the obsolete methods are moved.
+#pragma warning disable CS0618
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -73,6 +75,7 @@ namespace MyTrout.Pipelines.Steps
                 this.Logger.LogDebug("Unloaded CacheItemName '{cacheItemName}' from the cached pipeline step.", cacheItemName);
             }
 
+            // TO FUTURE DEVELOPERS: Remove this call after the next breaking change when the obsolete methods are removed.
             await this.InvokeAfterCacheAsync(context).ConfigureAwait(false);
 
             await base.AfterNextStepAsync(context).ConfigureAwait(false);
@@ -87,6 +90,7 @@ namespace MyTrout.Pipelines.Steps
         {
             await base.BeforeNextStepAsync(context).ConfigureAwait(false);
 
+            // TO FUTURE DEVELOPERS: Remove this call after the next breaking change when the obsolete methods are removed.
             await this.InvokeBeforeCacheAsync(context).ConfigureAwait(false);
 
             foreach (var cachedItemName in this.CachedItemNames)
@@ -114,6 +118,7 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
+        [Obsolete("Use the AfterNextStepAsync() method to define behaviors that occur after the Next Step.")]
         protected virtual Task InvokeAfterCacheAsync(IPipelineContext context) => Task.CompletedTask;
 
         /// <summary>
@@ -121,6 +126,7 @@ namespace MyTrout.Pipelines.Steps
         /// </summary>
         /// <param name="context">The <paramref name="context"/> passed during pipeline execution.</param>
         /// <returns>A <see cref="Task" />.</returns>
+        [Obsolete("Use the BeforeNextStepAsync() method to define behaviors that occur before the Next Step.")]
         protected virtual Task InvokeBeforeCacheAsync(IPipelineContext context) => Task.CompletedTask;
 
         /// <summary>
@@ -130,6 +136,8 @@ namespace MyTrout.Pipelines.Steps
         /// <returns>A <see cref="Task" />.</returns>
         [Obsolete("Use the BeforeNextStepAsync() and AfterNextStepAsync() methods to define behaviors that occur around the Next Step.  This abstract method should implement 'await this.CallNextStepAsync(context);' in the implementation body until the next breaking change.")]
         protected abstract Task InvokeCachedCoreAsync(IPipelineContext context);
+
+        // TO FUTURE DEVELOPERS: Remove this override when the obsolete methodsa removed, as it will no longer be required.
 
         /// <summary>
         /// Caches <paramref name="context"/>.<see cref="IPipelineContext.Items">Items</see>, Executes the caching, passes the execution to <see cref="InvokeCachedCoreAsync(IPipelineContext)"/>, and then restores the item from cache.
@@ -141,4 +149,5 @@ namespace MyTrout.Pipelines.Steps
             await this.InvokeCachedCoreAsync(context).ConfigureAwait(false);
         }
     }
+#pragma warning restore CS0618
 }

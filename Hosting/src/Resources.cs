@@ -221,7 +221,7 @@ namespace MyTrout.Pipelines.Hosting
 		}
 
 		/// <summary>
-		/// Looks up a localized string like "A handled exception occurred in the execution of the Pipeline.  ".
+		/// Looks up a localized string like "A handled exception occurred in the execution of the Pipeline '{0}'".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -233,7 +233,7 @@ namespace MyTrout.Pipelines.Hosting
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "A handled exception occurred in the execution of the Pipeline.  ".
+		/// Looks up a localized string using a specific culture like "A handled exception occurred in the execution of the Pipeline '{0}'".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -243,9 +243,177 @@ namespace MyTrout.Pipelines.Hosting
 		{
 			return Resources.ResourceManager.GetString("HANDLED_EXCEPTION", culture);
 		}
-		
+				
 		/// <summary>
-		/// Looks up a localized string like "Pipeline Tasks are starting.".
+		/// Looks up a localized string using a specific culture like "A handled exception occurred in the execution of the Pipeline '{0}'".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string HANDLED_EXCEPTION(params object[] args)
+		{
+			return Resources.HANDLED_EXCEPTION(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "A handled exception occurred in the execution of the Pipeline '{0}'".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string HANDLED_EXCEPTION(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("HANDLED_EXCEPTION", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "Pipeline: '{0}' took {1} seconds to construct.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_BUILD_ELAPSED_TIME()
+		{
+			return Resources.PIPELINE_BUILD_ELAPSED_TIME(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline: '{0}' took {1} seconds to construct.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_BUILD_ELAPSED_TIME(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PIPELINE_BUILD_ELAPSED_TIME", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline: '{0}' took {1} seconds to construct.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_BUILD_ELAPSED_TIME(params object[] args)
+		{
+			return Resources.PIPELINE_BUILD_ELAPSED_TIME(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline: '{0}' took {1} seconds to construct.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_BUILD_ELAPSED_TIME(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("PIPELINE_BUILD_ELAPSED_TIME", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "Pipeline '{0}' took {1} seconds to execute successfully.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_EXECUTION_ELAPSED_TIME()
+		{
+			return Resources.PIPELINE_EXECUTION_ELAPSED_TIME(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to execute successfully.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_EXECUTION_ELAPSED_TIME(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PIPELINE_EXECUTION_ELAPSED_TIME", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to execute successfully.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_EXECUTION_ELAPSED_TIME(params object[] args)
+		{
+			return Resources.PIPELINE_EXECUTION_ELAPSED_TIME(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to execute successfully.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_EXECUTION_ELAPSED_TIME(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("PIPELINE_EXECUTION_ELAPSED_TIME", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "Pipeline '{0}' took {1} seconds to complete all processing, including error reporting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME()
+		{
+			return Resources.PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME(CultureInfo.CurrentCulture);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to complete all processing, including error reporting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME(CultureInfo culture)
+		{
+			return Resources.ResourceManager.GetString("PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME", culture);
+		}
+				
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to complete all processing, including error reporting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME(params object[] args)
+		{
+			return Resources.PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' took {1} seconds to complete all processing, including error reporting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "Pipeline '{0}' Tasks are starting.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -257,7 +425,7 @@ namespace MyTrout.Pipelines.Hosting
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "Pipeline Tasks are starting.".
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' Tasks are starting.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -267,9 +435,33 @@ namespace MyTrout.Pipelines.Hosting
 		{
 			return Resources.ResourceManager.GetString("PIPELINE_TASKS_STARTING", culture);
 		}
-		
+				
 		/// <summary>
-		/// Looks up a localized string like "All Pipelines Tasks are completed.".
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' Tasks are starting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TASKS_STARTING(params object[] args)
+		{
+			return Resources.PIPELINE_TASKS_STARTING(CultureInfo.CurrentCulture, args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string using a specific culture like "Pipeline '{0}' Tasks are starting.".
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
+		public static string PIPELINE_TASKS_STARTING(CultureInfo culture, params object[] args)
+		{
+			return string.Format(culture, Resources.ResourceManager.GetString("PIPELINE_TASKS_STARTING", culture), args);
+		}
+
+		/// <summary>
+		/// Looks up a localized string like "All Pipeline '{0}' Tasks are completed.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -281,7 +473,7 @@ namespace MyTrout.Pipelines.Hosting
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "All Pipelines Tasks are completed.".
+		/// Looks up a localized string using a specific culture like "All Pipeline '{0}' Tasks are completed.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
@@ -291,29 +483,29 @@ namespace MyTrout.Pipelines.Hosting
 		{
 			return Resources.ResourceManager.GetString("TASKS_ARE_COMPLETED", culture);
 		}
-		
+				
 		/// <summary>
-		/// Looks up a localized string like "An unhandled exception occurred in the execution of the Pipeline.  Application behavior at this time is unstable.".
+		/// Looks up a localized string using a specific culture like "All Pipeline '{0}' Tasks are completed.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string UNHANDLED_EXCEPTION()
+		public static string TASKS_ARE_COMPLETED(params object[] args)
 		{
-			return Resources.UNHANDLED_EXCEPTION(CultureInfo.CurrentCulture);
+			return Resources.TASKS_ARE_COMPLETED(CultureInfo.CurrentCulture, args);
 		}
 
 		/// <summary>
-		/// Looks up a localized string using a specific culture like "An unhandled exception occurred in the execution of the Pipeline.  Application behavior at this time is unstable.".
+		/// Looks up a localized string using a specific culture like "All Pipeline '{0}' Tasks are completed.".
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "This is T4-generated code.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores", Justification = "This is T4-generated code from a resources file.")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", Justification = "This is T4-generated code from a resources file.")]
-		public static string UNHANDLED_EXCEPTION(CultureInfo culture)
+		public static string TASKS_ARE_COMPLETED(CultureInfo culture, params object[] args)
 		{
-			return Resources.ResourceManager.GetString("UNHANDLED_EXCEPTION", culture);
+			return string.Format(culture, Resources.ResourceManager.GetString("TASKS_ARE_COMPLETED", culture), args);
 		}
-		}
+}
 }

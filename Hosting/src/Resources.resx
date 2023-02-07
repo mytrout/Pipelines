@@ -130,15 +130,21 @@
     <value>The Step Dependencies with Context is either null or isn't of type 'Dictionary&lt;Type, Dictionary&lt;string, Func&lt;IServiceProvider, {0}&gt;&gt;&gt;'</value>
   </data>
   <data name="HANDLED_EXCEPTION" xml:space="preserve">
-    <value>A handled exception occurred in the execution of the Pipeline.  </value>
+    <value>A handled exception occurred in the execution of the Pipeline '{0}'</value>
+  </data>
+  <data name="PIPELINE_BUILD_ELAPSED_TIME" xml:space="preserve">
+    <value>Pipeline: '{0}' took {1} seconds to construct.</value>
+  </data>
+  <data name="PIPELINE_EXECUTION_ELAPSED_TIME" xml:space="preserve">
+    <value>Pipeline '{0}' took {1} seconds to execute successfully.</value>
+  </data>
+  <data name="PIPELINE_TOTAL_EXECUTION_ELAPSED_TIME" xml:space="preserve">
+    <value>Pipeline '{0}' took {1} seconds to complete all processing, including error reporting.</value>
   </data>
   <data name="PIPELINE_TASKS_STARTING" xml:space="preserve">
-    <value>Pipeline Tasks are starting.</value>
+    <value>Pipeline '{0}' Tasks are starting.</value>
   </data>
   <data name="TASKS_ARE_COMPLETED" xml:space="preserve">
-    <value>All Pipelines Tasks are completed.</value>
-  </data>
-  <data name="UNHANDLED_EXCEPTION" xml:space="preserve">
-    <value>An unhandled exception occurred in the execution of the Pipeline.  Application behavior at this time is unstable.</value>
+    <value>All Pipeline '{0}' Tasks are completed.</value>
   </data>
 </root>
