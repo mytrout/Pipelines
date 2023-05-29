@@ -156,7 +156,7 @@ jobs:
           parameters: databaseName=Cartoon databaseServerName=${{ env.AZURE_SV_NAME }} administratorLoginPassword=${{ secrets.MYTROUT_PIPELINES_DATA_STEP_PASSWORD }}
              
       - name: Apply DACPAC to Azure SQL Server
-        uses: azure/sql-action@v1
+        uses: azure/sql-action@v2
         env:
           AZURE_SV_NAME: sv-${{ env.AZURE_SERVER_NAME }}-${{ github.run_number }}
         with:
