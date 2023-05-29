@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.1.1
+- Add support for .NET 8.0 Preview 4.
+
 ## 4.1.0
 - Upgrade from preview release of .NET 7.0 to official release.
 
