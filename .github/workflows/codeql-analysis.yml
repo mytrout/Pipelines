@@ -47,7 +47,7 @@ jobs:
 
     # Needs .NET 6.0 to build the code in the run Autobuild step.
     - name: Setup .NET Core SDK 6.0.x and 7.0.x
-      uses: actions/setup-dotnet@v3.1.0
+      uses: actions/setup-dotnet@v3.2.0
       with:
         dotnet-version: |
           6.0.x
