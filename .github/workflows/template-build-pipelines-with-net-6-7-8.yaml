@@ -64,12 +64,12 @@ jobs:
             7.0.x
             8.0.x
       
-      # "dotnet sonarscanner end" now requires Java 11 to be installed.
-      - name: Setup Java 11 for SonarQube.
+      # "dotnet sonarscanner end" now requires Java 17 to be installed.
+      - name: Setup Java 17 for SonarQube.
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
           
       # https://stackoverflow.com/questions/67597824/sonarscanner-for-net-fails-in-github-actions-net-5
