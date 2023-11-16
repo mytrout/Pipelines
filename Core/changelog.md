@@ -1,5 +1,14 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 4.2.0
+- Upgrade to .NET 8.0.
+- Upgrade libraries to 8.0.0 versions.
+- Correct all new Analyzer issues.
+- Correct missing documentation on StepWithInstance&lt;TStep, TOptions&gt; and StepWithFactory&lt;TStep, TOptions&gt;
+- NOTE TO DEVELOPERS: Obsolete properties in IPipelineContext ad PipelineContext will be removed in v5.0.0 when .NET 6.0 and .NET 7.0 support is removed.
+- build template upgraded to build with .NET 6.0, .NET 7.0 and .NET 8.0.
+- build template upgraded to Java 17 for SonarQube.
+
 ## 4.1.0
 - Upgrade from preview release of .NET 7.0 to official release.
 

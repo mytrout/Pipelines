@@ -16,7 +16,7 @@
 
 MyTrout.Pipelines provides a non-HTTP pipeline similar to the ASP.NET Core request pipeline.
 
-MyTrout.Pipelines targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) and [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0)
+MyTrout.Pipelines targets [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0), and [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 If three steps named M1, M2, and M3 were added to the Pipeline, here is the execution path for the code.
 
@@ -33,10 +33,10 @@ For more details on implementing Pipelines.Hosting, see [Pipelines.Hosting](../H
     Install-Package MyTrout.Pipelines
 
 ## Software dependencies
-    1. Microsoft.Extensions.Configuration.Abstractions 6.0.0
-    2. Microsoft.Extensions.Configuration.Binder 6.0.0
-    3. Microsoft.Extensions.DependencyInjection.Abstractions 6.0.0
-    4. Microsoft.Extensions.Logging.Abstractions 6.0.0
+    1. Microsoft.Extensions.Configuration.Abstractions 8.0.0
+    2. Microsoft.Extensions.Configuration.Binder 8.0.0
+    3. Microsoft.Extensions.DependencyInjection.Abstractions 8.0.0
+    4. Microsoft.Extensions.Logging.Abstractions 8.0.0
 
 All software dependencies listed above use the [MIT License](https://licenses.nuget.org/MIT).
 

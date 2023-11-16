@@ -29,6 +29,8 @@ namespace MyTrout.Pipelines
     /// <summary>
     /// Provides the ability to configure a Pipeline Step multiple times with different instances and/or functions in the same pipeline.
     /// </summary>
+    /// <typeparam name="TStep">The class which implements the step wrapped by this instance.</typeparam>
+    /// <typeparam name="TOptions">The class which provides configuration for the <typeparamref name="TStep"/>.</typeparam>
     public sealed record StepWithInstance<TStep, TOptions> : StepWithContext, IStepWithInstance
         where TStep : class, IPipelineRequest
         where TOptions : class
