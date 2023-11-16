@@ -60,7 +60,7 @@ namespace MyTrout.Pipelines.Steps
             {
                 foreach (var itemName in this.Options.ConfigurationNames)
                 {
-                    context.Items.Add(itemName, this.Options.Configuration.GetValue<object>(itemName));
+                    context.Items.Add(itemName, this.Options.Configuration.GetValue<object>(itemName)!);
                 }
 
                 await this.Next.InvokeAsync(context);

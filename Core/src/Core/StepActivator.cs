@@ -155,7 +155,7 @@ namespace MyTrout.Pipelines.Core
             foreach (var property in parameter.ParameterType.GetProperties().Where(x => Attribute.IsDefined(x, typeof(FromServicesAttribute), true)))
             {
                 // Setter must exist for this property.
-                var parameterInfo = property.GetSetMethod(true)?.GetParameters().First();
+                var parameterInfo = property.GetSetMethod(true)?.GetParameters()[0];
 
                 if (parameterInfo == null)
                 {
@@ -287,7 +287,7 @@ namespace MyTrout.Pipelines.Core
             foreach (var constructor in pipelineStep.StepType.GetConstructors()
                                                 .OrderByDescending(x => x.GetParameters().Length))
             {
-                if (!constructor.GetParameters().Any(x => x.ParameterType == typeof(IPipelineRequest)))
+                if (!Array.Exists(constructor.GetParameters(), x => x.ParameterType == typeof(IPipelineRequest)))
                 {
                     // Skip this constructor because no next PipelineRequest parameter was found.
                     continue;

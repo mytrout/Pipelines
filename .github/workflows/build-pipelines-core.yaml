@@ -24,6 +24,6 @@ jobs:
       sonar-project-name: 'Pipelines.Core'
       working-directory: '/Core'
       solution-name: 'MyTrout.Pipelines.Core.sln'
-      project-version: '4.1.0'
+      project-version: '4.2.0'
     secrets: inherit
     
