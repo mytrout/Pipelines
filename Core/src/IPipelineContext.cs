@@ -24,7 +24,6 @@
 
 namespace MyTrout.Pipelines
 {
-    using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -40,12 +39,6 @@ namespace MyTrout.Pipelines
         CancellationToken CancellationToken { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="IConfiguration"/> that can be optionally used by steps in the pipeline.
-        /// </summary>
-        [Obsolete("Use the LoadConfigurationValuesToPipelineContextStep in lieu of accessing IConfiguration.")]
-        IConfiguration? Configuration { get; set; }
-
-        /// <summary>
         /// Gets a correlation value that can be used to correlate log entries and reporting data.
         /// </summary>
         Guid CorrelationId { get; }
@@ -54,12 +47,6 @@ namespace MyTrout.Pipelines
         /// Gets a list of non-fatal exceptions reported by the pipeline.
         /// </summary>
         IList<Exception> Errors { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether or not <see cref="Configuration"/> is available.
-        /// </summary>
-        [Obsolete("Use the LoadConfigurationValuesToPipelineContextStep in lieu of accessing IConfiguration.")]
-        bool IsConfigurationAvailable { get; }
 
         /// <summary>
         /// Gets context items which are passed between step instances during execution.

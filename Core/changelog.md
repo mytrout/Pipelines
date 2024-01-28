@@ -1,5 +1,8 @@
 # MyTrout.Pipelines.Core Change Log
 
+## 5.0.0
+- Remove IsConfigurationAvailable and Configuration properties from IPipelineContext and PipelineContext.
+
 ## 4.2.0
 - Upgrade to .NET 8.0.
 - Upgrade libraries to 8.0.0 versions.
